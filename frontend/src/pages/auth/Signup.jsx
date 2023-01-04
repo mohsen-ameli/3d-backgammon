@@ -3,6 +3,9 @@ import { AuthContext } from "../../context/AuthContext"
 import Button from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import Input from "../../components/ui/Input"
+import Back from "../../components/ui/Back"
+import Title from "../../components/ui/Title"
+import FormField from "../../components/ui/FormField"
 
 const Signup = () => {
   // Context
@@ -23,48 +26,36 @@ const Signup = () => {
   }
 
   return (
-    <Container>
-      {/* <PageTitle text="Sign up" /> */}
+    <Container className="h-fit">
+      {/* Header section */}
+      <div className="relative">
+        <Back to="/" />
+        <Title>Sign up</Title>
+      </div>
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-y-8"
+        className="flex flex-col gap-y-4"
         autoComplete="on"
       >
-        <label htmlFor="username">
-          Username
-          <Input
-            name="username"
-            id="username"
-            placeholder="Username"
-            className="mt-3"
-          />
-        </label>
-        <label htmlFor="email">
-          Email
-          <Input name="email" id="email" placeholder="Email" className="mt-3" />
-        </label>
-        <label htmlFor="password">
-          Password
-          <Input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Password"
-            className="mt-3"
-          />
-        </label>
-        <label htmlFor="password2">
-          Password (again)
-          <Input
-            type="password"
-            name="password2"
-            id="password2"
-            placeholder="Password Confirmation"
-            className="mt-3"
-          />
-        </label>
-        <Button type="submit">Sign up</Button>
+        <FormField label="Username" name="username" placeholder="Username" />
+        <FormField label="Email" name="email" placeholder="Email" />
+        <FormField
+          label="Password"
+          name="password"
+          type="password"
+          placeholder="Password"
+        />
+        <FormField
+          label="Password (again)"
+          name="password2"
+          type="password"
+          placeholder="Password Confirmation"
+        />
+
+        <Button type="submit" className="mt-2">
+          Sign up
+        </Button>
       </form>
     </Container>
   )

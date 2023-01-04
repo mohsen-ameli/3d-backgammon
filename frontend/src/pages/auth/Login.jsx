@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/AuthContext"
 import Button from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import Input from "../../components/ui/Input"
+import FormField from "../../components/ui/FormField"
 
 const Login = () => {
   // Context
@@ -29,25 +30,14 @@ const Login = () => {
         className="mt-6 flex flex-col gap-y-8"
         autoComplete="on"
       >
-        <label htmlFor="username">
-          Username
-          <Input
-            name="username"
-            id="username"
-            placeholder="Username"
-            className="mt-3"
-          />
-        </label>
-        <label htmlFor="password">
-          Password
-          <Input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Password"
-            className="mt-3"
-          />
-        </label>
+        <FormField label="Username" name="username" placeholder="Username" />
+        <FormField
+          label="Password"
+          name="password"
+          type="password"
+          placeholder="Password"
+        />
+
         <Button type="submit">Login</Button>
       </form>
     </Container>

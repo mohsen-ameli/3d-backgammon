@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 # ----------------- CUSTOM TOKEN CLAIMS JWT ----------------- #
 
+# Custome JWT token
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -25,6 +26,9 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
+# ----------------- USER VIEWS ----------------- #
+
+# Getting a list of the user's friends
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def handle_friends(request):
