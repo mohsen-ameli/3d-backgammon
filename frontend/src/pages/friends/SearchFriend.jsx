@@ -17,7 +17,7 @@ const SearchFriend = () => {
     <Container>
       {/* Header section */}
       <div className="relative">
-        <Back to="/" />
+        <Back to="/friends" />
         <Title>Search for new friend</Title>
       </div>
 

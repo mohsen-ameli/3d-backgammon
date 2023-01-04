@@ -40,7 +40,7 @@ const Friends = () => {
       </Center>
 
       {/* Header section */}
-      <div className="relative mb-4">
+      <div className="relative mb-6">
         <Back to="/" />
         <Title>Friends list</Title>
         <Link to="/search-friend" className="absolute right-0 top-0">
@@ -50,28 +50,17 @@ const Friends = () => {
         </Link>
       </div>
 
-      {/* <FriendDetails key={friend.id} friend={friend} /> */}
-
       {data.length !== 0 ? (
         <>
-          {data.filter((friend) => friend.is_online).length !== 0 && (
-            <p className="text-xl border-b-2">Online</p>
-          )}
-          {data.map(
-            (friend) =>
-              friend.is_online && (
-                <FriendDetails key={friend.id} friend={friend} />
-              )
-          )}
-          {data.filter((friend) => !friend.is_online).length !== 0 && (
-            <p className="text-xl border-b-2">Offline</p>
-          )}
-          {data.map(
-            (friend) =>
-              !friend.is_online && (
-                <FriendDetails key={friend.id} friend={friend} />
-              )
-          )}
+          <div className="text-xl mb-4 pb-3 border-b-2 grid grid-cols-4 text-center">
+            <p>Name</p>
+            <p>Status</p>
+            <p>Chat</p>
+            <p>Remove</p>
+          </div>
+          {data.map((friend) => (
+            <FriendDetails key={friend.id} friend={friend} />
+          ))}
         </>
       ) : (
         <p className="text-center">No friends online</p>
@@ -91,17 +80,24 @@ const FriendDetails = ({ friend }) => {
   }
 
   return (
-    <>
-      <div className="flex items-center gap-x-2">
-        <p>{friend.username}</p>
-        <button
-          onClick={() => createChatID(friend.username)}
-          className="hover:text-slate-600 hover:ease-in-out duration-75"
-        >
-          <i className="fa-solid fa-comment-dots text-xl p-2"></i>
-        </button>
-      </div>
-    </>
+    <div className="grid grid-cols-4">
+      <p className="self-center justify-self-center">{friend.username}</p>
+      <div
+        className={
+          "w-4 h-4 rounded-full self-center justify-self-center " +
+          (friend.is_online ? "bg-green-500" : "bg-red-500")
+        }
+      ></div>
+      <button
+        onClick={() => createChatID(friend.username)}
+        className="hover:text-slate-600 hover:ease-in-out duration-75"
+      >
+        <i className="fa-solid fa-comment-dots text-xl p-2"></i>
+      </button>
+      <button>
+        <i className="fa-solid fa-user-minus text-red-600"></i>
+      </button>
+    </div>
   )
 }
 

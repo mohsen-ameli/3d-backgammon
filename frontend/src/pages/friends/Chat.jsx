@@ -85,11 +85,14 @@ const Chat = () => {
         <Input
           type="text"
           name="test"
+          placeholder="Type a message..."
           ref={messageInput}
-          className="px-2 py-2 outline-none rounded-lg"
+          className="w-full"
         />
 
-        <Button>Send</Button>
+        <Button>
+          <i class="fa-solid fa-paper-plane"></i>
+        </Button>
       </form>
     </Container>
   )

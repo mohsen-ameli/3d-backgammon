@@ -1,10 +1,14 @@
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
+import { AuthContext } from "../../context/AuthContext"
 
 const Back = ({ className, to }) => {
   const navigate = useNavigate()
+  const { setErrors } = useContext(AuthContext)
 
   const goBackTo = () => {
     navigate(to)
+    setErrors(null)
   }
 
   return (

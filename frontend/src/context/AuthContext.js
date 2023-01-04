@@ -22,6 +22,9 @@ const AuthContextProvider = (props) => {
       : null
   )
 
+  // Form errors
+  const [errors, setErrors] = useState(null)
+
   // Login
   const login = async (username, password) => {
     try {
@@ -45,9 +48,10 @@ const AuthContextProvider = (props) => {
 
         // Going home
         navigate("/")
+        setErrors(null)
       }
     } catch (error) {
-      console.log(error)
+      setErrors(error.response.data.detail)
     }
   }
 
@@ -62,6 +66,7 @@ const AuthContextProvider = (props) => {
 
     // Going home
     navigate("/")
+    setErrors(null)
   }
 
   // Sign up
@@ -73,19 +78,22 @@ const AuthContextProvider = (props) => {
         password,
         password2,
       }
-      const res = await axios.post("/api/signup/", context)
+      const res = await axios.post("api/signup/", context)
       if (res.status === 200) {
         // Going home
         navigate("/login")
+        setErrors(null)
       }
     } catch (error) {
-      console.log(error)
+      setErrors(error.response.data)
     }
   }
 
   const value = {
     user,
     tokens,
+    errors,
+    setErrors,
     setUser,
     setTokens,
     login,
