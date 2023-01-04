@@ -1,31 +1,27 @@
-import { useState } from "react"
+import { useContext } from "react"
 import { Link } from "react-router-dom"
 import Button from "./components/ui/Button"
 import Container from "./components/ui/Container"
+import { AuthContext } from "./context/AuthContext"
 
 const Interface = () => {
-  const [authenticated, setAuthenticated] = useState(true)
+  const { user, logout } = useContext(AuthContext)
 
-  const login = () => {
-    setAuthenticated(true)
-  }
-
-  const logout = () => {
-    setAuthenticated(false)
-  }
   return (
-    <Container>
+    <Container className="justify-between">
       <div className="w-full flex gap-x-8 items-center justify-evenly">
-        {authenticated ? (
+        {user ? (
           <>
             <Button onClick={logout}>Log Out</Button>
             <Button>Profile</Button>
-            <Button>Friends</Button>
+            <Link to="/friends">
+              <Button>Friends</Button>
+            </Link>
           </>
         ) : (
           <>
             <Link to="/login">
-              <Button onClick={login}>Login</Button>
+              <Button>Login</Button>
             </Link>
             <Link to="/signup">
               <Button>Sign Up</Button>

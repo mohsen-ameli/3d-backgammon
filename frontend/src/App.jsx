@@ -1,21 +1,30 @@
 import { Canvas } from "@react-three/fiber"
-import { BrowserRouter, Route, Router, Routes } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import AuthContextProvider from "./context/AuthContext"
+import Friends from "./pages/friends/Friends"
 import Game from "./Game"
 import Interface from "./Interface"
-import Login from "./Login"
+import Login from "./pages/auth/Login"
 import PlayRandom from "./PlayRandom"
-import Signup from "./Signup"
+import Signup from "./pages/auth/Signup"
+import SearchFriend from "./pages/friends/SearchFriend"
+import Chat from "./pages/friends/Chat"
 
 const App = () => {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Interface />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/play-random" element={<PlayRandom />} />
-        </Routes>
+        <AuthContextProvider>
+          <Routes>
+            <Route path="/" element={<Interface />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/play-random" element={<PlayRandom />} />
+            <Route path="/friends" element={<Friends />} />
+            <Route path="/search-friend" element={<SearchFriend />} />
+            <Route path="/chat/:uuid" element={<Chat />} />
+          </Routes>
+        </AuthContextProvider>
       </BrowserRouter>
 
       <Canvas camera={{ position: [0, 0, 3], fov: 45 }}>

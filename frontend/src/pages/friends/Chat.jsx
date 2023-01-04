@@ -1,19 +1,30 @@
-import { useEffect, useRef, useState } from "react"
-import Button from "./components/ui/Button"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { useLocation, useNavigate, useParams, Navigate } from "react-router-dom"
+import Button from "../../components/ui/Button"
+import Container from "../../components/ui/Container"
+import Input from "../../components/ui/Input"
+import Back from "../../components/ui/Back"
+import Title from "../../components/ui/Title"
 
 const Chat = () => {
   const [messages, setMessages] = useState([])
   const messageInput = useRef()
+  const uuid = useParams().uuid
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const uuid = crypto.randomUUID()
+  // const uuid = crypto.randomUUID()
 
   // Create WebSocket connection.
   // TODP: probably get the uuid from the url
-  const ws = new WebSocket(
-    `ws://localhost:8000/ws/game/05e81fb8-9d46-4a21-a8bd-2ec144b35025/`
+  const [ws] = useState(
+    () => new WebSocket(`ws://localhost:8000/ws/game/${uuid}/`)
   )
 
-  const close = () => ws.close()
+  const close = useCallback(() => {
+    ws.close()
+    navigate("/friends")
+  }, [navigate, ws])
 
   useEffect(() => {
     // Connect to server
@@ -34,7 +45,7 @@ const Chat = () => {
     return () => {
       close()
     }
-  }, [])
+  }, [close, ws])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -52,11 +63,17 @@ const Chat = () => {
     messageInput.current.value = ""
   }
 
+  if (!location.state) {
+    return <Navigate to="/friends" replace />
+  }
+
   return (
-    <div className="p-2 w-[300px] left-2 top-2 rounded-md relative bg-gray-400 flex flex-col gap-y-4">
-      <Button onClick={close} className="w-fit">
-        Back
-      </Button>
+    <Container>
+      {/* Header section */}
+      <div className="relative">
+        <Back to="/" />
+        <Title>Chatting with: {location.state.username2}</Title>
+      </div>
 
       {messages.map((msg, index) => (
         <p key={index} className="p-2 rounded-md bg-slate-200">
@@ -65,7 +82,7 @@ const Chat = () => {
       ))}
 
       <form onSubmit={handleSubmit} className="flex gap-x-2">
-        <input
+        <Input
           type="text"
           name="test"
           ref={messageInput}
@@ -74,7 +91,7 @@ const Chat = () => {
 
         <Button>Send</Button>
       </form>
-    </div>
+    </Container>
   )
 }
 
