@@ -67,7 +67,7 @@ const Chat = () => {
     <Container>
       <Header to="/" title={`Chatting with: ${location.state.username2}`} />
 
-      <div className="mb-14 custom-scroll-bar overflow-y-visible">
+      <div className="mb-14 custom-scroll-bar">
         {messages.map((msg, index) => (
           <p key={index} className="p-2 mb-2 mr-2 rounded-md bg-slate-200">
             {msg}

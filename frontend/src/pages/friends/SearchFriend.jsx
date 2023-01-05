@@ -10,6 +10,7 @@ const SearchFriend = () => {
     () => new WebSocket("ws://localhost:8000/ws/search-friend/")
   )
   const [friends, setFriends] = useState([])
+  const [error, setError] = useState()
 
   const axiosInstance = useAxios()
 
@@ -55,13 +56,16 @@ const SearchFriend = () => {
 
   // Send friend request
   const sendFriendReequest = async (id) => {
-    // fetch
-    await axiosInstance.put("api/handle-friends/", { id, action: "add" })
+    try {
+      await axiosInstance.put("api/handle-friends/", { id, action: "add" })
+    } catch (err) {
+      setError(err.response.data[0])
+    }
   }
 
   return (
     <Container>
-      <Header to="/friends" title="Search for new friend" />
+      <Header to="/friends" title="Search For a New Friend" />
 
       <Input
         className="mb-4"
@@ -75,17 +79,45 @@ const SearchFriend = () => {
           {friends.map((friend) => (
             <div
               key={friend.id}
-              className="flex items-center justify-between p-2 mb-2 mr-2 rounded-lg bg-slate-400"
+              className="flex items-center justify-between p-2 mb-2 mr-2 rounded-lg bg-slate-200"
             >
               <p>{friend.username}</p>
-              <Button onClick={() => sendFriendReequest(friend.id)}>Add</Button>
+              <AddButton
+                sendFriendReequest={sendFriendReequest}
+                friend={friend}
+                setError={setError}
+              />
             </div>
           ))}
         </div>
       ) : (
         <p>No user found with the specified name or email.</p>
       )}
+
+      {error && <p className="text-red-500">{error}</p>}
     </Container>
+  )
+}
+
+const AddButton = ({ sendFriendReequest, friend, setError }) => {
+  const [clicked, setClicked] = useState(false)
+
+  return (
+    <>
+      {clicked ? (
+        <i className="fa-solid fa-check p-1 text-2xl mr-4 text-green-700" />
+      ) : (
+        <Button
+          onClick={() => {
+            sendFriendReequest(friend.id)
+            setClicked(true)
+            setError(false)
+          }}
+        >
+          Add
+        </Button>
+      )}
+    </>
   )
 }
 

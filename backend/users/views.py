@@ -5,6 +5,7 @@ from .models import CustomUser
 from .serializers import UserSerializer, FriendSerializer, UserFullSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.exceptions import ValidationError
 
 
 # ----------------- CUSTOM TOKEN CLAIMS JWT ----------------- #
@@ -27,14 +28,22 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 # ----------------- USER VIEWS ----------------- #
 
-# Getting a list of the user's friends
+# Getting user's friend requests and number of friend requests
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_user_data(request):
+def get_friend_requests(request):
     if request.method == "GET":
         user = CustomUser.objects.filter(id=request.user.id)
-        serializer = UserSerializer(user.first())
-        return Response(serializer.data)
+        dict_to_return = {}
+
+        # Appending the number of friend requests
+        dict_to_return['num_requests'] = user.first().friend_requests.count()
+
+        dict_to_return['friend_requests'] = []
+
+        for requeset in user.first().friend_requests.all():
+            dict_to_return['friend_requests'].append({'id': requeset.id, 'username': requeset.username})
+        return Response(dict_to_return)
 
 
 # Getting a list of the user's friends
@@ -44,7 +53,7 @@ def handle_friends(request):
     # Current user
     user = CustomUser.objects.filter(id=request.user.id)
     
-    # (GET) getting the list of all friends of the user
+    # (GET) getting all friends of the user
     if request.method == "GET":
         if user.first().friends.all():
             serializer = FriendSerializer(user.first().friends, many=True)
@@ -52,23 +61,34 @@ def handle_friends(request):
         
         return Response([])
 
-    # (PUT) managing friend requests, and removals
+    # (PUT) managing friend requests
     elif request.method == "PUT":
         friend = CustomUser.objects.filter(id=request.data['id'])
 
         # removing a friend
         if request.data['action'] == "remove":
             user.first().friends.remove(friend.first())
-            return Response({"message": f" removed"})
+            return Response({"message": "Friend removed"})
 
         # sending a new freind request
         elif request.data['action'] == "add":
+            if friend.first().friend_requests.filter(id=user.first().id).exists():
+                raise ValidationError("Friend request already sent")
+            elif friend.first() == user.first():
+                raise ValidationError("You can't add yourself")
             friend.first().friend_requests.add(user.first())
-            return Response({"message": f" added"})
-
-# 1 : sending new friend requests
-# 2 : accept/reject friend request
-# 3 DONE : remove friend
+            return Response({"message": "Friend added"})
+        
+        # accepting a friend request
+        elif request.data['action'] == "accept":
+            user.first().friend_requests.remove(friend.first())
+            user.first().friends.add(friend.first())
+            return Response({"message": "Friend accepted"})
+        
+        # rejecting a friend request
+        elif request.data['action'] == "reject":
+            user.first().friend_requests.remove(friend.first())
+            return Response({"message": "Friend rejected"})
 
 
 # Creating a new user

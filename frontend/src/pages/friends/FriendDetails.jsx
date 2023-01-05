@@ -23,22 +23,25 @@ const FriendDetails = ({ friend, refetchFriends }) => {
 
   return (
     <div className="grid grid-cols-4">
+      {/* Name */}
       <p className="self-center justify-self-center">{friend.username}</p>
+      {/* Status */}
       <div
         className={
           "w-4 h-4 rounded-full self-center justify-self-center " +
           (friend.is_online ? "bg-green-500" : "bg-red-500")
         }
-      ></div>
+      />
+      {/* Chat */}
       <button
         onClick={() => createChatID(friend.username)}
-        className="hover:text-slate-600 hover:ease-in-out duration-75"
-      >
-        <i className="fa-solid fa-comment-dots text-xl p-2"></i>
-      </button>
-      <button onClick={() => deleteFriend(friend.id)}>
-        <i className="fa-solid fa-user-minus text-red-600"></i>
-      </button>
+        className="fa-solid fa-comment-dots self-center justify-self-center text-xl text-emerald-500 hover:text-emerald-800 hover:ease-in-out duration-75"
+      />
+      {/* Remove */}
+      <button
+        className="fa-solid fa-trash-can self-center justify-self-center text-red-500 hover:text-red-800"
+        onClick={() => deleteFriend(friend.id)}
+      />
     </div>
   )
 }

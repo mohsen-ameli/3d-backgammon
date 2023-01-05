@@ -26,8 +26,6 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
-        print("Received message: " + message)
-
     def chat_message(self, event):
         message = event['message']
 
