@@ -9,6 +9,12 @@ from django.contrib.auth.password_validation import validate_password
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
+        fields = ("id", "username", "friend_requests")
+
+
+class FriendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
         fields = ("id", "username", "is_online")
 
 

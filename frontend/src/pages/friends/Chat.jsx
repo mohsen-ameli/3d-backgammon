@@ -3,8 +3,7 @@ import { useLocation, useNavigate, useParams, Navigate } from "react-router-dom"
 import Button from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import Input from "../../components/ui/Input"
-import Back from "../../components/ui/Back"
-import Title from "../../components/ui/Title"
+import Header from "../../components/ui/Header"
 
 const Chat = () => {
   const [messages, setMessages] = useState([])
@@ -13,10 +12,7 @@ const Chat = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // const uuid = crypto.randomUUID()
-
   // Create WebSocket connection.
-  // TODP: probably get the uuid from the url
   const [ws] = useState(
     () => new WebSocket(`ws://localhost:8000/ws/game/${uuid}/`)
   )
@@ -69,19 +65,20 @@ const Chat = () => {
 
   return (
     <Container>
-      {/* Header section */}
-      <div className="relative">
-        <Back to="/" />
-        <Title>Chatting with: {location.state.username2}</Title>
+      <Header to="/" title={`Chatting with: ${location.state.username2}`} />
+
+      <div className="mb-14 custom-scroll-bar overflow-y-visible">
+        {messages.map((msg, index) => (
+          <p key={index} className="p-2 mb-2 mr-2 rounded-md bg-slate-200">
+            {msg}
+          </p>
+        ))}
       </div>
 
-      {messages.map((msg, index) => (
-        <p key={index} className="p-2 rounded-md bg-slate-200">
-          {msg}
-        </p>
-      ))}
-
-      <form onSubmit={handleSubmit} className="flex gap-x-2">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full fixed bottom-0 left-0 p-3 flex gap-x-2"
+      >
         <Input
           type="text"
           name="test"
@@ -91,7 +88,7 @@ const Chat = () => {
         />
 
         <Button>
-          <i class="fa-solid fa-paper-plane"></i>
+          <i className="fa-solid fa-paper-plane"></i>
         </Button>
       </form>
     </Container>

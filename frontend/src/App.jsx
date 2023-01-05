@@ -9,6 +9,7 @@ import PlayRandom from "./PlayRandom"
 import Signup from "./pages/auth/Signup"
 import SearchFriend from "./pages/friends/SearchFriend"
 import Chat from "./pages/friends/Chat"
+import FriendRequests from "./pages/friends/FriendRequests"
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
             <Route path="/friends" element={<Friends />} />
             <Route path="/search-friend" element={<SearchFriend />} />
             <Route path="/chat/:uuid" element={<Chat />} />
+            <Route path="/friend-requests" element={<FriendRequests />} />
           </Routes>
         </AuthContextProvider>
       </BrowserRouter>

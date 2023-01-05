@@ -1,14 +1,18 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import Button from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import FormField from "../../components/ui/FormField"
-import Title from "../../components/ui/Title"
-import Back from "../../components/ui/Back"
+import Header from "../../components/ui/Header"
 
 const Login = () => {
   // Context
-  const { login, errors } = useContext(AuthContext)
+  const { login, errors, setErrors } = useContext(AuthContext)
+
+  useEffect(() => {
+    // Clear the errors when the component mounts
+    setErrors(null)
+  }, [setErrors])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -24,11 +28,7 @@ const Login = () => {
 
   return (
     <Container className="h-fit">
-      {/* Header section */}
-      <div className="relative">
-        <Back to="/" />
-        <Title>Log In</Title>
-      </div>
+      <Header to="/" title="Log In" />
 
       <form
         onSubmit={handleSubmit}
@@ -41,11 +41,12 @@ const Login = () => {
           name="password"
           type="password"
           placeholder="Password"
+          errors={errors}
         />
 
-        {errors && <p className="text-red-500">{errors}</p>}
-
-        <Button type="submit">Login</Button>
+        <Button type="submit" className="mt-3">
+          Login
+        </Button>
       </form>
     </Container>
   )

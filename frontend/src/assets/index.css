@@ -17,3 +17,22 @@ canvas {
   left: 0;
   z-index: -9999;
 }
+
+.custom-scroll-bar {
+  overflow-y: auto;
+  /* width: 20px; */
+}
+.custom-scroll-bar::-webkit-scrollbar {
+  width: 10px;
+}
+.custom-scroll-bar::-webkit-scrollbar-track {
+  background: #092a63;
+  border-radius: 10px;
+}
+.custom-scroll-bar::-webkit-scrollbar-thumb {
+  background: rgb(137, 162, 192);
+  border-radius: 10px;
+}
+.custom-scroll-bar::-webkit-scrollbar-thumb:hover {
+  background: rgb(32, 90, 189);
+}

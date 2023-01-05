@@ -1,5 +1,5 @@
 import axios from "axios"
-import { createContext, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import jwt_decode from "jwt-decode"
 
@@ -51,7 +51,7 @@ const AuthContextProvider = (props) => {
         setErrors(null)
       }
     } catch (error) {
-      setErrors(error.response.data.detail)
+      setErrors({ message: error.response.data.detail, code: "password" })
     }
   }
 
