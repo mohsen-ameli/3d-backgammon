@@ -4,7 +4,7 @@ import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import useAxios from "../../components/hooks/useAxios"
 
-const FriendDetails = ({ friend, refetchFriends }) => {
+const FriendDetails = ({ friend }) => {
   const { user } = useContext(AuthContext)
   const navigate = useNavigate()
   const axiosInstance = useAxios()
@@ -18,13 +18,12 @@ const FriendDetails = ({ friend, refetchFriends }) => {
   // Deleting a friend
   const deleteFriend = async (id) => {
     await axiosInstance.put("api/handle-friends/", { id, action: "remove" })
-    await refetchFriends()
   }
 
   return (
     <div className="grid grid-cols-4">
       {/* Name */}
-      <p className="self-center justify-self-center">{friend.username}</p>
+      <div className="w-full custom-scroll-bar">{friend.username}</div>
       {/* Status */}
       <div
         className={
@@ -45,5 +44,24 @@ const FriendDetails = ({ friend, refetchFriends }) => {
     </div>
   )
 }
+
+// function ScrollingBox({ text }) {
+//   const boxRef = useRef(null)
+
+//   useEffect(() => {
+//     gsap.to(boxRef.current, {
+//       xPercent: 100,
+//       repeat: -1,
+//       ease: "ease-in-out",
+//       duration: 1,
+//     })
+//   }, [])
+
+//   return (
+//     <div ref={boxRef} className="w-full overflow-x-hidden">
+//       {text}
+//     </div>
+//   )
+// }
 
 export default FriendDetails

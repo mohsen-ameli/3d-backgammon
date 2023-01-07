@@ -14,7 +14,7 @@ const Chat = () => {
 
   // Create WebSocket connection.
   const [ws] = useState(
-    () => new WebSocket(`ws://localhost:8000/ws/game/${uuid}/`)
+    () => new WebSocket(`ws://localhost:8000/ws/chat/${uuid}/`)
   )
 
   const close = useCallback(() => {

@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router-dom"
 
-const Header = (props) => {
+const Header = ({ className, ...props }) => {
   return (
-    <>
+    <div className="relative mb-6 w-full">
       {/* Header section */}
-      <div className="relative mb-6">
-        <Back to={props.to} />
+      <Back to={props.to} />
+      <div className={`max-w-[240px] mx-auto ${className}`}>
         <h1 className="text-xl font-semibold text-center">{props.title}</h1>
         {props.children}
       </div>
-    </>
+    </div>
   )
 }
 

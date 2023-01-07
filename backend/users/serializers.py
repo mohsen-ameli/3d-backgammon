@@ -6,12 +6,6 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ("id", "username", "friend_requests")
-
-
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -24,9 +18,6 @@ class UserFullSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ("username", "email", "password", "password2")
-    
-    # q: how can i build a django serializer that has an extra field, not existing in the model, but the user is passing it in, and i'd like to validate the data.
-    # a: https://stackoverflow.com/questions/44675370/django-rest-framework-serializer-with-extra-field
 
     def is_valid(self, *, raise_exception=False):
         # Username validations

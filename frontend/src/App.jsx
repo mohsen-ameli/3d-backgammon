@@ -10,6 +10,8 @@ import Signup from "./pages/auth/Signup"
 import SearchFriend from "./pages/friends/SearchFriend"
 import Chat from "./pages/friends/Chat"
 import FriendRequests from "./pages/friends/FriendRequests"
+import PrivateRoute from "./components/utils/PrivateRoute"
+import PassAndPlay from "./PassAndPlay"
 
 const App = () => {
   return (
@@ -21,10 +23,41 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/play-random" element={<PlayRandom />} />
-            <Route path="/friends" element={<Friends />} />
-            <Route path="/search-friend" element={<SearchFriend />} />
-            <Route path="/chat/:uuid" element={<Chat />} />
-            <Route path="/friend-requests" element={<FriendRequests />} />
+            <Route path="/pass-and-play" element={<PassAndPlay />} />
+
+            {/* Private Routes */}
+            <Route
+              path="/friends"
+              element={
+                <PrivateRoute>
+                  <Friends />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/search-friend"
+              element={
+                <PrivateRoute>
+                  <SearchFriend />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/chat/:uuid"
+              element={
+                <PrivateRoute>
+                  <Chat />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/friend-requests"
+              element={
+                <PrivateRoute>
+                  <FriendRequests />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </AuthContextProvider>
       </BrowserRouter>

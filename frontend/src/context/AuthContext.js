@@ -1,7 +1,8 @@
 import axios from "axios"
-import { createContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import jwt_decode from "jwt-decode"
+import useAxios from "../components/hooks/useAxios"
 
 export const AuthContext = createContext()
 
@@ -102,8 +103,46 @@ const AuthContextProvider = (props) => {
   }
 
   return (
-    <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>
+    <AuthContext.Provider value={value}>
+      <SetStatus />
+      {props.children}
+    </AuthContext.Provider>
   )
+}
+
+const SetStatus = () => {
+  const axiosInstance = useAxios()
+
+  const { user } = useContext(AuthContext)
+
+  // Change the user's status
+  const changeStatus = async (status) => {
+    try {
+      console.log("status = ", status)
+      await axiosInstance.put("api/change-user-status/", { status })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // Handle the tab closing
+  const handleTabClosing = () => {
+    changeStatus(false)
+  }
+
+  // Setting the satus of the user
+  useEffect(() => {
+    // User is logged in, so status = true
+    user && changeStatus(true)
+
+    // Event listener for when user closes the tab
+    window.addEventListener("unload", handleTabClosing)
+
+    return () => {
+      window.removeEventListener("unload", handleTabClosing)
+      changeStatus(false)
+    }
+  }, [user])
 }
 
 export default AuthContextProvider

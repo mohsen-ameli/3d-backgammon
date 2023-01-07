@@ -86,12 +86,16 @@ const SearchFriend = () => {
                 sendFriendReequest={sendFriendReequest}
                 friend={friend}
                 setError={setError}
+                error={error}
               />
             </div>
           ))}
         </div>
       ) : (
-        <p>No user found with the specified name or email.</p>
+        <p>
+          No user found with the specified name or email. (Did you spell
+          something wrong?)
+        </p>
       )}
 
       {error && <p className="text-red-500">{error}</p>}
@@ -99,13 +103,15 @@ const SearchFriend = () => {
   )
 }
 
-const AddButton = ({ sendFriendReequest, friend, setError }) => {
+const AddButton = ({ sendFriendReequest, friend, setError, error }) => {
   const [clicked, setClicked] = useState(false)
 
   return (
     <>
       {clicked ? (
-        <i className="fa-solid fa-check p-1 text-2xl mr-4 text-green-700" />
+        error ? null : (
+          <i className="fa-solid fa-check p-1 text-2xl mr-4 text-green-700" />
+        )
       ) : (
         <Button
           onClick={() => {

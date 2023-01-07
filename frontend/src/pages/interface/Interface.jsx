@@ -38,7 +38,9 @@ const Interface = () => {
         <Link to="/play-random">
           <Button>Play With a Random</Button>
         </Link>
-        <Button>Pass & Play</Button>
+        <Link to="/pass-and-play">
+          <Button>Pass & Play</Button>
+        </Link>
       </div>
     </Container>
   )

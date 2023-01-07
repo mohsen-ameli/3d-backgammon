@@ -29,7 +29,7 @@ const FriendRequests = () => {
               className="p-2 mb-3 mr-2 flex items-center justify-between rounded-md bg-slate-200"
               key={req.id}
             >
-              <p>{req.username}</p>
+              <p>{req.username} wants to be your friend!</p>
               <div className="flex items-center gap-x-8">
                 <i
                   className="fa-solid fa-check p-1 text-2xl cursor-pointer text-green-500 hover:text-green-700"
