@@ -1,8 +1,8 @@
 import axios from "axios"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import jwt_decode from "jwt-decode"
-import useAxios from "../components/hooks/useAxios"
+import useSetStatus from "../components/hooks/useSetStatus"
 
 export const AuthContext = createContext()
 
@@ -20,11 +20,23 @@ const AuthContextProvider = (props) => {
   const [tokens, setTokens] = useState(() =>
     localStorage.getItem("tokens")
       ? JSON.parse(localStorage.getItem("tokens"))
-      : null
+      : ""
   )
-
   // Form errors
   const [errors, setErrors] = useState(null)
+
+  // Setting the satus of the user
+  const { changeStatus } = useSetStatus()
+  useEffect(() => {
+    // If there is a user, set their status to true
+    user && changeStatus(true)
+
+    // When the component unmounts, set status to false
+    return () => {
+      changeStatus(false)
+      console.log("unmounting")
+    }
+  }, [])
 
   // Login
   const login = async (username, password) => {
@@ -36,16 +48,18 @@ const AuthContextProvider = (props) => {
 
       const res = await axios.post("api/token/", context)
       if (res.status === 200) {
-        const tokens = {
+        const newTokens = {
           access: res.data.access,
           refresh: res.data.refresh,
         }
         // Save tokens to local storage
-        localStorage.setItem("tokens", JSON.stringify(tokens))
+        localStorage.setItem("tokens", JSON.stringify(newTokens))
 
         // Set tokens
-        setTokens(tokens)
-        setUser(jwt_decode(tokens.access))
+        setTokens(newTokens)
+        setUser(jwt_decode(newTokens.access))
+        // THIS IS WHERE THE ERROR IS
+        changeStatus(true)
 
         // Going home
         navigate("/")
@@ -64,6 +78,8 @@ const AuthContextProvider = (props) => {
     // Set tokens
     setTokens(null)
     setUser(null)
+
+    changeStatus(false)
 
     // Going home
     navigate("/")
@@ -90,6 +106,7 @@ const AuthContextProvider = (props) => {
     }
   }
 
+  // Context value
   const value = {
     user,
     tokens,
@@ -103,46 +120,8 @@ const AuthContextProvider = (props) => {
   }
 
   return (
-    <AuthContext.Provider value={value}>
-      <SetStatus />
-      {props.children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>
   )
-}
-
-const SetStatus = () => {
-  const axiosInstance = useAxios()
-
-  const { user } = useContext(AuthContext)
-
-  // Change the user's status
-  const changeStatus = async (status) => {
-    try {
-      console.log("status = ", status)
-      await axiosInstance.put("api/change-user-status/", { status })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  // Handle the tab closing
-  const handleTabClosing = () => {
-    changeStatus(false)
-  }
-
-  // Setting the satus of the user
-  useEffect(() => {
-    // User is logged in, so status = true
-    user && changeStatus(true)
-
-    // Event listener for when user closes the tab
-    window.addEventListener("unload", handleTabClosing)
-
-    return () => {
-      window.removeEventListener("unload", handleTabClosing)
-      changeStatus(false)
-    }
-  }, [user])
 }
 
 export default AuthContextProvider

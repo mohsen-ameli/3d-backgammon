@@ -1,5 +1,4 @@
 import Container from "../../components/ui/Container"
-import useFetch from "../../components/hooks/useFetch"
 import Center from "../../components/ui/Center"
 import Button from "../../components/ui/Button"
 import { Link, useLocation } from "react-router-dom"
@@ -7,39 +6,44 @@ import Header from "../../components/ui/Header"
 import FriendDetails from "./FriendDetails"
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
+import useFetch from "../../components/hooks/useFetch"
 
 const Friends = () => {
-  // const {
-  //   data,
-  //   error,
-  //   loading,
-  //   fetchData: refetchFriends,
-  // } = useFetch("api/handle-friends/")
-
-  const [data, setData] = useState()
   const location = useLocation()
-
+  const [data, setData] = useState()
   const { tokens } = useContext(AuthContext)
-
-  const [ws] = useState(
+  const { data: d1 } = useFetch("/")
+  const [ws, setWs] = useState(
     () => new WebSocket(`ws://localhost:8000/ws/friends/${tokens.access}/`)
   )
 
-  useEffect(() => {
-    ws.onopen = () => {
-      console.log("Connected to the server")
-    }
+  // useEffect(() => {
+  //   if (d1) {
+  //     const tokens = JSON.parse(localStorage.getItem("tokens"))
+  //     setWs(
+  //       () => new WebSocket(`ws://localhost:8000/ws/friends/${tokens.access}/`)
+  //     )
+  //   }
+  // }, [d1])
 
-    ws.onmessage = (e) => {
-      const data = JSON.parse(e.data)
-      setData(data)
+  // Retrieving the friends list live from the server
+  useEffect(() => {
+    if (ws) {
+      ws.onopen = () => {
+        console.log("Connected to the server")
+      }
+
+      ws.onmessage = (e) => {
+        const data = JSON.parse(e.data)
+        setData(data)
+      }
     }
   }, [])
 
+  // Closeing the connection, when the component unmounts
   useEffect(() => {
     return () => {
-      ws.close(1000, "CLOSEEEEEEEEEEEEEEEEEEEEEE")
-      console.log("goodbye")
+      ws.close()
     }
   }, [location])
 

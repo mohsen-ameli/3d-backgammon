@@ -81,6 +81,8 @@ class FriendsListConsumer(AsyncWebsocketConsumer):
         # Getting the JWT access token from the url
         self.token = self.scope['url_route']['kwargs']['token']
 
+        print('token: ', self.token)
+
         # Decoding the JWT token
         self.jwt_token = jwt.decode(self.token, settings.SECRET_KEY, algorithms="HS256")
         self.user = await sync_to_async(CustomUser.objects.get)(id=self.jwt_token['user_id'])

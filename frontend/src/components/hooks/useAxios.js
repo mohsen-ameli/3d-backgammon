@@ -7,7 +7,6 @@ import { useContext } from "react"
  * Hook used for all types of fetch requests. (Usually not GET, because useFetch handles that)
  * @returns AxiosInstance -> Axios instance with the access token
  */
-
 const useAxios = () => {
   const { tokens, setTokens, setUser } = useContext(AuthContext)
 
