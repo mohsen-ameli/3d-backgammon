@@ -174,3 +174,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+# The interval at which the client will receive updates (in seconds)
+UPDATE_INTERVAL = DEBUG and 1 or 5

@@ -4,9 +4,8 @@ from .models import CustomUser
 from django.conf import settings
 from asgiref.sync import sync_to_async, async_to_sync
 from django.db.models import Q
-from time import sleep
 import asyncio
-from base64 import b64decode
+from .utils import get_friends
 
 
 # For searching for friends
@@ -76,77 +75,34 @@ class ChatConsumer(WebsocketConsumer):
         )
 
 
-# See live updates on:
-# 1: The status
-# 2: Friend requests
-# 3: Friends in general
-# Query all friends, and number of friend requests, and send to the client
-
 # For live updates of the friends of the user
 class FriendsListConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # Group name
-        self.room_group_name = "friends_list"
-
+        # Getting the JWT access token from the url
         self.token = self.scope['url_route']['kwargs']['token']
-        self.live = True
 
-        # Decode JWT token, and get user id
+        # Decoding the JWT token
         self.jwt_token = jwt.decode(self.token, settings.SECRET_KEY, algorithms="HS256")
-        self.user_id = self.jwt_token['user_id']
-        self.user = await sync_to_async(CustomUser.objects.get)(id=self.user_id)
-
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
+        self.user = await sync_to_async(CustomUser.objects.get)(id=self.jwt_token['user_id'])
 
         if self.user is not None:
             await self.accept()
-
-        # Send an update to the client with the current list of friends and friend requests
-        await self.channel_layer.group_send(
-            self.room_group_name,
-        {
-            'type': 'send_friends_update',
-            'live': self.live
-        })
+        
+        # Creating an async task to send updates of the user's friend
+        # List and friend requests to the client
+        self.thread = asyncio.create_task(self.send_friends_update())
 
     async def disconnect(self, close_code):
-        # Disconnect the client when the websocket closes
-        sync_to_async(print)('Disconnecteddddddddddddddddddddddddd', close_code)
-        self.live = False
+        # Stopping the async thread, and disconnecting the client
+        self.thread.cancel()
         await self.close(close_code)
 
-    async def send_friends_update(self, event):
-        print("HEREEEEEEEEEEEEEE", event['live'])
-
-        while self.live:
-            if self.live == False:
-                break
-            
+    async def send_friends_update(self):
+        while True:
             # Send an update to the client with the current list of friends and friend requests
             response = await sync_to_async(get_friends)(self.user)
-            
-            await sync_to_async(print)(self.live)
-            
             await self.send(text_data=json.dumps(response))
-            # Sleeping
-            await asyncio.sleep(5)
-        
-
-
-def get_friends(user) -> dict:
-    dict_to_return = {}
-
-    dict_to_return['num_requests'] = user.friend_requests.count()
-    dict_to_return['friends'] = []
-
-    for friend in user.friends.all():
-        dict_to_return['friends'].append({'id': friend.id, 'username': friend.username, 'is_online': friend.is_online})
-
-    return dict_to_return
-
+            await asyncio.sleep(settings.UPDATE_INTERVAL)
 
 
 # Sample output for self.scope
