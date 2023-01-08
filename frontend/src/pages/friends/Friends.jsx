@@ -1,7 +1,7 @@
 import Container from "../../components/ui/Container"
 import Center from "../../components/ui/Center"
 import Button from "../../components/ui/Button"
-import { Link, useLocation } from "react-router-dom"
+import { Link } from "react-router-dom"
 import Header from "../../components/ui/Header"
 import FriendDetails from "./FriendDetails"
 import { useContext, useEffect, useState } from "react"
@@ -9,7 +9,6 @@ import { AuthContext } from "../../context/AuthContext"
 import useGetFreshTokens from "../../components/hooks/useGetFreshTokens"
 
 const Friends = () => {
-  const location = useLocation()
   const [data, setData] = useState()
   const { tokens } = useContext(AuthContext)
   const [ws, setWs] = useState(() => {})
@@ -33,15 +32,12 @@ const Friends = () => {
         const data = JSON.parse(e.data)
         setData(data)
       }
+      ws.onclose = () => console.log("Closed")
     }
-  }, [ws])
-
-  // Closeing the connection, when the component unmounts
-  useEffect(() => {
     return () => {
       ws && ws.close()
     }
-  }, [location])
+  }, [ws])
 
   return (
     <Container className="gap-y-2">

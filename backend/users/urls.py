@@ -8,5 +8,6 @@ urlpatterns = [
     path('handle-friends/', views.handle_friends),
     path('get-friend-requests/', views.get_friend_requests),
     path('change-user-status/', views.change_status),
-    path('signup/', views.register_user)
+    path('signup/', views.register_user),
+    # path('test/', views.test),
 ]

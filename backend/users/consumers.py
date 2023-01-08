@@ -9,7 +9,7 @@ from .utils import get_friends
 from jwt.exceptions import ExpiredSignatureError
 
 
-# For searching for friends
+# Searching for friends
 class SearchFriendConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
@@ -29,7 +29,7 @@ class SearchFriendConsumer(AsyncWebsocketConsumer):
         await self.close(close_code)
 
 
-# For chatting between users
+# Chatting between users
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.chat_id = self.scope['url_route']['kwargs']['chat_id']
@@ -76,7 +76,7 @@ class ChatConsumer(WebsocketConsumer):
         )
 
 
-# For live updates of the friends of the user
+# Live updates for the friends of a user
 class FriendsListConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # Getting the JWT access token from the url
@@ -111,6 +111,40 @@ class FriendsListConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps(response))
             await asyncio.sleep(settings.UPDATE_INTERVAL)
 
+
+# Updating the user's online status
+class StatusConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.token = self.scope['url_route']['kwargs']['token']
+
+        await self.set_token(self.token)
+        await sync_to_async(self.user.update)(is_online=True)
+        await self.accept()
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+
+        # User has logged out, and logged in with a different account
+        try:
+            await self.set_token(data['new_refresh'])
+        except KeyError:
+            pass
+
+        # Updating the user's online status
+        await sync_to_async(self.user.update)(is_online=data['is_online'])
+
+    # Function to set the token
+    async def set_token(self, token):
+        try:
+            self.jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
+        except ExpiredSignatureError:
+            await self.close()
+            return
+        self.user = await sync_to_async(CustomUser.objects.filter)(id=self.jwt_token['user_id'])
+    
+    async def disconnect(self, close_code):
+        await sync_to_async(self.user.update)(is_online=False)
+        await self.close(close_code)
 
 # Sample output for self.scope
 # {

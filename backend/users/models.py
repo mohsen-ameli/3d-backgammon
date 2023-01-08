@@ -11,11 +11,12 @@ class CustomUser(AbstractUser):
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     friend_requests = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='+')
 
-    # def save(self, *args, **kwargs):
-    #     if self in self.friends.all():
-    #         self.friends.remove(self)
-            # self.friends.delete(self)
-        # super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if self in self.friends.all():
+            self.friends.remove(self)
+            raise Exception("You can't add yourself as a friend")
+        else:
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return f"user: {self.username}, pk: {self.pk}"

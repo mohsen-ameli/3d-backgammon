@@ -11,6 +11,9 @@ from .utils import (
     accept_friend_request,
     reject_friend_request
 )
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+import time, jwt
 
 
 # ----------------- CUSTOM TOKEN CLAIMS JWT ----------------- #
@@ -88,6 +91,22 @@ def change_status(request):
         user = CustomUser.objects.filter(id=request.user.id)
         user.update(is_online=request.data['status'])
         return Response({'message': "Status changed!"})
+
+
+# @api_view(['GET'])
+# @permission_classes([])
+# def test(request):
+#     user = CustomUser.objects.get(id=3)
+#     refresh_token = RefreshToken.for_user(user)
+#     access_token = refresh_token.access_token
+#     print(str(access_token))
+#     # Decode the JWT access token
+#     payload = jwt.decode(str(access_token), settings.SECRET_KEY, algorithms="HS256")
+#     # Check if the expiration time has passed
+#     if payload['exp'] <= time.time():
+#         # The token has expired, so perform any necessary tasks here
+#         print("Token has expired")
+#     return Response({'message': "Test"})
 
 
 # Creating a new user aka signup
