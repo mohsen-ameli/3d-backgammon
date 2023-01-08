@@ -2,13 +2,15 @@ import axios from "axios"
 import jwt_decode from "jwt-decode"
 import { AuthContext } from "../../context/AuthContext"
 import { useContext } from "react"
+import useGetFreshTokens from "./useGetFreshTokens"
 
 /**
  * Hook used for all types of fetch requests. (Usually not GET, because useFetch handles that)
- * @returns AxiosInstance -> Axios instance with the access token
+ * @returns Axios instance with the access token
  */
 const useAxios = () => {
-  const { tokens, setTokens, setUser } = useContext(AuthContext)
+  const { tokens } = useContext(AuthContext)
+  const getFreshTokens = useGetFreshTokens(tokens, true)
 
   // Creating an axios instance with the access token
   const axiosInstance = axios.create({
@@ -26,31 +28,12 @@ const useAxios = () => {
     // Access token is not expired
     if (now < expire) return request
 
-    // Access token is expired. Will use the refresh token to get a new access token
-    try {
-      const response = await axios.post("/api/token/refresh/", {
-        refresh: tokens.refresh,
-      })
+    // Access token is expired, so getting fresh tokens
+    const freshTokens = await getFreshTokens()
 
-      if (response.status === 200) {
-        const newTokens = {
-          access: response.data.access,
-          refresh: tokens.refresh,
-        }
-
-        // Saving the new tokens to local storage
-        localStorage.setItem("tokens", JSON.stringify(newTokens))
-
-        setUser(jwt_decode(response.data.access))
-        setTokens(newTokens)
-
-        // Setting new access token to the axios instance
-        request.headers.Authorization = `Bearer ${response.data.access}`
-        return request
-      }
-    } catch (error) {
-      console.log(error)
-    }
+    // Returning the original request
+    request.headers.Authorization = `Bearer ${freshTokens.access}`
+    return request
   })
 
   return axiosInstance

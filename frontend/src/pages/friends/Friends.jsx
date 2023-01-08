@@ -6,44 +6,40 @@ import Header from "../../components/ui/Header"
 import FriendDetails from "./FriendDetails"
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
-import useFetch from "../../components/hooks/useFetch"
+import useGetFreshTokens from "../../components/hooks/useGetFreshTokens"
 
 const Friends = () => {
   const location = useLocation()
   const [data, setData] = useState()
   const { tokens } = useContext(AuthContext)
-  const { data: d1 } = useFetch("/")
-  const [ws, setWs] = useState(
-    () => new WebSocket(`ws://localhost:8000/ws/friends/${tokens.access}/`)
-  )
+  const [ws, setWs] = useState(() => {})
+  const getfreshTokens = useGetFreshTokens(tokens)
 
-  // useEffect(() => {
-  //   if (d1) {
-  //     const tokens = JSON.parse(localStorage.getItem("tokens"))
-  //     setWs(
-  //       () => new WebSocket(`ws://localhost:8000/ws/friends/${tokens.access}/`)
-  //     )
-  //   }
-  // }, [d1])
+  // Making a connection to the server, with fresh tokens
+  useEffect(() => {
+    const makeConnection = async () => {
+      const freshTokens = await getfreshTokens()
+      // prettier-ignore
+      setWs(() => new WebSocket(`ws://localhost:8000/ws/friends/${freshTokens.access}/`))
+    }
+    makeConnection()
+  }, [])
 
-  // Retrieving the friends list live from the server
+  // Retrieving the friends list data live from the server
   useEffect(() => {
     if (ws) {
-      ws.onopen = () => {
-        console.log("Connected to the server")
-      }
-
+      ws.onopen = () => console.log("Connected to the server")
       ws.onmessage = (e) => {
         const data = JSON.parse(e.data)
         setData(data)
       }
     }
-  }, [])
+  }, [ws])
 
   // Closeing the connection, when the component unmounts
   useEffect(() => {
     return () => {
-      ws.close()
+      ws && ws.close()
     }
   }, [location])
 

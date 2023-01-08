@@ -6,6 +6,7 @@ from asgiref.sync import sync_to_async, async_to_sync
 from django.db.models import Q
 import asyncio
 from .utils import get_friends
+from jwt.exceptions import ExpiredSignatureError
 
 
 # For searching for friends
@@ -81,14 +82,15 @@ class FriendsListConsumer(AsyncWebsocketConsumer):
         # Getting the JWT access token from the url
         self.token = self.scope['url_route']['kwargs']['token']
 
-        print('token: ', self.token)
-
         # Decoding the JWT token
-        self.jwt_token = jwt.decode(self.token, settings.SECRET_KEY, algorithms="HS256")
+        try:
+            self.jwt_token = jwt.decode(self.token, settings.SECRET_KEY, algorithms="HS256")
+        except ExpiredSignatureError:
+            await self.close()
+            return
+        
         self.user = await sync_to_async(CustomUser.objects.get)(id=self.jwt_token['user_id'])
-
-        if self.user is not None:
-            await self.accept()
+        await self.accept()
         
         # Creating an async task to send updates of the user's friend
         # List and friend requests to the client
@@ -96,7 +98,10 @@ class FriendsListConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Stopping the async thread, and disconnecting the client
-        self.thread.cancel()
+        try:
+            self.thread.cancel()
+        except AttributeError:
+            pass
         await self.close(close_code)
 
     async def send_friends_update(self):
