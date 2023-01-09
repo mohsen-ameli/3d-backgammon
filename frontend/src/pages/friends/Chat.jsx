@@ -1,5 +1,5 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react"
-import { useLocation, useNavigate, useParams, Navigate } from "react-router-dom"
+import { useContext, useEffect, useRef, useState } from "react"
+import { useLocation, useNavigate, Navigate } from "react-router-dom"
 import Button from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import Input from "../../components/ui/Input"
@@ -64,9 +64,9 @@ const Chat = () => {
     messageInput.current.value = ""
   }
 
-  // if (!location.state) {
-  //   return <Navigate to="/friends" replace />
-  // }
+  if (!location.state) {
+    return <Navigate to="/friends" replace />
+  }
 
   return (
     <Container className="select-none">
@@ -78,8 +78,7 @@ const Chat = () => {
 
       <div className="mb-14 custom-scroll-bar" ref={chatContainer}>
         {messages.map((msg, index) => {
-          // prettier-ignore
-          const f = new Intl.DateTimeFormat("en-US", {
+          const f = new Intl.DateTimeFormat("default", {
             hour: "numeric",
             hour12: true,
             minute: "numeric",
@@ -126,12 +125,12 @@ const MessageBox = ({ type, message, sender, date }) => {
     <div
       // prettier-ignore
       className={
-        "w-fit max-w-[320px] flex items-center justify-between gap-x-2 p-2 mb-2 rounded-md " +
+        "w-fit max-w-[300px] min-w-[125px] h-fit relative flex items-center justify-between gap-x-2 p-2 pb-6 mb-2 rounded-md " +
         (type === "friend" ? "bg-slate-200 mr-auto" : "bg-orange-200 mr-2 ml-auto")
       }
     >
-      <p className="text-lg">{message}</p>
-      <p className="text-xs text-slate-500">
+      <p className="text-lg break-all">{message}</p>
+      <p className="absolute bottom-0 right-1 text-xs text-slate-500">
         {sender} at {date}
       </p>
     </div>

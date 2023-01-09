@@ -47,7 +47,7 @@ class ChatConsumer(WebsocketConsumer):
     # Fetching the messages of the chat from the database
     # and sending them to the client
     def fetch_messages(self):
-        messages = self.chat.messages.order_by('timestamp').all()
+        messages = self.chat.messages.all()
 
         for msg in messages:
             timestamp = round(msg.timestamp.replace(tzinfo=timezone.utc).timestamp())
@@ -93,7 +93,6 @@ class ChatConsumer(WebsocketConsumer):
             sender=sender
         )
         self.chat.messages.add(msg)
-        self.chat.save()
 
     def send_message(self, event):
         message = event['message']

@@ -12,6 +12,7 @@ import Chat from "./pages/friends/Chat"
 import FriendRequests from "./pages/friends/FriendRequests"
 import PrivateRoute from "./components/utils/PrivateRoute"
 import PassAndPlay from "./PassAndPlay"
+import Profile from "./pages/profile/Profile"
 
 const App = () => {
   return (
@@ -31,6 +32,14 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <Friends />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <Profile />
                 </PrivateRoute>
               }
             />

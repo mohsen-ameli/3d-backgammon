@@ -13,7 +13,9 @@ const Interface = () => {
         {user ? (
           <>
             <Button onClick={logout}>Log Out</Button>
-            <Button>Profile</Button>
+            <Link to="/profile">
+              <Button>Profile</Button>
+            </Link>
             <Link to="/friends">
               <Button>Friends</Button>
             </Link>

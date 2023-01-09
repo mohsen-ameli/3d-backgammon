@@ -1,23 +1,24 @@
 import Input from "./Input"
 
-const FormField = ({ label, name, type = "text", placeholder, errors }) => {
+// prettier-ignore
+const FormField = ({ label, type = "text", autoComplete = "on", required = true, errors, ...props }) => {
   return (
     <div className="flex flex-col">
       <label
-        htmlFor={name}
+        htmlFor={props.name}
         className="after:content-['*'] after:ml-1 after:text-red-500"
       >
         {label}
       </label>
       <Input
-        name={name}
-        id={name}
+        id={props.name}
         type={type}
-        placeholder={placeholder}
-        autoComplete="on"
+        autoComplete={autoComplete}
+        required={required}
         className="mt-2"
+        {...props}
       />
-      {errors && errors.code === name && (
+      {errors && errors.code === props.name && (
         <p className="text-red-500 text-sm">{errors.message}</p>
       )}
     </div>

@@ -99,7 +99,7 @@ def get_chat_uuid(request, friend_id):
         friend = CustomUser.objects.get(id=friend_id)
 
         try:
-            chat_room = Chat.objects.filter(Q(users__pk=user.id)).get(Q(users__pk=friend.id))
+            chat_room = Chat.objects.filter(Q(users__pk=request.user.id)).get(Q(users__pk=friend_id))
             return Response({'chat_uuid': chat_room.uuid})
         except Chat.DoesNotExist:
             chat_room = Chat.objects.create()
@@ -123,6 +123,7 @@ def get_chat_uuid(request, friend_id):
 
 # Creating a new user aka signup
 @api_view(['POST'])
+@permission_classes([])
 def register_user(request):
     serializer = UserFullSerializer(data=request.data, partial=True)
 

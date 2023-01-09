@@ -66,20 +66,18 @@ const Friends = () => {
       </Header>
 
       {/* Friends list */}
+      <div className="text-xl mb-1 pb-2 border-b-2 grid grid-cols-4 text-center">
+        <p>Name</p>
+        <p>Status</p>
+        <p>Chat</p>
+        <p>Remove</p>
+      </div>
       {data?.friends.length !== 0 ? (
-        <>
-          <div className="text-xl mb-1 pb-2 border-b-2 grid grid-cols-4 text-center">
-            <p>Name</p>
-            <p>Status</p>
-            <p>Chat</p>
-            <p>Remove</p>
-          </div>
-          <div className="custom-scroll-bar flex flex-col gap-y-4">
-            {data?.friends.map((friend) => (
-              <FriendDetails key={friend.id} friend={friend} />
-            ))}
-          </div>
-        </>
+        <div className="custom-scroll-bar flex flex-col gap-y-4">
+          {data?.friends.map((friend) => (
+            <FriendDetails key={friend.id} friend={friend} />
+          ))}
+        </div>
       ) : (
         <p className="text-center">No friends online</p>
       )}

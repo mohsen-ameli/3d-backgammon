@@ -4,6 +4,7 @@ from .models import CustomUser, Chat, Message
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
+    list_display = ('username', 'email', 'is_online')
 
     fieldsets = (
         *UserAdmin.fieldsets,
@@ -22,6 +23,14 @@ class CustomUserAdmin(UserAdmin):
         )
     )
 
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'timestamp')
+    list_filter = ('timestamp',)
+    search_fields = ('sender__username', 'text')
+    ordering = ('-timestamp',)
+    list_per_page = 25
+
+
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Chat)
-admin.site.register(Message)
+admin.site.register(Message, MessageAdmin)
