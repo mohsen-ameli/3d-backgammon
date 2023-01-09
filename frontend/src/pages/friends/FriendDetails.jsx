@@ -9,10 +9,16 @@ const FriendDetails = ({ friend }) => {
   const navigate = useNavigate()
   const axiosInstance = useAxios()
 
-  // Creating a unique chat id, according to the two users
-  const createChatID = async (username2) => {
-    const hash = await generateHash(user.username, username2)
-    navigate(`/chat/${hash}`, { state: { username2 } })
+  // Going to the chat room between the two users
+  const goToChat = async (friend) => {
+    const res = await axiosInstance.get(`api/get-chat-uuid/${friend.id}`)
+    navigate(`/chat`, {
+      state: {
+        uuid: res.data.chat_uuid,
+        friend: friend.username,
+        status: friend.is_online,
+      },
+    })
   }
 
   // Deleting a friend
@@ -33,7 +39,7 @@ const FriendDetails = ({ friend }) => {
       />
       {/* Chat */}
       <button
-        onClick={() => createChatID(friend.username)}
+        onClick={() => goToChat(friend)}
         className="fa-solid fa-comment-dots self-center justify-self-center text-xl text-emerald-500 hover:text-emerald-800 hover:ease-in-out duration-75"
       />
       {/* Remove */}

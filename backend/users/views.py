@@ -1,8 +1,9 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser
+from .models import CustomUser, Chat, Message
 from .serializers import FriendSerializer, UserFullSerializer
+from django.db.models import Q
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .utils import (
@@ -11,9 +12,6 @@ from .utils import (
     accept_friend_request,
     reject_friend_request
 )
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.conf import settings
-import time, jwt
 
 
 # ----------------- CUSTOM TOKEN CLAIMS JWT ----------------- #
@@ -93,9 +91,23 @@ def change_status(request):
         return Response({'message': "Status changed!"})
 
 
-# @api_view(['GET'])
-# @permission_classes([])
-# def test(request):
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_chat_uuid(request, friend_id):
+    if request.method == "GET":
+        user = CustomUser.objects.get(id=request.user.id)
+        friend = CustomUser.objects.get(id=friend_id)
+
+        try:
+            chat_room = Chat.objects.filter(Q(users__pk=user.id)).get(Q(users__pk=friend.id))
+            return Response({'chat_uuid': chat_room.uuid})
+        except Chat.DoesNotExist:
+            chat_room = Chat.objects.create()
+            chat_room.users.add(user)
+            chat_room.users.add(friend)
+            chat_room.save()
+            return Response({'chat_uuid': chat_room.uuid})
+
 #     user = CustomUser.objects.get(id=3)
 #     refresh_token = RefreshToken.for_user(user)
 #     access_token = refresh_token.access_token

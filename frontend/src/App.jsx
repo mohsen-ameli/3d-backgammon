@@ -43,7 +43,7 @@ const App = () => {
               }
             />
             <Route
-              path="/chat/:uuid"
+              path="/chat"
               element={
                 <PrivateRoute>
                   <Chat />

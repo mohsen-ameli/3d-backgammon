@@ -1,12 +1,13 @@
 import json, jwt
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
-from .models import CustomUser
+from .models import CustomUser, Chat, Message
 from django.conf import settings
 from asgiref.sync import sync_to_async, async_to_sync
 from django.db.models import Q
 import asyncio
 from .utils import get_friends
 from jwt.exceptions import ExpiredSignatureError
+from django.utils import timezone
 
 
 # Searching for friends
@@ -33,6 +34,7 @@ class SearchFriendConsumer(AsyncWebsocketConsumer):
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.chat_id = self.scope['url_route']['kwargs']['chat_id']
+        self.chat = Chat.objects.get(uuid=self.chat_id)
         self.room_group_name = self.chat_id
 
         async_to_sync(self.channel_layer.group_add)(
@@ -42,34 +44,69 @@ class ChatConsumer(WebsocketConsumer):
 
         self.accept()
 
+    # Fetching the messages of the chat from the database
+    # and sending them to the client
+    def fetch_messages(self):
+        messages = self.chat.messages.order_by('timestamp').all()
+
+        for msg in messages:
+            timestamp = round(msg.timestamp.replace(tzinfo=timezone.utc).timestamp())
+            
+            context = {
+                'message': msg.text,
+                'sender': msg.sender.id,
+                'timestamp': timestamp
+            }
+            self.send_message(context)
+
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
+
+        # If the client is initially requesting the messages
+        try:
+            command = text_data_json['command']
+            if command == 'fetch_messages':
+                self.fetch_messages()
+                return
+        except KeyError:
+            pass
+
         message = text_data_json['message']
+        sender = text_data_json['sender']
+        timestamp = text_data_json['timestamp']
 
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
-                'type': 'chat_message',
-                'message': message
+                'type': 'send_message',
+                'message': message,
+                'sender': sender,
+                'timestamp': timestamp
             }
         )
 
-    def chat_message(self, event):
+        sender = CustomUser.objects.get(id=sender)
+
+        # Saving the message to the database
+        msg = Message.objects.create(
+            text=message,
+            sender=sender
+        )
+        self.chat.messages.add(msg)
+        self.chat.save()
+
+    def send_message(self, event):
         message = event['message']
+        sender = event['sender']
+        timestamp = event['timestamp']
 
         self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
+            'sender': sender,
+            'timestamp' : timestamp
         }))
 
     def disconnect(self, close_code):
-        # Get a list of all the members in the group
-        # members = self.channel_layer.group_channels(self.room_group_name)
-        # Disconnect each member
-        # for member in members:
-        #     self.channel_layer.group_discard(
-        #         self.room_group_name,
-        #         member
-        #     )
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
             self.channel_name
@@ -145,6 +182,11 @@ class StatusConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         await sync_to_async(self.user.update)(is_online=False)
         await self.close(close_code)
+
+
+
+
+
 
 # Sample output for self.scope
 # {
