@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import AuthContextProvider from "./context/AuthContext"
-import Friends from "./pages/friends/Friends"
+import FriendsList from "./pages/friends/FriendsList"
 import Game from "./Game"
 import Interface from "./pages/interface/Interface"
 import Login from "./pages/auth/Login"
@@ -31,7 +31,7 @@ const App = () => {
               path="/friends"
               element={
                 <PrivateRoute>
-                  <Friends />
+                  <FriendsList />
                 </PrivateRoute>
               }
             />

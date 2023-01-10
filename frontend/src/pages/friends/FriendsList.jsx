@@ -8,7 +8,10 @@ import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import useGetFreshTokens from "../../components/hooks/useGetFreshTokens"
 
-const Friends = () => {
+/**
+ * This is the friends list page.
+ */
+const FriendsList = () => {
   const [data, setData] = useState()
   const { tokens } = useContext(AuthContext)
   const [ws, setWs] = useState(() => {})
@@ -85,4 +88,4 @@ const Friends = () => {
   )
 }
 
-export default Friends
+export default FriendsList

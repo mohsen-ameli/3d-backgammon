@@ -1,8 +1,8 @@
 import json, jwt, asyncio
 from datetime import datetime
-from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from asgiref.sync import async_to_sync
+from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.db.models import Q
 from django.utils import timezone
@@ -36,43 +36,52 @@ class SearchFriendConsumer(AsyncWebsocketConsumer):
         await self.close(close_code)
 
 
-# Chatting between users (/chat)
-class ChatConsumer(WebsocketConsumer):
-    def connect(self):
-        self.chat_id = self.scope['url_route']['kwargs']['chat_id']
-        self.chat = Chat.objects.get(uuid=self.chat_id)
-        self.room_group_name = self.chat_id
+# Takes a chat object in, and return a list filled with the messages
+@database_sync_to_async
+def get_messages_context(chat: Chat) -> list:
+    messages = chat.messages.all()
+    context = []
 
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
+    for msg in messages:
+        timestamp = round(msg.timestamp.replace(tzinfo=timezone.utc).timestamp())
+        
+        context.append({
+            'message': msg.text,
+            'sender': msg.sender.id,
+            'timestamp': timestamp
+        })
+    return context
+
+
+# Chatting between users (/chat)
+class ChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        chat_id = self.scope['url_route']['kwargs']['chat_id']
+
+        # Getting the chat object
+        self.chat = await database_sync_to_async(Chat.objects.get)(uuid=chat_id)
+        self.room_group_name = chat_id
+
+        await self.channel_layer.group_add(
+            self.room_group_name, self.channel_name
         )
 
-        self.accept()
+        await self.accept()
 
     # Fetching the messages of the chat from the database
     # and sending them to the client
-    def fetch_messages(self):
-        messages = self.chat.messages.all()
+    async def fetch_messages(self):
+        context = await get_messages_context(self.chat)
+        await self.send(text_data=json.dumps(context))
 
-        for msg in messages:
-            timestamp = round(msg.timestamp.replace(tzinfo=timezone.utc).timestamp())
-            
-            context = {
-                'message': msg.text,
-                'sender': msg.sender.id,
-                'timestamp': timestamp
-            }
-            self.send_message(context)
-
-    def receive(self, text_data):
+    async def receive(self, text_data):
         text_data_json = json.loads(text_data)
 
         # If the client is initially requesting the messages
         try:
             command = text_data_json['command']
             if command == 'fetch_messages':
-                self.fetch_messages()
+                await self.fetch_messages()
                 return
         except KeyError:
             pass
@@ -81,7 +90,7 @@ class ChatConsumer(WebsocketConsumer):
         sender = text_data_json['sender']
         timestamp = text_data_json['timestamp']
 
-        async_to_sync(self.channel_layer.group_send)(
+        await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'send_message',
@@ -91,38 +100,37 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
-        sender = CustomUser.objects.get(id=sender)
+        # Getting the sender user
+        sender = await database_sync_to_async(CustomUser.objects.get)(id=sender)
 
         # Saving the message to the database
-        msg = Message.objects.create(
+        msg = await database_sync_to_async(Message.objects.create)(
             text=message,
             sender=sender
         )
-        self.chat.messages.add(msg)
+        await database_sync_to_async(self.chat.messages.add)(msg)
 
-    def send_message(self, event):
+    # Used to send a message to the chat, when one of the users sends a message
+    async def send_message(self, event):
         message = event['message']
         sender = event['sender']
         timestamp = event['timestamp']
 
-        self.send(text_data=json.dumps({
+        context = {
             'message': message,
             'sender': sender,
             'timestamp' : timestamp
-        }))
+        }
 
-    def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)(
+        await self.send(text_data=json.dumps([context]))
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
 
 
 ######### TODO: Combine FriendsListConsumer and StatusConsumer into one consumer #########
-
-# Getting the user
-@database_sync_to_async
-def get_user(id: int):
-    return CustomUser.objects.filter(id=id)
 
 
 # Gets all friends and number of friend requests of a user
@@ -130,10 +138,10 @@ def get_user(id: int):
 def get_friends(user: CustomUser) -> dict:
     dict_to_return = {}
 
-    dict_to_return['num_requests'] = user.first().friend_requests.count()
+    dict_to_return['num_requests'] = user.friend_requests.count()
     dict_to_return['friends'] = []
 
-    friends = user.first().friends.all().order_by("-is_online")
+    friends = user.friends.all().order_by("-is_online")
 
     for friend in friends:
         try:
@@ -177,7 +185,7 @@ class FriendsListConsumer(AsyncWebsocketConsumer):
     async def set_user(self, token):
         try:
             jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
-            self.user = await get_user(id=jwt_token['user_id'])
+            self.user = await database_sync_to_async(CustomUser.objects.get)(id=jwt_token['user_id'])
         except ExpiredSignatureError:
             await self.close()
             return
@@ -221,7 +229,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
     async def set_user(self, token):
         try:
             jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
-            self.user = await get_user(id=jwt_token['user_id'])
+            self.user = await database_sync_to_async(CustomUser.objects.filter)(id=jwt_token['user_id'])
         except ExpiredSignatureError:
             await self.close()
             return

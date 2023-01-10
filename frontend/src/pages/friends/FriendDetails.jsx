@@ -1,6 +1,10 @@
 import { useNavigate } from "react-router-dom"
 import useAxios from "../../components/hooks/useAxios"
 
+/**
+ * This is the column that shows friend details.
+ * @param friend The friend object passed down from FriendsList component
+ */
 const FriendDetails = ({ friend }) => {
   const navigate = useNavigate()
   const axiosInstance = useAxios()
@@ -48,6 +52,7 @@ const FriendDetails = ({ friend }) => {
   )
 }
 
+// TODO: For long usernames, use this to make the text scroll
 // function ScrollingBox({ text }) {
 //   const boxRef = useRef(null)
 
