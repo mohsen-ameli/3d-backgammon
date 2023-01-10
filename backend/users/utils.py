@@ -39,17 +39,3 @@ def reject_friend_request(user, friend):
     """
     user.first().friend_requests.remove(friend.first())
     return Response({"message": "Friend rejected"})
-
-def get_friends(user) -> dict:
-    """
-    Get all friends and number of friend requests
-    """
-    dict_to_return = {}
-
-    dict_to_return['num_requests'] = user.friend_requests.count()
-    dict_to_return['friends'] = []
-
-    for friend in user.friends.all().order_by("-is_online"):
-        dict_to_return['friends'].append({'id': friend.id, 'username': friend.username, 'is_online': friend.is_online})
-
-    return dict_to_return

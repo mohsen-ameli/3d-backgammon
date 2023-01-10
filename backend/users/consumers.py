@@ -1,36 +1,42 @@
-import json, jwt
+import json, jwt, asyncio
+from datetime import datetime
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
-from .models import CustomUser, Chat, Message
+from channels.db import database_sync_to_async
+from asgiref.sync import async_to_sync
 from django.conf import settings
-from asgiref.sync import sync_to_async, async_to_sync
 from django.db.models import Q
-import asyncio
-from .utils import get_friends
-from jwt.exceptions import ExpiredSignatureError
 from django.utils import timezone
+from jwt.exceptions import ExpiredSignatureError
+
+from .models import CustomUser, Chat, Message
 
 
-# Searching for friends
+# Searching for friends (/search-friend)
 class SearchFriendConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
 
     async def receive(self, text_data):
+        # Getting the user's input
         self.typed = json.loads(text_data)['typed']
         
-        # Finding the users that matches the typed text
-        results = await sync_to_async(CustomUser.objects.filter)(
-            Q(username__iexact=self.typed) | Q(email__iexact=self.typed)
-        )
-        results = await sync_to_async(list)(results.values('id', 'username'))
+        results = await self.search()
 
         await self.send(json.dumps({'results': results}))
+
+    # Querying the database for matching username or email, based on user's input
+    @database_sync_to_async
+    def search(self):
+        results = CustomUser.objects.filter(
+            Q(username__iexact=self.typed) | Q(email__iexact=self.typed)
+        )
+        return list(results.values('id', 'username'))
 
     async def disconnect(self, close_code):
         await self.close(close_code)
 
 
-# Chatting between users
+# Chatting between users (/chat)
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.chat_id = self.scope['url_route']['kwargs']['chat_id']
@@ -107,30 +113,57 @@ class ChatConsumer(WebsocketConsumer):
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name,
-            self.channel_name
+            self.room_group_name, self.channel_name
         )
 
 
-# Live updates for the friends of a user
+######### TODO: Combine FriendsListConsumer and StatusConsumer into one consumer #########
+
+# Getting the user
+@database_sync_to_async
+def get_user(id: int):
+    return CustomUser.objects.filter(id=id)
+
+
+# Gets all friends and number of friend requests of a user
+@database_sync_to_async
+def get_friends(user: CustomUser) -> dict:
+    dict_to_return = {}
+
+    dict_to_return['num_requests'] = user.first().friend_requests.count()
+    dict_to_return['friends'] = []
+
+    friends = user.first().friends.all().order_by("-is_online")
+
+    for friend in friends:
+        try:
+            last_login = round(datetime.timestamp(friend.last_login))
+        except TypeError:
+            last_login = None
+        dict_to_return['friends'].append({'id': friend.id, 'username': friend.username, 'is_online': friend.is_online, 'last_login': last_login})
+    return dict_to_return
+
+
+# Updating user's fields
+@database_sync_to_async
+def update_user(user: CustomUser, **kwargs):
+    for key, value in kwargs.items():
+        user.update(**{key: value})
+
+
+# Live updates for the friends of a user (/friends)
 class FriendsListConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # Getting the JWT access token from the url
-        self.token = self.scope['url_route']['kwargs']['token']
+        access_token = self.scope['url_route']['kwargs']['token']
 
-        # Decoding the JWT token
-        try:
-            self.jwt_token = jwt.decode(self.token, settings.SECRET_KEY, algorithms="HS256")
-        except ExpiredSignatureError:
-            await self.close()
-            return
-        
-        self.user = await sync_to_async(CustomUser.objects.get)(id=self.jwt_token['user_id'])
-        await self.accept()
+        await self.set_user(access_token)
         
         # Creating an async task to send updates of the user's friend
         # List and friend requests to the client
         self.thread = asyncio.create_task(self.send_friends_update())
+
+        await self.accept()
 
     async def disconnect(self, close_code):
         # Stopping the async thread, and disconnecting the client
@@ -140,21 +173,34 @@ class FriendsListConsumer(AsyncWebsocketConsumer):
             pass
         await self.close(close_code)
 
+    # Function to set the user based on the JWT access token
+    async def set_user(self, token):
+        try:
+            jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
+            self.user = await get_user(id=jwt_token['user_id'])
+        except ExpiredSignatureError:
+            await self.close()
+            return
+
+    # Worker, that sends updates to the client every UPDATE_INTERVAL seconds
     async def send_friends_update(self):
         while True:
             # Send an update to the client with the current list of friends and friend requests
-            response = await sync_to_async(get_friends)(self.user)
+            response = await get_friends(self.user)
             await self.send(text_data=json.dumps(response))
             await asyncio.sleep(settings.UPDATE_INTERVAL)
 
 
-# Updating the user's online status
+# Updating the user's online status, as well their last login time
 class StatusConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.token = self.scope['url_route']['kwargs']['token']
+        token = self.scope['url_route']['kwargs']['token']
 
-        await self.set_token(self.token)
-        await sync_to_async(self.user.update)(is_online=True)
+        # Getting the user
+        await self.set_user(token)
+        # Updating the user's online status, and last login time
+        await update_user(self.user, is_online=True, last_login=timezone.now())
+        
         await self.accept()
 
     async def receive(self, text_data):
@@ -162,27 +208,27 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
         # User has logged out, and logged in with a different account
         try:
-            await self.set_token(data['new_refresh'])
+            # Updating the user's last login time, and getting the new user if there is one
+            await self.set_user(data['new_refresh'])
+            await update_user(self.user, last_login=timezone.now())
         except KeyError:
             pass
 
         # Updating the user's online status
-        await sync_to_async(self.user.update)(is_online=data['is_online'])
+        await update_user(self.user, is_online=data['is_online'], last_login=timezone.now())
 
-    # Function to set the token
-    async def set_token(self, token):
+    # Function to set the user based on the JWT access token
+    async def set_user(self, token):
         try:
-            self.jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
+            jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
+            self.user = await get_user(id=jwt_token['user_id'])
         except ExpiredSignatureError:
             await self.close()
             return
-        self.user = await sync_to_async(CustomUser.objects.filter)(id=self.jwt_token['user_id'])
     
     async def disconnect(self, close_code):
-        await sync_to_async(self.user.update)(is_online=False)
+        await update_user(self.user, is_online=False, last_login=timezone.now())
         await self.close(close_code)
-
-
 
 
 

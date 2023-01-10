@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     def save(self, *args, **kwargs):
         # If the user has friends, and is trying to add himself as a friend, raise an exception
         try:
-            if self in self.friends.all():
+            if self.friends.contains(self):
                 self.friends.remove(self)
                 raise Exception("You can't add yourself as a friend")
         except ValueError:

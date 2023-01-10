@@ -71,9 +71,7 @@ const Chat = () => {
   return (
     <Container className="select-none">
       <Header to="/" title={location.state.friend}>
-        <p className="text-xs text-slate-500 text-center">
-          {location.state.status ? "Online" : "Offline"}
-        </p>
+        <Status />
       </Header>
 
       <div className="mb-14 custom-scroll-bar" ref={chatContainer}>
@@ -125,7 +123,7 @@ const MessageBox = ({ type, message, sender, date }) => {
     <div
       // prettier-ignore
       className={
-        "w-fit max-w-[300px] min-w-[125px] h-fit relative flex items-center justify-between gap-x-2 p-2 pb-6 mb-2 rounded-md " +
+        "w-fit max-w-[300px] min-w-[150px] h-fit relative flex items-center justify-between gap-x-2 p-2 pb-6 mb-2 rounded-md " +
         (type === "friend" ? "bg-slate-200 mr-auto" : "bg-orange-200 mr-2 ml-auto")
       }
     >
@@ -135,6 +133,33 @@ const MessageBox = ({ type, message, sender, date }) => {
       </p>
     </div>
   )
+}
+
+const Status = () => {
+  const location = useLocation()
+  const [status, setStatus] = useState()
+
+  const getStatus = () => {
+    if (location.state.status) {
+      setStatus("Online")
+      return
+    }
+    const f = new Intl.DateTimeFormat("default", {
+      hour: "numeric",
+      hour12: true,
+      minute: "numeric",
+    })
+
+    let date = new Date(location.state.lastLogin * 1000)
+    date = f.format(date)
+    setStatus(`Last seen ${date}`)
+  }
+
+  useEffect(() => {
+    location && getStatus()
+  }, [location])
+
+  return <p className="text-xs text-slate-500 text-center">{status}</p>
 }
 
 export default Chat

@@ -1,11 +1,7 @@
 import { useNavigate } from "react-router-dom"
-import generateHash from "../../components/utils/GenerateHash"
-import { useContext } from "react"
-import { AuthContext } from "../../context/AuthContext"
 import useAxios from "../../components/hooks/useAxios"
 
 const FriendDetails = ({ friend }) => {
-  const { user } = useContext(AuthContext)
   const navigate = useNavigate()
   const axiosInstance = useAxios()
 
@@ -17,6 +13,7 @@ const FriendDetails = ({ friend }) => {
         uuid: res.data.chat_uuid,
         friend: friend.username,
         status: friend.is_online,
+        lastLogin: friend.last_login,
       },
     })
   }
