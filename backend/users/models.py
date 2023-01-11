@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import datetime
 
 class CustomUser(AbstractUser):
     games_won = models.IntegerField(default=0)
@@ -11,6 +12,10 @@ class CustomUser(AbstractUser):
 
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     friend_requests = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='+')
+
+    @property
+    def get_date_joined(self):
+        return round(datetime.timestamp(self.date_joined))
 
     def save(self, *args, **kwargs):
         # If the user has friends, and is trying to add himself as a friend, raise an exception

@@ -1,8 +1,9 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from datetime import datetime
 from .models import CustomUser, Chat, Message
-from .serializers import FriendSerializer, UserFullSerializer
+from .serializers import FriendSerializer, PrimaryUserSerializer, ProfileUserSerializer
 from django.db.models import Q
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -108,24 +109,25 @@ def get_chat_uuid(request, friend_id):
             chat_room.save()
             return Response({'chat_uuid': chat_room.uuid})
 
-#     user = CustomUser.objects.get(id=3)
-#     refresh_token = RefreshToken.for_user(user)
-#     access_token = refresh_token.access_token
-#     print(str(access_token))
-#     # Decode the JWT access token
-#     payload = jwt.decode(str(access_token), settings.SECRET_KEY, algorithms="HS256")
-#     # Check if the expiration time has passed
-#     if payload['exp'] <= time.time():
-#         # The token has expired, so perform any necessary tasks here
-#         print("Token has expired")
-#     return Response({'message': "Test"})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_profile(request):
+    if request.method == "GET":
+        user = CustomUser.objects.get(id=request.user.id)
+        serializer = ProfileUserSerializer(user)
+        # date_joined = round(datetime.timestamp(user.date_joined))
+        # serializer.data['date_joined'] = date_joined
+        print(serializer.data)
+
+        return Response(serializer.data)
 
 
 # Creating a new user aka signup
 @api_view(['POST'])
 @permission_classes([])
 def register_user(request):
-    serializer = UserFullSerializer(data=request.data, partial=True)
+    serializer = PrimaryUserSerializer(data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()

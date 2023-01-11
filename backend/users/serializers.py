@@ -12,7 +12,19 @@ class FriendSerializer(serializers.ModelSerializer):
         fields = ("id", "username", "is_online")
 
 
-class UserFullSerializer(serializers.ModelSerializer):
+# Serializer used for getting user's profile
+class ProfileUserSerializer(serializers.ModelSerializer):
+    date_joined = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ("id", "total_games", "games_won", "games_lost", "date_joined")
+
+    def get_date_joined(self, obj):
+        return obj.get_date_joined
+
+# Primary serializer used for registering
+class PrimaryUserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
 
     class Meta:
@@ -52,4 +64,4 @@ class UserFullSerializer(serializers.ModelSerializer):
         # Deleting password2, since we don't need it to be saved in the database
         del self.validated_data['password2']
 
-        super(UserFullSerializer, self).save(**kwargs)
+        super(PrimaryUserSerializer, self).save(**kwargs)

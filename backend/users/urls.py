@@ -9,5 +9,6 @@ urlpatterns = [
     path('get-friend-requests/', views.get_friend_requests),
     path('change-user-status/', views.change_status),
     path('signup/', views.register_user),
+    path('get-user-profile/', views.get_user_profile),
     path('get-chat-uuid/<int:friend_id>/', views.get_chat_uuid),
 ]
