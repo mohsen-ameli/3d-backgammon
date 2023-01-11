@@ -10,7 +10,7 @@ const Loading = ({ basic }) => {
           height="80"
           width="80"
           radius="9"
-          color="#4fa94d"
+          color="#2563eb"
           ariaLabel="three-dots-loading"
           visible={true}
         />
@@ -23,7 +23,7 @@ const Loading = ({ basic }) => {
           height="80"
           width="80"
           radius="9"
-          color="#4fa94d"
+          color="#2563eb"
           ariaLabel="three-dots-loading"
           wrapperStyle={{}}
           wrapperClassName=""

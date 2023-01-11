@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 
 
+# Serializer for getting user's friends
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser

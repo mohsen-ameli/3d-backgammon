@@ -5,12 +5,14 @@ from rest_framework.response import Response
 @permission_classes([])
 def api_overview(request):
     api_urls = {
-        'GET JWT Toekn': '/api/token/',
-        'POST JWT Access Token': '/api/token/refresh/',
-        "---------------": "--------------",
-        'GET All Friends': '/api/handle-friends/',
+        'GET JWT Tokens': '/api/token/',
+        'POST JWT Token': '/api/token/refresh/',
+        '---------------': '--------------',
+        'GET All Friend Requests': '/api/handle-friends/',
         'PUT Manage Friend Requests': '/api/handle-friends/',
-        "----------------": "--------------",
+        'GET User Profile': '/api/get-user-profile/',
+        'GET Chat UUID': '/api/get-chat-uuid/<int:friend_id>/',
+        '----------------': '--------------',
         'POST New User': '/api/signup/',
     }
     return Response(api_urls)
