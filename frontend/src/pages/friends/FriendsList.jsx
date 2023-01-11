@@ -7,12 +7,14 @@ import FriendDetails from "./FriendDetails"
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import useGetFreshTokens from "../../components/hooks/useGetFreshTokens"
+import Loading from "../../components/ui/Loading"
 
 /**
  * This is the friends list page.
  */
 const FriendsList = () => {
   const [data, setData] = useState()
+  const [loading, setLoading] = useState(true)
   const { tokens } = useContext(AuthContext)
   const [ws, setWs] = useState(() => {})
   const getfreshTokens = useGetFreshTokens(tokens)
@@ -30,10 +32,11 @@ const FriendsList = () => {
   // Retrieving the friends list data live from the server
   useEffect(() => {
     if (ws) {
-      ws.onopen = () => console.log("Connected to the server")
+      ws.onopen = () => setLoading(false)
       ws.onmessage = (e) => {
         const data = JSON.parse(e.data)
         setData(data)
+        setLoading(false)
       }
       ws.onclose = () => console.log("Closed")
     }
@@ -75,10 +78,17 @@ const FriendsList = () => {
         <p>Chat</p>
         <p>Remove</p>
       </div>
-      {data?.friends.length !== 0 ? (
+
+      {loading ? (
+        <Loading basic />
+      ) : data && data.friends.length !== 0 ? (
         <div className="custom-scroll-bar flex flex-col gap-y-4">
-          {data?.friends.map((friend) => (
-            <FriendDetails key={friend.id} friend={friend} />
+          {data.friends.map((friend) => (
+            <FriendDetails
+              key={friend.id}
+              friend={friend}
+              setLoading={setLoading}
+            />
           ))}
         </div>
       ) : (

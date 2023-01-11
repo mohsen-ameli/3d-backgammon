@@ -5,6 +5,7 @@ import Container from "../../components/ui/Container"
 import Input from "../../components/ui/Input"
 import Header from "../../components/ui/Header"
 import { AuthContext } from "../../context/AuthContext"
+import Loading from "../../components/ui/Loading"
 
 /**
  * This chat componenet is used to display the chat between the user and a friend.
@@ -12,6 +13,7 @@ import { AuthContext } from "../../context/AuthContext"
  */
 const Chat = () => {
   const [messages, setMessages] = useState([])
+  const [loading, setLoading] = useState(true)
   const messageInput = useRef()
   const navigate = useNavigate()
   const location = useLocation()
@@ -25,8 +27,8 @@ const Chat = () => {
 
   useEffect(() => {
     ws.onopen = () => {
-      console.log("Connected to server!")
       ws.send(JSON.stringify({ command: "fetch_messages" }))
+      setLoading(false)
     }
     ws.onclose = () => console.log("closed")
 
@@ -37,6 +39,7 @@ const Chat = () => {
       setTimeout(() => {
         chatContainer.current.scrollTop = 1000000
       }, 50)
+      setLoading(false)
     }
 
     return () => {
@@ -78,28 +81,37 @@ const Chat = () => {
         <Status />
       </Header>
 
-      <div className="mb-14 custom-scroll-bar" ref={chatContainer}>
-        {messages &&
-          messages.map((msg, index) => {
-            const f = new Intl.DateTimeFormat("default", {
-              hour: "numeric",
-              hour12: true,
-              minute: "numeric",
+      {loading ? (
+        <Loading />
+      ) : (
+        // Messages
+        <div className="mb-14 custom-scroll-bar" ref={chatContainer}>
+          {messages && messages.length > 0 ? (
+            messages.map((msg, index) => {
+              const f = new Intl.DateTimeFormat("default", {
+                hour: "numeric",
+                hour12: true,
+                minute: "numeric",
+              })
+
+              let date = new Date(msg.timestamp * 1000)
+              date = f.format(date)
+
+              if (msg.sender === user.user_id) {
+                // User messages
+                // prettier-ignore
+                return <MessageBox key={index} type="user" sender="You" message={msg.message} date={date} />
+              } else {
+                // Friend message
+                // prettier-ignore
+                return <MessageBox key={index} type="friend" sender={location.state.friend} message={msg.message} date={date} />
+              }
             })
-
-            let date = new Date(msg.timestamp * 1000)
-            date = f.format(date)
-
-            if (msg.sender === user.user_id) {
-              // User messages
-              // prettier-ignore
-              return <MessageBox key={index} type="user" sender="You" message={msg.message} date={date} />
-            }
-            // Friend message
-            // prettier-ignore
-            return <MessageBox key={index} type="friend" sender={location.state.friend} message={msg.message} date={date} />
-          })}
-      </div>
+          ) : (
+            <p>Wow this is an empty chat...</p>
+          )}
+        </div>
+      )}
 
       <form
         onSubmit={handleSubmit}

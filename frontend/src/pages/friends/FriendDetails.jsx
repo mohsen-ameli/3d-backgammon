@@ -4,8 +4,9 @@ import useAxios from "../../components/hooks/useAxios"
 /**
  * This is the column that shows friend details.
  * @param friend The friend object passed down from FriendsList component
+ * @param setLoading The function to set the loading state
  */
-const FriendDetails = ({ friend }) => {
+const FriendDetails = ({ friend, setLoading }) => {
   const navigate = useNavigate()
   const axiosInstance = useAxios()
 
@@ -24,6 +25,7 @@ const FriendDetails = ({ friend }) => {
 
   // Deleting a friend
   const deleteFriend = async (id) => {
+    setLoading(true)
     await axiosInstance.put("api/handle-friends/", { id, action: "remove" })
   }
 

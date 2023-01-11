@@ -2,18 +2,23 @@ import useAxios from "../../components/hooks/useAxios"
 import useFetch from "../../components/hooks/useFetch"
 import Container from "../../components/ui/Container"
 import Header from "../../components/ui/Header"
+import Loading from "../../components/ui/Loading"
 
 const FriendRequests = () => {
-  const { data, fetchData } = useFetch("api/get-friend-requests/")
+  const { data, loading, setLoading, fetchData } = useFetch(
+    "api/get-friend-requests/"
+  )
 
   const axiosInstance = useAxios()
 
   const acceptFriendRequest = async (id) => {
+    setLoading(true)
     await axiosInstance.put("api/handle-friends/", { id, action: "accept" })
     fetchData()
   }
 
   const rejectFriendRequest = async (id) => {
+    setLoading(true)
     await axiosInstance.put("api/handle-friends/", { id, action: "reject" })
     fetchData()
   }
@@ -22,7 +27,9 @@ const FriendRequests = () => {
     <Container>
       <Header to="/friends" title="Friend Requests" />
 
-      {data.num_requests > 0 ? (
+      {loading ? (
+        <Loading basic />
+      ) : data.num_requests > 0 ? (
         <div className="custom-scroll-bar">
           {data.friend_requests.map((req) => (
             <div

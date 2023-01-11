@@ -35,7 +35,7 @@ const useFetch = (url) => {
     // eslint-disable-next-line
   }, [url])
 
-  return { data, loading, error, fetchData }
+  return { data, loading, error, setLoading, fetchData }
 }
 
 export default useFetch

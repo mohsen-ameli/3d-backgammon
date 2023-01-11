@@ -15,15 +15,8 @@ const SearchFriend = () => {
   const axiosInstance = useAxios()
 
   useEffect(() => {
-    // Connect to server
-    ws.onopen = () => {
-      console.log("Connected to server")
-    }
-
-    // Closing the connection
-    ws.onclose = () => {
-      console.log("closed")
-    }
+    ws.onopen = () => console.log("Connected to server")
+    ws.onclose = () => console.log("closed")
 
     // Getting list of potential friends
     ws.onmessage = (e) => {
@@ -45,6 +38,7 @@ const SearchFriend = () => {
     const typed = e.target.value
 
     if (typed !== "") {
+      error && setError(false)
       // fetch
       ws.send(
         JSON.stringify({
@@ -106,22 +100,17 @@ const SearchFriend = () => {
 const AddButton = ({ sendFriendReequest, friend, setError, error }) => {
   const [clicked, setClicked] = useState(false)
 
+  const handleClick = () => {
+    sendFriendReequest(friend.id)
+    setClicked(true)
+  }
+
   return (
     <>
-      {clicked ? (
-        error ? null : (
-          <i className="fa-solid fa-check p-1 text-2xl mr-4 text-green-700" />
-        )
+      {clicked && !error ? (
+        <i className="fa-solid fa-check p-1 text-2xl mr-4 text-green-700" />
       ) : (
-        <Button
-          onClick={() => {
-            sendFriendReequest(friend.id)
-            setClicked(true)
-            setError(false)
-          }}
-        >
-          Add
-        </Button>
+        <Button onClick={handleClick}>Add</Button>
       )}
     </>
   )

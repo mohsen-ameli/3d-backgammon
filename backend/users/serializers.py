@@ -32,7 +32,14 @@ class PrimaryUserSerializer(serializers.ModelSerializer):
         fields = ("username", "email", "password", "password2")
 
     def is_valid(self, *, raise_exception=False):
+        # Stripping whitespaces from username and email
+        self.initial_data['username'] = self.initial_data['username'].strip()
+        self.initial_data['email'] = self.initial_data['email'].strip()
+
         # Username validations
+        for char in self.initial_data['username']:
+            if char.isspace():
+                raise serializers.ValidationError({"message": "Username cannot contain whitespace", "code": "username"})
         if len(self.initial_data['username']) < 5:
             raise serializers.ValidationError({"message": "Username must be at least 5 characters long", "code": "username"})
         elif CustomUser.objects.filter(username=self.initial_data['username']).exists():

@@ -1,11 +1,12 @@
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
-import Button from "../../components/ui/Button"
+import Button, { ButtonLoading } from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import FormField from "../../components/ui/FormField"
 import Header from "../../components/ui/Header"
 
 const Signup = () => {
+  const [clicked, setClicked] = useState(false)
   // Context
   const { signup, errors, setErrors } = useContext(AuthContext)
 
@@ -13,6 +14,11 @@ const Signup = () => {
     // Clear the errors when the component mounts
     setErrors(null)
   }, [setErrors])
+
+  // Clear the clicked state when the errors change
+  useEffect(() => {
+    setClicked(false)
+  }, [errors])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -23,9 +29,12 @@ const Signup = () => {
     const password = e.target.password.value
     const password2 = e.target.password2.value
 
-    if (username !== "" && email !== "" && password !== "" && password2 !== "")
+    // prettier-ignore
+    if (username !== "" && email !== "" && password !== "" && password2 !== "") {
       // sing the user up
       signup(username, email, password, password2)
+      setClicked(true)
+    }
   }
 
   return (
@@ -64,8 +73,11 @@ const Signup = () => {
           errors={errors}
         />
 
-        <Button type="submit" className="mt-3">
-          Sign Up
+        <Button
+          type="submit"
+          className={(clicked && "cursor-not-allowed ") + "mt-3"}
+        >
+          {clicked ? <ButtonLoading /> : "Sign Up"}
         </Button>
       </form>
     </Container>

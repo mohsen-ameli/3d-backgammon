@@ -1,11 +1,12 @@
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
-import Button from "../../components/ui/Button"
+import Button, { ButtonLoading } from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import FormField from "../../components/ui/FormField"
 import Header from "../../components/ui/Header"
 
 const Login = () => {
+  const [clicked, setClicked] = useState(false)
   // Context
   const { login, errors, setErrors } = useContext(AuthContext)
 
@@ -14,6 +15,11 @@ const Login = () => {
     setErrors(null)
   }, [setErrors])
 
+  // Clear the clicked state when the errors change
+  useEffect(() => {
+    setClicked(false)
+  }, [errors])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -21,9 +27,11 @@ const Login = () => {
     const username = e.target.username.value
     const password = e.target.password.value
 
-    if (username !== "" && password !== "")
+    if (username !== "" && password !== "") {
       // Log the user in
       login(username, password)
+      setClicked(true)
+    }
   }
 
   return (
@@ -44,8 +52,11 @@ const Login = () => {
           errors={errors}
         />
 
-        <Button type="submit" className="mt-3">
-          Login
+        <Button
+          type="submit"
+          className={(clicked && "cursor-not-allowed ") + "mt-3"}
+        >
+          {clicked ? <ButtonLoading /> : "Log In"}
         </Button>
       </form>
     </Container>
