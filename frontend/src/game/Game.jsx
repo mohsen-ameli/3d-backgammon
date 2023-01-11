@@ -1,8 +1,10 @@
 import { OrbitControls } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
-import { useRef } from "react"
+import { useContext, useRef } from "react"
+import { AuthContext } from "../context/AuthContext"
 
 const Game = () => {
+  const { user } = useContext(AuthContext)
   const cube = useRef()
 
   useFrame((frame, delta) => {
