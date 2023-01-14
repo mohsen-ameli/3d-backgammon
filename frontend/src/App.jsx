@@ -16,7 +16,13 @@ import Profile from "./pages/profile/Profile"
 const App = () => {
   return (
     <>
-      <Canvas camera={{ position: [0, 0, 3], fov: 45 }}>
+      <Canvas
+        camera={{
+          position: [0, 2.75, 3],
+          // position: [5, 5, 5],
+          fov: 45,
+        }}
+      >
         <Game />
       </Canvas>
 
