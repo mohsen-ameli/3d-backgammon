@@ -1,5 +1,5 @@
 import { Clone, Html, OrbitControls, useGLTF } from "@react-three/drei"
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
 import * as THREE from "three"
@@ -12,20 +12,13 @@ import {
   RigidBody,
 } from "@react-three/rapier"
 import { useControls } from "leva"
-import getDiceNumber from "./utils/GetDiceNumber"
 import throwDice from "./utils/ThrowDice"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useDrag } from "@use-gesture/react"
 import { useSpring, a } from "@react-spring/three"
+import Column from "./Column"
+import Dice from "./Dice"
 
-let OriginalWhiteColumnColor = new THREE.Color()
-
-const WhiteColumnMat = new THREE.MeshStandardMaterial()
-const DarkColumnMat = new THREE.MeshStandardMaterial()
-
-const DICE_MASS = 0.2
-const DICE_BOUNCINESS = 0.9
-const DICE_FRICTION = 0.4
 const TOTAL_CHECKERS = 8
 
 const Game = () => {
@@ -35,13 +28,12 @@ const Game = () => {
   //   z: { value: -1 },
   // })
 
-  const first = useRef()
-  const dice = useRef()
+  const columns = useRef()
+  const dice1 = useRef()
   const dice2 = useRef()
-  const ref = useRef()
   const checker = useRef()
+
   const { nodes, materials } = useGLTF(models)
-  const [myTurn, setMyTurn] = useState(false)
   const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true)
 
   const { size, viewport } = useThree()
@@ -49,37 +41,34 @@ const Game = () => {
 
   const [spring, set] = useSpring(() => ({
     position: [0, 0, 0],
-    config: { mass: 1, friction: 40, tension: 1200 },
+    config: { mass: 1, friction: 40, tension: 800 },
   }))
 
   const bind = useDrag(({ offset: [x, y], down }) => {
-    // set({ position: [x / aspect, 0, y / aspect] })
-
     // setting the checkers x and z position (the user shouldn't have the ability to drag the checker upwards)
-    const checkerX = x / aspect
     const ground = -0.06
+    const checkerX = x / aspect
     const checkerY = 0.2
     const checkerZ = y / aspect
-
-    checker.current.setTranslation({ x: checkerX, y: checkerY, z: checkerZ })
 
     if (down) {
       // Disabling orbit controls when dragging
       orbitControlsEnabled && setOrbitControlsEnabled(false)
+      // Setting the checker's position (Not the physics)
+      set({ position: [checkerX, checkerY, checkerZ] })
     } else {
       setOrbitControlsEnabled(true)
-      // console.log(checker.current?.mass())
-      // checker.current?.setMass(10)
-      checker.current.setTranslation({ x: checkerX, y: ground, z: checkerZ })
+      // Setting the checker's position (Not the physics)
+      set({ position: [checkerX, ground, checkerZ] })
+
+      // Setting the checker's physics position
+      checker.current.setTranslation({
+        x: checkerX,
+        y: ground,
+        z: checkerZ,
+      })
     }
   })
-
-  useEffect(() => {
-    // Optimizing the triangle columns inside the board
-    WhiteColumnMat.copy(materials.ColumnWhite)
-    OriginalWhiteColumnColor.copy(WhiteColumnMat.color)
-    DarkColumnMat.copy(materials.ColumnDark)
-  }, [])
 
   return (
     <>
@@ -92,201 +81,46 @@ const Game = () => {
       <Html as="div" transform scale={0.2} position={[1.75, 0.5, 0]}>
         <Button
           className="text-white"
-          onClick={() => throwDice([dice.current, dice2.current])}
+          onClick={() => throwDice([dice1.current, dice2.current])}
         >
           Throw Dice
         </Button>
       </Html>
 
       {/* Columns */}
-      <group name="Top">
-        <mesh
-          position={nodes["1"].position}
-          geometry={nodes["1"].geometry}
-          material={DarkColumnMat}
-          ref={first}
-        />
-        <mesh
-          position={nodes["2"].position}
-          geometry={nodes["1"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["3"].position}
-          geometry={nodes["1"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["4"].position}
-          geometry={nodes["1"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["5"].position}
-          geometry={nodes["1"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["6"].position}
-          geometry={nodes["1"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["7"].position}
-          geometry={nodes["1"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["8"].position}
-          geometry={nodes["1"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["9"].position}
-          geometry={nodes["1"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["10"].position}
-          geometry={nodes["1"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["11"].position}
-          geometry={nodes["1"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          onPointerEnter={() => nodes["12"].material.color.set("white")}
-          onPointerLeave={() =>
-            nodes["12"].material.color.set(OriginalWhiteColumnColor)
-          }
-          position={nodes["12"].position}
-          geometry={nodes["1"].geometry}
-          material={nodes["12"].material}
-        />
-      </group>
-      <group name="Bottom">
-        <mesh
-          position={nodes["13"].position}
-          geometry={nodes["24"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["14"].position}
-          geometry={nodes["24"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["15"].position}
-          geometry={nodes["24"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["16"].position}
-          geometry={nodes["24"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["17"].position}
-          geometry={nodes["24"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["18"].position}
-          geometry={nodes["24"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["19"].position}
-          geometry={nodes["24"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["20"].position}
-          geometry={nodes["24"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["21"].position}
-          geometry={nodes["24"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["22"].position}
-          geometry={nodes["24"].geometry}
-          material={WhiteColumnMat}
-        />
-        <mesh
-          position={nodes["23"].position}
-          geometry={nodes["24"].geometry}
-          material={DarkColumnMat}
-        />
-        <mesh
-          position={nodes["24"].position}
-          geometry={nodes["24"].geometry}
-          material={WhiteColumnMat}
-        />
+      <group name="Columns" ref={columns}>
+        {Object.keys(nodes).map(
+          (node, index) =>
+            node.includes("col_") && (
+              <Column
+                obj={nodes[node]}
+                nodes={nodes}
+                materials={materials}
+                key={index}
+              />
+            )
+        )}
       </group>
 
       {/* Board Hinge */}
       <mesh geometry={nodes.Cube012_1.geometry} material={materials.Hinge} />
 
       <Physics>
-        {/* Debug */}
         <Debug />
 
-        {/* Dice */}
-        <RigidBody
-          mass={DICE_MASS}
-          restitution={DICE_BOUNCINESS}
-          friction={DICE_FRICTION}
-          ref={dice}
+        {/* Dices */}
+        <Dice
+          ref={dice1}
+          nodes={nodes}
+          materials={materials}
           position={[0, 1, 2]}
-          onSleep={() => {
-            !myTurn && setMyTurn(true)
-            const number = getDiceNumber(dice.current)
-            console.log(number)
-          }}
-        >
-          <group name="Dice" ref={ref}>
-            <mesh
-              name="DiceGeo"
-              geometry={nodes.DiceGeo.geometry}
-              material={materials.DiceWhite}
-            />
-            <mesh
-              name="DiceGeo_1"
-              geometry={nodes.DiceGeo_1.geometry}
-              material={materials.DiceDark}
-            />
-          </group>
-        </RigidBody>
-        <RigidBody
-          mass={DICE_MASS}
-          restitution={DICE_BOUNCINESS}
-          friction={DICE_FRICTION}
+        />
+        <Dice
           ref={dice2}
+          nodes={nodes}
+          materials={materials}
           position={[0.1, 1, 2]}
-          onSleep={() => {
-            !myTurn && setMyTurn(true)
-            const number = getDiceNumber(dice2.current)
-            console.log(number)
-          }}
-        >
-          <group name="Dice">
-            <mesh
-              name="DiceGeo"
-              geometry={nodes.DiceGeo.geometry}
-              material={materials.DiceWhite}
-            />
-            <mesh
-              name="DiceGeo_1"
-              geometry={nodes.DiceGeo_1.geometry}
-              material={materials.DiceDark}
-            />
-          </group>
-        </RigidBody>
+        />
 
         {/* Dark Checker */}
         <RigidBody>
@@ -299,18 +133,16 @@ const Game = () => {
         </RigidBody>
 
         {/* White Checker */}
-        <RigidBody ref={checker} {...bind()} type="kinematicPosition">
-          <mesh
-            name="WhiteChecker"
-            geometry={nodes.WhiteChecker.geometry}
-            material={materials.WhiteCheckerMat}
-          />
+        <RigidBody ref={checker} type="kinematicPosition">
+          <CuboidCollider args={[0.08, 0.02, 0.08]} position={[0, 0.02, 0]} />
         </RigidBody>
-
-        {/* <WhiteCheckers
+        <a.mesh
+          {...spring}
+          {...bind()}
+          name="WhiteChecker"
           geometry={nodes.WhiteChecker.geometry}
           material={materials.WhiteCheckerMat}
-        /> */}
+        />
 
         {/* Board */}
         <RigidBody type="fixed" colliders={false}>
@@ -391,16 +223,5 @@ const WhiteCheckers = ({ geometry, material }) => {
     </InstancedRigidBodies>
   )
 }
-
-const Dice = forwardRef(({ nodes, materials }, ref) => {
-  return (
-    // <Clone>
-    <RigidBody mass={0.2} ref={ref} position={[-0.8, 1.5, 0]}>
-      <mesh name="DiceGeo" geometry={nodes[0]} material={materials[0]} />
-      <mesh name="DiceGeo_1" geometry={nodes[1]} material={materials[1]} />
-    </RigidBody>
-    // {/* </Clone> */}
-  )
-})
 
 export default Game
