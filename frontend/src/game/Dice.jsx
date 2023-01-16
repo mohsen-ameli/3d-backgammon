@@ -1,9 +1,12 @@
 import { RigidBody } from "@react-three/rapier"
-import { forwardRef, useRef } from "react"
+import { forwardRef, useContext } from "react"
 import * as data from "./data/Data"
+import { GameState } from "./Game"
 import getDiceNumber from "./utils/GetDiceNumber"
 
-const Dice = forwardRef(({ nodes, materials, position }, ref) => {
+const Dice = forwardRef(({ position }, ref) => {
+  const { nodes, materials } = useContext(GameState)
+
   return (
     <RigidBody
       mass={data.DICE_MASS}

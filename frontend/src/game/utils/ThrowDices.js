@@ -2,7 +2,7 @@
  * This will throw the dice(s) around.
  * @param {*} dices A list of dices to throw. (dice.current)
  */
-const throwDice = (dices) => {
+const throwDices = (dices) => {
   for (const dice of dices) {
     dice.applyImpulse({
       x: Math.random() * 0.5,
@@ -18,4 +18,4 @@ const throwDice = (dices) => {
   }
 }
 
-export default throwDice
+export default throwDices

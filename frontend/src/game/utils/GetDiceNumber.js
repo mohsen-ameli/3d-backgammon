@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import throwDice from "./ThrowDice"
+import throwDice from "./ThrowDices"
 
 /**
  * This will get the current number on the dice that's pointing up, by its rotation.
