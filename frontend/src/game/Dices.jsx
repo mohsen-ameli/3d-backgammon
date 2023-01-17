@@ -8,31 +8,39 @@ import throwDices from "./utils/ThrowDices"
 import * as data from "./data/Data"
 
 const Dices = () => {
-  const { diceNums } = useContext(GameState)
+  const { diceNums, state } = useContext(GameState)
   const dice1 = useRef()
   const dice2 = useRef()
 
-  const [finishedThrow, setFinishedThrow] = useState(() => [false, false])
+  const [finishedThrow, setFinishedThrow] = useState({
+    0: false,
+    1: false,
+  })
 
   useEffect(() => {
-    console.log("dices: ", finishedThrow)
+    if (finishedThrow[0] && finishedThrow[1]) {
+      console.log("diceNums: ", diceNums.current)
+      state.current = "checkerMove"
+    }
   }, [finishedThrow])
 
   return (
     <>
       <Html as="div" transform scale={0.2} position={[1.75, 0.5, 0]}>
         {/* Throwing the dice */}
-        <Button
-          className="text-white select-none"
-          onClick={() => {
-            resetDices([dice1.current, dice2.current])
-            throwDices([dice1.current, dice2.current])
-            // diceNums.current = getDiceMoves(diceNums)
-            // setTimeout(() => console.log(diceNums.current), 3800)
-          }}
-        >
-          Throw Dice
-        </Button>
+        {finishedThrow[0] && finishedThrow[1] && (
+          <Button
+            className="text-white select-none"
+            onClick={() => {
+              resetDices([dice1.current, dice2.current])
+              throwDices([dice1.current, dice2.current])
+              // diceNums.current = getDiceMoves(diceNums)
+              // setTimeout(() => console.log(diceNums.current), 3800)
+            }}
+          >
+            Throw Dice
+          </Button>
+        )}
       </Html>
 
       <Dice

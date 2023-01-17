@@ -11,8 +11,14 @@ import { OrbitState } from "./OrbitContext"
 const Checker = ({ info }) => {
   const checker = useRef()
 
-  const { checkerPicked, nodes, materials, newCheckerPosition } =
-    useContext(GameState)
+  const {
+    checkerPicked,
+    nodes,
+    materials,
+    newCheckerPosition,
+    diceNums,
+    state,
+  } = useContext(GameState)
 
   const { orbitControlsEnabled, setOrbitControlsEnabled } =
     useContext(OrbitState)
@@ -33,49 +39,65 @@ const Checker = ({ info }) => {
   // When a checker is picked up (dragged)
   const bind = useDrag(
     ({ offset: [x, y], dragging }) => {
-      // Used for dragging the checker in the x, y, z directions
-      const checkerX = x / aspect
-      const checkerY = 0.2
-      const checkerZ = y / aspect
+      if (state.current === "checkerMove" && diceNums.current.length !== 0) {
+        // Used for dragging the checker in the x, y, z directions
+        const checkerX = x / aspect
+        const checkerY = 0.2
+        const checkerZ = y / aspect
 
-      // Started dragging the checker
-      if (dragging) {
-        // Disabling orbit controls
-        orbitControlsEnabled && setOrbitControlsEnabled(false)
+        // Started dragging the checker
+        if (dragging) {
+          // Disabling orbit controls
+          orbitControlsEnabled && setOrbitControlsEnabled(false)
 
-        // Setting the checker's mesh position (not the physics)
-        set({ position: [checkerX, checkerY, checkerZ] })
+          // Setting the checker's mesh position (not the physics)
+          set({ position: [checkerX, checkerY, checkerZ] })
 
-        checkerPicked.current = true
-      }
-      // Finished dragging
-      else {
-        setOrbitControlsEnabled(true)
+          checkerPicked.current = true
+        }
+        // Finished dragging
+        else {
+          setOrbitControlsEnabled(true)
 
-        const from = info.col
-        const to = newCheckerPosition.current
-        // console.log("from: ", from, "to: ", to, "moved: ", to - from)
+          const from = info.col
+          const to = newCheckerPosition.current
+          const moved = to - from
 
-        // *1: Get the column number
-        // *2: Get the from and to, column numbers
-        // *3: Check how many columns they have moved
-        // 4: If the dice number matches with last step, then proceed
-        // if not, then show error message
-        // 5: Call a function that will get the number of checker
-        // on that column and give out a set of coordinates for
-        // the new checker to placed on.
+          // If the user has moved to a valid column
+          if (
+            !isNaN(moved) &&
+            moved > 0 &&
+            diceNums.current.filter((num) => num === moved).length === 1
+          ) {
+            console.log("moved: ", moved, "dice: ", diceNums.current)
 
-        checkerPicked.current = false
+            // *1: Get the column number
+            // *2: Get the from and to, column numbers
+            // *3: Check how many columns they have moved
+            // *4: If the dice number matches with last step, then proceed
+            // 4.5: if not, show error message
+            // 5: Call a function that will get the number of checker
+            // on that column and give out a set of coordinates for
+            // the new checker to placed on.
+            // 6: Set the spring, and physics position based on 5.
 
-        // Setting the checker's mesh position (not the physics)
-        set({ position: [checkerX, data.GROUND, checkerZ] })
+            checkerPicked.current = false
 
-        // Setting the checker's physics position
-        checker.current.setTranslation({
-          x: checkerX,
-          y: data.GROUND + 0.01,
-          z: checkerZ,
-        })
+            // Setting the checker's mesh position (not the physics)
+            set({ position: [checkerX, data.GROUND, checkerZ] })
+
+            // Setting the checker's physics position
+            checker.current.setTranslation({
+              x: checkerX,
+              y: data.GROUND + 0.01,
+              z: checkerZ,
+            })
+          }
+          // User has moved off-grid
+          else {
+            set({ position: pos })
+          }
+        }
       }
     },
     {

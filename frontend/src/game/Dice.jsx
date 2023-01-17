@@ -1,11 +1,13 @@
 import { RigidBody } from "@react-three/rapier"
-import { forwardRef, useContext } from "react"
+import { forwardRef, useContext, useState } from "react"
 import * as data from "./data/Data"
 import { GameState } from "./Game"
 import getDiceNumber from "./utils/GetDiceNumber"
 
 const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
   const { nodes, materials, diceNums } = useContext(GameState)
+
+  const [initial, setInitial] = useState(false)
 
   return (
     <RigidBody
@@ -15,18 +17,26 @@ const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
       ref={ref}
       position={position}
       onWake={() => {
+        console.log("wake")
         setFinishedThrow((current) => {
-          current[index] = false
-          return current
+          const newCurrent = { ...current }
+          newCurrent[index] = false
+          return newCurrent
         })
       }}
       onSleep={() => {
-        // You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
-        const number = getDiceNumber(ref.current)
-        diceNums.current[index] = number
+        if (initial) {
+          // You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
+          const number = getDiceNumber(ref.current)
+          diceNums.current[index] = number
+        } else {
+          setInitial(true)
+        }
+
         setFinishedThrow((current) => {
-          current[index] = true
-          return current
+          const newCurrent = { ...current }
+          newCurrent[index] = true
+          return newCurrent
         })
       }}
     >

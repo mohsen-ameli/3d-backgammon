@@ -3,11 +3,9 @@ import { createContext, useEffect, useMemo, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
 import * as THREE from "three"
-import Button from "../components/ui/Button"
 import { CuboidCollider, Debug, Physics, RigidBody } from "@react-three/rapier"
 import { useControls } from "leva"
 import Column from "./Column"
-import * as data from "./data/Data"
 import Checker from "./Checker"
 import OrbitProvider from "./OrbitContext"
 import Dices from "./Dices"
@@ -30,6 +28,7 @@ const Game = () => {
   const userTurn = useRef("white")
   const checkerPicked = useRef(false)
   const newCheckerPosition = useRef()
+  const state = useRef("initial")
 
   /* checkerNumber: [
     id,
@@ -38,6 +37,7 @@ const Game = () => {
     row: 0 - 4,
   ] */
 
+  // All of the checkers' positions
   const checkers = useRef([
     { id: 0, color: "white", col: 0, row: 0 },
     { id: 1, color: "white", col: 0, row: 1 },
@@ -72,11 +72,6 @@ const Game = () => {
     { id: 29, color: "black", col: 5, row: 4 },
   ])
 
-  // A game state that will have all the checker's positions
-  // const [checkerPos, setCheckerPos] = useState({
-  //   1: [0, 4],
-  // })
-
   useEffect(() => console.log("rerendering main game state"))
 
   const { nodes, materials } = useGLTF(models)
@@ -87,6 +82,8 @@ const Game = () => {
     materials,
     diceNums,
     userTurn,
+    checkers,
+    state,
     checkerPicked,
     newCheckerPosition,
   }
@@ -122,6 +119,8 @@ const Game = () => {
           <Dices />
 
           {/* Checkers */}
+          {/* Get rid of this context, and put both the orbit controls
+          and all of checkers in a separate component. */}
           <OrbitProvider>
             {checkers.current.map((data) => (
               <Checker info={data} key={data.id} />
