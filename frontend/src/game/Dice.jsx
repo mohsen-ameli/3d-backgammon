@@ -4,8 +4,8 @@ import * as data from "./data/Data"
 import { GameState } from "./Game"
 import getDiceNumber from "./utils/GetDiceNumber"
 
-const Dice = forwardRef(({ position }, ref) => {
-  const { nodes, materials } = useContext(GameState)
+const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
+  const { nodes, materials, diceNums } = useContext(GameState)
 
   return (
     <RigidBody
@@ -14,9 +14,20 @@ const Dice = forwardRef(({ position }, ref) => {
       friction={data.DICE_FRICTION}
       ref={ref}
       position={position}
+      onWake={() => {
+        setFinishedThrow((current) => {
+          current[index] = false
+          return current
+        })
+      }}
       onSleep={() => {
-        // !myTurn && setMyTurn(true)
+        // You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
         const number = getDiceNumber(ref.current)
+        diceNums.current[index] = number
+        setFinishedThrow((current) => {
+          current[index] = true
+          return current
+        })
       }}
     >
       <group name="Dice">

@@ -1,4 +1,4 @@
-import { Html, OrbitControls, useGLTF } from "@react-three/drei"
+import { Html, useGLTF } from "@react-three/drei"
 import { createContext, useEffect, useMemo, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
@@ -6,12 +6,12 @@ import * as THREE from "three"
 import Button from "../components/ui/Button"
 import { CuboidCollider, Debug, Physics, RigidBody } from "@react-three/rapier"
 import { useControls } from "leva"
-import throwDices from "./utils/ThrowDices"
 import Column from "./Column"
-import Dice from "./Dice"
 import * as data from "./data/Data"
-import resetDices from "./utils/ResetDices"
 import Checker from "./Checker"
+import OrbitProvider from "./OrbitContext"
+import Dices from "./Dices"
+import UI from "./UI"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
@@ -25,8 +25,7 @@ const Game = () => {
 
   const board = useRef()
   const columns = useRef()
-  const dice1 = useRef()
-  const dice2 = useRef()
+  const diceNums = useRef([])
 
   const userTurn = useRef("white")
   const checkerPicked = useRef(false)
@@ -81,14 +80,12 @@ const Game = () => {
   useEffect(() => console.log("rerendering main game state"))
 
   const { nodes, materials } = useGLTF(models)
-  // const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true)
-  const orbitControlsEnabled = useRef(false)
 
   // Game state values
   const value = {
     nodes,
     materials,
-    orbitControlsEnabled,
+    diceNums,
     userTurn,
     checkerPicked,
     newCheckerPosition,
@@ -96,8 +93,6 @@ const Game = () => {
 
   return (
     <>
-      <OrbitControls makeDefault enabled={orbitControlsEnabled.current} />
-
       <color args={["salmon"]} attach="background" />
 
       <ambientLight intensity={0.5} />
@@ -107,31 +102,7 @@ const Game = () => {
 
       <GameState.Provider value={value}>
         {/* UI components around the board */}
-        <Html as="div" transform scale={0.2} position={[1.75, 0.5, 0]}>
-          {/* Throwing the dice */}
-          <Button
-            className="text-white select-none"
-            onClick={() => {
-              resetDices([dice1.current, dice2.current])
-              throwDices([dice1.current, dice2.current])
-            }}
-          >
-            Throw Dice
-          </Button>
-
-          {/* Flipping the board */}
-          <Button
-            className="text-white select-none"
-            onClick={() => {
-              userTurn.current =
-                userTurn.current === "white" ? "black" : "white"
-              // Fire a function to flip the board
-              // board.current.rotation.y = board.current.rotation.y + Math.PI
-            }}
-          >
-            Flip the board
-          </Button>
-        </Html>
+        <UI />
 
         {/* Columns */}
         <group name="Columns" ref={columns}>
@@ -145,26 +116,17 @@ const Game = () => {
         <mesh geometry={nodes.Cube012_1.geometry} material={materials.Hinge} />
 
         <Physics>
-          {/* <Debug /> */}
+          <Debug />
 
           {/* Dices */}
-          <Dice ref={dice1} position={data.DICE_1_DEFAULT_POS} />
-          <Dice ref={dice2} position={data.DICE_2_DEFAULT_POS} />
-
-          {/* Dark Checker */}
-          {/* <RigidBody>
-          <mesh
-            name="DarkChecker"
-            geometry={nodes.DarkChecker.geometry}
-            material={materials.DarkCheckerMat}
-            position={[0, 0.5, 0]}
-          />
-        </RigidBody> */}
+          <Dices />
 
           {/* Checkers */}
-          {checkers.current.map((data) => (
-            <Checker info={data} key={data.id} />
-          ))}
+          <OrbitProvider>
+            {checkers.current.map((data) => (
+              <Checker info={data} key={data.id} />
+            ))}
+          </OrbitProvider>
 
           {/* Board */}
           <RigidBody type="fixed" colliders={false}>

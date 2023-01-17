@@ -6,17 +6,16 @@ import { useSpring, a } from "@react-spring/three"
 import { GameState } from "./Game"
 import * as data from "./data/Data"
 import getCheckerPos from "./utils/GetCheckerPos"
+import { OrbitState } from "./OrbitContext"
 
 const Checker = ({ info }) => {
   const checker = useRef()
 
-  const {
-    orbitControlsEnabled,
-    checkerPicked,
-    nodes,
-    materials,
-    newCheckerPosition,
-  } = useContext(GameState)
+  const { checkerPicked, nodes, materials, newCheckerPosition } =
+    useContext(GameState)
+
+  const { orbitControlsEnabled, setOrbitControlsEnabled } =
+    useContext(OrbitState)
 
   // Checkers
   const { size, viewport } = useThree()
@@ -28,7 +27,7 @@ const Checker = ({ info }) => {
   // Animations for dragging
   const [spring, set] = useSpring(() => ({
     position: pos,
-    config: { mass: 1, friction: 35, tension: 800 },
+    config: { mass: 1, friction: 36, tension: 800 },
   }))
 
   // When a checker is picked up (dragged)
@@ -42,7 +41,7 @@ const Checker = ({ info }) => {
       // Started dragging the checker
       if (dragging) {
         // Disabling orbit controls
-        orbitControlsEnabled.current = orbitControlsEnabled.current && false
+        orbitControlsEnabled && setOrbitControlsEnabled(false)
 
         // Setting the checker's mesh position (not the physics)
         set({ position: [checkerX, checkerY, checkerZ] })
@@ -51,11 +50,11 @@ const Checker = ({ info }) => {
       }
       // Finished dragging
       else {
-        orbitControlsEnabled.current = true
+        setOrbitControlsEnabled(true)
 
         const from = info.col
         const to = newCheckerPosition.current
-        console.log("from: ", from, "to: ", to, "moved: ", to - from)
+        // console.log("from: ", from, "to: ", to, "moved: ", to - from)
 
         // *1: Get the column number
         // *2: Get the from and to, column numbers
