@@ -1,25 +1,17 @@
-import { Clone, Html, OrbitControls, useGLTF } from "@react-three/drei"
+import { Html, OrbitControls, useGLTF } from "@react-three/drei"
 import { createContext, useEffect, useMemo, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
 import * as THREE from "three"
 import Button from "../components/ui/Button"
-import {
-  CuboidCollider,
-  Debug,
-  InstancedRigidBodies,
-  Physics,
-  RigidBody,
-} from "@react-three/rapier"
+import { CuboidCollider, Debug, Physics, RigidBody } from "@react-three/rapier"
 import { useControls } from "leva"
 import throwDices from "./utils/ThrowDices"
-import { useFrame, useThree } from "@react-three/fiber"
-import { useDrag } from "@use-gesture/react"
-import { useSpring, a } from "@react-spring/three"
 import Column from "./Column"
 import Dice from "./Dice"
 import * as data from "./data/Data"
 import resetDices from "./utils/ResetDices"
+import Checker from "./Checker"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
@@ -35,144 +27,68 @@ const Game = () => {
   const columns = useRef()
   const dice1 = useRef()
   const dice2 = useRef()
-  const checker = useRef()
+
   const userTurn = useRef("white")
   const checkerPicked = useRef(false)
   const newCheckerPosition = useRef()
 
-  // const checkerPositions = useRef({
-  //   1: 2,
-  // })
+  /* checkerNumber: [
+    id,
+    color: "white" | "black",
+    col: 0 - 23,
+    row: 0 - 4,
+  ] */
+
+  const checkers = useRef([
+    { id: 0, color: "white", col: 0, row: 0 },
+    { id: 1, color: "white", col: 0, row: 1 },
+    { id: 2, color: "white", col: 11, row: 0 },
+    { id: 3, color: "white", col: 11, row: 1 },
+    { id: 4, color: "white", col: 11, row: 2 },
+    { id: 5, color: "white", col: 11, row: 3 },
+    { id: 6, color: "white", col: 11, row: 4 },
+    { id: 7, color: "white", col: 16, row: 0 },
+    { id: 8, color: "white", col: 16, row: 1 },
+    { id: 9, color: "white", col: 16, row: 2 },
+    { id: 10, color: "white", col: 18, row: 0 },
+    { id: 11, color: "white", col: 18, row: 1 },
+    { id: 12, color: "white", col: 18, row: 2 },
+    { id: 13, color: "white", col: 18, row: 3 },
+    { id: 14, color: "white", col: 18, row: 4 },
+
+    { id: 15, color: "black", col: 23, row: 0 },
+    { id: 16, color: "black", col: 23, row: 1 },
+    { id: 17, color: "black", col: 12, row: 0 },
+    { id: 18, color: "black", col: 12, row: 1 },
+    { id: 19, color: "black", col: 12, row: 2 },
+    { id: 20, color: "black", col: 12, row: 3 },
+    { id: 21, color: "black", col: 12, row: 4 },
+    { id: 22, color: "black", col: 7, row: 0 },
+    { id: 23, color: "black", col: 7, row: 1 },
+    { id: 24, color: "black", col: 7, row: 2 },
+    { id: 25, color: "black", col: 5, row: 0 },
+    { id: 26, color: "black", col: 5, row: 1 },
+    { id: 27, color: "black", col: 5, row: 2 },
+    { id: 28, color: "black", col: 5, row: 3 },
+    { id: 29, color: "black", col: 5, row: 4 },
+  ])
 
   // A game state that will have all the checker's positions
-  const [checkerPos, setCheckerPos] = useState({
-    1: [0, 4],
-  })
-
-  const { nodes, materials } = useGLTF(models)
-  const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true)
-
-  // Checkers
-  const { size, viewport } = useThree()
-  const aspect = size.width / viewport.width
-
-  // Values to move the checkers around
-  const xAxis = 0.155
-  const xStep = 0.1835
-  const rightEnd = xAxis + xStep * 5
-  const zAxis = 0.855
-  const zStep = 0.165
-
-  console.log("first")
-
-  // local state for every checker
-  // const [pos, setPos] = useState(() => {
-  //   const checkerNum = 1
-  //   let zValues
-
-  //   // Upper rank (z-axis)
-  //   if (checkerNum <= 11) {
-  //     zValues = -zAxis
-  //   }
-  //   // Lower rank (z-axis)
-  //   else {
-  //     zValues = zAxis
-  //   }
-
-  //   // Right side
-  //   if (checkerPos[checkerNum][0] <= 6) {
-  //     return [
-  //       rightEnd - xStep * checkerPos[checkerNum][0],
-  //       -0.03,
-  //       zValues - zStep * checkerPos[checkerNum][1],
-  //     ]
-  //   }
-  //   // Left side
-  //   else {
-  //     return [
-  //       rightEnd - xStep * checkerPos[checkerNum][0],
-  //       -0.03,
-  //       zValues - zStep * checkerPos[checkerNum][1],
-  //     ]
-  //   }
+  // const [checkerPos, setCheckerPos] = useState({
+  //   1: [0, 4],
   // })
 
-  const pos = [1, -0.03, 0]
+  useEffect(() => console.log("rerendering main game state"))
 
-  // useEffect(() => {
-  //   if (checkerPos[1] <= 6 || checkerPos[1] >= 19) {
-  //     setPos([rightEnd - xStep * checkerPos[1], -0.03, -zAxis + zStep * 3])
-  //   }
-  // }, [checkerPos])
-
-  const [spring, set] = useSpring(() => ({
-    position: pos,
-    config: { mass: 1, friction: 40, tension: 800 },
-  }))
-
-  // When a checker is picked up (dragged)
-  const bind = useDrag(
-    ({ offset: [x, y], dragging }) => {
-      // Ground level (y coordinate)
-      const ground = -0.05
-      // Used for dragging the checker in the x, y, z directions
-      const checkerX = x / aspect
-      const checkerY = 0.2
-      const checkerZ = y / aspect
-
-      // Started dragging the checker
-      if (dragging) {
-        // Disabling orbit controls
-        orbitControlsEnabled && setOrbitControlsEnabled(false)
-
-        // Setting the checker's mesh position (not the physics)
-        set({ position: [checkerX, checkerY, checkerZ] })
-
-        checkerPicked.current = true
-      }
-      // Finished dragging
-      else {
-        setOrbitControlsEnabled(true)
-
-        // *1: Get the column number
-        // 2: Get the from and to, column numbers
-        // 3: Check how many columns they have moved
-        // 4: If the dice number matches with step 1, then proceed
-        // if not, then show error message
-        // 5: Call a function that will get the number of checker
-        // on that column and give out a set of coordinates for
-        // the new checker to placed on.
-
-        checkerPicked.current = false
-
-        // Setting the checker's mesh position (not the physics)
-        set({ position: [checkerX, ground, checkerZ] })
-
-        // Setting the checker's physics position
-        checker.current.setTranslation({
-          x: checkerX,
-          y: ground + 0.01,
-          z: checkerZ,
-        })
-      }
-    },
-    {
-      // From position of the checker
-      from: () => {
-        return [
-          spring.position.get()[0] * aspect,
-          spring.position.get()[2] * aspect,
-        ]
-      },
-    }
-  )
+  const { nodes, materials } = useGLTF(models)
+  // const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true)
+  const orbitControlsEnabled = useRef(false)
 
   // Game state values
   const value = {
     nodes,
     materials,
     orbitControlsEnabled,
-    setOrbitControlsEnabled,
     userTurn,
     checkerPicked,
     newCheckerPosition,
@@ -180,7 +96,7 @@ const Game = () => {
 
   return (
     <>
-      <OrbitControls makeDefault enabled={orbitControlsEnabled} />
+      <OrbitControls makeDefault enabled={orbitControlsEnabled.current} />
 
       <color args={["salmon"]} attach="background" />
 
@@ -229,7 +145,7 @@ const Game = () => {
         <mesh geometry={nodes.Cube012_1.geometry} material={materials.Hinge} />
 
         <Physics>
-          <Debug />
+          {/* <Debug /> */}
 
           {/* Dices */}
           <Dice ref={dice1} position={data.DICE_1_DEFAULT_POS} />
@@ -245,17 +161,10 @@ const Game = () => {
           />
         </RigidBody> */}
 
-          {/* White Checkers */}
-          <RigidBody ref={checker} type="kinematicPosition" position={pos}>
-            <CuboidCollider args={[0.08, 0.02, 0.08]} />
-          </RigidBody>
-          <a.mesh
-            {...spring}
-            {...bind()}
-            name="WhiteChecker"
-            geometry={nodes.WhiteChecker.geometry}
-            material={materials.WhiteCheckerMat}
-          />
+          {/* Checkers */}
+          {checkers.current.map((data) => (
+            <Checker info={data} key={data.id} />
+          ))}
 
           {/* Board */}
           <RigidBody type="fixed" colliders={false}>
@@ -298,55 +207,6 @@ const Game = () => {
         </Physics>
       </GameState.Provider>
     </>
-  )
-}
-
-const WhiteCheckers = ({ geometry, material }) => {
-  const COL_STEP = 0.16
-
-  const EDGE_X = 1.08
-  const EDGE_Z = 0.85
-
-  const DROP_HEIGHT_Y = 0.2
-  const CHECKER_WIDTH = 0.15
-
-  const cubesTransforms = useMemo(() => {
-    const positions = []
-    const rotaions = []
-    const scales = []
-
-    positions[0] = [EDGE_X, DROP_HEIGHT_Y, -EDGE_Z]
-    positions[1] = [EDGE_X, DROP_HEIGHT_Y, -EDGE_Z + CHECKER_WIDTH]
-
-    positions[2] = [-EDGE_X, DROP_HEIGHT_Y, -EDGE_Z + CHECKER_WIDTH * 0]
-    positions[3] = [-EDGE_X, DROP_HEIGHT_Y, -EDGE_Z + CHECKER_WIDTH * 1]
-    positions[4] = [-EDGE_X, DROP_HEIGHT_Y, -EDGE_Z + CHECKER_WIDTH * 2]
-    positions[5] = [-EDGE_X, DROP_HEIGHT_Y, -EDGE_Z + CHECKER_WIDTH * 3]
-    positions[6] = [-EDGE_X, DROP_HEIGHT_Y, -EDGE_Z + CHECKER_WIDTH * 4]
-
-    positions[7] = [EDGE_X / 4, DROP_HEIGHT_Y, -EDGE_Z + CHECKER_WIDTH * 4]
-    // positions[8] = [-EDGE_X, DROP_HEIGHT_Y, -EDGE_Z + CHECKER_WIDTH * 4]
-    // positions[9] = [-EDGE_X, DROP_HEIGHT_Y, -EDGE_Z + CHECKER_WIDTH * 4]
-
-    for (let i = 0; i < data.TOTAL_CHECKERS; i++) {
-      // positions.push([-i, 0, 0])
-      rotaions.push([0, 0, 0])
-      scales.push([1, 1, 1])
-    }
-
-    return { positions, rotaions, scales }
-  }, [])
-
-  return (
-    <InstancedRigidBodies
-      positions={cubesTransforms.positions}
-      rotations={cubesTransforms.rotaions}
-      scales={cubesTransforms.scales}
-    >
-      <instancedMesh
-        args={[geometry, material, data.TOTAL_CHECKERS]}
-      ></instancedMesh>
-    </InstancedRigidBodies>
   )
 }
 

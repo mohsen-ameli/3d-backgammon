@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef } from "react"
 import * as THREE from "three"
 import { COLOUMN_HOVER_COLOR } from "./data/Data"
 import { GameState } from "./Game"
+import getObjNum from "./utils/GetObjNum"
 
 const Column = ({ node }) => {
   const { nodes, materials, checkerPicked, newCheckerPosition } =
@@ -23,7 +24,7 @@ const Column = ({ node }) => {
   const handleHover = () => {
     if (checkerPicked.current) {
       materail.current.color.set(COLOUMN_HOVER_COLOR)
-      newCheckerPosition.current = getObjNum(nodes[node].name)
+      newCheckerPosition.current = getObjNum(nodes[node].name) - 1
     }
   }
 
@@ -49,10 +50,6 @@ const Column = ({ node }) => {
       material={materail.current}
     />
   )
-}
-
-const getObjNum = (name) => {
-  return parseInt(name.split("_")[1])
 }
 
 export default Column
