@@ -2,8 +2,9 @@ import * as THREE from "three"
 import throwDice from "./ThrowDices"
 
 /**
- * This will get the current number on the dice that's pointing up, by its rotation.
- * @param {*} dice The dice we want the number of
+ * --> This method is a hot mess. That's what this is. But it works!! I had to do a lot of pattern recognision and a lot of math to get this to work. Probably the hardest function to build in this entire project.
+ * This will get the current number on the dice that's pointing up, using the dice's rotation.
+ * @param {*} dice Referecne to the dice we want the number of
  * @returns The number on the dice that's pointing up
  */
 const getDiceNumber = (dice) => {

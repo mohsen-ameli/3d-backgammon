@@ -1,6 +1,6 @@
 /**
- * This will throw the dice(s) around.
- * @param {*} dices A list of dices to throw. (dice.current)
+ * This will throw the dices around.
+ * @param {*} dices A reference list of dices to throw.
  */
 const throwDices = (dices) => {
   for (const dice of dices) {

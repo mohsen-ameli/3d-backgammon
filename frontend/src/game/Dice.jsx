@@ -17,7 +17,6 @@ const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
       ref={ref}
       position={position}
       onWake={() => {
-        console.log("wake")
         setFinishedThrow((current) => {
           const newCurrent = { ...current }
           newCurrent[index] = false

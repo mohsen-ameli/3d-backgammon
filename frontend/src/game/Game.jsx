@@ -23,7 +23,10 @@ const Game = () => {
 
   const board = useRef()
   const columns = useRef()
-  const diceNums = useRef([])
+  // The numbers on the dice, and how many times the user is allowed to move
+  // ex: [2, 5, 2] -> The dice shows 2 and 5 and therefore user can move twice
+  // ex: [6, 6, 4] -> The dice shows 6 and 6 and therefore user can move four times
+  const diceNums = useRef([undefined, undefined, 0])
 
   const userTurn = useRef("white")
   const checkerPicked = useRef(false)
@@ -31,45 +34,46 @@ const Game = () => {
   const state = useRef("initial")
 
   /* checkerNumber: [
-    id,
+    id: int,
     color: "white" | "black",
     col: 0 - 23,
     row: 0 - 4,
+    removed: true | false
   ] */
 
   // All of the checkers' positions
   const checkers = useRef([
-    { id: 0, color: "white", col: 0, row: 0 },
-    { id: 1, color: "white", col: 0, row: 1 },
-    { id: 2, color: "white", col: 11, row: 0 },
-    { id: 3, color: "white", col: 11, row: 1 },
-    { id: 4, color: "white", col: 11, row: 2 },
-    { id: 5, color: "white", col: 11, row: 3 },
-    { id: 6, color: "white", col: 11, row: 4 },
-    { id: 7, color: "white", col: 16, row: 0 },
-    { id: 8, color: "white", col: 16, row: 1 },
-    { id: 9, color: "white", col: 16, row: 2 },
-    { id: 10, color: "white", col: 18, row: 0 },
-    { id: 11, color: "white", col: 18, row: 1 },
-    { id: 12, color: "white", col: 18, row: 2 },
-    { id: 13, color: "white", col: 18, row: 3 },
-    { id: 14, color: "white", col: 18, row: 4 },
+    { id: 0, color: "white", col: 0, row: 0, removed: false },
+    { id: 1, color: "white", col: 0, row: 1, removed: false },
+    { id: 2, color: "white", col: 11, row: 0, removed: false },
+    { id: 3, color: "white", col: 11, row: 1, removed: false },
+    { id: 4, color: "white", col: 11, row: 2, removed: false },
+    { id: 5, color: "white", col: 11, row: 3, removed: false },
+    { id: 6, color: "white", col: 11, row: 4, removed: false },
+    { id: 7, color: "white", col: 16, row: 0, removed: false },
+    { id: 8, color: "white", col: 16, row: 1, removed: false },
+    { id: 9, color: "white", col: 16, row: 2, removed: false },
+    { id: 10, color: "white", col: 18, row: 0, removed: false },
+    { id: 11, color: "white", col: 18, row: 1, removed: false },
+    { id: 12, color: "white", col: 18, row: 2, removed: false },
+    { id: 13, color: "white", col: 18, row: 3, removed: false },
+    { id: 14, color: "white", col: 18, row: 4, removed: false },
 
-    { id: 15, color: "black", col: 23, row: 0 },
-    { id: 16, color: "black", col: 23, row: 1 },
-    { id: 17, color: "black", col: 12, row: 0 },
-    { id: 18, color: "black", col: 12, row: 1 },
-    { id: 19, color: "black", col: 12, row: 2 },
-    { id: 20, color: "black", col: 12, row: 3 },
-    { id: 21, color: "black", col: 12, row: 4 },
-    { id: 22, color: "black", col: 7, row: 0 },
-    { id: 23, color: "black", col: 7, row: 1 },
-    { id: 24, color: "black", col: 7, row: 2 },
-    { id: 25, color: "black", col: 5, row: 0 },
-    { id: 26, color: "black", col: 5, row: 1 },
-    { id: 27, color: "black", col: 5, row: 2 },
-    { id: 28, color: "black", col: 5, row: 3 },
-    { id: 29, color: "black", col: 5, row: 4 },
+    { id: 15, color: "black", col: 23, row: 0, removed: false },
+    { id: 16, color: "black", col: 23, row: 1, removed: false },
+    { id: 17, color: "black", col: 12, row: 0, removed: false },
+    { id: 18, color: "black", col: 12, row: 1, removed: false },
+    { id: 19, color: "black", col: 12, row: 2, removed: false },
+    { id: 20, color: "black", col: 12, row: 3, removed: false },
+    { id: 21, color: "black", col: 12, row: 4, removed: false },
+    { id: 22, color: "black", col: 7, row: 0, removed: false },
+    { id: 23, color: "black", col: 7, row: 1, removed: false },
+    { id: 24, color: "black", col: 7, row: 2, removed: false },
+    { id: 25, color: "black", col: 5, row: 0, removed: false },
+    { id: 26, color: "black", col: 5, row: 1, removed: false },
+    { id: 27, color: "black", col: 5, row: 2, removed: false },
+    { id: 28, color: "black", col: 5, row: 3, removed: false },
+    { id: 29, color: "black", col: 5, row: 4, removed: false },
   ])
 
   useEffect(() => console.log("rerendering main game state"))
@@ -113,9 +117,8 @@ const Game = () => {
         <mesh geometry={nodes.Cube012_1.geometry} material={materials.Hinge} />
 
         <Physics>
-          <Debug />
+          {/* <Debug /> */}
 
-          {/* Dices */}
           <Dices />
 
           {/* Checkers */}
@@ -123,7 +126,7 @@ const Game = () => {
           and all of checkers in a separate component. */}
           <OrbitProvider>
             {checkers.current.map((data) => (
-              <Checker info={data} key={data.id} />
+              <Checker thisChecker={data} key={data.id} />
             ))}
           </OrbitProvider>
 

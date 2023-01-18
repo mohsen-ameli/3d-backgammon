@@ -1,6 +1,9 @@
 import * as data from "../data/Data"
 
-// This will reset the dices positions
+/**
+ * This will reset the dices positions
+ * @param {*} dices A reference list of dices to reset.
+ */
 const resetDices = (dices) => {
   dices[0].setTranslation({
     x: data.DICE_1_DEFAULT_POS[0],

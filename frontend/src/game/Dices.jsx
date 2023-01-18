@@ -19,16 +19,24 @@ const Dices = () => {
 
   useEffect(() => {
     if (finishedThrow[0] && finishedThrow[1]) {
-      console.log("diceNums: ", diceNums.current)
-      state.current = "checkerMove"
+      if (diceNums.current[0] && diceNums.current[1]) {
+        if (diceNums.current[0] === diceNums.current[1]) {
+          diceNums.current[2] = 4
+        } else {
+          diceNums.current[2] = 2
+        }
+        state.current = "checkerMove"
+      }
     }
   }, [finishedThrow])
+
+  console.log(diceNums.current[2])
 
   return (
     <>
       <Html as="div" transform scale={0.2} position={[1.75, 0.5, 0]}>
         {/* Throwing the dice */}
-        {finishedThrow[0] && finishedThrow[1] && (
+        {diceNums.current[2] === 0 && (
           <Button
             className="text-white select-none"
             onClick={() => {

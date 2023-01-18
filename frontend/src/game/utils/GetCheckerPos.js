@@ -1,7 +1,7 @@
 import * as data from "../data/Data"
 
 /**
- * This function will get the position of the checker on the board
+ * This function will get the position (x,y,z) of the checker on the board based on the given column and row
  * @param {*} col The column of the checker
  * @param {*} row The row of the checker
  * @returns An array of x, y, and z coordinates. The y (or the elavation) is the ground level
