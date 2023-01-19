@@ -4,7 +4,7 @@ import Button from "../components/ui/Button"
 import { GameState } from "./Game"
 
 const UI = () => {
-  const { userTurn } = useContext(GameState)
+  const { userChecker } = useContext(GameState)
 
   return (
     <Html as="div" transform scale={0.2} position={[1.75, 1, 0]} sprite>
@@ -12,7 +12,7 @@ const UI = () => {
       {/* <Button
         className="text-white select-none"
         onClick={() => {
-          userTurn.current = userTurn.current === "white" ? "black" : "white"
+          userChecker.current = userChecker.current === "white" ? "black" : "white"
           // Fire a function to flip the board
           // board.current.rotation.y = board.current.rotation.y + Math.PI
         }}

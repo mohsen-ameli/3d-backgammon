@@ -1,15 +1,15 @@
-import { Html, useGLTF } from "@react-three/drei"
-import { createContext, useEffect, useMemo, useRef, useState } from "react"
+import { useGLTF } from "@react-three/drei"
+import { createContext, useEffect, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
 import * as THREE from "three"
-import { CuboidCollider, Debug, Physics, RigidBody } from "@react-three/rapier"
+import { Physics } from "@react-three/rapier"
 import { useControls } from "leva"
-import Column from "./Column"
-import Checker from "./Checker"
-import OrbitProvider from "./OrbitContext"
 import Dices from "./Dices"
 import UI from "./UI"
+import Checkers from "./Checkers"
+import Board from "./Board"
+import Columns from "./Columns"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
@@ -21,18 +21,18 @@ const Game = () => {
   //   z: { value: 0.855, step: 0.0001 },
   // })
 
-  const board = useRef()
-  const columns = useRef()
   // The numbers on the dice, and how many times the user is allowed to move
   // ex: [2, 5, 2] -> The dice shows 2 and 5 and therefore user can move twice
   // ex: [6, 6, 4] -> The dice shows 6 and 6 and therefore user can move four times
-  const diceNums = useRef([undefined, undefined, 0])
-
-  const userTurn = useRef("white")
+  const diceNums = useRef({ dice1: undefined, dice2: undefined, moves: 0 })
+  // The current checker that is being moved
+  const userChecker = useRef("white")
+  // If the checker has been picked up
   const checkerPicked = useRef(false)
+  // The new position of the checker (in checkers used for calculating the moved variable)
   const newCheckerPosition = useRef()
-  const state = useRef("initial")
 
+  // The current phase of the game
   const [phase, setPhase] = useState("initial")
 
   /* checkerNumber: [
@@ -43,7 +43,7 @@ const Game = () => {
     removed: true | false
   ] */
 
-  // All of the checkers' positions
+  // All of the checkers' default positions
   const checkers = useRef([
     { id: 0, color: "white", col: 0, row: 0, removed: false },
     { id: 1, color: "white", col: 0, row: 1, removed: false },
@@ -80,6 +80,7 @@ const Game = () => {
 
   useEffect(() => console.log("rerendering main game state"))
 
+  // Load the models
   const { nodes, materials } = useGLTF(models)
 
   // Game state values
@@ -87,9 +88,8 @@ const Game = () => {
     nodes,
     materials,
     diceNums,
-    userTurn,
+    userChecker,
     checkers,
-    state,
     phase,
     setPhase,
     checkerPicked,
@@ -103,75 +103,27 @@ const Game = () => {
       <ambientLight intensity={0.5} />
       <directionalLight position={[0, 10, 5]} intensity={1.5} />
 
-      <Perf position="top-left" />
+      {/* <Perf position="top-left" /> */}
 
       <GameState.Provider value={value}>
-        {/* UI components around the board */}
         <UI />
 
-        {/* Columns */}
-        <group name="Columns" ref={columns}>
-          {Object.keys(nodes).map(
-            (node, index) =>
-              node.includes("col_") && <Column node={node} key={index} />
-          )}
-        </group>
-
-        {/* Board Hinge */}
-        <mesh geometry={nodes.Cube012_1.geometry} material={materials.Hinge} />
+        <Columns />
 
         <Physics>
           {/* <Debug /> */}
 
           <Dices />
 
-          {/* Checkers */}
-          {/* Get rid of this context, and put both the orbit controls
-          and all of checkers in a separate component. */}
-          <OrbitProvider />
+          <Checkers />
 
-          {/* Board */}
-          <RigidBody type="fixed" colliders={false}>
-            {/* Surface */}
-            <CuboidCollider
-              args={[1.175, 0.1, 0.935]}
-              position={[0, -0.15, 0]}
-            />
-
-            {/* Center */}
-            <CuboidCollider args={[0.07, 0.115, 1]} position={[0, 0, 0]} />
-
-            {/* Left */}
-            <CuboidCollider
-              args={[0.07, 0.5, 1]}
-              position={[-1.245, 0.06, 0]}
-            />
-
-            {/* Right */}
-            <CuboidCollider args={[0.07, 0.5, 1]} position={[1.245, 0.06, 0]} />
-
-            {/* Top */}
-            <CuboidCollider
-              args={[1.175, 0.5, 0.07]}
-              position={[0, 0.06, -1]}
-            />
-
-            {/* Bottom */}
-            <CuboidCollider args={[1.175, 0.5, 0.07]} position={[0, 0.06, 1]} />
-
-            {/* Dice Holder */}
-            <CuboidCollider args={[0.5, 0.1, 0.1]} position={[0, 0.6, 2]} />
-
-            <mesh
-              geometry={nodes.Cube012.geometry}
-              material={materials.BoardWood2}
-              ref={board}
-            />
-          </RigidBody>
+          <Board />
         </Physics>
       </GameState.Provider>
     </>
   )
 }
+
+useGLTF.preload(models)
 
 export default Game

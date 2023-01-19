@@ -13,7 +13,6 @@ export const TOTAL_CHECKERS = 8
 export const CHECKER_W = 0.184
 export const CHECKER_H = 0.16
 export const CHECKER_HALF = CHECKER_W / 2
-// export const HINGE_W = 0.068151
 
 // Board
 export const GROUND = -0.058 // Ground level (y coordinate)

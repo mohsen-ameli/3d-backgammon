@@ -5,13 +5,16 @@ import { useDrag } from "@use-gesture/react"
 import { useSpring, a } from "@react-spring/three"
 import { GameState } from "./Game"
 import getCheckerPos from "./utils/GetCheckerPos"
-import { OrbitState } from "./OrbitContext"
 import getCheckersOnCol from "./utils/GetCheckersOnCol"
 import lenRemovedCheckers from "./utils/LenRemovedCheckers"
 import switchPlayers from "./utils/switchPlayers"
 import { useEffect } from "react"
 
-const Checker = ({ thisChecker }) => {
+const Checker = ({
+  thisChecker,
+  orbitControlsEnabled,
+  setOrbitControlsEnabled,
+}) => {
   const checker = useRef()
 
   const {
@@ -21,13 +24,10 @@ const Checker = ({ thisChecker }) => {
     newCheckerPosition,
     diceNums,
     checkers,
-    userTurn,
+    userChecker,
     phase,
     setPhase,
   } = useContext(GameState)
-
-  const { orbitControlsEnabled, setOrbitControlsEnabled } =
-    useContext(OrbitState)
 
   // Checkers
   const { size, viewport } = useThree()
@@ -49,7 +49,7 @@ const Checker = ({ thisChecker }) => {
     set({ position: newPos })
   }, [thisChecker.removed])
 
-  // Animations for dragging
+  // Spring animation for dragging
   const [spring, set] = useSpring(() => ({
     position: pos,
     config: { mass: 1, friction: 37, tension: 800 },
@@ -60,26 +60,26 @@ const Checker = ({ thisChecker }) => {
   const bind = useDrag(
     ({ event, offset: [x, y], dragging }) => {
       // For debugging purposes
-      // console.log("checker", checkerPicked.current)
+      // console.log("checker", thisChecker)
+      // console.log("dice", diceNums.current)
 
       // Check to see if the user is allowed to move
       if (
         phase === "checkerMove" &&
-        diceNums.current.length > 1 &&
-        diceNums.current[2] > 0 &&
-        thisChecker.color === userTurn.current
+        diceNums.current.moves > 0 &&
+        thisChecker.color === userChecker.current
       ) {
         // User started dragging the checker
         if (dragging) {
           // If the user is dragging a checker from the removed column,
-          // stop the other checkers from being dragged
+          // stop the other checkers from being dragged (if there are multiple
+          // checkers in the removed column, they get stacked)
           let i = 0
           event.intersections.map((inter) => {
             if (inter.object.material.name.includes("Column")) {
               i++
             }
           })
-
           if (thisChecker.col < 0 && i === 0) event.stopPropagation()
 
           // Disabling orbit controls
@@ -96,10 +96,9 @@ const Checker = ({ thisChecker }) => {
           setOrbitControlsEnabled(true)
           checkerPicked.current = false
 
-          // Cannot update the removed checker's position from here
           const removedCheckersLen = lenRemovedCheckers(
             checkers.current,
-            userTurn.current
+            userChecker.current
           )
 
           // From and to column number
@@ -120,18 +119,25 @@ const Checker = ({ thisChecker }) => {
             // They are moving in the right direction (not backwards)
             moved > 0 &&
             // The user is moving by whatever the number on the dice is
-            (diceNums.current[0] === moved || diceNums.current[1] === moved) &&
+            (diceNums.current.dice1 === moved ||
+              diceNums.current.dice2 === moved) &&
+            // Enforcing the user to move the removed checker *first*
             ((removedCheckersLen > 0 && thisChecker.removed) ||
               (removedCheckersLen === 0 && !thisChecker.removed))
           ) {
             // prettier-ignore
-            const { action, numCheckers, rmChecker } = getCheckersOnCol(checkers.current, to, thisChecker)
+            // Checking of the user is going to a valid position
+            const { action, numCheckers, rmChecker } = getCheckersOnCol(checkers.current, to, thisChecker.color)
 
+            // Current checker instance
             const currentChecker = checkers.current[thisChecker.id]
 
+            // User is moving invalidly ..?
             if (action === "invalid") {
               // Show error message
               console.log("You can't go there!")
+
+              // Return to old position
               const oldPosition = getCheckerPos(
                 currentChecker.col,
                 currentChecker.row,
@@ -143,6 +149,7 @@ const Checker = ({ thisChecker }) => {
 
             let newPositions
 
+            // User is moving validly ..?
             if (action === "valid") {
               // Set the new position of the checker
               newPositions = getCheckerPos(to, numCheckers)
@@ -153,12 +160,14 @@ const Checker = ({ thisChecker }) => {
               currentChecker.removed = false
             }
 
+            // User is removing a checker
             if (action === "remove") {
               // Set the new position of the checker
               newPositions = getCheckerPos(to, numCheckers - 1)
               // Saving the new position of the checker
               currentChecker.col = to
               currentChecker.row = numCheckers - 1
+              currentChecker.removed = false
 
               // Cannot update the removed checker's position from here
               const removedLength = lenRemovedCheckers(
@@ -183,41 +192,27 @@ const Checker = ({ thisChecker }) => {
             })
 
             // Updating the dices
-            diceNums.current[2]--
-            if (diceNums.current[2] < 2) {
-              if (diceNums.current[0] === moved) {
-                diceNums.current[0] = undefined
+            diceNums.current.moves--
+            if (diceNums.current.moves < 2) {
+              if (diceNums.current.dice1 === moved) {
+                diceNums.current.dice1 = undefined
               } else {
-                diceNums.current[1] = undefined
+                diceNums.current.dice2 = undefined
               }
             }
 
-            // Updating the user that is playing
-            if (diceNums.current[2] === 0) {
-              userTurn.current = switchPlayers(userTurn.current)
+            // Updating the user that is playing, and the phase
+            if (diceNums.current.moves === 0) {
+              userChecker.current = switchPlayers(userChecker.current)
               setPhase("diceRoll")
             }
 
-            // *1: Get the column number
-            // *2: Get the from and to, column numbers
-            // *3: Check how many columns they have moved
-            // *4: If the dice number matches with last step, then proceed
-            // 4.5: if not, show error message
-            // 5: Call a function that will get the number of checkers
-            // on that column. If the user is allowed to go to that column
-            // then proceed, if not then show an error message or something.
-            // -> There is a single dark checker -> Removing the checker
-            // -> There are multiple dark checkers
-            // -> There is/are white checkers
-            // 6: Call another function to give out a set of coordinates for
-            // the new checker to placed on.
-            // 7: Set the spring, and physics position based on 5.
-            // 8: Update the checkers positions. (checkers.current)
-
+            // End of logic... phew!
             return
           }
 
-          // User has moved off-grid OR back to their old position. Either way they will return to their previous position
+          // User has moved off-grid OR back to their old position.
+          // Either way they will return to their previous position
           const oldPosition = getCheckerPos(
             checkers.current[thisChecker.id].col,
             checkers.current[thisChecker.id].row,
@@ -235,6 +230,7 @@ const Checker = ({ thisChecker }) => {
           spring.position.get()[2] * aspect,
         ]
       },
+      // For perfomance reasons
       eventOptions: {
         capture: false,
         passive: true,
@@ -244,9 +240,12 @@ const Checker = ({ thisChecker }) => {
 
   return (
     <>
+      {/* The physics */}
       <RigidBody ref={checker} type="kinematicPosition" position={pos}>
         <CuboidCollider args={[0.08, 0.02, 0.08]} />
       </RigidBody>
+
+      {/* The mesh */}
       <a.mesh
         {...spring}
         {...bind()}

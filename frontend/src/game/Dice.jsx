@@ -22,9 +22,15 @@ const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
         })
       }}
       onSleep={() => {
-        // You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
+        // => MAYBE: You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
+
+        // Getting the dice number and saving it to diceNums
         const number = getDiceNumber(ref.current)
-        diceNums.current[index] = number
+        if (index === 0) {
+          diceNums.current.dice1 = number
+        } else {
+          diceNums.current.dice2 = number
+        }
 
         setFinishedThrow((current) => {
           const newCurrent = { ...current }

@@ -8,7 +8,7 @@ const Interface = () => {
   const { user, logout } = useContext(AuthContext)
 
   return (
-    <Container className="justify-between">
+    <Container className="justify-between z-10">
       <div className="w-full flex gap-x-8 items-center justify-evenly">
         {user ? (
           <>

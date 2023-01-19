@@ -23,11 +23,12 @@ const Dices = () => {
     // Dices have finished throwing
     if (finishedThrow[0] && finishedThrow[1]) {
       // Get and set the dice moves
-      if (diceNums.current[0] && diceNums.current[1]) {
-        if (diceNums.current[0] === diceNums.current[1]) {
-          diceNums.current[2] = 4
+      // If the dice numbers match, the user can move 4 times, otherwise 2
+      if (diceNums.current.dice1 && diceNums.current.dice2) {
+        if (diceNums.current.dice1 === diceNums.current.dice2) {
+          diceNums.current.moves = 4
         } else {
-          diceNums.current[2] = 2
+          diceNums.current.moves = 2
         }
         // Set the phase to checkerMove
         setPhase("checkerMove")
@@ -54,8 +55,6 @@ const Dices = () => {
               setShowThrowBtn(false)
               resetDices([dice1.current, dice2.current])
               throwDices([dice1.current, dice2.current])
-              // diceNums.current = getDiceMoves(diceNums)
-              // setTimeout(() => console.log(diceNums.current), 3800)
             }}
           >
             Throw Dice

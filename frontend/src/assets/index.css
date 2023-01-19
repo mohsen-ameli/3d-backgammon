@@ -11,7 +11,7 @@ body,
   height: 100%;
   font-family: "Caveat", cursive;
   font-family: "Josefin Sans", sans-serif;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 
 canvas {
