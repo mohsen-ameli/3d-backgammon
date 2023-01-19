@@ -6,8 +6,16 @@ import * as data from "../data/Data"
  * @param {*} row The row of the checker
  * @returns An array of x, y, and z coordinates. The y (or the elavation) is the ground level
  */
-const getCheckerPos = (col, row) => {
+const getCheckerPos = (col, row, removed = false) => {
   const position = []
+
+  if (removed) {
+    position[0] = 0
+    position[1] = data.CHECKER_H + row * 0.03 - 0.05
+    position[2] = col === -1 ? 0.2 : -0.2
+
+    return position
+  }
 
   // Quadrant 1
   if (col <= 5) {

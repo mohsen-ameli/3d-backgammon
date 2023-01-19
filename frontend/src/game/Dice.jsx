@@ -7,8 +7,6 @@ import getDiceNumber from "./utils/GetDiceNumber"
 const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
   const { nodes, materials, diceNums } = useContext(GameState)
 
-  const [initial, setInitial] = useState(false)
-
   return (
     <RigidBody
       mass={data.DICE_MASS}
@@ -24,13 +22,9 @@ const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
         })
       }}
       onSleep={() => {
-        if (initial) {
-          // You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
-          const number = getDiceNumber(ref.current)
-          diceNums.current[index] = number
-        } else {
-          setInitial(true)
-        }
+        // You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
+        const number = getDiceNumber(ref.current)
+        diceNums.current[index] = number
 
         setFinishedThrow((current) => {
           const newCurrent = { ...current }

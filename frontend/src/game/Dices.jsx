@@ -8,7 +8,7 @@ import throwDices from "./utils/ThrowDices"
 import * as data from "./data/Data"
 
 const Dices = () => {
-  const { diceNums, state } = useContext(GameState)
+  const { diceNums, state, phase, setPhase } = useContext(GameState)
   const dice1 = useRef()
   const dice2 = useRef()
 
@@ -16,6 +16,8 @@ const Dices = () => {
     0: false,
     1: false,
   })
+
+  const [showThrowBtn, setShowThrowBtn] = useState(true)
 
   useEffect(() => {
     if (finishedThrow[0] && finishedThrow[1]) {
@@ -25,21 +27,27 @@ const Dices = () => {
         } else {
           diceNums.current[2] = 2
         }
-        state.current = "checkerMove"
+        setPhase("checkerMove")
       }
     }
   }, [finishedThrow])
 
-  console.log(diceNums.current[2])
+  useEffect(() => {
+    console.log("phase", phase)
+    if (phase === "diceRoll") {
+      setShowThrowBtn(true)
+    }
+  }, [phase])
 
   return (
     <>
       <Html as="div" transform scale={0.2} position={[1.75, 0.5, 0]}>
         {/* Throwing the dice */}
-        {diceNums.current[2] === 0 && (
+        {showThrowBtn && (
           <Button
             className="text-white select-none"
             onClick={() => {
+              setShowThrowBtn(false)
               resetDices([dice1.current, dice2.current])
               throwDices([dice1.current, dice2.current])
               // diceNums.current = getDiceMoves(diceNums)

@@ -33,6 +33,8 @@ const Game = () => {
   const newCheckerPosition = useRef()
   const state = useRef("initial")
 
+  const [phase, setPhase] = useState("initial")
+
   /* checkerNumber: [
     id: int,
     color: "white" | "black",
@@ -88,6 +90,8 @@ const Game = () => {
     userTurn,
     checkers,
     state,
+    phase,
+    setPhase,
     checkerPicked,
     newCheckerPosition,
   }
@@ -117,18 +121,14 @@ const Game = () => {
         <mesh geometry={nodes.Cube012_1.geometry} material={materials.Hinge} />
 
         <Physics>
-          {/* <Debug /> */}
+          <Debug />
 
           <Dices />
 
           {/* Checkers */}
           {/* Get rid of this context, and put both the orbit controls
           and all of checkers in a separate component. */}
-          <OrbitProvider>
-            {checkers.current.map((data) => (
-              <Checker thisChecker={data} key={data.id} />
-            ))}
-          </OrbitProvider>
+          <OrbitProvider />
 
           {/* Board */}
           <RigidBody type="fixed" colliders={false}>

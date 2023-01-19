@@ -1,9 +1,13 @@
 import { OrbitControls } from "@react-three/drei"
-import { createContext, useState } from "react"
+import { createContext, useContext, useState } from "react"
+import Checker from "./Checker"
+import { GameState } from "./Game"
 
 export const OrbitState = createContext()
 
-const OrbitProvider = (props) => {
+const OrbitProvider = () => {
+  const { checkers } = useContext(GameState)
+
   const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true)
 
   return (
@@ -14,7 +18,9 @@ const OrbitProvider = (props) => {
       }}
     >
       <OrbitControls makeDefault enabled={orbitControlsEnabled} />
-      {props.children}
+      {checkers.current.map((data) => (
+        <Checker thisChecker={data} key={data.id} />
+      ))}
     </OrbitState.Provider>
   )
 }
