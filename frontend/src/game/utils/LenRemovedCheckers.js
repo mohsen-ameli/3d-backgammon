@@ -3,6 +3,7 @@ const lenRemovedCheckers = (checkers, color) => {
     if (checker.color === color) {
       return checker.removed
     }
+    return
   })
 
   return removed.length

@@ -4,7 +4,6 @@ import { useThree } from "@react-three/fiber"
 import { useDrag } from "@use-gesture/react"
 import { useSpring, a } from "@react-spring/three"
 import { GameState } from "./Game"
-import * as data from "./data/Data"
 import getCheckerPos from "./utils/GetCheckerPos"
 import { OrbitState } from "./OrbitContext"
 import getCheckersOnCol from "./utils/GetCheckersOnCol"
@@ -35,7 +34,6 @@ const Checker = ({ thisChecker }) => {
   const aspect = size.width / viewport.width
 
   // local state for every checker
-  // ****************** maybe remove () => here ******************
   const [pos, setPos] = useState(() =>
     getCheckerPos(thisChecker.col, thisChecker.row, thisChecker.removed)
   )
@@ -58,9 +56,13 @@ const Checker = ({ thisChecker }) => {
   }))
 
   // When a checker is picked up (dragged)
+  // This is where the main logic for the game is
   const bind = useDrag(
-    ({ offset: [x, y], dragging }) => {
-      // Check to see if user is allowed to move
+    ({ event, offset: [x, y], dragging }) => {
+      // For debugging purposes
+      // console.log("checker", checkerPicked.current)
+
+      // Check to see if the user is allowed to move
       if (
         phase === "checkerMove" &&
         diceNums.current.length > 1 &&
@@ -69,6 +71,17 @@ const Checker = ({ thisChecker }) => {
       ) {
         // User started dragging the checker
         if (dragging) {
+          // If the user is dragging a checker from the removed column,
+          // stop the other checkers from being dragged
+          let i = 0
+          event.intersections.map((inter) => {
+            if (inter.object.material.name.includes("Column")) {
+              i++
+            }
+          })
+
+          if (thisChecker.col < 0 && i === 0) event.stopPropagation()
+
           // Disabling orbit controls
           orbitControlsEnabled && setOrbitControlsEnabled(false)
 
@@ -101,8 +114,6 @@ const Checker = ({ thisChecker }) => {
           const to = newCheckerPosition.current
           const moved = thisChecker.color === "white" ? to - from : from - to
 
-          console.log(moved)
-
           if (
             // The user isn't going to the moon
             !isNaN(moved) &&
@@ -116,13 +127,15 @@ const Checker = ({ thisChecker }) => {
             // prettier-ignore
             const { action, numCheckers, rmChecker } = getCheckersOnCol(checkers.current, to, thisChecker)
 
+            const currentChecker = checkers.current[thisChecker.id]
+
             if (action === "invalid") {
               // Show error message
               console.log("You can't go there!")
               const oldPosition = getCheckerPos(
-                checkers.current[thisChecker.id].col,
-                checkers.current[thisChecker.id].row,
-                checkers.current[thisChecker.id].removed
+                currentChecker.col,
+                currentChecker.row,
+                currentChecker.removed
               )
               set({ position: oldPosition })
               return
@@ -135,21 +148,17 @@ const Checker = ({ thisChecker }) => {
               newPositions = getCheckerPos(to, numCheckers)
 
               // Saving the new position of the checker
-              checkers.current[thisChecker.id].col = to
-              checkers.current[thisChecker.id].row = numCheckers
-
-              checkers.current[thisChecker.id].removed =
-                checkers.current[thisChecker.id].removed === true
-                  ? false
-                  : false
+              currentChecker.col = to
+              currentChecker.row = numCheckers
+              currentChecker.removed = false
             }
 
             if (action === "remove") {
               // Set the new position of the checker
               newPositions = getCheckerPos(to, numCheckers - 1)
               // Saving the new position of the checker
-              checkers.current[thisChecker.id].col = to
-              checkers.current[thisChecker.id].row = numCheckers - 1
+              currentChecker.col = to
+              currentChecker.row = numCheckers - 1
 
               // Cannot update the removed checker's position from here
               const removedLength = lenRemovedCheckers(
@@ -225,6 +234,10 @@ const Checker = ({ thisChecker }) => {
           spring.position.get()[0] * aspect,
           spring.position.get()[2] * aspect,
         ]
+      },
+      eventOptions: {
+        capture: false,
+        passive: true,
       },
     }
   )

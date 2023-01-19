@@ -7,9 +7,9 @@ const UI = () => {
   const { userTurn } = useContext(GameState)
 
   return (
-    <Html as="div" transform scale={0.2} position={[1.75, 1, 0]}>
+    <Html as="div" transform scale={0.2} position={[1.75, 1, 0]} sprite>
       {/* Flipping the board */}
-      <Button
+      {/* <Button
         className="text-white select-none"
         onClick={() => {
           userTurn.current = userTurn.current === "white" ? "black" : "white"
@@ -18,7 +18,7 @@ const UI = () => {
         }}
       >
         Flip the board
-      </Button>
+      </Button> */}
     </Html>
   )
 }

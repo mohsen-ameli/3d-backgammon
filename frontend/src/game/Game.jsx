@@ -38,7 +38,7 @@ const Game = () => {
   /* checkerNumber: [
     id: int,
     color: "white" | "black",
-    col: 0 - 23,
+    col: 0 - 23 (if removed, -1 => white checkers or -2 => black checkers),
     row: 0 - 4,
     removed: true | false
   ] */
@@ -121,7 +121,7 @@ const Game = () => {
         <mesh geometry={nodes.Cube012_1.geometry} material={materials.Hinge} />
 
         <Physics>
-          <Debug />
+          {/* <Debug /> */}
 
           <Dices />
 

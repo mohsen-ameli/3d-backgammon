@@ -8,7 +8,7 @@ import throwDices from "./utils/ThrowDices"
 import * as data from "./data/Data"
 
 const Dices = () => {
-  const { diceNums, state, phase, setPhase } = useContext(GameState)
+  const { diceNums, phase, setPhase } = useContext(GameState)
   const dice1 = useRef()
   const dice2 = useRef()
 
@@ -20,20 +20,24 @@ const Dices = () => {
   const [showThrowBtn, setShowThrowBtn] = useState(true)
 
   useEffect(() => {
+    // Dices have finished throwing
     if (finishedThrow[0] && finishedThrow[1]) {
+      // Get and set the dice moves
       if (diceNums.current[0] && diceNums.current[1]) {
         if (diceNums.current[0] === diceNums.current[1]) {
           diceNums.current[2] = 4
         } else {
           diceNums.current[2] = 2
         }
+        // Set the phase to checkerMove
         setPhase("checkerMove")
+
+        // Check if user has any valid moves
       }
     }
   }, [finishedThrow])
 
   useEffect(() => {
-    console.log("phase", phase)
     if (phase === "diceRoll") {
       setShowThrowBtn(true)
     }
@@ -41,7 +45,7 @@ const Dices = () => {
 
   return (
     <>
-      <Html as="div" transform scale={0.2} position={[1.75, 0.5, 0]}>
+      <Html as="div" transform scale={0.2} position={[1.75, 0.5, 0]} sprite>
         {/* Throwing the dice */}
         {showThrowBtn && (
           <Button

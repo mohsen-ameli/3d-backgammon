@@ -1,5 +1,5 @@
 import { RigidBody } from "@react-three/rapier"
-import { forwardRef, useContext, useState } from "react"
+import { forwardRef, useContext } from "react"
 import * as data from "./data/Data"
 import { GameState } from "./Game"
 import getDiceNumber from "./utils/GetDiceNumber"
