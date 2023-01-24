@@ -60,6 +60,7 @@ const Checker = ({ thisChecker }) => {
       // For debugging purposes
       // console.log("checker", thisChecker)
       // console.log("dice", diceNums.current)
+      // console.log("phase", phase)
 
       // Check to see if the user is allowed to move
       if (

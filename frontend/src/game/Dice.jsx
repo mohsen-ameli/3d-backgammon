@@ -22,23 +22,25 @@ const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
         })
       }}
       onSleep={() => {
-        // => MAYBE: You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
+        if (diceOnBoard(ref.current)) {
+          // => MAYBE: You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
 
-        // Getting the dice number and saving it to diceNums
-        if (!isInitial(ref.current.rotation())) {
-          const number = getDiceNumber(ref.current)
-          if (index === 0) {
-            diceNums.current.dice1 = number
-          } else {
-            diceNums.current.dice2 = number
+          // Getting the dice number and saving it to diceNums
+          if (!isInitial(ref.current.rotation())) {
+            const number = getDiceNumber(ref.current)
+            if (index === 0) {
+              diceNums.current.dice1 = number
+            } else {
+              diceNums.current.dice2 = number
+            }
           }
-        }
 
-        setFinishedThrow((current) => {
-          const newCurrent = { ...current }
-          newCurrent[index] = true
-          return newCurrent
-        })
+          setFinishedThrow((current) => {
+            const newCurrent = { ...current }
+            newCurrent[index] = true
+            return newCurrent
+          })
+        }
       }}
     >
       <group name="Dice">
@@ -68,6 +70,10 @@ const isInitial = (quatornion) => {
   } else {
     return false
   }
+}
+
+const diceOnBoard = (dice) => {
+  return dice.translation().y < 0.5
 }
 
 export default Dice
