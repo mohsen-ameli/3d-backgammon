@@ -25,11 +25,13 @@ const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
         // => MAYBE: You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
 
         // Getting the dice number and saving it to diceNums
-        const number = getDiceNumber(ref.current)
-        if (index === 0) {
-          diceNums.current.dice1 = number
-        } else {
-          diceNums.current.dice2 = number
+        if (!isInitial(ref.current.rotation())) {
+          const number = getDiceNumber(ref.current)
+          if (index === 0) {
+            diceNums.current.dice1 = number
+          } else {
+            diceNums.current.dice2 = number
+          }
         }
 
         setFinishedThrow((current) => {
@@ -54,5 +56,18 @@ const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
     </RigidBody>
   )
 })
+
+const isInitial = (quatornion) => {
+  if (
+    quatornion.x === 0.00048353226156905293 &&
+    quatornion.y === 0.005327336024492979 &&
+    quatornion.z === -0.00011967308091698214 &&
+    quatornion.w === 0.9999856352806091
+  ) {
+    return true
+  } else {
+    return false
+  }
+}
 
 export default Dice

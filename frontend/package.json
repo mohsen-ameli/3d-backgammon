@@ -1,57 +1,30 @@
 {
-  "name": "3d-backgammon",
-  "proxy": "http://localhost:8000",
-  "version": "0.1.0",
+  "name": "3d-backgammon-frontend",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build"
+  },
   "dependencies": {
-    "@react-spring/web": "^9.6.1",
-    "@react-three/drei": "^9.48.1",
-    "@react-three/fiber": "^8.9.1",
-    "@react-three/rapier": "^0.10.0",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/three": "^0.146.0",
-    "@use-gesture/react": "^10.2.23",
+    "@react-three/rapier": "^0.12.2",
     "axios": "^1.2.2",
     "gsap": "^3.11.4",
-    "http": "^0.0.1-security",
     "jwt-decode": "^3.1.2",
     "leva": "^0.9.34",
     "r3f-perf": "^6.6.3",
     "react": "^18.2.0",
-    "react-beforeunload": "^2.5.3",
     "react-dom": "^18.2.0",
     "react-loader-spinner": "^5.3.4",
     "react-router-dom": "^6.6.1",
-    "react-scripts": "5.0.1",
-    "three": "^0.148.0",
-    "uuid": "^9.0.0",
-    "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "BROWSER=none react-scripts start",
-    "build": "react-scripts build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "three": "^0.148.0"
   },
   "devDependencies": {
-    "tailwindcss": "^3.2.4"
+    "@vitejs/plugin-react": "^3.0.0",
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.4",
+    "vite": "^4.0.4"
   }
 }

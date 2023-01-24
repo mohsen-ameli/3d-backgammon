@@ -10,11 +10,7 @@ import lenRemovedCheckers from "./utils/LenRemovedCheckers"
 import switchPlayers from "./utils/switchPlayers"
 import { useEffect } from "react"
 
-const Checker = ({
-  thisChecker,
-  orbitControlsEnabled,
-  setOrbitControlsEnabled,
-}) => {
+const Checker = ({ thisChecker }) => {
   const checker = useRef()
 
   const {
@@ -27,6 +23,8 @@ const Checker = ({
     userChecker,
     phase,
     setPhase,
+    orbitControlsEnabled,
+    setOrbitControlsEnabled,
   } = useContext(GameState)
 
   // Checkers

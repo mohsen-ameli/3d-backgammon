@@ -1,4 +1,4 @@
-import { useGLTF } from "@react-three/drei"
+import { useGLTF, OrbitControls } from "@react-three/drei"
 import { createContext, useEffect, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
@@ -34,6 +34,8 @@ const Game = () => {
 
   // The current phase of the game
   const [phase, setPhase] = useState("initial")
+  // Orbit controls state
+  const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true)
 
   /* checkerNumber: [
     id: int,
@@ -92,6 +94,8 @@ const Game = () => {
     checkers,
     phase,
     setPhase,
+    orbitControlsEnabled,
+    setOrbitControlsEnabled,
     checkerPicked,
     newCheckerPosition,
   }
@@ -106,6 +110,8 @@ const Game = () => {
       {/* <Perf position="top-left" /> */}
 
       <GameState.Provider value={value}>
+        <OrbitControls makeDefault enabled={orbitControlsEnabled} />
+
         <UI />
 
         <Columns />

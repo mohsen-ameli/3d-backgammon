@@ -6,9 +6,11 @@ import { GameState } from "./Game"
 import resetDices from "./utils/ResetDices"
 import throwDices from "./utils/ThrowDices"
 import * as data from "./data/Data"
+import hasValidMoves from "./utils/HasValidMoves"
 
 const Dices = () => {
-  const { diceNums, phase, setPhase } = useContext(GameState)
+  const { diceNums, phase, setPhase, checkers, userChecker } =
+    useContext(GameState)
   const dice1 = useRef()
   const dice2 = useRef()
 
@@ -25,6 +27,9 @@ const Dices = () => {
       // Get and set the dice moves
       // If the dice numbers match, the user can move 4 times, otherwise 2
       if (diceNums.current.dice1 && diceNums.current.dice2) {
+        // Check if user has any valid moves
+        hasValidMoves(checkers.current, diceNums.current, userChecker.current)
+
         if (diceNums.current.dice1 === diceNums.current.dice2) {
           diceNums.current.moves = 4
         } else {
@@ -32,8 +37,6 @@ const Dices = () => {
         }
         // Set the phase to checkerMove
         setPhase("checkerMove")
-
-        // Check if user has any valid moves
       }
     }
   }, [finishedThrow])
