@@ -112,6 +112,14 @@ const Checker = ({ thisChecker }) => {
           const to = newCheckerPosition.current
           const moved = thisChecker.color === "white" ? to - from : from - to
 
+          // Need to check if user has all of their checkers in the home column,
+          // if only the "to" is -3 or -4.
+
+          // User is trying to move their checker to the outside coloumn
+          if (to === -3 || to === -4) {
+            return
+          }
+
           if (
             // The user isn't going to the moon
             !isNaN(moved) &&
