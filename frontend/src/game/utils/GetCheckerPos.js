@@ -8,6 +8,7 @@ import * as data from "../data/Data"
  */
 const getCheckerPos = (col, row, removed = false) => {
   const position = []
+  position[1] = data.GROUND
 
   if (removed) {
     position[0] = 0
@@ -17,8 +18,17 @@ const getCheckerPos = (col, row, removed = false) => {
     return position
   }
 
+  if (col === -3) {
+    position[0] = data.BOARD_W + (data.CHECKER_W * 5.6) / 4
+    position[1] = data.GROUND + 0.15
+    position[2] = 0.25 + 0.04 * row
+  } else if (col === -4) {
+    position[0] = data.BOARD_W + (data.CHECKER_W * 5.6) / 4
+    position[1] = data.GROUND + 0.15
+    position[2] = -0.825 + 0.04 * row
+  }
   // Quadrant 1
-  if (col <= 5) {
+  else if (col <= 5) {
     position[0] = data.BOARD_W - data.CHECKER_W * col
     position[2] = -data.BOARD_H + data.CHECKER_H * row
   }
@@ -37,8 +47,6 @@ const getCheckerPos = (col, row, removed = false) => {
     position[0] = data.BOARD_W - data.CHECKER_W * (18 - col + 5)
     position[2] = data.BOARD_H - data.CHECKER_H * row
   }
-
-  position[1] = data.GROUND
 
   return position
 }

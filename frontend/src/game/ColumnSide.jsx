@@ -3,9 +3,16 @@ import { COLOUMN_HOVER_COLOR } from "./data/Data"
 import * as THREE from "three"
 import { GameState } from "./Game"
 import { useMemo } from "react"
+import Endgame from "./utils/Endgame"
 
 const ColumnSide = ({ node }) => {
-  const { materials, checkerPicked, newCheckerPosition } = useContext(GameState)
+  const {
+    materials,
+    checkerPicked,
+    newCheckerPosition,
+    checkers,
+    userChecker,
+  } = useContext(GameState)
 
   const blackOrWhite = useRef()
 
@@ -22,12 +29,15 @@ const ColumnSide = ({ node }) => {
   }, [])
 
   const handleHover = () => {
-    if (checkerPicked.current) {
-      material.color.set(COLOUMN_HOVER_COLOR)
-      if (node.name === "WhiteHouse") {
-        newCheckerPosition.current = -3
-      } else {
-        newCheckerPosition.current = -4
+    if (node.name.includes(toCapitalize(userChecker.current))) {
+      const end = Endgame(checkers.current, userChecker.current)
+      if (checkerPicked.current && end) {
+        material.color.set(COLOUMN_HOVER_COLOR)
+        if (node.name === "WhiteHouse") {
+          newCheckerPosition.current = -3
+        } else {
+          newCheckerPosition.current = -4
+        }
       }
     }
   }
@@ -45,6 +55,10 @@ const ColumnSide = ({ node }) => {
       material={material}
     />
   )
+}
+
+function toCapitalize(str) {
+  return str[0].toUpperCase() + str.slice(1)
 }
 
 export default ColumnSide

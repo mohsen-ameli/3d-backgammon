@@ -9,6 +9,8 @@ import getCheckersOnCol from "./utils/GetCheckersOnCol"
 import lenRemovedCheckers from "./utils/LenRemovedCheckers"
 import switchPlayers from "./utils/switchPlayers"
 import { useEffect } from "react"
+import Endgame from "./utils/Endgame"
+import GameWon from "./utils/GameWon"
 
 const Checker = ({ thisChecker }) => {
   const checker = useRef()
@@ -49,6 +51,10 @@ const Checker = ({ thisChecker }) => {
 
   // Spring animation for dragging
   const [spring, set] = useSpring(() => ({
+    rotation:
+      thisChecker.col === -3 || thisChecker.col === -4
+        ? [Math.PI / 3, 0, 0]
+        : [0, 0, 0],
     position: pos,
     config: { mass: 1, friction: 37, tension: 800 },
   }))
@@ -60,7 +66,9 @@ const Checker = ({ thisChecker }) => {
       // For debugging purposes
       // console.log("checker", thisChecker)
       // console.log("dice", diceNums.current)
+      // console.log("game won", GameWon(checkers.current, userChecker.current))
       // console.log("phase", phase)
+      // console.log("thisChecker", thisChecker)
 
       // Check to see if the user is allowed to move
       if (
@@ -90,11 +98,12 @@ const Checker = ({ thisChecker }) => {
           // The checker has been picked up
           checkerPicked.current = true
         }
-        // Finished dragging
+        // Finished dragging (Main logic of the game)
         else {
-          setOrbitControlsEnabled(true)
+          !orbitControlsEnabled && setOrbitControlsEnabled(true)
           checkerPicked.current = false
 
+          // Number of removed checkers of the current player/user
           const removedCheckersLen = lenRemovedCheckers(
             checkers.current,
             userChecker.current
@@ -110,16 +119,92 @@ const Checker = ({ thisChecker }) => {
             from = thisChecker.col
           }
           const to = newCheckerPosition.current
-          const moved = thisChecker.color === "white" ? to - from : from - to
-
-          // Need to check if user has all of their checkers in the home column,
-          // if only the "to" is -3 or -4.
-
-          // User is trying to move their checker to the outside coloumn
-          if (to === -3 || to === -4) {
-            return
+          let moved
+          if (to === -3) {
+            moved = 24 - from
+          } else if (to === -4) {
+            moved = from + 1
+          } else {
+            moved = thisChecker.color === "white" ? to - from : from - to
           }
 
+          // Current checker instance
+          const currentChecker = checkers.current[thisChecker.id]
+
+          // User is trying to move their checker outside the board
+          if (to === -3 || to === -4) {
+            const end = Endgame(checkers.current, userChecker.current)
+            if (end) {
+              // Getting the number of checkers in the back of the current checker
+              let backRankCheckers
+              if (thisChecker.color === "black") {
+                backRankCheckers = checkers.current.filter(
+                  (checker) =>
+                    checker.col > thisChecker.col &&
+                    checker.color === thisChecker.color
+                ).length
+              } else {
+                backRankCheckers = checkers.current.filter(
+                  (checker) =>
+                    checker.col >= 18 &&
+                    checker.col < thisChecker.col &&
+                    checker.color === thisChecker.color
+                ).length
+              }
+
+              let validMove = false
+
+              // If there are no checkers behind the current checker,
+              // and the dice number is greater than the how much the user moved
+              if (
+                backRankCheckers === 0 &&
+                (diceNums.current.dice1 >= moved ||
+                  diceNums.current.dice2 >= moved)
+              ) {
+                if (diceNums.current.dice1 > diceNums.current.dice2) {
+                  moved = diceNums.current.dice1
+                } else {
+                  moved = diceNums.current.dice2
+                }
+                validMove = true
+              }
+              // The user has moved directly outside
+              else if (
+                diceNums.current.dice1 === moved ||
+                diceNums.current.dice2 === moved
+              ) {
+                validMove = true
+              }
+
+              if (validMove) {
+                const checkersOnEndCol = checkers.current.filter(
+                  (checker) => checker.col === to
+                )
+                const positions = getCheckerPos(to, checkersOnEndCol.length)
+
+                // Saving the new position of the checker
+                currentChecker.col = to
+                currentChecker.row = checkersOnEndCol.length
+                currentChecker.removed = false
+
+                // Checking if user has won
+                const possibleWinner = userChecker.current
+
+                updateStuff(positions, moved, [Math.PI / 3, 0, 0])
+
+                const won = GameWon(checkers.current, possibleWinner)
+                if (won) {
+                  console.log(`${possibleWinner}-won`)
+                  setPhase(`${possibleWinner}-won`)
+                  return
+                }
+
+                return
+              }
+            }
+          }
+
+          // User is moving their checker withing the board
           if (
             // The user isn't going to the moon
             !isNaN(moved) &&
@@ -133,11 +218,8 @@ const Checker = ({ thisChecker }) => {
               (removedCheckersLen === 0 && !thisChecker.removed))
           ) {
             // prettier-ignore
-            // Checking of the user is going to a valid position
+            // Checking if the user is going to a valid position
             const { action, numCheckers, rmChecker } = getCheckersOnCol(checkers.current, to, thisChecker.color)
-
-            // Current checker instance
-            const currentChecker = checkers.current[thisChecker.id]
 
             // User is moving invalidly ..?
             if (action === "invalid") {
@@ -151,6 +233,7 @@ const Checker = ({ thisChecker }) => {
                 currentChecker.removed
               )
               set({ position: oldPosition })
+
               return
             }
 
@@ -188,31 +271,7 @@ const Checker = ({ thisChecker }) => {
               checkers.current[rmChecker.id].removed = true
             }
 
-            // Setting the checker's mesh position (not the physics)
-            set({ position: newPositions })
-
-            // Setting the checker's physics position
-            checker.current.setTranslation({
-              x: newPositions[0],
-              y: newPositions[1],
-              z: newPositions[2],
-            })
-
-            // Updating the dices
-            diceNums.current.moves--
-            if (diceNums.current.moves < 2) {
-              if (diceNums.current.dice1 === moved) {
-                diceNums.current.dice1 = undefined
-              } else {
-                diceNums.current.dice2 = undefined
-              }
-            }
-
-            // Updating the user that is playing, and the phase
-            if (diceNums.current.moves === 0) {
-              userChecker.current = switchPlayers(userChecker.current)
-              setPhase("diceRoll")
-            }
+            updateStuff(newPositions, moved)
 
             // End of logic... phew!
             return
@@ -244,6 +303,34 @@ const Checker = ({ thisChecker }) => {
       },
     }
   )
+
+  function updateStuff(newPositions, moved, rotation = [0, 0, 0]) {
+    // Setting the checker's mesh position (not the physics)
+    set({ position: newPositions, rotation })
+
+    // Setting the checker's physics position
+    checker.current.setTranslation({
+      x: newPositions[0],
+      y: newPositions[1],
+      z: newPositions[2],
+    })
+
+    // Updating the dices
+    diceNums.current.moves--
+    if (diceNums.current.moves < 2) {
+      if (diceNums.current.dice1 === moved) {
+        diceNums.current.dice1 = undefined
+      } else {
+        diceNums.current.dice2 = undefined
+      }
+    }
+
+    // Updating the user that is playing, and the phase
+    if (diceNums.current.moves === 0) {
+      userChecker.current = switchPlayers(userChecker.current)
+      setPhase("diceRoll")
+    }
+  }
 
   return (
     <>
