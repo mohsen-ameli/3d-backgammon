@@ -4,6 +4,7 @@ import * as THREE from "three"
 import { GameState } from "./Game"
 import { useMemo } from "react"
 import Endgame from "./utils/Endgame"
+import toCapitalize from "../components/utils/ToCapitalize"
 
 const ColumnSide = ({ node }) => {
   const {
@@ -55,10 +56,6 @@ const ColumnSide = ({ node }) => {
       material={material}
     />
   )
-}
-
-function toCapitalize(str) {
-  return str[0].toUpperCase() + str.slice(1)
 }
 
 export default ColumnSide

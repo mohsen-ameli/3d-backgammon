@@ -21,7 +21,7 @@ const Dices = () => {
     1: false,
   })
 
-  const [showThrowBtn, setShowThrowBtn] = useState(true)
+  const [showThrowBtn, setShowThrowBtn] = useState(false)
 
   useEffect(() => {
     // Dices have finished throwing
@@ -66,6 +66,12 @@ const Dices = () => {
 
   useEffect(() => {
     if (phase === "diceRoll") {
+      setShowThrowBtn(true)
+    } else if (phase === "ended") {
+      setShowThrowBtn(false)
+    } else if (phase === "initial") {
+      resetDices([dice1.current, dice2.current])
+      resetDiceRotation([dice1.current, dice2.current])
       setShowThrowBtn(true)
     }
   }, [phase])

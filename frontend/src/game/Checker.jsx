@@ -34,9 +34,25 @@ const Checker = ({ thisChecker }) => {
   const aspect = size.width / viewport.width
 
   // local state for every checker
-  const [pos, setPos] = useState(() =>
-    getCheckerPos(thisChecker.col, thisChecker.row, thisChecker.removed)
-  )
+  const [pos, setPos] = useState([0, 0, 0])
+
+  useEffect(() => {
+    if (phase === "initial") {
+      const newPos = getCheckerPos(
+        thisChecker.col,
+        thisChecker.row,
+        thisChecker.removed
+      )
+      setPos(newPos)
+      set({ position: newPos, rotation: [0, 0, 0] })
+      // Setting the checker's physics position
+      checker.current.setTranslation({
+        x: newPos[0],
+        y: newPos[1],
+        z: newPos[2],
+      })
+    }
+  }, [phase])
 
   // When a checker is removed, update its position
   useEffect(() => {
@@ -193,11 +209,7 @@ const Checker = ({ thisChecker }) => {
                 updateStuff(positions, moved, [Math.PI / 3, 0, 0])
 
                 const won = GameWon(checkers.current, possibleWinner)
-                if (won) {
-                  console.log(`${possibleWinner}-won`)
-                  setPhase(`${possibleWinner}-won`)
-                  return
-                }
+                if (won) setPhase("ended")
 
                 return
               }

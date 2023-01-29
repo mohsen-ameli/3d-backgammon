@@ -1,4 +1,4 @@
-import { useGLTF, OrbitControls } from "@react-three/drei"
+import { useGLTF, OrbitControls, Environment } from "@react-three/drei"
 import { createContext, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
@@ -8,13 +8,16 @@ import UI from "./UI"
 import Checkers from "./Checkers"
 import Board from "./Board"
 import Columns from "./Columns"
+import { useEffect } from "react"
+import { useLocation } from "react-router-dom"
+import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
 
 const Game = () => {
   // The current phase of the game
-  const [phase, setPhase] = useState("initial")
+  const [phase, setPhase] = useState()
 
   // Orbit controls enabled state
   const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true)
@@ -42,42 +45,21 @@ const Game = () => {
   ] */
 
   // All of the checkers' default positions
-  const checkers = useRef([
-    { id: 0, color: "white", col: 21, row: 0, removed: false },
-    { id: 1, color: "white", col: 21, row: 1, removed: false },
-    { id: 2, color: "white", col: -3, row: 0, removed: false },
-    { id: 3, color: "white", col: -3, row: 1, removed: false },
-    { id: 4, color: "white", col: -3, row: 2, removed: false },
-    { id: 5, color: "white", col: -3, row: 3, removed: false },
-    { id: 6, color: "white", col: -3, row: 4, removed: false },
-    { id: 7, color: "white", col: -3, row: 5, removed: false },
-    { id: 8, color: "white", col: -3, row: 6, removed: false },
-    { id: 9, color: "white", col: -3, row: 7, removed: false },
-    { id: 10, color: "white", col: -3, row: 8, removed: false },
-    { id: 11, color: "white", col: -3, row: 9, removed: false },
-    { id: 12, color: "white", col: -3, row: 10, removed: false },
-    { id: 13, color: "white", col: 18, row: 0, removed: false },
-    { id: 14, color: "white", col: 18, row: 1, removed: false },
-
-    { id: 15, color: "black", col: 23, row: 0, removed: false },
-    { id: 16, color: "black", col: 23, row: 1, removed: false },
-    { id: 17, color: "black", col: 12, row: 0, removed: false },
-    { id: 18, color: "black", col: 12, row: 1, removed: false },
-    { id: 19, color: "black", col: 12, row: 2, removed: false },
-    { id: 20, color: "black", col: 12, row: 3, removed: false },
-    { id: 21, color: "black", col: 12, row: 4, removed: false },
-    { id: 22, color: "black", col: 7, row: 0, removed: false },
-    { id: 23, color: "black", col: 7, row: 1, removed: false },
-    { id: 24, color: "black", col: 7, row: 2, removed: false },
-    { id: 25, color: "black", col: 5, row: 0, removed: false },
-    { id: 26, color: "black", col: 5, row: 1, removed: false },
-    { id: 27, color: "black", col: 5, row: 2, removed: false },
-    { id: 28, color: "black", col: 5, row: 3, removed: false },
-    { id: 29, color: "black", col: 5, row: 4, removed: false },
-  ])
+  const checkers = useRef(JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS)))
 
   // Load the models
   const { nodes, materials } = useGLTF(models)
+
+  const location = useLocation()
+
+  // Setting the phase to initial if user is playing
+  useEffect(() => {
+    if (location.pathname === "/pass-and-play") {
+      setPhase("initial")
+      userChecker.current = "white"
+      checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
+    }
+  }, [location.pathname])
 
   // Game state values
   const value = {
@@ -96,10 +78,10 @@ const Game = () => {
 
   return (
     <>
-      <color args={["salmon"]} attach="background" />
+      <Environment preset="forest" background blur={0.1} />
 
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[0, 10, 5]} intensity={1.5} />
+      <ambientLight intensity={1} />
+      <directionalLight position={[-5, 10, 5]} intensity={0.5} />
 
       <Perf position="top-left" />
 
