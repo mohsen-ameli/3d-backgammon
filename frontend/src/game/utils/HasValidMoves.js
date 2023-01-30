@@ -1,3 +1,12 @@
+/**
+ * This method is for when the user has checkers removed and wants to
+ * move them back to the board. If they have any valid moves, then
+ * this method will return true, otherwise it will return false.
+ * @param {*} checkers Reference to the checkers array
+ * @param {*} dices Reference to the dices array
+ * @param {*} color The color of the checker to be checked
+ * @returns boolean
+ */
 const hasValidMoves = (checkers, dices, color) => {
   const oppositeColor = color === "white" ? "black" : "white"
 

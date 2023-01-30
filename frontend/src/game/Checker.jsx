@@ -11,6 +11,7 @@ import switchPlayers from "./utils/switchPlayers"
 import { useEffect } from "react"
 import Endgame from "./utils/Endgame"
 import GameWon from "./utils/GameWon"
+import hasMoves from "./utils/HasMoves"
 
 const Checker = ({ thisChecker }) => {
   const checker = useRef()
@@ -90,7 +91,9 @@ const Checker = ({ thisChecker }) => {
       if (
         phase === "checkerMove" &&
         diceNums.current.moves > 0 &&
-        thisChecker.color === userChecker.current
+        thisChecker.color === userChecker.current &&
+        thisChecker.col !== -3 &&
+        thisChecker.col !== -4
       ) {
         // User started dragging the checker
         if (dragging) {
@@ -209,7 +212,10 @@ const Checker = ({ thisChecker }) => {
                 updateStuff(positions, moved, [Math.PI / 3, 0, 0])
 
                 const won = GameWon(checkers.current, possibleWinner)
-                if (won) setPhase("ended")
+                if (won) {
+                  setPhase("ended")
+                  userChecker.current = possibleWinner
+                }
 
                 return
               }
@@ -341,6 +347,28 @@ const Checker = ({ thisChecker }) => {
     if (diceNums.current.moves === 0) {
       userChecker.current = switchPlayers(userChecker.current)
       setPhase("diceRoll")
+    }
+
+    // Checking if the user has any valid moves
+    const hasMoves_ = hasMoves(
+      checkers.current,
+      diceNums.current,
+      userChecker.current
+    )
+    console.log(hasMoves_)
+
+    // If the user has no valid moves
+    if (!hasMoves_) {
+      // Switch players
+      userChecker.current = switchPlayers(userChecker.current)
+      // Reset the dice moves
+      diceNums.current.moves = 0
+      diceNums.current.dice1 = undefined
+      diceNums.current.dice2 = undefined
+      // Set the phase to diceRoll
+      setPhase("diceRoll")
+      // Show a message that the user has no valid moves
+      return
     }
   }
 

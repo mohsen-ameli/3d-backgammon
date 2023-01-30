@@ -9,6 +9,7 @@ import * as data from "./data/Data"
 import hasValidMoves from "./utils/HasValidMoves"
 import switchPlayers from "./utils/switchPlayers"
 import resetDiceRotation from "./utils/ResetDiceRotation"
+import hasMoves from "./utils/HasMoves"
 
 const Dices = () => {
   const { diceNums, phase, setPhase, checkers, userChecker } =
@@ -35,7 +36,10 @@ const Dices = () => {
           diceNums.current,
           userChecker.current
         )
-        if (!hasValidMovesBool) {
+        const hasMoves_ = true
+        // console.log(hasMoves_)
+
+        if (!hasValidMovesBool || !hasMoves_) {
           // Switch players
           userChecker.current = switchPlayers(userChecker.current)
           // Reset the dice moves

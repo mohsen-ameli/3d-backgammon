@@ -8,8 +8,14 @@ import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { GameState } from "./Game"
 
 const UI = () => {
-  const { userChecker, setOrbitControlsEnabled, phase, setPhase, checkers } =
-    useContext(GameState)
+  const {
+    userChecker,
+    setOrbitControlsEnabled,
+    phase,
+    setPhase,
+    checkers,
+    diceNums,
+  } = useContext(GameState)
 
   const [winner, setWinner] = useState()
   const navigate = useNavigate()
@@ -38,7 +44,16 @@ const UI = () => {
         <Html as="div" transform scale={0.2} position={[-1.75, 0.5, 0]} sprite>
           <div className="flex flex-col items-center gap-4 select-none">
             {/* Flipping the board */}
-            {/* <Button className="text-white">Flip the board</Button> */}
+            {/* <Button
+              className="text-white"
+              onClick={() => {
+                diceNums.current.dice1 = 5
+                diceNums.current.dice2 = 2
+                diceNums.current.moves = 2
+              }}
+            >
+              Flip the board
+            </Button> */}
 
             {/* Toggling orbit controls */}
             <Button className="text-white" onClick={toggleOrbitControls}>
