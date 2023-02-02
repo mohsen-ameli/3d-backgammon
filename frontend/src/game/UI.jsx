@@ -8,21 +8,11 @@ import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { GameState } from "./Game"
 
 const UI = () => {
-  const {
-    userChecker,
-    setOrbitControlsEnabled,
-    phase,
-    setPhase,
-    checkers,
-    diceNums,
-  } = useContext(GameState)
+  const { userChecker, toggleControls, phase, setPhase, checkers } =
+    useContext(GameState)
 
   const [winner, setWinner] = useState()
   const navigate = useNavigate()
-
-  const toggleOrbitControls = () => {
-    setOrbitControlsEnabled((prev) => !prev)
-  }
 
   const playAgain = () => {
     setPhase("initial")
@@ -56,7 +46,7 @@ const UI = () => {
             </Button> */}
 
             {/* Toggling orbit controls */}
-            <Button className="text-white" onClick={toggleOrbitControls}>
+            <Button className="text-white" onClick={() => toggleControls(true)}>
               Toggle pan
             </Button>
 

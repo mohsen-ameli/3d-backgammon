@@ -20,7 +20,29 @@ const Game = () => {
   const [phase, setPhase] = useState()
 
   // Orbit controls enabled state
-  const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(true)
+  const [orbitControls, setOrbitControls] = useState({
+    enabled: true,
+    changable: true,
+  })
+
+  // Toggle the orbit controls.
+  const toggleControls = (ui = false) => {
+    let returnValue
+    if (ui) {
+      returnValue = {
+        enabled: !orbitControls["enabled"],
+        changable: !orbitControls["changable"],
+      }
+    } else if (orbitControls["changable"]) {
+      returnValue = {
+        enabled: !orbitControls["enabled"],
+        changable: orbitControls["changable"],
+      }
+    }
+
+    if (!returnValue) return
+    setOrbitControls(returnValue)
+  }
 
   // The numbers on the dice, and how many times the user is allowed to move
   // ex: [dice1: 2, dice2: 5, moves: 2] -> The dice shows 2 and 5, therefore the user can move twice
@@ -70,8 +92,8 @@ const Game = () => {
     checkers,
     phase,
     setPhase,
-    orbitControlsEnabled,
-    setOrbitControlsEnabled,
+    orbitControls,
+    toggleControls,
     checkerPicked,
     newCheckerPosition,
   }
@@ -86,7 +108,7 @@ const Game = () => {
       <Perf position="top-left" />
 
       <GameState.Provider value={value}>
-        <OrbitControls makeDefault enabled={orbitControlsEnabled} />
+        <OrbitControls makeDefault enabled={orbitControls["enabled"]} />
 
         <UI />
 

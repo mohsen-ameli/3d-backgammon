@@ -21,8 +21,8 @@ export const BOARD_H = 0.855
 
 // Default checker positions
 export const DEFAULT_CHECKER_POSITIONS = [
-  { id: 0, color: "white", col: 0, row: 0, removed: false },
-  { id: 1, color: "white", col: 0, row: 1, removed: false },
+  { id: 0, color: "white", col: -1, row: 0, removed: true },
+  { id: 1, color: "white", col: -1, row: 1, removed: true },
   { id: 2, color: "white", col: 11, row: 0, removed: false },
   { id: 3, color: "white", col: 11, row: 1, removed: false },
   { id: 4, color: "white", col: 11, row: 2, removed: false },
@@ -44,12 +44,12 @@ export const DEFAULT_CHECKER_POSITIONS = [
   { id: 19, color: "black", col: 12, row: 2, removed: false },
   { id: 20, color: "black", col: 12, row: 3, removed: false },
   { id: 21, color: "black", col: 12, row: 4, removed: false },
-  { id: 22, color: "black", col: 7, row: 0, removed: false },
-  { id: 23, color: "black", col: 7, row: 1, removed: false },
-  { id: 24, color: "black", col: 7, row: 2, removed: false },
+  { id: 22, color: "black", col: 2, row: 0, removed: false },
+  { id: 23, color: "black", col: 2, row: 1, removed: false },
+  { id: 24, color: "black", col: 3, row: 1, removed: false },
   { id: 25, color: "black", col: 5, row: 0, removed: false },
   { id: 26, color: "black", col: 5, row: 1, removed: false },
-  { id: 27, color: "black", col: 5, row: 2, removed: false },
-  { id: 28, color: "black", col: 5, row: 3, removed: false },
-  { id: 29, color: "black", col: 5, row: 4, removed: false },
+  { id: 27, color: "black", col: 3, row: 0, removed: false },
+  { id: 28, color: "black", col: 4, row: 0, removed: false },
+  { id: 29, color: "black", col: 4, row: 1, removed: false },
 ]

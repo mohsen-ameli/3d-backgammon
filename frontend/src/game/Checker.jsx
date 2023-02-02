@@ -27,8 +27,8 @@ const Checker = ({ thisChecker }) => {
     userChecker,
     phase,
     setPhase,
-    orbitControlsEnabled,
-    setOrbitControlsEnabled,
+    orbitControls,
+    toggleControls,
   } = useContext(GameState)
 
   // Checkers
@@ -109,8 +109,8 @@ const Checker = ({ thisChecker }) => {
           })
           if (thisChecker.col < 0 && i === 0) event.stopPropagation()
 
-          // Disabling orbit controls
-          orbitControlsEnabled && setOrbitControlsEnabled(false)
+          // Switching orbit controls
+          orbitControls["enabled"] && toggleControls()
 
           // Setting the checker's mesh position (not the physics)
           set({ position: [x / aspect, 0.2, y / aspect] })
@@ -120,7 +120,8 @@ const Checker = ({ thisChecker }) => {
         }
         // Finished dragging (Main logic of the game)
         else {
-          !orbitControlsEnabled && setOrbitControlsEnabled(true)
+          // Enabling orbit controls
+          !orbitControls["enabled"] && toggleControls()
           checkerPicked.current = false
 
           // Number of removed checkers of the current player/user
