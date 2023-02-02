@@ -15,6 +15,8 @@ const Columns = () => {
 
       <ColumnSide node={nodes["WhiteHouse"]} />
       <ColumnSide node={nodes["BlackHouse"]} />
+      <ColumnSide node={nodes["BlackHouse2"]} />
+      <ColumnSide node={nodes["WhiteHouse2"]} />
     </>
   )
 }

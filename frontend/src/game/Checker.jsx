@@ -12,6 +12,7 @@ import { useEffect } from "react"
 import Endgame from "./utils/Endgame"
 import GameWon from "./utils/GameWon"
 import hasMoves from "./utils/HasMoves"
+import hasValidMoves from "./utils/HasValidMoves"
 
 const Checker = ({ thisChecker }) => {
   const checker = useRef()
@@ -343,22 +344,20 @@ const Checker = ({ thisChecker }) => {
       }
     }
 
-    // Updating the user that is playing, and the phase
-    if (diceNums.current.moves === 0) {
-      userChecker.current = switchPlayers(userChecker.current)
-      setPhase("diceRoll")
-    }
-
-    // Checking if the user has any valid moves
+    // Check if user has any valid moves
+    const hasValidMovesBool = hasValidMoves(
+      checkers.current,
+      diceNums.current,
+      userChecker.current
+    )
     const hasMoves_ = hasMoves(
       checkers.current,
       diceNums.current,
       userChecker.current
     )
-    console.log(hasMoves_)
 
     // If the user has no valid moves
-    if (!hasMoves_) {
+    if (!hasValidMovesBool || !hasMoves_) {
       // Switch players
       userChecker.current = switchPlayers(userChecker.current)
       // Reset the dice moves
@@ -369,6 +368,12 @@ const Checker = ({ thisChecker }) => {
       setPhase("diceRoll")
       // Show a message that the user has no valid moves
       return
+    }
+
+    // Updating the user that is playing, and the phase
+    if (diceNums.current.moves === 0) {
+      userChecker.current = switchPlayers(userChecker.current)
+      setPhase("diceRoll")
     }
   }
 

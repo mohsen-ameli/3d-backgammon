@@ -1,11 +1,24 @@
 import { RigidBody } from "@react-three/rapier"
-import { forwardRef, useContext } from "react"
+import { forwardRef, useContext, useRef, useState } from "react"
 import * as data from "./data/Data"
 import { GameState } from "./Game"
 import getDiceNumber from "./utils/GetDiceNumber"
+import dice from "../assets/sounds/dice.mp3"
+import newDice from "../assets/sounds/NewDice.wav"
+import hit from "../assets/sounds/hit.mp3"
 
 const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
   const { nodes, materials, diceNums } = useContext(GameState)
+
+  const [audio] = useState(() => new Audio(newDice))
+
+  const colissionEnter = () => {
+    if (diceOnBoard(ref.current)) {
+      audio.currentTime = 0
+      audio.volume = Math.random()
+      audio.play()
+    }
+  }
 
   return (
     <RigidBody
@@ -42,6 +55,7 @@ const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
           })
         }
       }}
+      onCollisionEnter={colissionEnter}
     >
       <group name="Dice">
         <mesh

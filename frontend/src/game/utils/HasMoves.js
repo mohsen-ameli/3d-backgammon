@@ -70,7 +70,6 @@ const hasMoves = (checkers, dices, color) => {
       }
     }
   }
-  console.log(validMoves)
 
   const moves = validMoves.filter((item) => item === true)
   if (moves.length >= 0) {

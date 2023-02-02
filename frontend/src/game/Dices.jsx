@@ -36,8 +36,11 @@ const Dices = () => {
           diceNums.current,
           userChecker.current
         )
-        const hasMoves_ = true
-        // console.log(hasMoves_)
+        const hasMoves_ = hasMoves(
+          checkers.current,
+          diceNums.current,
+          userChecker.current
+        )
 
         if (!hasValidMovesBool || !hasMoves_) {
           // Switch players

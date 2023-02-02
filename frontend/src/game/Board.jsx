@@ -8,7 +8,7 @@ const Board = () => {
   return (
     <>
       {/* Board Hinge */}
-      <mesh geometry={nodes.Cube012_1.geometry} material={materials.Hinge} />
+      <mesh geometry={nodes.Hinge.geometry} material={materials.Hinge} />
 
       <RigidBody type="fixed" colliders={false}>
         {/* Surface */}
@@ -32,10 +32,7 @@ const Board = () => {
         {/* Dice Holder */}
         <CuboidCollider args={[0.5, 0.1, 0.1]} position={[0, 0.6, 2]} />
 
-        <mesh
-          geometry={nodes.Cube012.geometry}
-          material={materials.BoardWood2}
-        />
+        <mesh geometry={nodes.Board.geometry} material={materials.BoardWood2} />
       </RigidBody>
     </>
   )
