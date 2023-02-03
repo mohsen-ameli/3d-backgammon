@@ -324,6 +324,11 @@ const Checker = ({ thisChecker }) => {
     }
   )
 
+  // const bindd = useDrag(({ event, offset: [x, y], dragging }) => {
+  //   // console.log(x, y, dragging)
+  //   console.log(event)
+  // })
+
   function updateStuff(newPositions, moved, rotation = [0, 0, 0]) {
     // Setting the checker's mesh position (not the physics)
     set({ position: newPositions, rotation })
@@ -380,6 +385,26 @@ const Checker = ({ thisChecker }) => {
 
   return (
     <>
+      {/* <a.instancedMesh
+        {...bindd()}
+        args={[
+          nodes.WhiteChecker.geometry,
+          color === "white"
+            ? materials.WhiteCheckerMat
+            : materials.DarkCheckerMat,
+          15,
+        ]}
+        ref={meshes}
+        onPointerEnter={() => {
+          // Change the cusror to grab
+          document.body.style.cursor = "grab"
+        }}
+        onPointerLeave={() => {
+          // Change the cusror to default
+          document.body.style.cursor = "default"
+        }}
+      /> */}
+
       {/* The physics */}
       <RigidBody ref={checker} type="kinematicPosition" position={pos}>
         <CuboidCollider args={[0.08, 0.02, 0.08]} />
