@@ -3,7 +3,6 @@ import ColumnSide from "./ColumnSide"
 import { GameState } from "./Game"
 import * as THREE from "three"
 import { COLOUMN_HOVER_COLOR } from "./data/Data"
-import Column from "./Column"
 
 const Columns = () => {
   const { nodes, materials, checkerPicked, newCheckerPosition } =
@@ -68,18 +67,13 @@ const Columns = () => {
 
   return (
     <>
-      {/* {Object.keys(nodes).map(
-        (node, index) =>
-          node.includes("col_") && <Column node={node} key={index} />
-      )} */}
-
       <instancedMesh
         onPointerOver={handleHover}
         onPointerLeave={handleHoverFinished}
         ref={columnsRef}
         args={[nodes["col_1"].geometry, null, count]}
       >
-        <meshStandardMaterial />
+        <meshStandardMaterial name="Column" />
       </instancedMesh>
 
       <ColumnSide node={nodes["WhiteHouse"]} />

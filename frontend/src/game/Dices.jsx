@@ -50,11 +50,11 @@ const Dices = () => {
           diceNums.current.dice1 = undefined
           diceNums.current.dice2 = undefined
           // Reset the dice
-          resetDices([dice1.current, dice2.current])
+          // resetDices([dice1.current, dice2.current])
           // Set the phase to diceRoll
-          setPhase("diceRoll")
+          setPhase("diceRollAgain")
           setShowThrowBtn(true)
-          resetDiceRotation([dice1.current, dice2.current])
+          // resetDiceRotation([dice1.current, dice2.current])
           // Show a message that the user has no valid moves
           return
         }

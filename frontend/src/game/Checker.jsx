@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { CuboidCollider, RigidBody } from "@react-three/rapier"
 import { useThree } from "@react-three/fiber"
 import { useDrag } from "@use-gesture/react"
@@ -8,7 +8,6 @@ import getCheckerPos from "./utils/GetCheckerPos"
 import getCheckersOnCol from "./utils/GetCheckersOnCol"
 import lenRemovedCheckers from "./utils/LenRemovedCheckers"
 import switchPlayers from "./utils/switchPlayers"
-import { useEffect } from "react"
 import Endgame from "./utils/Endgame"
 import GameWon from "./utils/GameWon"
 import hasMoves from "./utils/HasMoves"
@@ -87,6 +86,10 @@ const Checker = ({ thisChecker }) => {
       // console.log("game won", GameWon(checkers.current, userChecker.current))
       // console.log("phase", phase)
       // console.log("thisChecker", thisChecker)
+
+      // const id = event.instanceId
+      // const thisChecker = checkers.current[id]
+      // console.log(event)
 
       // Check to see if the user is allowed to move
       if (
@@ -324,11 +327,6 @@ const Checker = ({ thisChecker }) => {
     }
   )
 
-  // const bindd = useDrag(({ event, offset: [x, y], dragging }) => {
-  //   // console.log(x, y, dragging)
-  //   console.log(event)
-  // })
-
   function updateStuff(newPositions, moved, rotation = [0, 0, 0]) {
     // Setting the checker's mesh position (not the physics)
     set({ position: newPositions, rotation })
@@ -386,7 +384,9 @@ const Checker = ({ thisChecker }) => {
   return (
     <>
       {/* <a.instancedMesh
-        {...bindd()}
+        {...bind()}
+        {...spring}
+        ref={instanceMesh}
         args={[
           nodes.WhiteChecker.geometry,
           color === "white"
@@ -394,7 +394,6 @@ const Checker = ({ thisChecker }) => {
             : materials.DarkCheckerMat,
           15,
         ]}
-        ref={meshes}
         onPointerEnter={() => {
           // Change the cusror to grab
           document.body.style.cursor = "grab"

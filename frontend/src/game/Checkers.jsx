@@ -11,26 +11,26 @@ import getCheckerPos from "./utils/GetCheckerPos"
 const Checkers = () => {
   const { checkers, nodes, materials } = useContext(GameState)
 
-  const allCheckers = useMemo(() => {
-    const whitePositions = []
-    const blackPositions = []
-    const rotations = []
-    const scales = []
+  // const allCheckers = useMemo(() => {
+  //   const whitePositions = []
+  //   const blackPositions = []
+  //   const rotations = []
+  //   const scales = []
 
-    for (const checker of checkers.current) {
-      const pos = getCheckerPos(checker.col, checker.row, checker.removed)
+  //   for (const checker of checkers.current) {
+  //     const pos = getCheckerPos(checker.col, checker.row, checker.removed)
 
-      if (checker.color === "white") {
-        whitePositions.push([pos[0], pos[1], pos[2]])
-      } else {
-        blackPositions.push([pos[0], pos[1], pos[2]])
-      }
-      rotations.push([0, 0, 0])
-      scales.push([1, 1, 1])
-    }
+  //     if (checker.color === "white") {
+  //       whitePositions.push([pos[0], pos[1], pos[2]])
+  //     } else {
+  //       blackPositions.push([pos[0], pos[1], pos[2]])
+  //     }
+  //     rotations.push([0, 0, 0])
+  //     scales.push([1, 1, 1])
+  //   }
 
-    return { whitePositions, blackPositions, rotations, scales }
-  }, [])
+  //   return { whitePositions, blackPositions, rotations, scales }
+  // }, [])
 
   return (
     <>
@@ -44,17 +44,7 @@ const Checkers = () => {
         rotations={allCheckers.rotations}
         scales={allCheckers.scales}
       >
-        <instancedMesh
-          args={[nodes.WhiteChecker.geometry, materials.WhiteCheckerMat, 15]}
-          onPointerEnter={() => {
-            // Change the cusror to grab
-            document.body.style.cursor = "grab"
-          }}
-          onPointerLeave={() => {
-            // Change the cusror to default
-            document.body.style.cursor = "default"
-          }}
-        />
+        <Checker color="white" />
       </InstancedRigidBodies> */}
 
       {/* <InstancedRigidBodies
