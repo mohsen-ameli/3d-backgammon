@@ -9,6 +9,7 @@ import * as data from "./data/Data"
 import switchPlayers from "./utils/SwitchPlayers"
 import resetDiceRotation from "./utils/ResetDiceRotation"
 import hasMoves from "./utils/HasMoves"
+import notification from "../components/utils/Notification"
 
 const Dices = () => {
   const { diceNums, phase, setPhase, checkers, userChecker } =
@@ -43,13 +44,12 @@ const Dices = () => {
           diceNums.current.moves = 0
           diceNums.current.dice1 = undefined
           diceNums.current.dice2 = undefined
-          // Reset the dice
-          // resetDices([dice1.current, dice2.current])
           // Set the phase to diceRollAgain
           setPhase("diceRollAgain")
+          // Show the throw button again
           setShowThrowBtn(true)
-          // resetDiceRotation([dice1.current, dice2.current])
           // Show a message that the user has no valid moves
+          notification("error", "You don't have a move!")
           return
         }
 

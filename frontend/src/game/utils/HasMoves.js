@@ -1,4 +1,5 @@
 import Endgame from "./Endgame"
+import lenRemovedCheckers from "./LenRemovedCheckers"
 import switchPlayers from "./SwitchPlayers"
 
 /**
@@ -18,11 +19,9 @@ const hasMoves = (checkers, dices, color) => {
   oppositeColor = switchPlayers(color)
 
   // Checking fo any removed checkers
-  const removedCheckers = checkers.filter(
-    (checker) => checker.removed === true && checker.color === color
-  ).length
+  const lenRmCheckers = lenRemovedCheckers(checkers, color)
 
-  if (removedCheckers === 0) {
+  if (lenRmCheckers === 0) {
     return checkCheckers(checkers, dices, color)
   }
   // There are removed checkers. Checking if they have any valid moves
@@ -115,8 +114,6 @@ const checkCheckers = (checkers, dices, color) => {
       notAllowed[dices[dice]] = validMoves.every((item) => item === false)
     }
   }
-
-  console.log("notAllowed", notAllowed)
 
   // notALlowed object
   const invalidMoves = Object.values(notAllowed)

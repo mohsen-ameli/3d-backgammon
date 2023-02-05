@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import Button from "../components/ui/Button"
+import notification from "../components/utils/Notification"
 import toCapitalize from "../components/utils/ToCapitalize"
 import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { GameState } from "./Game"
@@ -46,7 +47,13 @@ const UI = () => {
             </Button> */}
 
             {/* Toggling orbit controls */}
-            <Button className="text-white" onClick={() => toggleControls(true)}>
+            <Button
+              className="text-white"
+              onClick={() => {
+                toggleControls(true)
+                notification("error", "hi")
+              }}
+            >
               Toggle pan
             </Button>
 

@@ -11,6 +11,7 @@ import switchPlayers from "./utils/SwitchPlayers"
 import Endgame from "./utils/Endgame"
 import GameWon from "./utils/GameWon"
 import hasMoves from "./utils/HasMoves"
+import notification from "../components/utils/Notification"
 
 const Checker = ({ thisChecker }) => {
   const checker = useRef()
@@ -45,7 +46,6 @@ const Checker = ({ thisChecker }) => {
       )
       setPos(newPos)
       set({ position: newPos, rotation: [0, 0, 0] })
-      // Setting the checker's physics position
       checker.current.setTranslation({
         x: newPos[0],
         y: newPos[1],
@@ -62,7 +62,12 @@ const Checker = ({ thisChecker }) => {
       thisChecker.removed
     )
     setPos(newPos)
-    set({ position: newPos })
+    set({ position: newPos, rotation: [0, 0, 0] })
+    checker.current.setTranslation({
+      x: newPos[0],
+      y: newPos[1],
+      z: newPos[2],
+    })
   }, [thisChecker.removed])
 
   // Spring animation for dragging
@@ -362,9 +367,10 @@ const Checker = ({ thisChecker }) => {
       diceNums.current.moves = 0
       diceNums.current.dice1 = undefined
       diceNums.current.dice2 = undefined
-      // Set the phase to diceRollAgain
+      // Set the phase to diceRoll
       setPhase("diceRoll")
       // Show a message that the user has no valid moves
+      notification("error", "You don't have a move!")
       return
     }
 

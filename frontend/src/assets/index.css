@@ -40,3 +40,8 @@ canvas {
 .custom-scroll-bar::-webkit-scrollbar-thumb:hover {
   background: rgb(17, 48, 102);
 }
+
+/* Toast customazation */
+.Toastify__toast {
+  user-select: none;
+}

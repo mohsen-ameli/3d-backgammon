@@ -122,25 +122,38 @@ const NO_MOVES_REMOVED = [
   { id: 29, color: "black", col: 1, row: 0, removed: false },
 ]
 
-const NO_MOVES = [
-  { id: 0, color: "white", col: 10, row: 0, removed: false },
-  { id: 1, color: "white", col: 10, row: 1, removed: false },
+const REMOVABLES_EVERYWHERE = [
+  { id: 0, color: "white", col: 0, row: 0, removed: false },
+  { id: 1, color: "white", col: 0, row: 1, removed: false },
   { id: 2, color: "white", col: 18, row: 0, removed: false },
-  { id: 3, color: "white", col: 18, row: 1, removed: false },
+  { id: 3, color: "white", col: 10, row: 0, removed: false },
   { id: 4, color: "white", col: 19, row: 0, removed: false },
-  { id: 5, color: "white", col: 19, row: 1, removed: false },
+  { id: 5, color: "white", col: 10, row: 1, removed: false },
   { id: 6, color: "white", col: 20, row: 0, removed: false },
-  { id: 7, color: "white", col: 20, row: 1, removed: false },
-  { id: 8, color: "white", col: 21, row: 1, removed: false },
-  { id: 9, color: "white", col: 21, row: 0, removed: false },
+  { id: 7, color: "white", col: 10, row: 2, removed: false },
+  { id: 8, color: "white", col: 21, row: 0, removed: false },
+  { id: 9, color: "white", col: 10, row: 3, removed: false },
   { id: 10, color: "white", col: 22, row: 0, removed: false },
-  { id: 11, color: "white", col: 22, row: 1, removed: false },
+  { id: 11, color: "white", col: 10, row: 4, removed: false },
   { id: 12, color: "white", col: 17, row: 0, removed: false },
-  { id: 13, color: "white", col: 17, row: 1, removed: false },
-  { id: 14, color: "white", col: 17, row: 2, removed: false },
+  { id: 13, color: "white", col: 10, row: 5, removed: false },
+  { id: 14, color: "white", col: 10, row: 6, removed: false },
 
   { id: 15, color: "black", col: 23, row: 0, removed: false },
   { id: 16, color: "black", col: 23, row: 1, removed: false },
+  { id: 17, color: "black", col: 5, row: 0, removed: false },
+  { id: 18, color: "black", col: 4, row: 0, removed: false },
+  { id: 19, color: "black", col: 3, row: 0, removed: false },
+  { id: 20, color: "black", col: 2, row: 0, removed: false },
+  { id: 21, color: "black", col: 1, row: 0, removed: false },
+  { id: 22, color: "black", col: 6, row: 0, removed: false },
+  { id: 23, color: "black", col: 13, row: 0, removed: false },
+  { id: 24, color: "black", col: 13, row: 1, removed: false },
+  { id: 25, color: "black", col: 13, row: 2, removed: false },
+  { id: 26, color: "black", col: 13, row: 3, removed: false },
+  { id: 27, color: "black", col: 13, row: 4, removed: false },
+  { id: 28, color: "black", col: 13, row: 5, removed: false },
+  { id: 29, color: "black", col: 13, row: 6, removed: false },
 ]
 
-export const DEFAULT_CHECKER_POSITIONS = NO_MOVES
+export const DEFAULT_CHECKER_POSITIONS = NO_MOVES_REMOVED

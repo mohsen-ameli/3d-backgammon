@@ -2,11 +2,12 @@ import * as THREE from "three"
 import throwDice from "./ThrowDices"
 
 /**
- * --> This method is a hot mess. That's what this is. But it works!! I had to do a lot of pattern recognision and a lot of math to get this to work. Probably the hardest function to build in this entire project.
+ * --> This method is a hot mess. But it works! I had to do a lot of pattern recognision and a lot of math to get this to work. Probably the hardest function to build in this entire project.
  * This will get the current number on the dice that's pointing up, using the dice's rotation.
  * @param {*} dice Referecne to the dice we want the number of
  * @returns The number on the dice that's pointing up
  */
+
 const getDiceNumber = (dice) => {
   const euler = new THREE.Euler()
   euler.setFromQuaternion(dice.rotation())
@@ -15,23 +16,29 @@ const getDiceNumber = (dice) => {
   const y = euler.y
   const z = euler.z
 
+  // Either 1 or 6
   if (Math.round(Math.sin(x)) === 0 && Math.round(Math.sin(z)) === 0) {
     if (Math.round(Math.cos(x)) === Math.round(Math.cos(z))) {
       return 1
     }
     return 6
-  } else if (
+  }
+  // Either 2 or 5
+  else if (
     Math.round(Math.sin(x)) === 0 &&
     (Math.abs(Math.PI / 2 - z) < 0.2 || Math.PI / 2 + z < 0.2)
   ) {
     if (
-      (Math.abs(Math.PI - x) < 0.2 && Math.abs(Math.PI / 2 - z) < 0.2) ||
-      (Math.round(x) === 0 && Math.abs(-Math.PI / 2 - z) < 0.2)
+      (Math.abs(Math.PI - x) < 0.2 &&
+        roundToTwo(Math.abs(Math.PI / 2 - z)) <= 0.2) ||
+      (Math.round(x) === 0 && roundToTwo(Math.abs(Math.PI / 2 + z)) <= 0.2)
     ) {
       return 2
     }
     return 5
-  } else if (
+  }
+  // Either 3 or 4
+  else if (
     (Math.abs(Math.PI / 2 - x) < 0.2 || Math.PI / 2 + x < 0.2) &&
     Math.round(y) === 0
   ) {
@@ -39,12 +46,14 @@ const getDiceNumber = (dice) => {
       return 3
     }
     return 4
-  } else {
+  }
+  // Don't know what the number is (Dice is on a slant angle)
+  else {
     console.log("uhhhhhhhhhh")
     throwDice([dice])
   }
 
-  // Some dice examples of the rotation of the dice, when it's leeping
+  // Some dice examples of the rotation of the dice, when it's sleeping
   // 1:
   // _x: 3.1256305108327114, _y: -1.5100878856031257, _z: 3.125425625711317
   // _x: 0.0015918107667124964, _y: 0.9168181096386551, _z: -0.0014976553076640048
@@ -68,6 +77,10 @@ const getDiceNumber = (dice) => {
   // _x: 3.1404301988223713, _y: -0.320732062342795, _z: 1.5701664825955897
   // _x: 3.1404847398618454, _y: -0.09350602269198391, _z: 1.570430075477538
   // _x: 0.18727401917531472, _y: -1.5648715445307704, _z: -1.3837890503153107
+  // _x: 3.1374698936136816, _y: -1.2998401004739195, _z: 1.5665605838453622
+  // _x: 0.0029257167302414637, _y: 1.1842025837212056, _z: -1.573769529445494
+  // _x: 0.0026408800993509775, _y: -1.1397790045308973, _z: -1.5686599726719834
+  // _x: 3.1402575212512303, _y: 0.5982204406165584, _z: 1.5712851317372114
 
   // 5:
   // _x: 3.035690283587604, _y: 1.560705808182779, _z: -1.464636251655983
@@ -78,6 +91,10 @@ const getDiceNumber = (dice) => {
   // _x: 0.0039044432202154796, _y: -1.2939909322650116, _z: 1.574818577563266
   // _x: 3.1403858946464465, _y: 0.4866102233780405, _z: -1.569965077086509
   // _x: 0.002095713199950449, _y: 1.036589758452318, _z: 1.5692592143572257
+  // _x: 3.1403331281136464, _y: -0.5603846470905822, _z: -1.5711989404681521
+  // _x: 3.1394243203247236, _y: 1.0562896138266822, _z: -1.5686419821260387
+  // _x: 0.0015637240502939837, _y: -0.819817763541371, _z: 1.5722060134228375
+  // _x: 0.0012046405399716957, _y: -0.4829356227141875, _z: 1.571622279308555
 
   // 3:
   // _x: -1.571931367850722, _y: 0.0001881356373814687, _z: 1.1767776045592004
@@ -95,6 +112,10 @@ const getDiceNumber = (dice) => {
   // _x: 1.5704696590969753, _y: 0.0010615663990524216, _z: -3.084984119105789
   // _x: 1.5713303634432196, _y: 0.0009733864302914862, _z: 2.397477015782778
   // _x: 1.571480189229249, _y: -0.0008750758125155607, _z: 0.42114216012832184
+}
+
+const roundToTwo = (num) => {
+  return Number(num.toFixed(2))
 }
 
 export default getDiceNumber
