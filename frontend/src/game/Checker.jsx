@@ -7,11 +7,10 @@ import { GameState } from "./Game"
 import getCheckerPos from "./utils/GetCheckerPos"
 import getCheckersOnCol from "./utils/GetCheckersOnCol"
 import lenRemovedCheckers from "./utils/LenRemovedCheckers"
-import switchPlayers from "./utils/switchPlayers"
+import switchPlayers from "./utils/SwitchPlayers"
 import Endgame from "./utils/Endgame"
 import GameWon from "./utils/GameWon"
 import hasMoves from "./utils/HasMoves"
-import hasValidMoves from "./utils/HasValidMoves"
 
 const Checker = ({ thisChecker }) => {
   const checker = useRef()
@@ -349,26 +348,21 @@ const Checker = ({ thisChecker }) => {
     }
 
     // Check if user has any valid moves
-    const hasValidMovesBool = hasValidMoves(
-      checkers.current,
-      diceNums.current,
-      userChecker.current
-    )
-    const hasMoves_ = hasMoves(
+    const moves = hasMoves(
       checkers.current,
       diceNums.current,
       userChecker.current
     )
 
     // If the user has no valid moves
-    if (!hasValidMovesBool || !hasMoves_) {
+    if (!moves) {
       // Switch players
       userChecker.current = switchPlayers(userChecker.current)
       // Reset the dice moves
       diceNums.current.moves = 0
       diceNums.current.dice1 = undefined
       diceNums.current.dice2 = undefined
-      // Set the phase to diceRoll
+      // Set the phase to diceRollAgain
       setPhase("diceRoll")
       // Show a message that the user has no valid moves
       return

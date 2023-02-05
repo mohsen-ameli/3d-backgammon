@@ -6,8 +6,7 @@ import { GameState } from "./Game"
 import resetDices from "./utils/ResetDices"
 import throwDices from "./utils/ThrowDices"
 import * as data from "./data/Data"
-import hasValidMoves from "./utils/HasValidMoves"
-import switchPlayers from "./utils/switchPlayers"
+import switchPlayers from "./utils/SwitchPlayers"
 import resetDiceRotation from "./utils/ResetDiceRotation"
 import hasMoves from "./utils/HasMoves"
 
@@ -31,18 +30,13 @@ const Dices = () => {
       // If the dice numbers match, the user can move 4 times, otherwise 2
       if (diceNums.current.dice1 && diceNums.current.dice2) {
         // Check if user has any valid moves
-        const hasValidMovesBool = hasValidMoves(
-          checkers.current,
-          diceNums.current,
-          userChecker.current
-        )
-        const hasMoves_ = hasMoves(
+        const moves = hasMoves(
           checkers.current,
           diceNums.current,
           userChecker.current
         )
 
-        if (!hasValidMovesBool || !hasMoves_) {
+        if (!moves) {
           // Switch players
           userChecker.current = switchPlayers(userChecker.current)
           // Reset the dice moves
@@ -51,7 +45,7 @@ const Dices = () => {
           diceNums.current.dice2 = undefined
           // Reset the dice
           // resetDices([dice1.current, dice2.current])
-          // Set the phase to diceRoll
+          // Set the phase to diceRollAgain
           setPhase("diceRollAgain")
           setShowThrowBtn(true)
           // resetDiceRotation([dice1.current, dice2.current])

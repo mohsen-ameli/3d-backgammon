@@ -1,27 +1,26 @@
 /**
- * This method will return true if the game is in endgame
+ * This method will return true if the game is in endgame for the color of the checkers provided.
  * @param {*} checkers All checkers positions
  * @param {*} color The checker color to be checked
- * @returns True if the game is in endgame, else false
+ * @returns True if the game is in endgame, otherwise false
  */
 
 const Endgame = (checkers, color) => {
-  const checkers1 = checkers.filter((checker) => checker.color === color)
+  const userCheckers = checkers.filter((checker) => checker.color === color)
 
-  let checkers2 = []
+  let inHouseCheckers
   if (color === "white") {
-    checkers2 = checkers1.filter(
+    inHouseCheckers = userCheckers.filter(
       (checker) => checker.col >= 18 || checker.col === -3
-    )
+    ).length
   } else {
-    checkers2 = checkers1.filter(
+    inHouseCheckers = userCheckers.filter(
       (checker) => checker.col <= 5 || checker.col === -4
-    )
+    ).length
   }
 
-  if (checkers2.length === 15) {
-    return true
-  }
+  if (inHouseCheckers === 15) return true
+
   return false
 }
 

@@ -88,7 +88,7 @@ const LOTS_OF_REMOVABLES = [
   { id: 29, color: "black", col: 1, row: 0, removed: false },
 ]
 
-const NO_MOVES = [
+const NO_MOVES_REMOVED = [
   { id: 0, color: "white", col: 10, row: 0, removed: false },
   { id: 1, color: "white", col: 10, row: 1, removed: false },
   { id: 2, color: "white", col: 18, row: 0, removed: false },
@@ -120,6 +120,27 @@ const NO_MOVES = [
   { id: 27, color: "black", col: 7, row: 8, removed: false },
   { id: 28, color: "black", col: 6, row: 0, removed: false },
   { id: 29, color: "black", col: 1, row: 0, removed: false },
+]
+
+const NO_MOVES = [
+  { id: 0, color: "white", col: 10, row: 0, removed: false },
+  { id: 1, color: "white", col: 10, row: 1, removed: false },
+  { id: 2, color: "white", col: 18, row: 0, removed: false },
+  { id: 3, color: "white", col: 18, row: 1, removed: false },
+  { id: 4, color: "white", col: 19, row: 0, removed: false },
+  { id: 5, color: "white", col: 19, row: 1, removed: false },
+  { id: 6, color: "white", col: 20, row: 0, removed: false },
+  { id: 7, color: "white", col: 20, row: 1, removed: false },
+  { id: 8, color: "white", col: 21, row: 1, removed: false },
+  { id: 9, color: "white", col: 21, row: 0, removed: false },
+  { id: 10, color: "white", col: 22, row: 0, removed: false },
+  { id: 11, color: "white", col: 22, row: 1, removed: false },
+  { id: 12, color: "white", col: 17, row: 0, removed: false },
+  { id: 13, color: "white", col: 17, row: 1, removed: false },
+  { id: 14, color: "white", col: 17, row: 2, removed: false },
+
+  { id: 15, color: "black", col: 23, row: 0, removed: false },
+  { id: 16, color: "black", col: 23, row: 1, removed: false },
 ]
 
 export const DEFAULT_CHECKER_POSITIONS = NO_MOVES
