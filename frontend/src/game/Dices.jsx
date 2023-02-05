@@ -49,7 +49,7 @@ const Dices = () => {
           // Show the throw button again
           setShowThrowBtn(true)
           // Show a message that the user has no valid moves
-          notification("error", "You don't have a move!")
+          notification("You don't have a move!", "error")
           return
         }
 

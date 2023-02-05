@@ -1,6 +1,6 @@
 import { toast } from "react-toastify"
 
-const notification = (type = "default", msg) => {
+const notification = (msg, type = "default") => {
   const args = {
     position: "top-center",
     autoClose: 5000,

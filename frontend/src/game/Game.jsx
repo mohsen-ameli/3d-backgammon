@@ -50,7 +50,7 @@ const Game = () => {
   const diceNums = useRef({ dice1: undefined, dice2: undefined, moves: 0 })
 
   // The current checker color that is being moved
-  const userChecker = useRef("white")
+  const userChecker = useRef()
 
   // If the checker has been picked up or not
   const checkerPicked = useRef(false)
@@ -78,7 +78,7 @@ const Game = () => {
   useEffect(() => {
     if (location.pathname === "/pass-and-play") {
       setPhase("initial")
-      userChecker.current = "white"
+      userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
       checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
     }
   }, [location.pathname])

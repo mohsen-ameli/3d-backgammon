@@ -12,6 +12,7 @@ import Endgame from "./utils/Endgame"
 import GameWon from "./utils/GameWon"
 import hasMoves from "./utils/HasMoves"
 import notification from "../components/utils/Notification"
+import toCapitalize from "../components/utils/ToCapitalize"
 
 const Checker = ({ thisChecker }) => {
   const checker = useRef()
@@ -218,12 +219,16 @@ const Checker = ({ thisChecker }) => {
                 // Checking if user has won
                 const possibleWinner = userChecker.current
 
-                updateStuff(positions, moved, [Math.PI / 3, 0, 0])
-
                 const won = GameWon(checkers.current, possibleWinner)
                 if (won) {
                   setPhase("ended")
                   userChecker.current = possibleWinner
+                  set({ position: positions, rotation: [Math.PI / 3, 0, 0] })
+                  notification(
+                    `${toCapitalize(userChecker.current)} is the winner!`
+                  )
+                } else {
+                  updateStuff(positions, moved, [Math.PI / 3, 0, 0])
                 }
 
                 return
@@ -370,7 +375,7 @@ const Checker = ({ thisChecker }) => {
       // Set the phase to diceRoll
       setPhase("diceRoll")
       // Show a message that the user has no valid moves
-      notification("error", "You don't have a move!")
+      notification("You don't have a move!", "error")
       return
     }
 

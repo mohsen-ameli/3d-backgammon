@@ -60,7 +60,7 @@ const UI = () => {
               className="text-white"
               onClick={() => {
                 toggleControls(true)
-                notification("error", "hi")
+                notification("hi", "error")
               }}
             >
               Toggle pan
