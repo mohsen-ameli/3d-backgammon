@@ -7,10 +7,13 @@ import notification from "../components/utils/Notification"
 import toCapitalize from "../components/utils/ToCapitalize"
 import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { GameState } from "./Game"
+import userSwitch from "../assets/sounds/user-switch.mp3"
 
 const UI = () => {
   const { userChecker, toggleControls, phase, setPhase, checkers } =
     useContext(GameState)
+
+  const [playAudio] = useState(() => new Audio(userSwitch))
 
   const [winner, setWinner] = useState()
   const navigate = useNavigate()
@@ -22,6 +25,12 @@ const UI = () => {
   }
 
   useEffect(() => {
+    // Playing a sound effect when users change
+    if (phase === "diceRoll" || phase === "diceRollAgain") {
+      playAudio.play()
+    }
+
+    // Somebody's won
     if (phase === "ended") {
       setWinner(toCapitalize(userChecker.current))
     } else {
