@@ -12,6 +12,7 @@ class CustomUser(AbstractUser):
 
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     friend_requests = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='+')
+    game_requests = models.ManyToManyField('self', symmetrical=False, blank=True)
 
     @property
     def get_date_joined(self):

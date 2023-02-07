@@ -30,14 +30,16 @@ const ColumnSide = ({ node }) => {
   }, [])
 
   const handleHover = () => {
-    if (node.name.includes(toCapitalize(userChecker.current))) {
-      const end = Endgame(checkers.current, userChecker.current)
-      if (checkerPicked.current && end) {
-        material.color.set(COLOUMN_HOVER_COLOR)
-        if (node.name === "WhiteHouse") {
-          newCheckerPosition.current = -3
-        } else {
-          newCheckerPosition.current = -4
+    if (checkerPicked.current) {
+      if (node.name.includes(toCapitalize(userChecker.current))) {
+        const end = Endgame(checkers.current, userChecker.current)
+        if (end) {
+          material.color.set(COLOUMN_HOVER_COLOR)
+          if (node.name === "WhiteHouse") {
+            newCheckerPosition.current = -3
+          } else {
+            newCheckerPosition.current = -4
+          }
         }
       }
     }

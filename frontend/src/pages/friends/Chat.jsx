@@ -99,12 +99,26 @@ const Chat = () => {
 
               if (msg.sender === user.user_id) {
                 // User messages
-                // prettier-ignore
-                return <MessageBox key={index} type="user" sender="You" message={msg.message} date={date} />
+                return (
+                  <MessageBox
+                    key={index}
+                    type="user"
+                    sender="You"
+                    message={msg.message}
+                    date={date}
+                  />
+                )
               } else {
                 // Friend message
-                // prettier-ignore
-                return <MessageBox key={index} type="friend" sender={location.state.friend} message={msg.message} date={date} />
+                return (
+                  <MessageBox
+                    key={index}
+                    type="friend"
+                    sender={location.state.friend}
+                    message={msg.message}
+                    date={date}
+                  />
+                )
               }
             })
           ) : (

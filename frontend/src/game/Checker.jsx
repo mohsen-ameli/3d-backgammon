@@ -37,6 +37,7 @@ const Checker = ({ thisChecker }) => {
 
   // local state for every checker
   const [pos, setPos] = useState([0, 0, 0])
+  const [, rerender] = useState(false)
 
   useEffect(() => {
     if (phase === "initial") {
@@ -57,18 +58,28 @@ const Checker = ({ thisChecker }) => {
 
   // When a checker is removed, update its position
   useEffect(() => {
-    const newPos = getCheckerPos(
-      thisChecker.col,
-      thisChecker.row,
-      thisChecker.removed
-    )
-    setPos(newPos)
-    set({ position: newPos, rotation: [0, 0, 0] })
-    checker.current.setTranslation({
-      x: newPos[0],
-      y: newPos[1],
-      z: newPos[2],
-    })
+    if (thisChecker.removed) {
+      // New position for the checker
+      const newPos = getCheckerPos(
+        thisChecker.col,
+        thisChecker.row,
+        thisChecker.removed
+      )
+      // Setting the new position of the checker when it gets removed
+      setPos(newPos)
+      // Making sure the component rerenders when the checker gets removed
+      rerender((curr) => !curr)
+
+      // Setting the checker's mesh position (not the physics)
+      set({ position: newPos, rotation: [0, 0, 0] })
+
+      // Setting the checker's physics position
+      checker.current.setTranslation({
+        x: newPos[0],
+        y: newPos[1],
+        z: newPos[2],
+      })
+    }
   }, [thisChecker.removed])
 
   // Spring animation for dragging

@@ -29,14 +29,27 @@ const FriendDetails = ({ friend, setLoading }) => {
     await axiosInstance.put("api/handle-friends/", { id, action: "remove" })
   }
 
+  // Playing with a friend
+  const play = async (friend) => {
+    if (friend.is_online) {
+    }
+  }
+
   return (
-    <div className="grid grid-cols-4">
+    <div className="grid grid-cols-5 relative">
       {/* Name */}
-      <div className="w-full custom-scroll-bar">{friend.username}</div>
+      <div
+        className={
+          "w-full custom-scroll-bar col-span-2 ml-6 self-center " +
+          (friend.is_online ? "text-black" : "text-slate-600")
+        }
+      >
+        {friend.username}
+      </div>
       {/* Status */}
       <div
         className={
-          "w-4 h-4 rounded-full self-center justify-self-center " +
+          "absolute w-4 h-4 rounded-full self-center left-0 " +
           (friend.is_online ? "bg-green-500" : "bg-red-500")
         }
       />
@@ -44,6 +57,16 @@ const FriendDetails = ({ friend, setLoading }) => {
       <button
         onClick={() => goToChat(friend)}
         className="fa-solid fa-comment-dots self-center justify-self-center text-xl text-emerald-500 hover:text-emerald-800 hover:ease-in-out duration-75"
+      />
+      {/* Play */}
+      <button
+        className={
+          "fa-solid fa-dice self-center justify-self-center " +
+          (friend.is_online
+            ? "text-indigo-500 hover:text-indigo-800"
+            : "cursor-default")
+        }
+        onClick={() => play(friend)}
       />
       {/* Remove */}
       <button

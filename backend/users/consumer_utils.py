@@ -29,6 +29,10 @@ def get_friends(user: CustomUser) -> dict:
 
     dict_to_return['num_requests'] = user.friend_requests.count()
     dict_to_return['friends'] = []
+    dict_to_return['game_requests'] = []
+
+    for req in user.game_requests.all():
+        dict_to_return['game_requests'].append({"id": req.id, "username": req.username})
 
     friends = user.friends.all().order_by("-is_online")
 

@@ -18,6 +18,7 @@ class CustomUserAdmin(UserAdmin):
                     'is_online',
                     'friends',
                     'friend_requests',
+                    'game_requests'
                 )
             }
         )

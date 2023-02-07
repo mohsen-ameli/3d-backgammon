@@ -4,10 +4,11 @@ import Button from "../../components/ui/Button"
 import { Link } from "react-router-dom"
 import Header from "../../components/ui/Header"
 import FriendDetails from "./FriendDetails"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import useGetFreshTokens from "../../components/hooks/useGetFreshTokens"
 import Loading from "../../components/ui/Loading"
+import notification from "../../components/utils/Notification"
 
 /**
  * This is the friends list page.
@@ -18,6 +19,7 @@ const FriendsList = () => {
   const { tokens } = useContext(AuthContext)
   const [ws, setWs] = useState(() => {})
   const getfreshTokens = useGetFreshTokens(tokens)
+  const showNotif = useRef(true)
 
   // Making a connection to the server, with fresh tokens
   useEffect(() => {
@@ -29,17 +31,50 @@ const FriendsList = () => {
     makeConnection()
   }, [])
 
+  const accept = async (id) => {
+    removeRequest(id)
+  }
+
+  const reject = async (id) => {
+    removeRequest(id)
+  }
+
+  const removeRequest = async (id) => {
+    console.log("removeRequest", id)
+  }
+
+  const removeAllRequests = async () => {
+    console.log("removeAllRequests")
+  }
+
   // Retrieving the friends list data live from the server
   useEffect(() => {
-    if (ws) {
-      ws.onopen = () => setLoading(false)
-      ws.onmessage = (e) => {
-        const data = JSON.parse(e.data)
-        setData(data)
-        setLoading(false)
+    if (!ws) return
+
+    ws.onopen = () => setLoading(false)
+    ws.onclose = () => removeAllRequests()
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data)
+
+      // If there are match requests
+      if (data["game_requests"].length > 0 && showNotif.current) {
+        // Making sure we show the notifications only once
+        showNotif.current = false
+
+        // Showing all match requests of a user
+        data["game_requests"].map((req) =>
+          notification(`${req.username} wants to play with you.`, "match", {
+            accept: () => accept(req.id),
+            reject: () => reject(req.id),
+            removeRequest: () => removeRequest(req.id),
+          })
+        )
       }
-      ws.onclose = () => console.log("Closed")
+
+      setData(data)
+      setLoading(false)
     }
+
     return () => {
       ws && ws.close()
     }
@@ -72,10 +107,10 @@ const FriendsList = () => {
       </Header>
 
       {/* Friends list */}
-      <div className="text-xl mb-1 pb-2 border-b-2 grid grid-cols-4 text-center">
-        <p>Name</p>
-        <p>Status</p>
+      <div className="text-xl mb-1 pb-2 border-b-2 grid grid-cols-5 text-center">
+        <p className="col-span-2">Name</p>
         <p>Chat</p>
+        <p>Play</p>
         <p>Remove</p>
       </div>
 
