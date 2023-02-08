@@ -13,6 +13,7 @@ class CustomUser(AbstractUser):
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     friend_requests = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='+')
     game_requests = models.ManyToManyField('self', symmetrical=False, blank=True)
+    rejected_request = models.OneToOneField('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="rejected")
 
     @property
     def get_date_joined(self):

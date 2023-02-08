@@ -105,7 +105,7 @@ const Game = () => {
       <ambientLight intensity={1} />
       <directionalLight position={[-5, 10, 5]} intensity={0.5} />
 
-      <Perf position="top-left" />
+      {/* <Perf position="top-left" /> */}
 
       <GameState.Provider value={value}>
         <OrbitControls makeDefault enabled={orbitControls["enabled"]} />

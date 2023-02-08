@@ -24,12 +24,19 @@ def get_messages_context(chat: Chat) -> list:
 
 # Gets all friends and number of friend requests of a user
 @database_sync_to_async
-def get_friends(user: CustomUser) -> dict:
+def get_friends(id) -> dict:
+    user = CustomUser.objects.get(id=id)
+
     dict_to_return = {}
 
     dict_to_return['num_requests'] = user.friend_requests.count()
     dict_to_return['friends'] = []
     dict_to_return['game_requests'] = []
+    dict_to_return['rejected_request'] = None
+
+    rejected = user.rejected_request
+    if rejected:
+        dict_to_return['rejected_request'] = {"id": rejected.id, "username": rejected.username}
 
     for req in user.game_requests.all():
         dict_to_return['game_requests'].append({"id": req.id, "username": req.username})

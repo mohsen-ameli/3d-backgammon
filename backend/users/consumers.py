@@ -141,7 +141,7 @@ class FriendsListConsumer(AsyncWebsocketConsumer):
     async def set_user(self, token):
         try:
             jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
-            self.user = await database_sync_to_async(CustomUser.objects.get)(id=jwt_token['user_id'])
+            self.user_id = jwt_token['user_id']
         except ExpiredSignatureError:
             await self.close()
             return
@@ -150,7 +150,7 @@ class FriendsListConsumer(AsyncWebsocketConsumer):
     async def send_friends_update(self):
         while True:
             # Send an update to the client with the current list of friends and friend requests
-            response = await get_friends(self.user)
+            response = await get_friends(self.user_id)
             await self.send(text_data=json.dumps(response))
             await asyncio.sleep(settings.UPDATE_INTERVAL)
 

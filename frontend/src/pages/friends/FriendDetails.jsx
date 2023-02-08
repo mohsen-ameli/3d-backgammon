@@ -32,6 +32,10 @@ const FriendDetails = ({ friend, setLoading }) => {
   // Playing with a friend
   const play = async (friend) => {
     if (friend.is_online) {
+      await axiosInstance.put("api/game/handle-match-request/", {
+        action: "send",
+        friend_id: friend.id,
+      })
     }
   }
 
@@ -56,21 +60,21 @@ const FriendDetails = ({ friend, setLoading }) => {
       {/* Chat */}
       <button
         onClick={() => goToChat(friend)}
-        className="fa-solid fa-comment-dots self-center justify-self-center text-xl text-emerald-500 hover:text-emerald-800 hover:ease-in-out duration-75"
+        className="fa-solid fa-comment-dots self-center justify-self-center text-xl text-emerald-600 hover:text-emerald-900 hover:ease-in-out duration-75"
       />
       {/* Play */}
       <button
         className={
           "fa-solid fa-dice self-center justify-self-center " +
           (friend.is_online
-            ? "text-indigo-500 hover:text-indigo-800"
+            ? "text-indigo-600 hover:text-indigo-900"
             : "cursor-default")
         }
         onClick={() => play(friend)}
       />
       {/* Remove */}
       <button
-        className="fa-solid fa-trash-can self-center justify-self-center text-red-500 hover:text-red-800"
+        className="fa-solid fa-trash-can self-center justify-self-center text-red-600 hover:text-red-900"
         onClick={() => deleteFriend(friend.id)}
       />
     </div>

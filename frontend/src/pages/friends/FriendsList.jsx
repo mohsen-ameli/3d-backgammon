@@ -9,6 +9,7 @@ import { AuthContext } from "../../context/AuthContext"
 import useGetFreshTokens from "../../components/hooks/useGetFreshTokens"
 import Loading from "../../components/ui/Loading"
 import notification from "../../components/utils/Notification"
+import useAxios from "../../components/hooks/useAxios"
 
 /**
  * This is the friends list page.
@@ -19,7 +20,9 @@ const FriendsList = () => {
   const { tokens } = useContext(AuthContext)
   const [ws, setWs] = useState(() => {})
   const getfreshTokens = useGetFreshTokens(tokens)
-  const showNotif = useRef(true)
+  const showReqNotif = useRef(true)
+  const showRejNotif = useRef(true)
+  const axiosInstance = useAxios()
 
   // Making a connection to the server, with fresh tokens
   useEffect(() => {
@@ -32,15 +35,26 @@ const FriendsList = () => {
   }, [])
 
   const accept = async (id) => {
-    removeRequest(id)
+    await axiosInstance.put("api/game/handle-match-request/", {
+      action: "accept",
+      friend_id: id,
+    })
+    showReqNotif.current = true
   }
 
   const reject = async (id) => {
-    removeRequest(id)
+    await axiosInstance.put("api/game/handle-match-request/", {
+      action: "reject",
+      friend_id: id,
+    })
+    showReqNotif.current = true
   }
 
-  const removeRequest = async (id) => {
-    console.log("removeRequest", id)
+  const deleteRejected = async () => {
+    await axiosInstance.put("api/game/handle-match-request/", {
+      action: "delete-rejected",
+    })
+    showRejNotif.current = true
   }
 
   const removeAllRequests = async () => {
@@ -54,25 +68,36 @@ const FriendsList = () => {
     ws.onopen = () => setLoading(false)
     ws.onclose = () => removeAllRequests()
     ws.onmessage = (e) => {
-      const data = JSON.parse(e.data)
+      const newData = JSON.parse(e.data)
+
+      // If there are rejected requests
+      if (newData["rejected_request"] && showRejNotif.current) {
+        showRejNotif.current = false
+        notification(
+          `${newData["rejected_request"].username} rejected your match request.`,
+          "deleteRejected",
+          { deleteRejected }
+        )
+      }
 
       // If there are match requests
-      if (data["game_requests"].length > 0 && showNotif.current) {
+      if (newData["game_requests"].length > 0 && showReqNotif.current) {
         // Making sure we show the notifications only once
-        showNotif.current = false
+        showReqNotif.current = false
 
         // Showing all match requests of a user
-        data["game_requests"].map((req) =>
+        newData["game_requests"].map((req) =>
           notification(`${req.username} wants to play with you.`, "match", {
             accept: () => accept(req.id),
             reject: () => reject(req.id),
-            removeRequest: () => removeRequest(req.id),
           })
         )
       }
 
-      setData(data)
-      setLoading(false)
+      if (data !== newData) {
+        setData(newData)
+        setLoading(false)
+      }
     }
 
     return () => {
