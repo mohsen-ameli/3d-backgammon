@@ -3,8 +3,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
 
+from .models import Game
 from users.models import CustomUser
 
+
+# This method will handle all the requests for a match
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def handle_match_request(request: Request):
@@ -26,18 +29,31 @@ def handle_match_request(request: Request):
         # User is sending a match request
         if action == "send":
             friend.game_requests.add(request.user)
+
         # User has accepted a match request
         elif action == "accept":
             remove_request(request.user, friend)
-            # TODO: Make a new game instance and add the two users to it.
+            newGame = Game()
+            newGame.save()
+            newGame.players.add(request.user, friend)
+            return Response({"game_id": newGame.id})
+            
         # User has rejected a match request
         elif action == "reject":
             remove_request(request.user, friend)
             friend.rejected_request = request.user
             friend.save()
-        # User has left the lobby, so deleting all match requests
-        elif action == "delete-all":
-            request.user.game_requests.clear()
 
         return Response({"success": True})
+
+# This method will check if the user is joining a valid game
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def valid_match(request: Request, game_id: int):
+    if request.method == "GET":
+        game = Game.objects.filter(id=game_id).filter(players=request.user)
         
+        if game.exists():
+            return Response({"valid": True, "finished": game.first().finished})
+        return Response({"valid": False})
+

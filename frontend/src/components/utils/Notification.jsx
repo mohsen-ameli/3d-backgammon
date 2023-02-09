@@ -6,8 +6,8 @@ const Msg = ({ closeToast, toastProps, msg, accept, reject }) => (
     <div className="flex justify-end gap-x-2">
       <button
         onClick={() => {
-          reject()
           closeToast()
+          reject()
         }}
         className="px-2 py-1 border-2 rounded-lg hover:text-white border-red-500 hover:bg-red-500 hover:ease-in-out duration-100"
       >
@@ -15,8 +15,8 @@ const Msg = ({ closeToast, toastProps, msg, accept, reject }) => (
       </button>
       <button
         onClick={() => {
+          closeToast(true)
           accept()
-          closeToast()
         }}
         className="px-2 py-1 border-2 rounded-lg hover:text-white border-green-500 hover:bg-green-500 hover:ease-in-out duration-100"
       >
@@ -29,7 +29,7 @@ const Msg = ({ closeToast, toastProps, msg, accept, reject }) => (
 const notification = (msg, type = "default", props) => {
   const args = {
     position: "top-center",
-    autoClose: 5000,
+    autoClose: 4000,
     hideProgressBar: false,
     closeOnClick: false,
     pauseOnHover: true,
@@ -45,12 +45,18 @@ const notification = (msg, type = "default", props) => {
   } else if (type === "error") {
     toast.error(msg, args)
   } else if (type === "match") {
+    const onClose = (skip = false) => {
+      if (!skip) {
+        props.reject()
+      }
+    }
+
     toast.info(<Msg msg={msg} accept={props.accept} reject={props.reject} />, {
       ...args,
       autoClose: 10000,
       closeButton: false,
       pauseOnHover: false,
-      onClose: () => props.reject(),
+      onClose,
     })
   } else if (type === "deleteRejected") {
     toast.info(msg, {

@@ -1,5 +1,5 @@
 import { useGLTF, OrbitControls, Environment } from "@react-three/drei"
-import { createContext, useRef, useState } from "react"
+import { createContext, useContext, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
 import { Debug, Physics } from "@react-three/rapier"
@@ -11,11 +11,14 @@ import Columns from "./Columns"
 import { useEffect } from "react"
 import { useLocation } from "react-router-dom"
 import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
+import { AuthContext } from "../context/AuthContext"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
 
 const Game = () => {
+  const { inGame, gameMode } = useContext(AuthContext)
+
   // The current phase of the game
   const [phase, setPhase] = useState()
 
@@ -76,12 +79,16 @@ const Game = () => {
 
   // Setting the phase to initial if user is playing
   useEffect(() => {
-    if (location.pathname === "/pass-and-play") {
-      setPhase("initial")
-      userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
-      checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
-    }
-  }, [location.pathname])
+    // This will not work when a user accepts a match request. Because
+    // of the validation fetch request.
+    if (!inGame) return
+
+    // if (gameMode.current === "pass-and-play") {
+    setPhase("initial")
+    userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
+    checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
+    // }
+  }, [inGame])
 
   // Game state values
   const value = {
@@ -90,12 +97,12 @@ const Game = () => {
     diceNums,
     userChecker,
     checkers,
+    checkerPicked,
+    newCheckerPosition,
     phase,
     setPhase,
     orbitControls,
     toggleControls,
-    checkerPicked,
-    newCheckerPosition,
   }
 
   return (
@@ -105,7 +112,7 @@ const Game = () => {
       <ambientLight intensity={1} />
       <directionalLight position={[-5, 10, 5]} intensity={0.5} />
 
-      {/* <Perf position="top-left" /> */}
+      <Perf position="top-left" />
 
       <GameState.Provider value={value}>
         <OrbitControls makeDefault enabled={orbitControls["enabled"]} />
@@ -117,10 +124,13 @@ const Game = () => {
         <Physics>
           {/* <Debug /> */}
 
-          <Dices />
+          {inGame && (
+            <>
+              <Dices />
 
-          <Checkers />
-
+              <Checkers />
+            </>
+          )}
           <Board />
         </Physics>
       </GameState.Provider>

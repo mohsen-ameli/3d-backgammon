@@ -1,7 +1,7 @@
 import Container from "../../components/ui/Container"
 import Center from "../../components/ui/Center"
 import Button from "../../components/ui/Button"
-import { Link } from "react-router-dom"
+import { Link, Navigate, useNavigate } from "react-router-dom"
 import Header from "../../components/ui/Header"
 import FriendDetails from "./FriendDetails"
 import { useContext, useEffect, useRef, useState } from "react"
@@ -22,6 +22,7 @@ const FriendsList = () => {
   const getfreshTokens = useGetFreshTokens(tokens)
   const showReqNotif = useRef(true)
   const showRejNotif = useRef(true)
+  const navigate = useNavigate()
   const axiosInstance = useAxios()
 
   // Making a connection to the server, with fresh tokens
@@ -35,11 +36,17 @@ const FriendsList = () => {
   }, [])
 
   const accept = async (id) => {
-    await axiosInstance.put("api/game/handle-match-request/", {
+    const res = await axiosInstance.put("api/game/handle-match-request/", {
       action: "accept",
       friend_id: id,
     })
-    showReqNotif.current = true
+
+    if (res.status === 200) {
+      const data = res.data
+      console.log(data)
+      navigate(`/friend-game/${data.game_id}/`)
+      return
+    }
   }
 
   const reject = async (id) => {
@@ -57,16 +64,11 @@ const FriendsList = () => {
     showRejNotif.current = true
   }
 
-  const removeAllRequests = async () => {
-    console.log("removeAllRequests")
-  }
-
   // Retrieving the friends list data live from the server
   useEffect(() => {
     if (!ws) return
 
     ws.onopen = () => setLoading(false)
-    ws.onclose = () => removeAllRequests()
     ws.onmessage = (e) => {
       const newData = JSON.parse(e.data)
 

@@ -21,12 +21,12 @@ class CustomUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         # If the user has friends, and is trying to add himself as a friend, raise an exception
-        try:
-            if self.friends.contains(self):
-                self.friends.remove(self)
-                raise Exception("You can't add yourself as a friend")
-        except ValueError:
-            pass
+        if self.friends.filter(pk=self.pk).exists():
+            self.friends.remove(self)
+            raise Exception("You can't add yourself as a friend")
+
+        super().save(*args, **kwargs)
+
         
         super().save(*args, **kwargs)
 
@@ -35,7 +35,7 @@ class CustomUser(AbstractUser):
 
 
 class Chat(models.Model):
-    uuid = models.UUIDField(primary_key=True, unique=True, default=uuid.uuid4(), editable=False)
+    uuid = models.UUIDField(primary_key=True, unique=True, editable=False)
     users = models.ManyToManyField('CustomUser', related_name='chats')
     messages = models.ManyToManyField('Message', related_name='chats', blank=True)
 

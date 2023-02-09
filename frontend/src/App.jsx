@@ -12,6 +12,7 @@ import FriendRequests from "./pages/friends/FriendRequests"
 import PrivateRoute from "./components/utils/PrivateRoute"
 import PassAndPlay from "./game/PassAndPlay"
 import Profile from "./pages/profile/Profile"
+import FriendGame from "./game/FriendGame"
 
 const App = () => {
   return (
@@ -27,13 +28,14 @@ const App = () => {
       </Canvas>
 
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Interface />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/play-random" element={<PlayRandom />} />
         <Route path="/pass-and-play" element={<PassAndPlay />} />
 
-        {/* Private Routes */}
+        {/* Private routes */}
         <Route
           path="/friends"
           element={
@@ -71,6 +73,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <FriendRequests />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/friend-game/:gameId"
+          element={
+            <PrivateRoute>
+              <FriendGame />
             </PrivateRoute>
           }
         />

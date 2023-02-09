@@ -191,8 +191,14 @@ class StatusConsumer(AsyncWebsocketConsumer):
             return
     
     async def disconnect(self, close_code):
+        # User has left the lobby, so deleting all match requests
+        await self.reset_match_requests()
         await update_user(self.user, is_online=False, last_login=timezone.now())
         await self.close(close_code)
+
+    @database_sync_to_async
+    def reset_match_requests(self):
+        self.user.first().game_requests.clear()
 
 
 

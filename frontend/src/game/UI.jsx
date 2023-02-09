@@ -8,8 +8,10 @@ import toCapitalize from "../components/utils/ToCapitalize"
 import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { GameState } from "./Game"
 import userSwitch from "../assets/sounds/user-switch.mp3"
+import { AuthContext } from "../context/AuthContext"
 
 const UI = () => {
+  const { setInGame } = useContext(AuthContext)
   const { userChecker, toggleControls, phase, setPhase, checkers } =
     useContext(GameState)
 
@@ -19,6 +21,7 @@ const UI = () => {
   const navigate = useNavigate()
 
   const playAgain = () => {
+    setInGame(true)
     setPhase("initial")
     userChecker.current = "white"
     checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
@@ -33,6 +36,7 @@ const UI = () => {
     // Somebody's won
     if (phase === "ended") {
       setWinner(toCapitalize(userChecker.current))
+      setInGame(false)
     } else {
       winner && setWinner()
     }

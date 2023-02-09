@@ -1,5 +1,5 @@
 import axios from "axios"
-import { createContext, useEffect, useState } from "react"
+import { createContext, useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import jwt_decode from "jwt-decode"
 
@@ -8,6 +8,12 @@ export const AuthContext = createContext()
 const AuthContextProvider = (props) => {
   // Navigate
   const navigate = useNavigate()
+
+  // Whether the user is in game or not
+  const [inGame, setInGame] = useState(false)
+
+  // Game mode
+  const gameMode = useRef()
 
   // User authentication info
   const [user, setUser] = useState(() =>
@@ -110,12 +116,15 @@ const AuthContextProvider = (props) => {
 
   // Context value
   const value = {
+    inGame,
+    gameMode,
     user,
     tokens,
     errors,
     setErrors,
     setUser,
     setTokens,
+    setInGame,
     login,
     logout,
     signup,
