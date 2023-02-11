@@ -13,8 +13,12 @@ import PrivateRoute from "./components/utils/PrivateRoute"
 import PassAndPlay from "./game/PassAndPlay"
 import Profile from "./pages/profile/Profile"
 import FriendGame from "./game/FriendGame"
+import useStatus from "./UserStatus"
 
 const App = () => {
+  // Getting the user status. (Game requests and game request rejections)
+  useStatus()
+
   return (
     <>
       <Canvas

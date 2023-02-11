@@ -9,7 +9,6 @@ import Checkers from "./Checkers"
 import Board from "./Board"
 import Columns from "./Columns"
 import { useEffect } from "react"
-import { useLocation } from "react-router-dom"
 import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { AuthContext } from "../context/AuthContext"
 
@@ -75,12 +74,8 @@ const Game = () => {
   // Load the models
   const { nodes, materials } = useGLTF(models)
 
-  const location = useLocation()
-
   // Setting the phase to initial if user is playing
   useEffect(() => {
-    // This will not work when a user accepts a match request. Because
-    // of the validation fetch request.
     if (!inGame) return
 
     // if (gameMode.current === "pass-and-play") {
@@ -112,7 +107,7 @@ const Game = () => {
       <ambientLight intensity={1} />
       <directionalLight position={[-5, 10, 5]} intensity={0.5} />
 
-      <Perf position="top-left" />
+      {/* <Perf position="top-left" /> */}
 
       <GameState.Provider value={value}>
         <OrbitControls makeDefault enabled={orbitControls["enabled"]} />

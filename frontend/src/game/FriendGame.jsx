@@ -10,22 +10,24 @@ const FriendGame = () => {
   const axiosInstance = useAxios()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const validateGame = async () => {
-      const res = await axiosInstance.get(`/api/game/valid-match/${gameId}`)
-      if (res.status === 200) {
-        if (!res.data.valid) {
-          navigate("/friends")
-          notification("Wrong game :(", "error")
-        } else if (res.data.finished) {
-          navigate("/friends")
-          notification("This game is finished :(", "error")
-        } else {
-          setInGame(true)
-          gameMode.current = `friend-game-${gameId}`
-        }
-      }
+  const validateGame = async () => {
+    const res = await axiosInstance.get(`/api/game/valid-match/${gameId}`)
+
+    if (res.status !== 200) return
+
+    if (!res.data.valid) {
+      navigate("/friends")
+      notification("Wrong game :(", "error")
+    } else if (res.data.finished) {
+      navigate("/friends")
+      notification("This game is finished :(", "error")
+    } else {
+      setInGame(true)
+      gameMode.current = `friend-game-${gameId}`
     }
+  }
+
+  useEffect(() => {
     validateGame()
   }, [])
 

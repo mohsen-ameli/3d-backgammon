@@ -28,6 +28,8 @@ def handle_match_request(request: Request):
 
         # User is sending a match request
         if action == "send":
+            if not friend.is_online:
+                return Response({"success": False})
             friend.game_requests.add(request.user)
 
         # User has accepted a match request

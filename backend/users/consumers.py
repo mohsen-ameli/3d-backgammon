@@ -113,48 +113,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
 
-######### TODO: Combine FriendsListConsumer and StatusConsumer into one consumer #########
-
-# Live updates for the friends of a user (/friends)
-class FriendsListConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        # Getting the JWT access token from the url
-        access_token = self.scope['url_route']['kwargs']['token']
-
-        await self.set_user(access_token)
-        
-        # Creating an async task to send updates of the user's friend
-        # List and friend requests to the client
-        self.thread = asyncio.create_task(self.send_friends_update())
-
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        # Stopping the async thread, and disconnecting the client
-        try:
-            self.thread.cancel()
-        except AttributeError:
-            pass
-        await self.close(close_code)
-
-    # Function to set the user based on the JWT access token
-    async def set_user(self, token):
-        try:
-            jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
-            self.user_id = jwt_token['user_id']
-        except ExpiredSignatureError:
-            await self.close()
-            return
-
-    # Worker, that sends updates to the client every UPDATE_INTERVAL seconds
-    async def send_friends_update(self):
-        while True:
-            # Send an update to the client with the current list of friends and friend requests
-            response = await get_friends(self.user_id)
-            await self.send(text_data=json.dumps(response))
-            await asyncio.sleep(settings.UPDATE_INTERVAL)
-
-
 # Updating the user's online status, as well their last login time
 class StatusConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -164,11 +122,20 @@ class StatusConsumer(AsyncWebsocketConsumer):
         await self.set_user(token)
         # Updating the user's online status, and last login time
         await update_user(self.user, is_online=True, last_login=timezone.now())
+
+        self.updates_on = "status"
+        self.thread = asyncio.create_task(self.send_updates())
         
         await self.accept()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
+
+        try:
+            await sync_to_async(print)(data["updates_on"])
+            self.updates_on = data["updates_on"]
+        except KeyError:
+            pass
 
         # User has logged out, and logged in with a different account
         try:
@@ -179,28 +146,41 @@ class StatusConsumer(AsyncWebsocketConsumer):
             pass
 
         # Updating the user's online status
-        await update_user(self.user, is_online=data['is_online'], last_login=timezone.now())
+        try:
+            await update_user(self.user, is_online=data['is_online'], last_login=timezone.now())
+        except KeyError:
+            pass
 
     # Function to set the user based on the JWT access token
     async def set_user(self, token):
         try:
             jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
-            self.user = await database_sync_to_async(CustomUser.objects.filter)(id=jwt_token['user_id'])
+            self.user_id = jwt_token['user_id']
+            self.user = await database_sync_to_async(CustomUser.objects.filter)(id=self.user_id)
         except ExpiredSignatureError:
             await self.close()
             return
     
-    async def disconnect(self, close_code):
-        # User has left the lobby, so deleting all match requests
-        await self.reset_match_requests()
-        await update_user(self.user, is_online=False, last_login=timezone.now())
-        await self.close(close_code)
+    async def send_updates(self):
+        while True:
+            # Send an update to the client with the current list of friends and friend requests
+            response = await get_updates(self.user_id, self.updates_on)
+            await self.send(text_data=json.dumps(response))
+            await asyncio.sleep(settings.UPDATE_INTERVAL)
 
     @database_sync_to_async
     def reset_match_requests(self):
         self.user.first().game_requests.clear()
 
-
+    async def disconnect(self, close_code):
+        # User has left the lobby, so deleting all match requests
+        await self.reset_match_requests()
+        await update_user(self.user, is_online=False, last_login=timezone.now())
+        try:
+            self.thread.cancel()
+        except AttributeError:
+            pass
+        await self.close(close_code)
 
 
 # Sample output for self.scope

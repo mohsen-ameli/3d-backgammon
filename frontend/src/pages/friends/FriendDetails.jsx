@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import useAxios from "../../components/hooks/useAxios"
+import notification from "../../components/utils/Notification"
 
 /**
  * This is the column that shows friend details.
@@ -31,12 +32,13 @@ const FriendDetails = ({ friend, setLoading }) => {
 
   // Playing with a friend
   const play = async (friend) => {
-    if (friend.is_online) {
-      await axiosInstance.put("api/game/handle-match-request/", {
-        action: "send",
-        friend_id: friend.id,
-      })
-    }
+    if (!friend.is_online) return
+
+    const res = await axiosInstance.put("api/game/handle-match-request/", {
+      action: "send",
+      friend_id: friend.id,
+    })
+    if (!res.data.success) notification("Your friend is not online!", "error")
   }
 
   return (

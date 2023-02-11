@@ -1,15 +1,12 @@
 import Container from "../../components/ui/Container"
 import Center from "../../components/ui/Center"
 import Button from "../../components/ui/Button"
-import { Link, Navigate, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import Header from "../../components/ui/Header"
 import FriendDetails from "./FriendDetails"
-import { useContext, useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
-import useGetFreshTokens from "../../components/hooks/useGetFreshTokens"
 import Loading from "../../components/ui/Loading"
-import notification from "../../components/utils/Notification"
-import useAxios from "../../components/hooks/useAxios"
 
 /**
  * This is the friends list page.
@@ -17,93 +14,33 @@ import useAxios from "../../components/hooks/useAxios"
 const FriendsList = () => {
   const [data, setData] = useState()
   const [loading, setLoading] = useState(true)
-  const { tokens } = useContext(AuthContext)
-  const [ws, setWs] = useState(() => {})
-  const getfreshTokens = useGetFreshTokens(tokens)
-  const showReqNotif = useRef(true)
-  const showRejNotif = useRef(true)
-  const navigate = useNavigate()
-  const axiosInstance = useAxios()
+  const { ws } = useContext(AuthContext)
 
-  // Making a connection to the server, with fresh tokens
-  useEffect(() => {
-    const makeConnection = async () => {
-      const freshTokens = await getfreshTokens()
-      // prettier-ignore
-      setWs(() => new WebSocket(`ws://localhost:8000/ws/friends/${freshTokens.access}/`))
-    }
-    makeConnection()
-  }, [])
+  const onMessage = (e) => {
+    const data = JSON.parse(e.data)
 
-  const accept = async (id) => {
-    const res = await axiosInstance.put("api/game/handle-match-request/", {
-      action: "accept",
-      friend_id: id,
-    })
+    if (data.updates_on !== "friends-list") return
 
-    if (res.status === 200) {
-      const data = res.data
-      console.log(data)
-      navigate(`/friend-game/${data.game_id}/`)
-      return
-    }
+    setData(data)
+    setLoading(false)
   }
 
-  const reject = async (id) => {
-    await axiosInstance.put("api/game/handle-match-request/", {
-      action: "reject",
-      friend_id: id,
-    })
-    showReqNotif.current = true
-  }
+  const onOpen = (e) => ws.send(JSON.stringify({ updates_on: "friends-list" }))
 
-  const deleteRejected = async () => {
-    await axiosInstance.put("api/game/handle-match-request/", {
-      action: "delete-rejected",
-    })
-    showRejNotif.current = true
-  }
-
-  // Retrieving the friends list data live from the server
   useEffect(() => {
     if (!ws) return
 
-    ws.onopen = () => setLoading(false)
-    ws.onmessage = (e) => {
-      const newData = JSON.parse(e.data)
+    ws.addEventListener("open", onOpen)
+    ws.addEventListener("message", onMessage)
 
-      // If there are rejected requests
-      if (newData["rejected_request"] && showRejNotif.current) {
-        showRejNotif.current = false
-        notification(
-          `${newData["rejected_request"].username} rejected your match request.`,
-          "deleteRejected",
-          { deleteRejected }
-        )
-      }
-
-      // If there are match requests
-      if (newData["game_requests"].length > 0 && showReqNotif.current) {
-        // Making sure we show the notifications only once
-        showReqNotif.current = false
-
-        // Showing all match requests of a user
-        newData["game_requests"].map((req) =>
-          notification(`${req.username} wants to play with you.`, "match", {
-            accept: () => accept(req.id),
-            reject: () => reject(req.id),
-          })
-        )
-      }
-
-      if (data !== newData) {
-        setData(newData)
-        setLoading(false)
-      }
-    }
+    // prettier-ignore
+    if (ws.readyState !== WebSocket.CLOSED && ws.readyState !== WebSocket.CONNECTING)
+      onOpen()
 
     return () => {
-      ws && ws.close()
+      ws.send(JSON.stringify({ updates_on: "status" }))
+      ws.removeEventListener("message", onMessage)
+      ws.removeEventListener("open", onOpen)
     }
   }, [ws])
 

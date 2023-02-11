@@ -118,6 +118,7 @@ const AuthContextProvider = (props) => {
   const value = {
     inGame,
     gameMode,
+    ws,
     user,
     tokens,
     errors,
