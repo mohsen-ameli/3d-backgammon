@@ -3,7 +3,6 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
 from django.conf import settings
-from django.db.models import Q
 from django.utils import timezone
 from jwt.exceptions import ExpiredSignatureError
 
@@ -20,17 +19,9 @@ class SearchFriendConsumer(AsyncWebsocketConsumer):
         # Getting the user's input
         self.typed = json.loads(text_data)['typed']
         
-        results = await self.search()
+        results = await search(self.typed)
 
         await self.send(json.dumps({'results': results}))
-
-    # Querying the database for matching username or email, based on user's input
-    @database_sync_to_async
-    def search(self):
-        results = CustomUser.objects.filter(
-            Q(username__iexact=self.typed) | Q(email__iexact=self.typed)
-        )
-        return list(results.values('id', 'username'))
 
     async def disconnect(self, close_code):
         await self.close(close_code)
@@ -51,9 +42,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-    # Fetching the messages of the chat from the database
-    # and sending them to the client
     async def fetch_messages(self):
+        # Fetching the messages of the chat from the database
+        # and sending them to the client
         context = await get_messages_context(self.chat)
         await self.send(text_data=json.dumps(context))
 
@@ -93,8 +84,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
         await database_sync_to_async(self.chat.messages.add)(msg)
 
-    # Used to send a message to the chat, when one of the users sends a message
     async def send_message(self, event):
+        # Used to send a message to the chat, when one of the users sends a message
         message = event['message']
         sender = event['sender']
         timestamp = event['timestamp']
@@ -122,22 +113,23 @@ class StatusConsumer(AsyncWebsocketConsumer):
         await self.set_user(token)
         # Updating the user's online status, and last login time
         await update_user(self.user, is_online=True, last_login=timezone.now())
-
+        # Starting live updates
         self.updates_on = "status"
         self.thread = asyncio.create_task(self.send_updates())
-        
+        # Accepting the conection
         await self.accept()
 
     async def receive(self, text_data):
+        # Data recieved
         data = json.loads(text_data)
 
+        # Front end wants updates on new fields of the user
         try:
-            await sync_to_async(print)(data["updates_on"])
             self.updates_on = data["updates_on"]
         except KeyError:
             pass
 
-        # User has logged out, and logged in with a different account
+        # User has logged out and logged in with a different account
         try:
             # Updating the user's last login time, and getting the new user if there is one
             await self.set_user(data['new_refresh'])
@@ -151,8 +143,8 @@ class StatusConsumer(AsyncWebsocketConsumer):
         except KeyError:
             pass
 
-    # Function to set the user based on the JWT access token
     async def set_user(self, token):
+        # This function sets the user based on the JWT access token given
         try:
             jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
             self.user_id = jwt_token['user_id']
@@ -168,63 +160,16 @@ class StatusConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps(response))
             await asyncio.sleep(settings.UPDATE_INTERVAL)
 
-    @database_sync_to_async
-    def reset_match_requests(self):
-        self.user.first().game_requests.clear()
-
     async def disconnect(self, close_code):
         # User has left the lobby, so deleting all match requests
-        await self.reset_match_requests()
+        await reset_match_requests(self.user)
+        # Updating user's online status
         await update_user(self.user, is_online=False, last_login=timezone.now())
+        # Canceling the asyncio thread
         try:
             self.thread.cancel()
         except AttributeError:
             pass
+        # Closing connection
         await self.close(close_code)
 
-
-# Sample output for self.scope
-# {
-#     'type': 'websocket',
-#     'path': '/ws/search-friend/',
-#     'raw_path': b'/ws/search-friend/',
-#     'headers': [
-#         (b'host',
-#         b'localhost:8000'),
-#         (b'connection',
-#         b'Upgrade'),
-#         (b'pragma',
-#         b'no-cache'),
-#         (b'cache-control',
-#         b'no-cache'),
-#         (b'user-agent',
-#         b'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/108.0.0.0 Safari/537.36'),
-#         (b'upgrade',
-#         b'websocket'),
-#         (b'origin',
-#         b'http://localhost:3000'),
-#         (b'sec-websocket-version',
-#         b'13'),
-#         (b'accept-encoding',
-#         b'gzip,deflate,br'),
-#         (b'accept-language',b'en-US,n;q=0.9'),
-#         (b'cookie',
-#         b'csrftoken=CGL08VFD22Zo71fhbrQDcLCFDk1iRAKW; sessionid=hkbqr37t28bejrar37dzoafqspt1z1my'),
-#         (b'sec-websocket-key',
-#         b'RNXjshR4b52ooHayAB3TpQ=='),
-#         (b'sec-websocket-extensions',
-#         b'permessage-deflate; client_max_window_bits')
-#     ],
-#     'query_string': b'',
-#     'client': ['127.0.0.1', 52572],
-#     'server': ['127.0.0.1', 8000],
-#     'subprotocols': [],
-#     'asgi': {'version': '3.0'},
-#     'cookies': {'csrftoken': 'CGL08VFD22Zo71fhbrQDcLCFDk1iRAKW',
-#     'sessionid': 'hkbqr37t28bejrar37dzoafqspt1z1my'},
-#     'session': '<django.utils.functional.LazyObject object at 0x7f71cb231e20>',
-#     'user': '<channels.auth.UserLazyObject object at 0x7f71cb221ee0>',
-#     'path_remaining': '',
-#     'url_route': {'args': (),
-#     'kwargs': {}}
-# }
