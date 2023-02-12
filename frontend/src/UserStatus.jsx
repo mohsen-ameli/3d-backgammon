@@ -13,6 +13,7 @@ const useStatus = () => {
   const showReqNotif = useRef(true)
   const showRejNotif = useRef(true)
 
+  // Accepting a game request
   const accept = async (id) => {
     const res = await axiosInstance.put("api/game/handle-match-request/", {
       action: "accept",
@@ -25,6 +26,7 @@ const useStatus = () => {
     navigate(`/friend-game/${data.game_id}`)
   }
 
+  // Rejecting the game request
   const reject = async (id) => {
     await axiosInstance.put("api/game/handle-match-request/", {
       action: "reject",
@@ -33,6 +35,7 @@ const useStatus = () => {
     showReqNotif.current = true
   }
 
+  // Deleting a "game request rejected" message
   const deleteRejected = async () => {
     await axiosInstance.put("api/game/handle-match-request/", {
       action: "delete-rejected",
@@ -40,6 +43,7 @@ const useStatus = () => {
     showRejNotif.current = true
   }
 
+  // Handling updates coming from the backend
   const onMessage = (e) => {
     const data = JSON.parse(e.data)
 
@@ -82,8 +86,11 @@ const useStatus = () => {
 
     return () => {
       ws.removeEventListener("message", onMessage)
+
       // Pausing the websocket from sending updates
       ws.send(JSON.stringify({ paused: true }))
+
+      // Reseting notification references
       showRejNotif.current = true
       showReqNotif.current = true
     }

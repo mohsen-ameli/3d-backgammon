@@ -15,9 +15,6 @@ const SearchFriend = () => {
   const axiosInstance = useAxios()
 
   useEffect(() => {
-    ws.onopen = () => console.log("Connected to server")
-    ws.onclose = () => console.log("closed")
-
     // Getting list of potential friends
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data)
@@ -28,24 +25,22 @@ const SearchFriend = () => {
       }
     }
 
-    return () => {
-      ws.close()
-    }
+    return () => ws.close()
   }, [ws])
 
   // Searching for potential friends
   const search = (e) => {
     const typed = e.target.value
 
-    if (typed !== "") {
-      error && setError(false)
-      // fetch
-      ws.send(
-        JSON.stringify({
-          typed,
-        })
-      )
-    }
+    if (typed === "") return
+
+    error && setError(false)
+    // fetch
+    ws.send(
+      JSON.stringify({
+        typed,
+      })
+    )
   }
 
   // Send friend request

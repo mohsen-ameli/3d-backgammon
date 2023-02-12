@@ -126,32 +126,24 @@ class StatusConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
 
         # Front end is pausing/resuming the updates
-        try:
+        if "paused" in data:
             self.paused = data["paused"]
             if not self.paused:
                 self.thread = asyncio.create_task(self.send_updates())
-        except KeyError:
-            pass
 
         # Front end wants updates on new fields of the user
-        try:
+        if "updates_on" in data:
             self.updates_on = data["updates_on"]
-        except KeyError:
-            pass
 
         # User has logged out and logged in with a different account
-        try:
+        if "new_refresh" in data:
             # Updating the user's last login time, and getting the new user if there is one
-            await self.set_user(data['new_refresh'])
+            await self.set_user(data["new_refresh"])
             await update_user(self.user, last_login=timezone.now())
-        except KeyError:
-            pass
 
         # Updating the user's online status
-        try:
-            await update_user(self.user, is_online=data['is_online'], last_login=timezone.now())
-        except KeyError:
-            pass
+        if "is_online" in data:
+            await update_user(self.user, is_online=data["is_online"], last_login=timezone.now())
 
     async def set_user(self, token):
         # This function sets the user based on the JWT access token given
@@ -165,7 +157,6 @@ class StatusConsumer(AsyncWebsocketConsumer):
     
     async def send_updates(self):
         while not self.paused:
-            # print("updating")
             # Send an update to the client with the current list of friends and friend requests
             response = await get_updates(self.user_id, self.updates_on)
             await self.send(text_data=json.dumps(response))
