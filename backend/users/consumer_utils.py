@@ -1,6 +1,7 @@
 from datetime import datetime
 from channels.db import database_sync_to_async
 from django.utils import timezone
+from django.db.models import Q
 
 from .models import CustomUser, Chat
 
@@ -68,3 +69,17 @@ def get_updates(id: int, updates_on: str) -> dict:
 def update_user(user: CustomUser, **kwargs):
     for key, value in kwargs.items():
         user.update(**{key: value})
+
+# Reseting all of user's game requests (When they leave the applicaiton)
+@database_sync_to_async
+def reset_match_requests(user: CustomUser):
+    user.first().game_requests.clear()
+
+
+# Querying the database for matching username or email, based on user's input
+@database_sync_to_async
+def search(typed: str):
+    results = CustomUser.objects.filter(
+        Q(username__iexact=typed) | Q(email__iexact=typed)
+    )
+    return list(results.values('id', 'username'))

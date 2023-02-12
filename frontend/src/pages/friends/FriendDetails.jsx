@@ -1,3 +1,5 @@
+import gsap from "gsap"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import useAxios from "../../components/hooks/useAxios"
 import notification from "../../components/utils/Notification"
@@ -65,21 +67,57 @@ const FriendDetails = ({ friend, setLoading }) => {
         className="fa-solid fa-comment-dots self-center justify-self-center text-xl text-emerald-600 hover:text-emerald-900 hover:ease-in-out duration-75"
       />
       {/* Play */}
-      <button
-        className={
-          "fa-solid fa-dice self-center justify-self-center " +
-          (friend.is_online
-            ? "text-indigo-600 hover:text-indigo-900"
-            : "cursor-default")
-        }
-        onClick={() => play(friend)}
-      />
+      <PlayButton friend={friend} play={play} />
       {/* Remove */}
       <button
         className="fa-solid fa-trash-can self-center justify-self-center text-red-600 hover:text-red-900"
         onClick={() => deleteFriend(friend.id)}
       />
     </div>
+  )
+}
+
+const PlayButton = ({ friend, play }) => {
+  const [clicked, setClicked] = useState()
+  const ref = useRef()
+
+  useEffect(() => {
+    if (clicked) {
+      gsap.to(ref.current, {
+        rotationZ: 360,
+        duration: 1.25,
+        ease: "linear",
+        repeat: -1,
+        yoyo: true,
+      })
+
+      setTimeout(() => {
+        setClicked(false)
+      }, 5000)
+    }
+  }, [clicked])
+
+  if (clicked)
+    return (
+      <i
+        ref={ref}
+        className="fa-regular fa-hourglass-half self-center justify-self-center"
+      ></i>
+    )
+
+  return (
+    <button
+      className={
+        "fa-solid fa-dice self-center justify-self-center " +
+        (friend.is_online
+          ? "text-indigo-600 hover:text-indigo-900"
+          : "cursor-default")
+      }
+      onClick={() => {
+        play(friend)
+        setClicked(true)
+      }}
+    />
   )
 }
 

@@ -47,6 +47,7 @@ const notification = (msg, type = "default", props) => {
   } else if (type === "match") {
     const onClose = (skip = false) => {
       if (!skip) {
+        console.log("rejecting")
         props.reject()
       }
     }
@@ -56,7 +57,7 @@ const notification = (msg, type = "default", props) => {
       autoClose: 10000,
       closeButton: false,
       pauseOnHover: false,
-      onClose,
+      onClose: () => onClose(),
     })
   } else if (type === "deleteRejected") {
     toast.info(msg, {

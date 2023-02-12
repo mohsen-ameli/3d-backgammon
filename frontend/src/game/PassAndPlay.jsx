@@ -7,6 +7,11 @@ const PassAndPlay = () => {
   useEffect(() => {
     setInGame(true)
     gameMode.current = "pass-and-play"
+
+    return () => {
+      setInGame(false)
+      gameMode.current = null
+    }
   }, [])
 
   return <></>

@@ -19,12 +19,10 @@ const useStatus = () => {
       friend_id: id,
     })
 
-    if (res.status === 200) {
-      const data = res.data
-      console.log(data)
-      navigate(`/friend-game/${data.game_id}/`)
-      return
-    }
+    if (res.status !== 200) return
+
+    const data = res.data
+    navigate(`/friend-game/${data.game_id}`)
   }
 
   const reject = async (id) => {
@@ -42,46 +40,54 @@ const useStatus = () => {
     showRejNotif.current = true
   }
 
-  useEffect(() => {
-    if (!ws) return
+  const onMessage = (e) => {
+    const data = JSON.parse(e.data)
 
-    ws.onmessage = (e) => {
-      const data = JSON.parse(e.data)
+    // If there are rejected requests
+    if (data["rejected_request"] && showRejNotif.current) {
+      // Making sure we show the notifications only once
+      showRejNotif.current = false
 
-      if (inGame) return
-
-      // If there are rejected requests
-      if (data["rejected_request"] && showRejNotif.current) {
-        // Making sure we show the notifications only once
-        showRejNotif.current = false
-
-        // Showing a notification
-        notification(
-          `${data["rejected_request"].username} rejected your match request.`,
-          "deleteRejected",
-          { deleteRejected }
-        )
-      }
-
-      // If there are game requests
-      if (data["game_requests"].length > 0 && showReqNotif.current) {
-        // Making sure we show the notifications only once
-        showReqNotif.current = false
-
-        // Showing all game requests of a user
-        data["game_requests"].map((req) =>
-          notification(`${req.username} wants to play with you.`, "match", {
-            accept: () => accept(req.id),
-            reject: () => reject(req.id),
-          })
-        )
-      }
+      // Showing a notification
+      notification(
+        `${data["rejected_request"].username} rejected your match request.`,
+        "deleteRejected",
+        { deleteRejected }
+      )
     }
+
+    // If there are game requests
+    if (data["game_requests"].length > 0 && showReqNotif.current) {
+      // Making sure we show the notifications only once
+      showReqNotif.current = false
+
+      // Showing all game requests of a user
+      data["game_requests"].map((req) =>
+        notification(`${req.username} wants to play with you.`, "match", {
+          accept: () => accept(req.id),
+          reject: () => reject(req.id),
+        })
+      )
+    }
+  }
+
+  useEffect(() => {
+    if (!ws || inGame) return
+
+    // User is not in game, so making sure the websocket is running
+    if (ws.readyState !== WebSocket.CONNECTING)
+      ws.send(JSON.stringify({ paused: false }))
+
+    ws.addEventListener("message", onMessage)
 
     return () => {
-      ws && ws.close()
+      ws.removeEventListener("message", onMessage)
+      // Pausing the websocket from sending updates
+      ws.send(JSON.stringify({ paused: true }))
+      showRejNotif.current = true
+      showReqNotif.current = true
     }
-  }, [ws])
+  }, [ws, inGame])
 }
 
 export default useStatus

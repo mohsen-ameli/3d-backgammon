@@ -109,6 +109,8 @@ class StatusConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         token = self.scope['url_route']['kwargs']['token']
 
+        # Should the websocket send updates or not
+        self.paused = False
         # Getting the user
         await self.set_user(token)
         # Updating the user's online status, and last login time
@@ -122,6 +124,14 @@ class StatusConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         # Data recieved
         data = json.loads(text_data)
+
+        # Front end is pausing/resuming the updates
+        try:
+            self.paused = data["paused"]
+            if not self.paused:
+                self.thread = asyncio.create_task(self.send_updates())
+        except KeyError:
+            pass
 
         # Front end wants updates on new fields of the user
         try:
@@ -154,7 +164,8 @@ class StatusConsumer(AsyncWebsocketConsumer):
             return
     
     async def send_updates(self):
-        while True:
+        while not self.paused:
+            # print("updating")
             # Send an update to the client with the current list of friends and friend requests
             response = await get_updates(self.user_id, self.updates_on)
             await self.send(text_data=json.dumps(response))

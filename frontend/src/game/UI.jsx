@@ -11,14 +11,13 @@ import userSwitch from "../assets/sounds/user-switch.mp3"
 import { AuthContext } from "../context/AuthContext"
 
 const UI = () => {
-  const { setInGame } = useContext(AuthContext)
+  const { inGame, setInGame } = useContext(AuthContext)
   const { userChecker, toggleControls, phase, setPhase, checkers } =
     useContext(GameState)
+  const navigate = useNavigate()
 
   const [playAudio] = useState(() => new Audio(userSwitch))
-
   const [winner, setWinner] = useState()
-  const navigate = useNavigate()
 
   const playAgain = () => {
     setInGame(true)
@@ -42,13 +41,22 @@ const UI = () => {
     }
   }, [phase])
 
+  // User needs to have a game phase, as well as be in game
+  // to see the button layout
   return (
     phase && (
       <>
-        <Html as="div" transform scale={0.2} position={[-1.75, 0.5, 0]} sprite>
-          <div className="flex flex-col items-center gap-4 select-none">
-            {/* Flipping the board */}
-            {/* <Button
+        {inGame && (
+          <Html
+            as="div"
+            transform
+            scale={0.2}
+            position={[-1.75, 0.5, 0]}
+            sprite
+          >
+            <div className="flex flex-col items-center gap-4 select-none">
+              {/* Flipping the board */}
+              {/* <Button
               className="text-white"
               onClick={() => {
                 diceNums.current.dice1 = 5
@@ -59,29 +67,30 @@ const UI = () => {
               Flip the board
             </Button> */}
 
-            {/* Toggling orbit controls */}
-            <Button
-              className="text-white"
-              onClick={() => {
-                toggleControls(true)
-                notification("hi", "error")
-              }}
-            >
-              Toggle pan
-            </Button>
+              {/* Toggling orbit controls */}
+              <Button
+                className="text-white"
+                onClick={() => {
+                  toggleControls(true)
+                  notification("hi", "error")
+                }}
+              >
+                Toggle pan
+              </Button>
 
-            <div
-              className={
-                "p-2 rounded-lg " +
-                (userChecker.current === "white"
-                  ? "bg-slate-200 text-black"
-                  : "bg-slate-600 text-white")
-              }
-            >
-              <h1>{toCapitalize(userChecker.current)} to play!</h1>
+              <div
+                className={
+                  "p-2 rounded-lg " +
+                  (userChecker.current === "white"
+                    ? "bg-slate-200 text-black"
+                    : "bg-slate-600 text-white")
+                }
+              >
+                <h1>{toCapitalize(userChecker.current)} to play!</h1>
+              </div>
             </div>
-          </div>
-        </Html>
+          </Html>
+        )}
 
         {/* Overlay when someone wins */}
         {winner && (

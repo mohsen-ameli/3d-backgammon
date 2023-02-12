@@ -29,6 +29,11 @@ const FriendGame = () => {
 
   useEffect(() => {
     validateGame()
+
+    return () => {
+      setInGame(false)
+      gameMode.current = null
+    }
   }, [])
 
   return <></>
