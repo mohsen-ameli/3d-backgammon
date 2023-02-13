@@ -3,5 +3,5 @@ from .views import *
 
 urlpatterns = [
     path("handle-match-request/", handle_match_request),
-    path("valid-match/<int:game_id>/", valid_match),
+    path("valid-match/<str:game_id>/", valid_match),
 ]

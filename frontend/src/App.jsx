@@ -81,7 +81,7 @@ const App = () => {
           }
         />
         <Route
-          path="/friend-game/:gameId"
+          path="/game/:gameId"
           element={
             <PrivateRoute>
               <FriendGame />

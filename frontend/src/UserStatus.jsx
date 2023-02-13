@@ -23,7 +23,7 @@ const useStatus = () => {
     if (res.status !== 200) return
 
     const data = res.data
-    navigate(`/friend-game/${data.game_id}`)
+    navigate(`/game/${data.game_id}`)
   }
 
   // Rejecting the game request
@@ -46,6 +46,10 @@ const useStatus = () => {
   // Handling updates coming from the backend
   const onMessage = (e) => {
     const data = JSON.parse(e.data)
+
+    if (data["live_game"]) {
+      navigate(`/game/${data["live_game"]}`)
+    }
 
     // If there are rejected requests
     if (data["rejected_request"] && showRejNotif.current) {
@@ -88,7 +92,8 @@ const useStatus = () => {
       ws.removeEventListener("message", onMessage)
 
       // Pausing the websocket from sending updates
-      ws.send(JSON.stringify({ paused: true }))
+      if (ws.readyState !== WebSocket.CONNECTING)
+        ws.send(JSON.stringify({ paused: true }))
 
       // Reseting notification references
       showRejNotif.current = true

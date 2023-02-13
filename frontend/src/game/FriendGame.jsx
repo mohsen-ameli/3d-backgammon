@@ -1,29 +1,27 @@
 import { useContext, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { AuthContext } from "../context/AuthContext"
-import useAxios from "../components/hooks/useAxios"
+import useFetch from "../components/hooks/useFetch"
 import notification from "../components/utils/Notification"
 
 const FriendGame = () => {
   const { gameId } = useParams()
   const { setInGame, gameMode } = useContext(AuthContext)
-  const axiosInstance = useAxios()
+  const { data } = useFetch(`/api/game/valid-match/${gameId}/`)
   const navigate = useNavigate()
 
-  const validateGame = async () => {
-    const res = await axiosInstance.get(`/api/game/valid-match/${gameId}`)
+  const validateGame = () => {
+    if (data.valid === undefined) return
 
-    if (res.status !== 200) return
-
-    if (!res.data.valid) {
+    if (!data.valid) {
       navigate("/friends")
       notification("Wrong game :(", "error")
-    } else if (res.data.finished) {
+    } else if (data.finished) {
       navigate("/friends")
       notification("This game is finished :(", "error")
     } else {
       setInGame(true)
-      gameMode.current = `friend-game-${gameId}`
+      gameMode.current = `game_${gameId}`
     }
   }
 
@@ -34,7 +32,7 @@ const FriendGame = () => {
       setInGame(false)
       gameMode.current = null
     }
-  }, [])
+  }, [data])
 
   return <></>
 }

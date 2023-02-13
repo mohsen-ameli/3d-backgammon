@@ -50,7 +50,7 @@ def get_updates(id: int, updates_on: str) -> dict:
     # Default status for all pages in the front end
     dict_to_return['game_requests'] = []
     dict_to_return['rejected_request'] = None
-    # dict_to_return['accepted_request'] = None
+    dict_to_return['live_game'] = str(user.live_game.id) if user.live_game else None
 
     # If user's friend rejected this user's game request
     rejected = user.rejected_request

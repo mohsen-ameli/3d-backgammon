@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import CustomUser
+import uuid
 
 class Game(models.Model):
     choices = [
@@ -7,10 +7,12 @@ class Game(models.Model):
         ("black", "black"),
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     start_time = models.DateTimeField(auto_now_add=True)
     turn = models.CharField(max_length=5, choices=choices, blank=True, null=True)
-    players = models.ManyToManyField(CustomUser, related_name='games', blank=True)
     finished = models.BooleanField(default=False)
+    board = models.JSONField(blank=True, null=True)
+    winner = models.ForeignKey("users.CustomUser", on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.players.first().username} vs {self.players.last().username} - {self.start_time}"
+        return f"{self.id}"

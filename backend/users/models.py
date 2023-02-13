@@ -2,17 +2,20 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 
+from game.models import Game
+
 class CustomUser(AbstractUser):
     games_won = models.IntegerField(default=0)
     games_lost = models.IntegerField(default=0)
     total_games = models.IntegerField(default=0)
-
     is_online = models.BooleanField(default=False, blank=True)
 
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     friend_requests = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='+')
     game_requests = models.ManyToManyField('self', symmetrical=False, blank=True)
     rejected_request = models.OneToOneField('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="rejected")
+    live_game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True, blank=True, related_name="+")
+    games = models.ManyToManyField(Game, symmetrical=False, blank=True)
 
     @property
     def get_date_joined(self):
@@ -20,13 +23,10 @@ class CustomUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         # If the user has friends, and is trying to add himself as a friend, raise an exception
-        if self.friends.filter(pk=self.pk).exists():
+        if self.pk != None and self.friends.filter(pk=self.pk).exists():
             self.friends.remove(self)
             raise Exception("You can't add yourself as a friend")
 
-        super().save(*args, **kwargs)
-
-        
         super().save(*args, **kwargs)
 
     def __str__(self):

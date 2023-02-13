@@ -11,6 +11,7 @@ import Columns from "./Columns"
 import { useEffect } from "react"
 import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { AuthContext } from "../context/AuthContext"
+import notification from "../components/utils/Notification"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
@@ -26,6 +27,9 @@ const Game = () => {
     enabled: true,
     changable: true,
   })
+
+  // Game websocket
+  const [ws, setWs] = useState(() => {})
 
   // Toggle the orbit controls.
   const toggleControls = (ui = false) => {
@@ -74,7 +78,7 @@ const Game = () => {
   // Load the models
   const { nodes, materials } = useGLTF(models)
 
-  // Setting the phase to initial if user is playing
+  // User has entered the game (potentially)
   useEffect(() => {
     if (!inGame) return
 
@@ -82,8 +86,40 @@ const Game = () => {
     setPhase("initial")
     userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
     checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
-    // }
+
+    if (gameMode.current.includes("game")) {
+      const gameId = gameMode.current.split("_")[1]
+
+      // Starting a websocket connection to let the fun begin
+      setWs(() => new WebSocket(`ws://localhost:8000/ws/game/${gameId}/`))
+    }
   }, [inGame])
+
+  useEffect(() => {
+    if (!ws) return
+
+    ws.onopen = () => {
+      const context = {
+        initial: true,
+        turn: userChecker.current,
+        board: checkers.current,
+      }
+
+      ws.send(JSON.stringify(context))
+    }
+    ws.onclose = () => console.log("closing")
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data)
+
+      if (data["too_many_users"]) {
+        notification(
+          "Please continue this game on your other active session!",
+          "error"
+        )
+        return
+      }
+    }
+  }, [ws])
 
   // Game state values
   const value = {
