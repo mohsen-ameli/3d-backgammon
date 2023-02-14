@@ -15,7 +15,7 @@ const useStatus = () => {
 
   // Accepting a game request
   const accept = async (id) => {
-    const res = await axiosInstance.put("api/game/handle-match-request/", {
+    const res = await axiosInstance.put("/api/game/handle-match-request/", {
       action: "accept",
       friend_id: id,
     })
@@ -28,7 +28,7 @@ const useStatus = () => {
 
   // Rejecting the game request
   const reject = async (id) => {
-    await axiosInstance.put("api/game/handle-match-request/", {
+    await axiosInstance.put("/api/game/handle-match-request/", {
       action: "reject",
       friend_id: id,
     })
@@ -37,7 +37,7 @@ const useStatus = () => {
 
   // Deleting a "game request rejected" message
   const deleteRejected = async () => {
-    await axiosInstance.put("api/game/handle-match-request/", {
+    await axiosInstance.put("/api/game/handle-match-request/", {
       action: "delete-rejected",
     })
     showRejNotif.current = true

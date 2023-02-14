@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
@@ -34,7 +35,7 @@ class CustomUser(AbstractUser):
 
 
 class Chat(models.Model):
-    uuid = models.UUIDField(primary_key=True, unique=True, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True, editable=False)
     users = models.ManyToManyField('CustomUser', related_name='chats')
     messages = models.ManyToManyField('Message', related_name='chats', blank=True)
 
@@ -42,7 +43,7 @@ class Chat(models.Model):
         return f"chat: {self.pk}"
 
     def save(self, *args, **kwargs):
-        if self.users.all().count() > 2:
+        if self.uuid != None and self.users.all().count() > 2:
             raise Exception("Chat must have at most, 2 users.")
         else:
             super().save(*args, **kwargs)

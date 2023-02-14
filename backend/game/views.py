@@ -1,3 +1,4 @@
+import random
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -36,6 +37,13 @@ def handle_match_request(request: Request):
     elif action == "accept":
         remove_request(request.user, friend)
         newGame = Game()
+
+        if random.random() > 0.5:
+            newGame.black = request.user
+            newGame.white = friend
+        else:
+            newGame.white = request.user
+            newGame.black = friend 
         newGame.save()
 
         request.user.games.add(newGame)

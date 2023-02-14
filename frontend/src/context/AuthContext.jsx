@@ -72,7 +72,6 @@ const AuthContextProvider = (props) => {
         setErrors(null)
       }
     } catch (error) {
-      console.log(error)
       setErrors({ message: error.response.data.detail, code: "password" })
     }
   }

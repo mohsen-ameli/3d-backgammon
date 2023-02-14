@@ -1,4 +1,4 @@
-import json, jwt, asyncio
+import json, jwt, asyncio, time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
@@ -6,6 +6,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from .models import Game
+from users.models import CustomUser
 
 class GameConsumer(AsyncWebsocketConsumer):
     users = 0
@@ -37,11 +38,79 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # User has connected to the game
         if "initial" in data:
-            self.game.turn = data["turn"]
-            self.game.board = data["board"]
-            await sync_to_async(self.game.save)()
+            await self.fetch_game_state(initial=True)
+        elif "winner" in data:
+            winner = await database_sync_to_async(CustomUser.objects.get)(id=data["winner"])
+            self.game.winner = winner.username
+            self.game.finished = True
+
+            white = await database_sync_to_async(CustomUser.objects.get)(id=self.game.white.id)
+            black = await database_sync_to_async(CustomUser.objects.get)(id=self.game.black.id)
+
+            white.live_game = None
+            black.live_game = None
+
+            await database_sync_to_async(self.game.save)()
+            await database_sync_to_async(white.save)()
+            await database_sync_to_async(black.save)()
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "game_is_over",
+                    "winner": winner.username,
+                    "finished": True,
+                }
+            )
+            await self.disconnect("")
         else:
-            print(data)
+            await update_game_state(self.game, data["board"], data["turn"])
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "send_updates",
+                    "initial": False,
+                    "turn": data["turn"],
+                    "board": data["board"],
+                    "finished": self.game.finished,
+                    "white": self.game.white.id,
+                    "black": self.game.black.id
+                }
+            )
+        return
+
+    async def game_is_over(self, event):
+        winner = event["winner"]
+        finished = event["finished"]
+
+        context = {
+            "winner": winner,
+            "finished": finished
+        }
+
+        await self.send(text_data=json.dumps(context))
+
+    async def send_updates(self, event):
+        initial = event["initial"]
+        turn = event["turn"]
+        board = event["board"]
+        finished = event["finished"]
+        white = event["white"]
+        black = event["black"]
+
+        context = {
+            "initial": initial,
+            "turn": turn,
+            "board": board,
+            "finished": finished,
+            "white": white,
+            "black": black
+        }
+
+        await self.send(text_data=json.dumps(context))
+
+    async def fetch_game_state(self, initial):
+        context = await get_game_state(self.game, initial)
+        await self.send(text_data=json.dumps(context))
 
     async def disconnect(self, code):
         GameConsumer.users -= 1
@@ -49,3 +118,22 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
+
+@database_sync_to_async
+def update_game_state(game: Game, board, turn):
+    game.board = board
+    game.turn = turn
+    game.save()
+
+@database_sync_to_async
+def get_game_state(game: Game, initial: bool):
+    context = {}
+
+    context["initial"] = initial
+    context["turn"] = game.turn
+    context["board"] = game.board
+    context["finished"] = game.finished
+    context["white"] = game.white.id
+    context["black"] = game.black.id
+
+    return context

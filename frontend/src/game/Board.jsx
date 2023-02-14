@@ -30,7 +30,7 @@ const Board = () => {
         <CuboidCollider args={[1.175, 0.5, 0.07]} position={[0, 0.06, 1]} />
 
         {/* Dice Holder */}
-        <CuboidCollider args={[0.5, 0.1, 0.1]} position={[0, 0.6, 2]} />
+        <CuboidCollider args={[0.5, 0.1, 0.5]} position={[0, 0.6, 2]} />
 
         <mesh geometry={nodes.Board.geometry} material={materials.BoardWood2} />
       </RigidBody>

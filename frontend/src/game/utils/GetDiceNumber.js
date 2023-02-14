@@ -54,7 +54,7 @@ const getDiceNumber = (dice) => {
     return 4
   }
   // Don't know what the number is (Dice is on a slant angle)
-  console.log("uhhhhhhhhhh")
+  console.log("Don't know what the dice number is!")
   throwDice([dice])
 
   // Some dice examples of the rotation of the dice, when it's sleeping

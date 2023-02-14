@@ -49,20 +49,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(context))
 
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
+        data = json.loads(text_data)
 
         # If the client is initially requesting the messages
-        try:
-            command = text_data_json['command']
-            if command == 'fetch_messages':
-                await self.fetch_messages()
-                return
-        except KeyError:
-            pass
+        if "command" in data:
+            await self.fetch_messages()
+            return
 
-        message = text_data_json['message']
-        sender = text_data_json['sender']
-        timestamp = text_data_json['timestamp']
+        message = data['message']
+        sender = data['sender']
+        timestamp = data['timestamp']
 
         await self.channel_layer.group_send(
             self.room_group_name,

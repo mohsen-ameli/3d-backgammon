@@ -11,7 +11,7 @@ import userSwitch from "../assets/sounds/user-switch.mp3"
 import { AuthContext } from "../context/AuthContext"
 
 const UI = () => {
-  const { inGame, setInGame } = useContext(AuthContext)
+  const { inGame, setInGame, gameMode } = useContext(AuthContext)
   const { userChecker, toggleControls, phase, setPhase, checkers } =
     useContext(GameState)
   const navigate = useNavigate()
@@ -72,7 +72,7 @@ const UI = () => {
                 className="text-white"
                 onClick={() => {
                   toggleControls(true)
-                  notification("hi", "error")
+                  // notification("hi", "error")
                 }}
               >
                 Toggle pan
@@ -97,8 +97,10 @@ const UI = () => {
           <Html as="div" transform scale={0.2} position={[0, 0, 0]} sprite>
             <div className="p-6 flex flex-col gap-y-8 rounded-lg bg-[#cbd5e18f] select-none">
               <h1 className="text-4xl text-center">{winner} wins!</h1>
-              <div className="w-full flex items-center gap-x-4">
-                <Button onClick={playAgain}>Play again</Button>
+              <div className="w-full flex items-center justify-center gap-x-4">
+                {gameMode.current === "pass-and-play" && (
+                  <Button onClick={playAgain}>Play again</Button>
+                )}
                 <Button
                   onClick={() => {
                     navigate("/")

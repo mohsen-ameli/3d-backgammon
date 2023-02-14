@@ -12,7 +12,7 @@ import hasMoves from "./utils/HasMoves"
 import notification from "../components/utils/Notification"
 
 const Dices = () => {
-  const { diceNums, phase, setPhase, checkers, userChecker } =
+  const { diceNums, phase, setPhase, checkers, userChecker, myTurn, ws } =
     useContext(GameState)
   const dice1 = useRef()
   const dice2 = useRef()
@@ -23,6 +23,12 @@ const Dices = () => {
   })
 
   const [showThrowBtn, setShowThrowBtn] = useState(false)
+
+  const updateLiveGame = () => {
+    ws.send(
+      JSON.stringify({ board: checkers.current, turn: userChecker.current })
+    )
+  }
 
   useEffect(() => {
     // Dices have finished throwing
@@ -44,10 +50,15 @@ const Dices = () => {
           diceNums.current.moves = 0
           diceNums.current.dice1 = undefined
           diceNums.current.dice2 = undefined
-          // Set the phase to diceRollAgain
-          setPhase("diceRollAgain")
-          // Show the throw button again
-          setShowThrowBtn(true)
+          // Set the phase to diceRoll
+          if (!ws) {
+            setPhase("diceRollAgain")
+            // Show the throw button again
+            setShowThrowBtn(true)
+          } else {
+            // Updating the backend, if user is playing a live game
+            updateLiveGame()
+          }
           // Show a message that the user has no valid moves
           notification("You don't have a move!", "error")
           return
@@ -66,10 +77,12 @@ const Dices = () => {
   }, [finishedThrow])
 
   useEffect(() => {
-    if (phase === "diceRoll") {
-      setShowThrowBtn(true)
-    } else if (phase === "ended") {
+    if (!myTurn.current || phase === "ended") {
       setShowThrowBtn(false)
+      return
+    }
+    if (phase === "diceRoll" || phase === "diceRollAgain") {
+      setShowThrowBtn(true)
     } else if (phase === "initial") {
       resetDices([dice1.current, dice2.current])
       resetDiceRotation([dice1.current, dice2.current])

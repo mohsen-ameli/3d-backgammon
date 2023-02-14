@@ -13,11 +13,15 @@ import GameWon from "./utils/GameWon"
 import hasMoves from "./utils/HasMoves"
 import notification from "../components/utils/Notification"
 import toCapitalize from "../components/utils/ToCapitalize"
+import { AuthContext } from "../context/AuthContext"
 
 const Checker = ({ thisChecker }) => {
   const checker = useRef()
 
+  const { user } = useContext(AuthContext)
+
   const {
+    ws,
     checkerPicked,
     nodes,
     materials,
@@ -39,48 +43,32 @@ const Checker = ({ thisChecker }) => {
   const [pos, setPos] = useState([0, 0, 0])
   const [, rerender] = useState(false)
 
-  useEffect(() => {
-    if (phase === "initial") {
-      const newPos = getCheckerPos(
-        thisChecker.col,
-        thisChecker.row,
-        thisChecker.removed
-      )
-      setPos(newPos)
-      set({ position: newPos, rotation: [0, 0, 0] })
-      checker.current.setTranslation({
-        x: newPos[0],
-        y: newPos[1],
-        z: newPos[2],
-      })
-    }
-  }, [phase])
-
   // When a checker is removed, update its position
   useEffect(() => {
-    if (thisChecker.removed) {
-      // New position for the checker
-      const newPos = getCheckerPos(
-        thisChecker.col,
-        thisChecker.row,
-        thisChecker.removed
-      )
-      // Setting the new position of the checker when it gets removed
-      setPos(newPos)
-      // Making sure the component rerenders when the checker gets removed
-      rerender((curr) => !curr)
+    // New position for the checker
+    const newPos = getCheckerPos(
+      thisChecker.col,
+      thisChecker.row,
+      thisChecker.removed
+    )
+    // Setting the new position of the checker when it gets removed
+    setPos(newPos)
+    rerender((curr) => !curr)
 
-      // Setting the checker's mesh position (not the physics)
-      set({ position: newPos, rotation: [0, 0, 0] })
+    // Setting the checker's mesh position (not the physics)
+    const rotation =
+      thisChecker.col === -3 || thisChecker.col === -4
+        ? [Math.PI / 3, 0, 0]
+        : [0, 0, 0]
+    set({ position: newPos, rotation })
 
-      // Setting the checker's physics position
-      checker.current.setTranslation({
-        x: newPos[0],
-        y: newPos[1],
-        z: newPos[2],
-      })
-    }
-  }, [thisChecker.removed])
+    // Setting the checker's physics position
+    checker.current.setTranslation({
+      x: newPos[0],
+      y: newPos[1],
+      z: newPos[2],
+    })
+  }, [thisChecker, thisChecker.removed])
 
   // Spring animation for dragging
   const [spring, set] = useSpring(() => ({
@@ -96,17 +84,6 @@ const Checker = ({ thisChecker }) => {
   // This is where the main logic for the game is
   const bind = useDrag(
     ({ event, offset: [x, y], dragging }) => {
-      // For debugging purposes
-      // console.log("checker", thisChecker)
-      // console.log("dice", diceNums.current)
-      // console.log("game won", GameWon(checkers.current, userChecker.current))
-      // console.log("phase", phase)
-      // console.log("thisChecker", thisChecker)
-
-      // const id = event.instanceId
-      // const thisChecker = checkers.current[id]
-      // console.log(event)
-
       // Check to see if the user is allowed to move
       if (
         phase === "checkerMove" &&
@@ -232,6 +209,10 @@ const Checker = ({ thisChecker }) => {
 
                 const won = GameWon(checkers.current, possibleWinner)
                 if (won) {
+                  if (ws) {
+                    updateGameWinner()
+                    return
+                  }
                   setPhase("ended")
                   userChecker.current = possibleWinner
                   set({ position: positions, rotation: [Math.PI / 3, 0, 0] })
@@ -247,7 +228,7 @@ const Checker = ({ thisChecker }) => {
             }
           }
 
-          // User is moving their checker withing the board
+          // User is moving their checker within the board
           if (
             // The user isn't going to the moon
             !isNaN(moved) &&
@@ -267,7 +248,7 @@ const Checker = ({ thisChecker }) => {
             // User is moving invalidly ..?
             if (action === "invalid") {
               // Show error message
-              console.log("You can't go there!")
+              notification("You can't go there!", "info")
 
               // Return to old position
               const oldPosition = getCheckerPos(
@@ -383,18 +364,40 @@ const Checker = ({ thisChecker }) => {
       diceNums.current.moves = 0
       diceNums.current.dice1 = undefined
       diceNums.current.dice2 = undefined
-      // Set the phase to diceRoll
-      setPhase("diceRoll")
       // Show a message that the user has no valid moves
       notification("You don't have a move!", "error")
+      // Set the phase to diceRoll
+      if (!ws) {
+        setPhase("diceRoll")
+      } else {
+        // Updating the backend, if user is playing a live game
+        updateLiveGame()
+      }
       return
     }
 
     // Updating the user that is playing, and the phase
     if (diceNums.current.moves === 0) {
+      // Switch players
       userChecker.current = switchPlayers(userChecker.current)
-      setPhase("diceRoll")
+      // Set the phase to diceRoll
+      if (!ws) {
+        setPhase("diceRoll")
+      } else {
+        // Updating the backend, if user is playing a live game
+        updateLiveGame()
+      }
     }
+  }
+
+  const updateGameWinner = () => {
+    ws.send(JSON.stringify({ finished: true, winner: user.user_id }))
+  }
+
+  const updateLiveGame = () => {
+    ws.send(
+      JSON.stringify({ board: checkers.current, turn: userChecker.current })
+    )
   }
 
   return (

@@ -12,12 +12,13 @@ import { useEffect } from "react"
 import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { AuthContext } from "../context/AuthContext"
 import notification from "../components/utils/Notification"
+import toCapitalize from "../components/utils/ToCapitalize"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
 
 const Game = () => {
-  const { inGame, gameMode } = useContext(AuthContext)
+  const { user, inGame, gameMode } = useContext(AuthContext)
 
   // The current phase of the game
   const [phase, setPhase] = useState()
@@ -64,16 +65,19 @@ const Game = () => {
   // The new position of the checker (in checkers used for calculating the moved variable)
   const newCheckerPosition = useRef()
 
-  /* checkerNumber: [
+  // Boolean to keep track of if it's the user's turn or not
+  const myTurn = useRef(true)
+
+  /* checkers: [
     id: int,
-    color: "white" | "black",
-    col: 0-23 normal, -1 removed white checker, -2 removed black checker, -3 endbar white checker, -4 endbar black checker,
-    row: 0 - 4,
-    removed: true | false
+    color: str = "white" | "black",
+    col: int = 0-23 normal | -1 removed white checker | -2 removed black checker | -3 endbar white checker | -4 endbar black checker,
+    row: int = 0 - 4,
+    removed: Boolean
   ] */
 
   // All of the checkers' default positions
-  const checkers = useRef(JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS)))
+  const checkers = useRef([])
 
   // Load the models
   const { nodes, materials } = useGLTF(models)
@@ -82,10 +86,11 @@ const Game = () => {
   useEffect(() => {
     if (!inGame) return
 
-    // if (gameMode.current === "pass-and-play") {
-    setPhase("initial")
-    userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
-    checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
+    if (gameMode.current === "pass-and-play") {
+      setPhase("initial")
+      userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
+      checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
+    }
 
     if (gameMode.current.includes("game")) {
       const gameId = gameMode.current.split("_")[1]
@@ -99,24 +104,51 @@ const Game = () => {
     if (!ws) return
 
     ws.onopen = () => {
-      const context = {
-        initial: true,
-        turn: userChecker.current,
-        board: checkers.current,
-      }
-
-      ws.send(JSON.stringify(context))
+      ws.send(JSON.stringify({ initial: true }))
     }
-    ws.onclose = () => console.log("closing")
+
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data)
 
+      // Checking if the user has multiple sessions active
       if (data["too_many_users"]) {
         notification(
           "Please continue this game on your other active session!",
           "error"
         )
         return
+      }
+
+      if (data["finished"]) {
+        userChecker.current = data["winner"]
+        setPhase("ended")
+        notification(`${toCapitalize(data["winner"])} is the winner!`)
+        return
+      }
+
+      userChecker.current = data["turn"]
+      checkers.current = data["board"]
+      myTurn.current = false
+
+      // User is playing as white
+      if (data.white === user.user_id && userChecker.current === "white") {
+        myTurn.current = true
+      }
+      // Player is playing as black
+      else if (data.black === user.user_id && userChecker.current === "black") {
+        myTurn.current = true
+      }
+
+      if (data.initial) {
+        setPhase("initial")
+      } else {
+        setPhase((curr) => {
+          if (curr === "diceRollAgain") {
+            return "diceRoll"
+          } else {
+            return "diceRollAgain"
+          }
+        })
       }
     }
   }, [ws])
@@ -127,9 +159,11 @@ const Game = () => {
     materials,
     diceNums,
     userChecker,
+    myTurn,
     checkers,
     checkerPicked,
     newCheckerPosition,
+    ws,
     phase,
     setPhase,
     orbitControls,

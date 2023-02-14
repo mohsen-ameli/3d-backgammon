@@ -30,7 +30,6 @@ const Chat = () => {
       ws.send(JSON.stringify({ command: "fetch_messages" }))
       setLoading(false)
     }
-    ws.onclose = () => console.log("closed")
 
     // Listen for messages from server
     ws.onmessage = (event) => {

@@ -47,7 +47,6 @@ const notification = (msg, type = "default", props) => {
   } else if (type === "match") {
     const onClose = (skip = false) => {
       if (!skip) {
-        console.log("rejecting")
         props.reject()
       }
     }
