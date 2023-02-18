@@ -14,6 +14,7 @@ import { AuthContext } from "../context/AuthContext"
 import notification from "../components/utils/Notification"
 import toCapitalize from "../components/utils/ToCapitalize"
 import Controls from "./Controls"
+import userSwitch from "../assets/sounds/user-switch.mp3"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
@@ -47,7 +48,10 @@ const Game = () => {
   const newCheckerPosition = useRef()
 
   // Boolean to keep track of if it's the user's turn or not
-  const myTurn = useRef(true)
+  const [myTurn, setMyTurn] = useState(true)
+
+  // Audio to play when users switch
+  const [audio] = useState(() => new Audio(userSwitch))
 
   /* checkers: [
     id: int,
@@ -84,14 +88,12 @@ const Game = () => {
   useEffect(() => {
     if (!ws) return
 
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ initial: true }))
-    }
+    ws.onopen = () => ws.send(JSON.stringify({ initial: true }))
 
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data)
 
-      // Checking if the user has multiple sessions active
+      // If there are too many sessions active
       if (data["too_many_users"]) {
         notification(
           "Please continue this game on your other active session!",
@@ -100,6 +102,7 @@ const Game = () => {
         return
       }
 
+      // If game has ended
       if (data["finished"]) {
         userChecker.current = data["winner"]
         setPhase("ended")
@@ -109,30 +112,47 @@ const Game = () => {
 
       userChecker.current = data["turn"]
       checkers.current = data["board"]
-      myTurn.current = false
+      let turn = false
 
       // User is playing as white
       if (data.white === user.user_id && userChecker.current === "white") {
-        myTurn.current = true
+        turn = true
       }
       // Player is playing as black
       else if (data.black === user.user_id && userChecker.current === "black") {
-        myTurn.current = true
+        turn = true
       }
 
+      setMyTurn(turn)
+
+      // Setting the phase to initial
       if (data.initial) {
         setPhase("initial")
-      } else {
-        setPhase((curr) => {
-          if (curr === "diceRollAgain") {
-            return "diceRoll"
-          } else {
-            return "diceRollAgain"
-          }
-        })
+        return
       }
+
+      if (diceNums.current.moves !== 0) return
+
+      // Making sure there is a rerender in the checkers component
+      // so that both user's boards get updated
+      setPhase((curr) => {
+        if (curr === "diceRollAgain") {
+          return "diceRoll"
+        } else {
+          return "diceRollAgain"
+        }
+      })
     }
   }, [ws])
+
+  // Playing a sound effect when users change
+  useEffect(() => {
+    audio.play().catch(() => {
+      console.log(
+        "Error playing audio, since user hasn't interacted with the website."
+      )
+    })
+  }, [myTurn])
 
   // Game state values
   const value = {
@@ -158,7 +178,7 @@ const Game = () => {
       <ambientLight intensity={1} />
       <directionalLight position={[-5, 10, 5]} intensity={0.5} />
 
-      {/* <Perf position="top-left" /> */}
+      <Perf position="top-left" />
 
       <GameState.Provider value={value}>
         <Controls ref={orbitRef} />

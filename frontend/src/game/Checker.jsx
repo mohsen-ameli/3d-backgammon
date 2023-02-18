@@ -369,7 +369,6 @@ const Checker = ({ thisChecker }) => {
       if (!ws) {
         setPhase("diceRoll")
       } else {
-        // Updating the backend, if user is playing a live game
         updateLiveGame()
       }
       return
@@ -382,17 +381,19 @@ const Checker = ({ thisChecker }) => {
       // Set the phase to diceRoll
       if (!ws) {
         setPhase("diceRoll")
-      } else {
-        // Updating the backend, if user is playing a live game
-        updateLiveGame()
       }
     }
+
+    // Updating the backend, if user is playing a live game
+    ws && updateLiveGame()
   }
 
+  // Sends a call to set the winner of the game
   const updateGameWinner = () => {
     ws.send(JSON.stringify({ finished: true, winner: user.user_id }))
   }
 
+  // Updating the current game instance
   const updateLiveGame = () => {
     ws.send(
       JSON.stringify({ board: checkers.current, turn: userChecker.current })

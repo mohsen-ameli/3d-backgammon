@@ -77,7 +77,7 @@ const Dices = () => {
   }, [finishedThrow])
 
   useEffect(() => {
-    if (!myTurn.current || phase === "ended") {
+    if (!myTurn || phase === "ended") {
       setShowThrowBtn(false)
       return
     }
