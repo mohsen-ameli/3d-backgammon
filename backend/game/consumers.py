@@ -38,7 +38,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # User has connected to the game
         if "initial" in data:
-            await self.fetch_game_state(initial=True)
+            await self.initialFetch()
         elif "winner" in data:
             winner = await database_sync_to_async(CustomUser.objects.get)(id=data["winner"])
             self.game.winner = winner.username
@@ -62,20 +62,25 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }
             )
             await self.disconnect("")
-        else:
-            await update_game_state(self.game, data["board"], data["turn"])
+        elif "update" in data:
+            await update_game_state(self.game, data["board"], data["dice"], data["turn"])
+            if not data["update"]:
+                return
+
             await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    "type": "send_updates",
-                    "initial": False,
-                    "turn": data["turn"],
-                    "board": data["board"],
-                    "finished": self.game.finished,
-                    "white": self.game.white.id,
-                    "black": self.game.black.id
-                }
-            )
+            self.room_group_name,
+            {
+                "type": "send_updates",
+                "initial": False,
+                "turn": data["turn"],
+                "board": data["board"],
+                "dice": data["dice"],
+                "finished": self.game.finished,
+                "white": self.game.white.id,
+                "black": self.game.black.id
+            }
+        )
+            
         return
 
     async def game_is_over(self, event):
@@ -93,6 +98,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         initial = event["initial"]
         turn = event["turn"]
         board = event["board"]
+        dice = event["dice"]
         finished = event["finished"]
         white = event["white"]
         black = event["black"]
@@ -101,6 +107,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             "initial": initial,
             "turn": turn,
             "board": board,
+            "dice": dice,
             "finished": finished,
             "white": white,
             "black": black
@@ -108,8 +115,8 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps(context))
 
-    async def fetch_game_state(self, initial):
-        context = await get_game_state(self.game, initial)
+    async def initialFetch(self):
+        context = await get_game_state(self.game)
         await self.send(text_data=json.dumps(context))
 
     async def disconnect(self, code):
@@ -120,18 +127,20 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
 
 @database_sync_to_async
-def update_game_state(game: Game, board, turn):
+def update_game_state(game: Game, board, dice, turn):
     game.board = board
+    game.dice = dice
     game.turn = turn
     game.save()
 
 @database_sync_to_async
-def get_game_state(game: Game, initial: bool):
+def get_game_state(game: Game) -> dict:
     context = {}
 
-    context["initial"] = initial
+    context["initial"] = True
     context["turn"] = game.turn
     context["board"] = game.board
+    context["dice"] = game.dice
     context["finished"] = game.finished
     context["white"] = game.white.id
     context["black"] = game.black.id

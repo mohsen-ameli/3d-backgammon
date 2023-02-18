@@ -24,9 +24,14 @@ const Dices = () => {
 
   const [showThrowBtn, setShowThrowBtn] = useState(false)
 
-  const updateLiveGame = () => {
+  const updateLiveGame = (updateUsers) => {
     ws.send(
-      JSON.stringify({ board: checkers.current, turn: userChecker.current })
+      JSON.stringify({
+        update: updateUsers,
+        board: checkers.current,
+        dice: diceNums.current,
+        turn: userChecker.current,
+      })
     )
   }
 
@@ -57,7 +62,7 @@ const Dices = () => {
             setShowThrowBtn(true)
           } else {
             // Updating the backend, if user is playing a live game
-            updateLiveGame()
+            updateLiveGame(true)
           }
           // Show a message that the user has no valid moves
           notification("You don't have a move!", "error")
@@ -70,6 +75,10 @@ const Dices = () => {
         } else {
           diceNums.current.moves = 2
         }
+
+        // Saving the dices in the DB, if user is playing a live game
+        ws && updateLiveGame(false)
+
         // Set the phase to checkerMove
         setPhase("checkerMove")
       }

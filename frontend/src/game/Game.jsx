@@ -52,6 +52,12 @@ const Game = () => {
 
   // Audio to play when users switch
   const [audio] = useState(() => new Audio(userSwitch))
+  const playAudio = () =>
+    audio.play().catch(() => {
+      console.log(
+        "Error playing audio, since user hasn't interacted with the website."
+      )
+    })
 
   /* checkers: [
     id: int,
@@ -67,16 +73,18 @@ const Game = () => {
   // Load the models
   const { nodes, materials } = useGLTF(models)
 
-  // User has entered the game (potentially)
+  // User has potentially entered the game
   useEffect(() => {
     if (!inGame) return
 
+    // If the game mode is pass and play
     if (gameMode.current === "pass-and-play") {
       setPhase("initial")
       userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
       checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
     }
 
+    // If the game mode is a "live game"
     if (gameMode.current.includes("game")) {
       const gameId = gameMode.current.split("_")[1]
 
@@ -85,9 +93,11 @@ const Game = () => {
     }
   }, [inGame])
 
+  // Connecting to the backend (live game)
   useEffect(() => {
     if (!ws) return
 
+    // Requesting initial data
     ws.onopen = () => ws.send(JSON.stringify({ initial: true }))
 
     ws.onmessage = (e) => {
@@ -112,6 +122,7 @@ const Game = () => {
 
       userChecker.current = data["turn"]
       checkers.current = data["board"]
+      // diceNums.current = data["dice"]
       let turn = false
 
       // User is playing as white
@@ -131,6 +142,13 @@ const Game = () => {
         return
       }
 
+      // Go back into the backend, and comment some parts out.
+      // Don't set the diceNums based on the information given from
+      // the backend immidietly. For a little while, just send over
+      // the diceNums to be saved in the DB, and later retrive it
+      // and use it as the user's actual moves.
+
+      // Return, if i am the user
       if (diceNums.current.moves !== 0) return
 
       // Making sure there is a rerender in the checkers component
@@ -145,14 +163,21 @@ const Game = () => {
     }
   }, [ws])
 
-  // Playing a sound effect when users change
+  // Playing sound effect when the user changes (live game)
   useEffect(() => {
-    audio.play().catch(() => {
-      console.log(
-        "Error playing audio, since user hasn't interacted with the website."
-      )
-    })
+    if (!phase || phase === "initial") return
+    playAudio()
   }, [myTurn])
+
+  // Playing sound effect when the user changes (pass and play)
+  useEffect(() => {
+    if (
+      gameMode.current === "pass-and-play" &&
+      (phase === "diceRoll" || phase === "diceRollAgain")
+    ) {
+      playAudio()
+    }
+  }, [phase])
 
   // Game state values
   const value = {

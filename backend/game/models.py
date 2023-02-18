@@ -34,12 +34,26 @@ DEFAULT_BOARD = [
     {"id": 29, "color": "black", "col": 5, "row": 4, "removed": False}
 ]
 
+DEFAULT_DICE = {
+    "dice1": 0,
+    "dice2": 0,
+    "moves": 0,
+}
+
 class SingletonJSONFieldDefault(object):
     _instance = None
 
     def __new__(cls):
         if not cls._instance:
             cls._instance = DEFAULT_BOARD
+        return cls._instance
+
+class DiceDefault(object):
+    _instance = None
+
+    def __new__(cls):
+        if not cls._instance:
+            cls._instance = DEFAULT_DICE
         return cls._instance
 
 class Game(models.Model):
@@ -53,6 +67,7 @@ class Game(models.Model):
     turn = models.CharField(max_length=5, choices=choices, blank=True, null=True)
     finished = models.BooleanField(default=False)
     board = models.JSONField(default=SingletonJSONFieldDefault, blank=True, null=True)
+    dice = models.JSONField(default=DiceDefault, blank=True, null=True)
     # I chose the winner to be a string, so that if the user deletes their account, 
     # in their friend's games their name doesn't appear as null
     winner = models.CharField(max_length=50, blank=True, null=True)

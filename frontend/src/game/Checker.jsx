@@ -396,7 +396,12 @@ const Checker = ({ thisChecker }) => {
   // Updating the current game instance
   const updateLiveGame = () => {
     ws.send(
-      JSON.stringify({ board: checkers.current, turn: userChecker.current })
+      JSON.stringify({
+        update: true,
+        board: checkers.current,
+        dice: diceNums.current,
+        turn: userChecker.current,
+      })
     )
   }
 
