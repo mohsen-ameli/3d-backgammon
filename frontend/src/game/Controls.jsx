@@ -1,41 +1,20 @@
-import gsap from "gsap"
-import { useControls } from "leva"
-import { forwardRef, useContext, useEffect, useRef, useState } from "react"
+import gsap, { Power4 } from "gsap"
+import { forwardRef, useContext, useEffect } from "react"
 import { GameState } from "./Game"
 import { OrbitControls } from "@react-three/drei"
-// import { useFrame } from "@react-three/fiber"
-// import * as THREE from "three"
 import {
   DEFAULT_ORBIT_POSITION,
   DEFAULT_ORBIT_QUATERNION,
   DEFAULT_ORBIT_TARGET,
 } from "./data/Data"
-// import {
-//   damp,
-//   damp2,
-//   damp3,
-//   damp4,
-//   dampE,
-//   dampM,
-//   dampQ,
-//   dampS,
-//   dampC,
-// } from "maath/easing"
 
 const Controls = forwardRef(({}, orbitRef) => {
   const { resetOrbit, toggleControls } = useContext(GameState)
 
-  const { dampingFactor, rotateSpeed } = useControls({
-    dampingFactor: { value: 0.02, min: 0, max: 0.1, step: 0.001 },
-    rotateSpeed: { value: 0.15, min: 0, max: 1, step: 0.001 },
-  })
-
-  // const [defaultCamera] = useState(() => new THREE.Vector3(0, 3.749999999998125, 0.000003749999999999375)) // prettier-ignore
-  // const [defaultTarget] = useState(() => new THREE.Vector3(0, 0, 0))
-  // const [defaultQuaternion] = useState(() => new THREE.Quaternion(-0.7071064276330685, 0, 0, 0.7071071347398497)) // prettier-ignore
-
-  // const [lerping, setLerping] = useState(false)
-  // const ref = useRef()
+  // const { dampingFactor, rotateSpeed } = useControls({
+  //   dampingFactor: { value: 0.1, min: 0, max: 0.2, step: 0.001 },
+  //   rotateSpeed: { value: 0.2, min: 0, max: 1, step: 0.001 },
+  // })
 
   useEffect(() => {
     // Setting the functions used in the game state
@@ -85,26 +64,6 @@ const Controls = forwardRef(({}, orbitRef) => {
     orbitRef.current.enabled = changes["enabled"]
   }
 
-  // useFrame(({ camera }, delta) => {
-  //   if (lerping) {
-  //     const time = 0.5
-
-  //     dampQ(camera.quaternion, defaultQuaternion, time, delta)
-  //     damp3(camera.position, defaultCamera, time, delta)
-  //     damp3(orbitRef.current.target, defaultTarget, time, delta)
-
-  //     setTimeout(() => {
-  //       setLerping(false)
-  //       orbitRef.current.enabled = true
-  //     }, 3000)
-  //   }
-  // })
-
-  // const resetOrbit_ = () => {
-  //   orbitRef.current.enabled = false
-  //   setLerping(true)
-  // }
-
   const resetOrbit_ = () => {
     const duration = 1
 
@@ -114,19 +73,19 @@ const Controls = forwardRef(({}, orbitRef) => {
     gsap.to(orbitRef.current.object.position, {
       ...DEFAULT_ORBIT_POSITION,
       duration,
-      ease: "power2.inOut",
+      ease: Power4.easeInOut,
     })
 
     gsap.to(orbitRef.current.object.quaternion, {
       ...DEFAULT_ORBIT_QUATERNION,
       duration,
-      ease: "power2.inOut",
+      ease: Power4.easeInOut,
     })
 
     gsap.to(orbitRef.current.target, {
       ...DEFAULT_ORBIT_TARGET,
       duration,
-      ease: "power2.inOut",
+      ease: Power4.easeInOut,
     })
 
     setTimeout(() => {
@@ -135,18 +94,16 @@ const Controls = forwardRef(({}, orbitRef) => {
   }
 
   return (
-    <>
-      <OrbitControls
-        ref={orbitRef}
-        makeDefault
-        minPolarAngle={-2}
-        maxPolarAngle={Math.PI / 2}
-        dampingFactor={dampingFactor}
-        screenSpacePanning={true}
-        zoomSpeed={0.5}
-        rotateSpeed={rotateSpeed}
-      />
-    </>
+    <OrbitControls
+      ref={orbitRef}
+      makeDefault
+      minPolarAngle={-2}
+      maxPolarAngle={Math.PI / 2}
+      dampingFactor={0.1}
+      rotateSpeed={0.2}
+      screenSpacePanning={true}
+      zoomSpeed={0.5}
+    />
   )
 })
 

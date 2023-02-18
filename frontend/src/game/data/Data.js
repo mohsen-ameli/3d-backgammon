@@ -1,5 +1,3 @@
-import * as THREE from "three"
-
 // Columns
 export const COLOUMN_HOVER_COLOR = "red"
 
@@ -34,12 +32,12 @@ export const DEFAULT_ORBIT_TARGET = {
   z: 0,
 }
 
-export const DEFAULT_ORBIT_QUATERNION = new THREE.Quaternion(
-  -0.7071064276330685,
-  0,
-  0,
-  0.7071071347398497
-)
+export const DEFAULT_ORBIT_QUATERNION = {
+  x: -0.7071064276330685,
+  y: 0,
+  z: 0,
+  w: 0.7071071347398497,
+}
 
 // Default checker positions
 const DEFAULT_POS = [
