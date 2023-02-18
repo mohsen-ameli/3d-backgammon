@@ -8,7 +8,7 @@ import newDice from "../assets/sounds/NewDice.wav"
 import hit from "../assets/sounds/hit.mp3"
 
 const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
-  const { nodes, materials, diceNums } = useContext(GameState)
+  const { nodes, materials, dice } = useContext(GameState)
 
   const [audio] = useState(() => new Audio(newDice))
 
@@ -38,13 +38,13 @@ const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
         if (diceOnBoard(ref.current)) {
           // => MAYBE: You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
 
-          // Getting the dice number and saving it to diceNums
+          // Getting the dice number and saving it to dice
           if (!isInitial(ref.current.rotation())) {
             const number = getDiceNumber(ref.current)
             if (index === 0) {
-              diceNums.current.dice1 = number
+              dice.current.dice1 = number
             } else {
-              diceNums.current.dice2 = number
+              dice.current.dice2 = number
             }
           }
 

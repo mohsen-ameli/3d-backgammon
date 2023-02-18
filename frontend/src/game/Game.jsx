@@ -36,7 +36,7 @@ const Game = () => {
   // The numbers on the dice, and how many times the user is allowed to move
   // ex: [dice1: 2, dice2: 5, moves: 2] -> The dice shows 2 and 5, therefore the user can move twice
   // ex: [dice1: 6, dice2: 6, moves: 4] -> The dice shows 6 and 6, therefore the user can move four times
-  const diceNums = useRef({ dice1: undefined, dice2: undefined, moves: 0 })
+  const dice = useRef({ dice1: undefined, dice2: undefined, moves: 0 })
 
   // The current checker color that is being moved
   const userChecker = useRef()
@@ -122,7 +122,7 @@ const Game = () => {
 
       userChecker.current = data["turn"]
       checkers.current = data["board"]
-      // diceNums.current = data["dice"]
+      // dice.current = data["dice"]
       let turn = false
 
       // User is playing as white
@@ -143,13 +143,13 @@ const Game = () => {
       }
 
       // Go back into the backend, and comment some parts out.
-      // Don't set the diceNums based on the information given from
+      // Don't set the dice based on the information given from
       // the backend immidietly. For a little while, just send over
-      // the diceNums to be saved in the DB, and later retrive it
+      // the dice to be saved in the DB, and later retrive it
       // and use it as the user's actual moves.
 
       // Return, if i am the user
-      if (diceNums.current.moves !== 0) return
+      if (dice.current.moves !== 0) return
 
       // Making sure there is a rerender in the checkers component
       // so that both user's boards get updated
@@ -183,7 +183,7 @@ const Game = () => {
   const value = {
     nodes,
     materials,
-    diceNums,
+    dice,
     userChecker,
     myTurn,
     checkers,

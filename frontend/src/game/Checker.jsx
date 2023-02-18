@@ -26,7 +26,7 @@ const Checker = ({ thisChecker }) => {
     nodes,
     materials,
     newCheckerPosition,
-    diceNums,
+    dice,
     checkers,
     userChecker,
     phase,
@@ -86,7 +86,7 @@ const Checker = ({ thisChecker }) => {
       // Check to see if the user is allowed to move
       if (
         phase === "checkerMove" &&
-        diceNums.current.moves > 0 &&
+        dice.current.moves > 0 &&
         thisChecker.color === userChecker.current &&
         thisChecker.col !== -3 &&
         thisChecker.col !== -4
@@ -174,20 +174,19 @@ const Checker = ({ thisChecker }) => {
               // and the dice number is greater than the how much the user moved
               if (
                 backRankCheckers === 0 &&
-                (diceNums.current.dice1 >= moved ||
-                  diceNums.current.dice2 >= moved)
+                (dice.current.dice1 >= moved || dice.current.dice2 >= moved)
               ) {
-                if (diceNums.current.dice1 > diceNums.current.dice2) {
-                  moved = diceNums.current.dice1
+                if (dice.current.dice1 > dice.current.dice2) {
+                  moved = dice.current.dice1
                 } else {
-                  moved = diceNums.current.dice2
+                  moved = dice.current.dice2
                 }
                 validMove = true
               }
               // The user has moved directly outside
               else if (
-                diceNums.current.dice1 === moved ||
-                diceNums.current.dice2 === moved
+                dice.current.dice1 === moved ||
+                dice.current.dice2 === moved
               ) {
                 validMove = true
               }
@@ -234,8 +233,7 @@ const Checker = ({ thisChecker }) => {
             // They are moving in the right direction (not backwards)
             moved > 0 &&
             // The user is moving by whatever the number on the dice is
-            (diceNums.current.dice1 === moved ||
-              diceNums.current.dice2 === moved) &&
+            (dice.current.dice1 === moved || dice.current.dice2 === moved) &&
             // Enforcing the user to move the removed checker *first*
             ((removedCheckersLen > 0 && thisChecker.removed) ||
               (removedCheckersLen === 0 && !thisChecker.removed))
@@ -339,30 +337,26 @@ const Checker = ({ thisChecker }) => {
     })
 
     // Updating the dices
-    diceNums.current.moves--
-    if (diceNums.current.moves < 2) {
-      if (diceNums.current.dice1 === moved) {
-        diceNums.current.dice1 = undefined
+    dice.current.moves--
+    if (dice.current.moves < 2) {
+      if (dice.current.dice1 === moved) {
+        dice.current.dice1 = undefined
       } else {
-        diceNums.current.dice2 = undefined
+        dice.current.dice2 = undefined
       }
     }
 
     // Check if user has any valid moves
-    const moves = hasMoves(
-      checkers.current,
-      diceNums.current,
-      userChecker.current
-    )
+    const moves = hasMoves(checkers.current, dice.current, userChecker.current)
 
     // If the user has no valid moves
     if (!moves) {
       // Switch players
       userChecker.current = switchPlayers(userChecker.current)
       // Reset the dice moves
-      diceNums.current.moves = 0
-      diceNums.current.dice1 = undefined
-      diceNums.current.dice2 = undefined
+      dice.current.moves = 0
+      dice.current.dice1 = undefined
+      dice.current.dice2 = undefined
       // Show a message that the user has no valid moves
       notification("You don't have a move!", "error")
       // Set the phase to diceRoll
@@ -375,7 +369,7 @@ const Checker = ({ thisChecker }) => {
     }
 
     // Updating the user that is playing, and the phase
-    if (diceNums.current.moves === 0) {
+    if (dice.current.moves === 0) {
       // Switch players
       userChecker.current = switchPlayers(userChecker.current)
       // Set the phase to diceRoll
@@ -399,7 +393,7 @@ const Checker = ({ thisChecker }) => {
       JSON.stringify({
         update: true,
         board: checkers.current,
-        dice: diceNums.current,
+        dice: dice.current,
         turn: userChecker.current,
       })
     )

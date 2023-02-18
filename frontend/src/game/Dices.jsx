@@ -12,7 +12,7 @@ import hasMoves from "./utils/HasMoves"
 import notification from "../components/utils/Notification"
 
 const Dices = () => {
-  const { diceNums, phase, setPhase, checkers, userChecker, myTurn, ws } =
+  const { dice, phase, setPhase, checkers, userChecker, myTurn, ws } =
     useContext(GameState)
   const dice1 = useRef()
   const dice2 = useRef()
@@ -29,7 +29,7 @@ const Dices = () => {
       JSON.stringify({
         update: updateUsers,
         board: checkers.current,
-        dice: diceNums.current,
+        dice: dice.current,
         turn: userChecker.current,
       })
     )
@@ -40,11 +40,11 @@ const Dices = () => {
     if (finishedThrow[0] && finishedThrow[1]) {
       // Get and set the dice moves
       // If the dice numbers match, the user can move 4 times, otherwise 2
-      if (diceNums.current.dice1 && diceNums.current.dice2) {
+      if (dice.current.dice1 && dice.current.dice2) {
         // Check if user has any valid moves
         const moves = hasMoves(
           checkers.current,
-          diceNums.current,
+          dice.current,
           userChecker.current
         )
 
@@ -52,9 +52,9 @@ const Dices = () => {
           // Switch players
           userChecker.current = switchPlayers(userChecker.current)
           // Reset the dice moves
-          diceNums.current.moves = 0
-          diceNums.current.dice1 = undefined
-          diceNums.current.dice2 = undefined
+          dice.current.moves = 0
+          dice.current.dice1 = undefined
+          dice.current.dice2 = undefined
           // Set the phase to diceRoll
           if (!ws) {
             setPhase("diceRollAgain")
@@ -70,10 +70,10 @@ const Dices = () => {
         }
 
         // Set the dice moves
-        if (diceNums.current.dice1 === diceNums.current.dice2) {
-          diceNums.current.moves = 4
+        if (dice.current.dice1 === dice.current.dice2) {
+          dice.current.moves = 4
         } else {
-          diceNums.current.moves = 2
+          dice.current.moves = 2
         }
 
         // Saving the dices in the DB, if user is playing a live game
