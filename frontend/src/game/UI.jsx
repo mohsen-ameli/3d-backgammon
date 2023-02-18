@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import Button from "../components/ui/Button"
-import notification from "../components/utils/Notification"
 import toCapitalize from "../components/utils/ToCapitalize"
 import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { GameState } from "./Game"
@@ -12,8 +11,7 @@ import { AuthContext } from "../context/AuthContext"
 
 const UI = () => {
   const { inGame, setInGame, gameMode } = useContext(AuthContext)
-  const { userChecker, toggleControls, phase, setPhase, checkers } =
-    useContext(GameState)
+  const { userChecker, toggleControls, phase, setPhase, checkers, resetOrbit } = useContext(GameState) // prettier-ignore
   const navigate = useNavigate()
 
   const [playAudio] = useState(() => new Audio(userSwitch))
@@ -56,26 +54,18 @@ const UI = () => {
           >
             <div className="flex flex-col items-center gap-4 select-none">
               {/* Flipping the board */}
-              {/* <Button
-              className="text-white"
-              onClick={() => {
-                diceNums.current.dice1 = 5
-                diceNums.current.dice2 = 2
-                diceNums.current.moves = 2
-              }}
-            >
-              Flip the board
-            </Button> */}
+              <Button className="text-white" onClick={resetOrbit.current}>
+                Reset controls
+              </Button>
 
               {/* Toggling orbit controls */}
               <Button
                 className="text-white"
                 onClick={() => {
-                  toggleControls(true)
-                  // notification("hi", "error")
+                  toggleControls.current(true)
                 }}
               >
-                Toggle pan
+                Toggle controls
               </Button>
 
               <div

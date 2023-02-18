@@ -1,4 +1,4 @@
-import { useGLTF, OrbitControls, Environment } from "@react-three/drei"
+import { useGLTF, Environment } from "@react-three/drei"
 import { createContext, useContext, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
@@ -13,6 +13,7 @@ import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
 import { AuthContext } from "../context/AuthContext"
 import notification from "../components/utils/Notification"
 import toCapitalize from "../components/utils/ToCapitalize"
+import Controls from "./Controls"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
@@ -23,33 +24,13 @@ const Game = () => {
   // The current phase of the game
   const [phase, setPhase] = useState()
 
-  // Orbit controls enabled state
-  const [orbitControls, setOrbitControls] = useState({
-    enabled: true,
-    changable: true,
-  })
-
   // Game websocket
   const [ws, setWs] = useState(() => {})
 
-  // Toggle the orbit controls.
-  const toggleControls = (ui = false) => {
-    let returnValue
-    if (ui) {
-      returnValue = {
-        enabled: !orbitControls["enabled"],
-        changable: !orbitControls["changable"],
-      }
-    } else if (orbitControls["changable"]) {
-      returnValue = {
-        enabled: !orbitControls["enabled"],
-        changable: orbitControls["changable"],
-      }
-    }
-
-    if (!returnValue) return
-    setOrbitControls(returnValue)
-  }
+  // Orbit control
+  const resetOrbit = useRef(() => null)
+  const toggleControls = useRef(() => null)
+  const orbitRef = useRef()
 
   // The numbers on the dice, and how many times the user is allowed to move
   // ex: [dice1: 2, dice2: 5, moves: 2] -> The dice shows 2 and 5, therefore the user can move twice
@@ -166,8 +147,8 @@ const Game = () => {
     ws,
     phase,
     setPhase,
-    orbitControls,
     toggleControls,
+    resetOrbit,
   }
 
   return (
@@ -180,7 +161,7 @@ const Game = () => {
       {/* <Perf position="top-left" /> */}
 
       <GameState.Provider value={value}>
-        <OrbitControls makeDefault enabled={orbitControls["enabled"]} />
+        <Controls ref={orbitRef} />
 
         <UI />
 
@@ -189,14 +170,10 @@ const Game = () => {
         <Physics>
           {/* <Debug /> */}
 
-          {inGame && (
-            <>
-              <Dices />
-
-              <Checkers />
-            </>
-          )}
           <Board />
+
+          {inGame && <Dices />}
+          {inGame && <Checkers />}
         </Physics>
       </GameState.Provider>
     </>

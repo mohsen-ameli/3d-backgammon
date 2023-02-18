@@ -1,3 +1,5 @@
+import * as THREE from "three"
+
 // Columns
 export const COLOUMN_HOVER_COLOR = "red"
 
@@ -18,6 +20,26 @@ export const CHECKER_HALF = CHECKER_W / 2
 export const GROUND = -0.058 // Ground level (y coordinate)
 export const BOARD_W = 1.17148 - CHECKER_HALF
 export const BOARD_H = 0.855
+
+// Default orbit controls position and quaternion
+export const DEFAULT_ORBIT_POSITION = {
+  x: 0,
+  y: 3.749999999998125,
+  z: 0.000003749999999999375,
+}
+
+export const DEFAULT_ORBIT_TARGET = {
+  x: 0,
+  y: 0,
+  z: 0,
+}
+
+export const DEFAULT_ORBIT_QUATERNION = new THREE.Quaternion(
+  -0.7071064276330685,
+  0,
+  0,
+  0.7071071347398497
+)
 
 // Default checker positions
 const DEFAULT_POS = [
