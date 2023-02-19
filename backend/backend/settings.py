@@ -182,8 +182,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -202,17 +201,20 @@ if not DEBUG:
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
     'http://localhost:8000',
-    'https://www.3d-backgammon.com'
+    'https://www.3d-backgammon.com',
+    'https://3d-backgammon-production.up.railway.app'
 )
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
-    'https://www.3d-backgammon.com'
+    'https://www.3d-backgammon.com',
+    'https://3d-backgammon-production.up.railway.app'
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
-r"^https://\w+\.3d-backgammon\.com$",
+    r"^https://\w+\.3d-backgammon\.com$",
+    r"^https://\w+\.3d-backgammon-production\.up\.railway\.app$",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
