@@ -21,6 +21,7 @@ importlib-metadata==6.0.0
 incremental==22.10.0
 Markdown==3.4.1
 msgpack==1.0.4
+psycopg2-binary==2.9.5
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
