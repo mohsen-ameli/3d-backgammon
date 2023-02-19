@@ -14,21 +14,29 @@ import PassAndPlay from "./game/PassAndPlay"
 import Profile from "./pages/profile/Profile"
 import FriendGame from "./game/FriendGame"
 import useStatus from "./UserStatus"
+import ViewPort from "./game/ViewPort"
+import { Suspense } from "react"
+import useLoadingScreen from "./components/hooks/useLoadingScreen"
 
 const App = () => {
   // Getting the user status. (Game requests and game request rejections)
   useStatus()
 
+  // Loader
+  const Loader = useLoadingScreen()
+
   return (
     <>
       <Canvas
         camera={{
-          // position: [0, 3, 1],
-          position: [0, 3.75, 0],
+          position: [0, 3, 0],
           fov: 45,
         }}
       >
-        <Game />
+        <Suspense fallback={Loader}>
+          <Game />
+          <ViewPort />
+        </Suspense>
       </Canvas>
 
       <Routes>

@@ -19,11 +19,11 @@ export const GROUND = -0.058 // Ground level (y coordinate)
 export const BOARD_W = 1.17148 - CHECKER_HALF
 export const BOARD_H = 0.855
 
-// Default orbit controls position and quaternion
+// Default orbit controls
 export const DEFAULT_ORBIT_POSITION = {
   x: 0,
-  y: 3.749999999998125,
-  z: 0.000003749999999999375,
+  y: 3,
+  z: 0,
 }
 
 export const DEFAULT_ORBIT_TARGET = {

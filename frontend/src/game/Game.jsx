@@ -1,5 +1,5 @@
-import { useGLTF, Environment } from "@react-three/drei"
-import { createContext, useContext, useRef, useState } from "react"
+import { useGLTF, Environment, useProgress } from "@react-three/drei"
+import { createContext, Suspense, useContext, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
 import { Perf } from "r3f-perf"
 import { Debug, Physics } from "@react-three/rapier"
@@ -22,12 +22,6 @@ export const GameState = createContext()
 const Game = () => {
   const { user, inGame, gameMode } = useContext(AuthContext)
 
-  // The current phase of the game
-  const [phase, setPhase] = useState()
-
-  // Game websocket
-  const [ws, setWs] = useState(() => {})
-
   // Orbit control
   const resetOrbit = useRef(() => null)
   const toggleControls = useRef(() => null)
@@ -47,6 +41,23 @@ const Game = () => {
   // The new position of the checker (in checkers used for calculating the moved variable)
   const newCheckerPosition = useRef()
 
+  /* checkers: [
+    id: int,
+    color: str = "white" | "black",
+    col: int = 0-23 normal | -1 removed white checker | -2 removed black checker | -3 endbar white checker | -4 endbar black checker,
+    row: int = 0 - 4,
+    removed: Boolean
+  ] */
+
+  // All of the checkers' default positions
+  const checkers = useRef([])
+
+  // The current phase of the game
+  const [phase, setPhase] = useState()
+
+  // Game websocket
+  const [ws, setWs] = useState(() => {})
+
   // Boolean to keep track of if it's the user's turn or not
   const [myTurn, setMyTurn] = useState(true)
 
@@ -58,17 +69,6 @@ const Game = () => {
         "Error playing audio, since user hasn't interacted with the website."
       )
     })
-
-  /* checkers: [
-    id: int,
-    color: str = "white" | "black",
-    col: int = 0-23 normal | -1 removed white checker | -2 removed black checker | -3 endbar white checker | -4 endbar black checker,
-    row: int = 0 - 4,
-    removed: Boolean
-  ] */
-
-  // All of the checkers' default positions
-  const checkers = useRef([])
 
   // Load the models
   const { nodes, materials } = useGLTF(models)
