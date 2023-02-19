@@ -376,6 +376,15 @@ const Checker = ({ thisChecker }) => {
       if (!ws) {
         setPhase("diceRoll")
       }
+    } else {
+      // Making sure there's a rerender everytime the user moves
+      // We have to make sure that user is not playing a live game
+      // since in a live game, this exact same code gets run (check
+      // useEffect with ws deppendency in Game)
+      !ws &&
+        setPhase((curr) => {
+          return curr === "checkerMove" ? "checkerMoveAgain" : "checkerMove"
+        })
     }
 
     // Updating the backend, if user is playing a live game

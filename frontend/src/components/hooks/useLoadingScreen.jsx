@@ -1,9 +1,8 @@
 import { Html, useProgress } from "@react-three/drei"
 
 const useLoadingScreen = () => {
-  const { active, progress, errors, item, loaded, total } = useProgress()
+  const { progress, loaded, total } = useProgress()
 
-  // const bar = progress > 0 ? progress.toFixed(1) : 100
   // const bar = progress.toFixed(1)
   const bar = ((loaded / total) * 100).toFixed(1)
 
@@ -25,7 +24,6 @@ const useLoadingScreen = () => {
       </div>
     </Html>
   )
-  // return <Html center>{progress > 0 ? progress.toFixed(1) : 100} % loaded</Html>
 }
 
 export default useLoadingScreen

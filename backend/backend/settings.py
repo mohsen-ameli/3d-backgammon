@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -7,12 +8,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '3g-584)e#-!9zrbl*fkwp91sx7^e1!44#u_zwd!ed=oy-xuq-a'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['DEBUG']
 
-ALLOWED_HOSTS = ["192.168.0.173", "localhost"]
+ALLOWED_HOSTS = ["www.3d-backgammon.com", "3d-backgammon.com", "192.168.0.173", "localhost"]
 
 
 # Application definition
@@ -75,7 +76,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("127.0.0.1", 6379)] if DEBUG else [os.environ["REDIS_URL"]],
         },
     },
 }
@@ -84,12 +85,25 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": os.environ.get("db_name"),
+            "USER": os.environ.get("db_user"),
+            "PASSWORD": os.environ.get("db_pass"),
+            "HOST": os.environ.get("db_host"),
+            "PORT": os.environ.get("db_port"),
+        }
+    }
+
 
 
 # Password validation
@@ -112,6 +126,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
+# The interval at which the client will receive updates (in seconds)
+UPDATE_INTERVAL = DEBUG and 1 or 5
 
 # REST Framework
 REST_FRAMEWORK = {
@@ -154,7 +170,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -167,13 +182,36 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# HTTPS settings
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 2592000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+
 # CORS
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://www.3d-backgammon.com'
+)
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://www.3d-backgammon.com'
 ]
 
-# The interval at which the client will receive updates (in seconds)
-UPDATE_INTERVAL = DEBUG and 1 or 5
+CORS_ALLOWED_ORIGIN_REGEXES = [
+r"^https://\w+\.3d-backgammon\.com$",
+]
+
+CORS_ALLOW_CREDENTIALS = True
