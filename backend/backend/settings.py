@@ -13,7 +13,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ['DEBUG']
 
-ALLOWED_HOSTS = ["www.3d-backgammon.com", "3d-backgammon.com", "192.168.0.173", "localhost"]
+ALLOWED_HOSTS = ["www.3d-backgammon.com", "3d-backgammon.com", "3d-backgammon-production.up.railway.app", "192.168.0.173", "localhost"]
 
 
 # Application definition
