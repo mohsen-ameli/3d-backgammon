@@ -53,8 +53,8 @@ const Dices = () => {
           userChecker.current = switchPlayers(userChecker.current)
           // Reset the dice moves
           dice.current.moves = 0
-          dice.current.dice1 = undefined
-          dice.current.dice2 = undefined
+          dice.current.dice1 = 0
+          dice.current.dice2 = 0
           // Set the phase to diceRoll
           if (!ws) {
             setPhase("diceRollAgain")

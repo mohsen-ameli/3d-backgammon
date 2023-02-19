@@ -340,9 +340,9 @@ const Checker = ({ thisChecker }) => {
     dice.current.moves--
     if (dice.current.moves < 2) {
       if (dice.current.dice1 === moved) {
-        dice.current.dice1 = undefined
+        dice.current.dice1 = 0
       } else {
-        dice.current.dice2 = undefined
+        dice.current.dice2 = 0
       }
     }
 
@@ -355,8 +355,8 @@ const Checker = ({ thisChecker }) => {
       userChecker.current = switchPlayers(userChecker.current)
       // Reset the dice moves
       dice.current.moves = 0
-      dice.current.dice1 = undefined
-      dice.current.dice2 = undefined
+      dice.current.dice1 = 0
+      dice.current.dice2 = 0
       // Show a message that the user has no valid moves
       notification("You don't have a move!", "error")
       // Set the phase to diceRoll

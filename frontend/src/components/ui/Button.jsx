@@ -2,13 +2,14 @@ const Button = ({ className, ...props }) => {
   return (
     <button
       type="submit"
-      className={
-        "py-[6px] px-4 rounded-lg border-2 outline-none border-orange-800 hover:bg-gradient-to-r from-red-500 to-orange-500 " +
+      class={
+        "relative group w-32 h-10 rounded-lg border-2 outline-none text-white border-orange-800 bg-gradient-to-b from-transparent to-tranfrom-transparent " +
         className
       }
       {...props}
     >
-      {props.children}
+      <div class="absolute inset-0 opacity-0 -z-10 flex items-center justify-center rounded-md group-hover:opacity-100 transition duration-200 bg-gradient-to-b from-red-500 to-orange-500"></div>
+      <div className="z-10">{props.children}</div>
     </button>
   )
 }

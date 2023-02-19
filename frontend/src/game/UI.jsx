@@ -10,7 +10,7 @@ import { AuthContext } from "../context/AuthContext"
 
 const UI = () => {
   const { inGame, setInGame, gameMode } = useContext(AuthContext)
-  const { userChecker, toggleControls, phase, setPhase, checkers, resetOrbit } = useContext(GameState) // prettier-ignore
+  const { userChecker, toggleControls, phase, setPhase, checkers, resetOrbit, dice } = useContext(GameState) // prettier-ignore
   const navigate = useNavigate()
 
   const [winner, setWinner] = useState()
@@ -63,13 +63,20 @@ const UI = () => {
 
               <div
                 className={
-                  "p-2 rounded-lg " +
+                  "p-3 rounded-lg text-center " +
                   (userChecker.current === "white"
                     ? "bg-slate-200 text-black"
                     : "bg-slate-600 text-white")
                 }
               >
                 <h1>{toCapitalize(userChecker.current)} to play!</h1>
+                {dice.current.moves > 0 && (
+                  <div className="flex items-center gap-x-2 mt-2">
+                    <h1>Dice moves</h1>
+                    <DiceMoves dice={dice.current.dice1} />
+                    <DiceMoves dice={dice.current.dice2} />
+                  </div>
+                )}
               </div>
             </div>
           </Html>
@@ -99,6 +106,25 @@ const UI = () => {
       </>
     )
   )
+}
+
+const DiceMoves = ({ dice }) => {
+  if (dice === 1) {
+    return <i className="fa-solid fa-dice-one text-[18pt]"></i>
+  } else if (dice === 2) {
+    return <i className="fa-solid fa-dice-two text-[18pt]"></i>
+  } else if (dice === 3) {
+    return <i className="fa-solid fa-dice-three text-[18pt]"></i>
+  } else if (dice === 4) {
+    return <i className="fa-solid fa-dice-four text-[18pt]"></i>
+  } else if (dice === 5) {
+    return <i className="fa-solid fa-dice-five text-[18pt]"></i>
+  } else if (dice === 6) {
+    return <i className="fa-solid fa-dice-six text-[18pt]"></i>
+  }
+  // else {
+  //   return <i className="fa-solid fa-dice text-[18pt]"></i>
+  // }
 }
 
 export default UI
