@@ -36,7 +36,7 @@ const Game = () => {
   // The numbers on the dice, and how many times the user is allowed to move
   // ex: [dice1: 2, dice2: 5, moves: 2] -> The dice shows 2 and 5, therefore the user can move twice
   // ex: [dice1: 6, dice2: 6, moves: 4] -> The dice shows 6 and 6, therefore the user can move four times
-  const dice = useRef({ dice1: undefined, dice2: undefined, moves: 0 })
+  const dice = useRef({ dice1: 0, dice2: 0, moves: 0 })
 
   // The current checker color that is being moved
   const userChecker = useRef()
@@ -122,7 +122,7 @@ const Game = () => {
 
       userChecker.current = data["turn"]
       checkers.current = data["board"]
-      // dice.current = data["dice"]
+      dice.current = data["dice"]
       let turn = false
 
       // User is playing as white
@@ -142,23 +142,31 @@ const Game = () => {
         return
       }
 
-      // Go back into the backend, and comment some parts out.
-      // Don't set the dice based on the information given from
-      // the backend immidietly. For a little while, just send over
-      // the dice to be saved in the DB, and later retrive it
-      // and use it as the user's actual moves.
-
       // Return, if i am the user
-      if (dice.current.moves !== 0) return
+      if (dice.current.moves !== 0) {
+        // Complicated state changes. Essentially making sure that
+        // whether the user is spectating or playing, they get the
+        // neweset updates from the backend.
+
+        // User is spectating
+        if (!turn) {
+          setPhase((curr) => {
+            return curr === "spectate" ? "spectating" : "spectate"
+          })
+        }
+        // User is playing
+        else {
+          setPhase((curr) => {
+            return curr === "checkerMove" ? "checkerMoveAgain" : "checkerMove"
+          })
+        }
+        return
+      }
 
       // Making sure there is a rerender in the checkers component
       // so that both user's boards get updated
       setPhase((curr) => {
-        if (curr === "diceRollAgain") {
-          return "diceRoll"
-        } else {
-          return "diceRollAgain"
-        }
+        return curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"
       })
     }
   }, [ws])
@@ -203,7 +211,7 @@ const Game = () => {
       <ambientLight intensity={1} />
       <directionalLight position={[-5, 10, 5]} intensity={0.5} />
 
-      <Perf position="top-left" />
+      {/* <Perf position="top-left" /> */}
 
       <GameState.Provider value={value}>
         <Controls ref={orbitRef} />

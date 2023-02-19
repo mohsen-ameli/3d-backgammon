@@ -12,18 +12,21 @@ import hasMoves from "./utils/HasMoves"
 import notification from "../components/utils/Notification"
 
 const Dices = () => {
-  const { dice, phase, setPhase, checkers, userChecker, myTurn, ws } =
-    useContext(GameState)
+  const { dice, phase, setPhase, checkers, userChecker, myTurn, ws } = useContext(GameState) // prettier-ignore
+
   const dice1 = useRef()
   const dice2 = useRef()
 
+  // To keep track of the dices finished throwing state
   const [finishedThrow, setFinishedThrow] = useState({
     0: false,
     1: false,
   })
 
+  // State to show the "throw dice" button
   const [showThrowBtn, setShowThrowBtn] = useState(false)
 
+  // Updating backend live game
   const updateLiveGame = (updateUsers) => {
     ws.send(
       JSON.stringify({
@@ -35,67 +38,86 @@ const Dices = () => {
     )
   }
 
+  // Handling the dice throws
   useEffect(() => {
     // Dices have finished throwing
     if (finishedThrow[0] && finishedThrow[1]) {
       // Get and set the dice moves
       // If the dice numbers match, the user can move 4 times, otherwise 2
-      if (dice.current.dice1 && dice.current.dice2) {
-        // Check if user has any valid moves
-        const moves = hasMoves(
-          checkers.current,
-          dice.current,
-          userChecker.current
-        )
 
-        if (!moves) {
-          // Switch players
-          userChecker.current = switchPlayers(userChecker.current)
-          // Reset the dice moves
-          dice.current.moves = 0
-          dice.current.dice1 = 0
-          dice.current.dice2 = 0
-          // Set the phase to diceRoll
-          if (!ws) {
-            setPhase("diceRollAgain")
-            // Show the throw button again
-            setShowThrowBtn(true)
-          } else {
-            // Updating the backend, if user is playing a live game
-            updateLiveGame(true)
-          }
-          // Show a message that the user has no valid moves
-          notification("You don't have a move!", "error")
-          return
+      // Check if user has any valid moves
+      const moves = hasMoves(
+        checkers.current,
+        dice.current,
+        userChecker.current
+      )
+
+      // User has no moves
+      if (!moves) {
+        // Switch players
+        userChecker.current = switchPlayers(userChecker.current)
+
+        // Reset the dice moves
+        dice.current.moves = 0
+        dice.current.dice1 = 0
+        dice.current.dice2 = 0
+
+        // Set the phase to diceRoll
+        if (!ws) {
+          setPhase("diceRollAgain")
+          // Show the throw button again
+          setShowThrowBtn(true)
+        } else {
+          // Updating the backend, if user is playing a live game
+          updateLiveGame(true)
         }
 
-        // Set the dice moves
+        // Show a message that the user has no valid moves
+        notification("You don't have a move!", "error")
+
+        return
+      }
+
+      // Set the dice moves
+      if (dice.current.moves === 0) {
         if (dice.current.dice1 === dice.current.dice2) {
           dice.current.moves = 4
         } else {
           dice.current.moves = 2
         }
-
-        // Saving the dices in the DB, if user is playing a live game
-        ws && updateLiveGame(false)
-
-        // Set the phase to checkerMove
-        setPhase("checkerMove")
       }
+
+      // Saving the dices in the DB, if user is playing a live game
+      ws && updateLiveGame(true)
+
+      // Setting the phase to checkerMove
+      setPhase("checkerMove")
     }
   }, [finishedThrow])
 
+  // Handling the phase changes
   useEffect(() => {
+    // If it's not the user's turn or if the game has ended
     if (!myTurn || phase === "ended") {
       setShowThrowBtn(false)
       return
     }
+
     if (phase === "diceRoll" || phase === "diceRollAgain") {
       setShowThrowBtn(true)
     } else if (phase === "initial") {
-      resetDices([dice1.current, dice2.current])
-      resetDiceRotation([dice1.current, dice2.current])
-      setShowThrowBtn(true)
+      // User has initially connected to the game, with no
+      // available/previous dice moves
+      if (dice.current.moves === 0) {
+        resetDices([dice1.current, dice2.current])
+        resetDiceRotation([dice1.current, dice2.current])
+        setShowThrowBtn(true)
+      }
+      // User has leftover moves
+      // (from a previous session that's saved on the DB)
+      else {
+        setFinishedThrow({ 0: true, 1: true })
+      }
     }
   }, [phase])
 

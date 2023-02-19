@@ -54,9 +54,7 @@ const UI = () => {
               {/* Toggling orbit controls */}
               <Button
                 className="text-white"
-                onClick={() => {
-                  toggleControls.current(true)
-                }}
+                onClick={() => toggleControls.current(true)}
               >
                 Toggle controls
               </Button>
@@ -71,10 +69,9 @@ const UI = () => {
               >
                 <h1>{toCapitalize(userChecker.current)} to play!</h1>
                 {dice.current.moves > 0 && (
-                  <div className="flex items-center gap-x-2 mt-2">
+                  <div className="flex flex-col items-center mt-2">
                     <h1>Dice moves</h1>
-                    <DiceMoves dice={dice.current.dice1} />
-                    <DiceMoves dice={dice.current.dice2} />
+                    <DiceMoves dice={dice.current} />
                   </div>
                 )}
               </div>
@@ -108,23 +105,45 @@ const UI = () => {
   )
 }
 
-const DiceMoves = ({ dice }) => {
-  if (dice === 1) {
+const getMoves = (num) => {
+  if (num === 1) {
     return <i className="fa-solid fa-dice-one text-[18pt]"></i>
-  } else if (dice === 2) {
+  } else if (num === 2) {
     return <i className="fa-solid fa-dice-two text-[18pt]"></i>
-  } else if (dice === 3) {
+  } else if (num === 3) {
     return <i className="fa-solid fa-dice-three text-[18pt]"></i>
-  } else if (dice === 4) {
+  } else if (num === 4) {
     return <i className="fa-solid fa-dice-four text-[18pt]"></i>
-  } else if (dice === 5) {
+  } else if (num === 5) {
     return <i className="fa-solid fa-dice-five text-[18pt]"></i>
-  } else if (dice === 6) {
+  } else if (num === 6) {
     return <i className="fa-solid fa-dice-six text-[18pt]"></i>
   }
-  // else {
-  //   return <i className="fa-solid fa-dice text-[18pt]"></i>
-  // }
+}
+
+const DiceMoves = ({ dice }) => {
+  const jsx = []
+
+  if (dice.moves > 2) {
+    for (let i = 0; i < dice.moves; i++) {
+      jsx.push(getMoves(dice.dice1))
+    }
+  } else if (dice.moves === 2) {
+    jsx.push(getMoves(dice.dice1))
+    jsx.push(getMoves(dice.dice2))
+  } else if (dice.dice1 !== 0) {
+    jsx.push(getMoves(dice.dice1))
+  } else {
+    jsx.push(getMoves(dice.dice2))
+  }
+
+  return (
+    <div className="flex items-center gap-x-2">
+      {jsx.map((number, index) => (
+        <span key={index}>{number}</span>
+      ))}
+    </div>
+  )
 }
 
 export default UI

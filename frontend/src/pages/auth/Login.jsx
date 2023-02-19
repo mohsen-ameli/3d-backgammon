@@ -35,7 +35,7 @@ const Login = () => {
   }
 
   return (
-    <Container className="h-fit">
+    <Container>
       <Header to="/" title="Log In" />
 
       <form
@@ -54,7 +54,9 @@ const Login = () => {
 
         <Button
           type="submit"
-          className={(clicked && "cursor-not-allowed ") + "mt-3"}
+          className={
+            (clicked && "cursor-not-allowed ") + "mt-3 px-8 self-center"
+          }
         >
           {clicked ? <ButtonLoading /> : "Log In"}
         </Button>

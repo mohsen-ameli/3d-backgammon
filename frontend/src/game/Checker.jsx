@@ -85,7 +85,7 @@ const Checker = ({ thisChecker }) => {
     ({ event, offset: [x, y], dragging }) => {
       // Check to see if the user is allowed to move
       if (
-        phase === "checkerMove" &&
+        (phase === "checkerMove" || phase === "checkerMoveAgain") &&
         dice.current.moves > 0 &&
         thisChecker.color === userChecker.current &&
         thisChecker.col !== -3 &&
