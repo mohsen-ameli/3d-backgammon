@@ -61,7 +61,7 @@ const FriendsList = () => {
             <Button className="relative px-3 py-1">
               <i className="fa-solid fa-bell"></i>
               {data?.num_requests > 0 && (
-                <div className="absolute -top-3 -right-3 w-7 h-7 bg-red-400 rounded-full">
+                <div className="absolute -top-5 -right-6 w-7 h-7 text-lg bg-red-400 rounded-full">
                   <Center>{data?.num_requests}</Center>
                 </div>
               )}

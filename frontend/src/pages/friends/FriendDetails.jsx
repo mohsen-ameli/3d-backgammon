@@ -106,6 +106,13 @@ const PlayButton = ({ friend, play }) => {
     }
   }, [clicked])
 
+  const handleClick = () => {
+    if (friend.is_online) {
+      play(friend)
+      setClicked(true)
+    }
+  }
+
   if (clicked)
     return (
       <i
@@ -122,10 +129,7 @@ const PlayButton = ({ friend, play }) => {
           ? "text-indigo-600 hover:text-indigo-900"
           : "cursor-default")
       }
-      onClick={() => {
-        play(friend)
-        setClicked(true)
-      }}
+      onClick={handleClick}
     />
   )
 }
