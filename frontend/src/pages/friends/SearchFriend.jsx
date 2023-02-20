@@ -47,7 +47,7 @@ const SearchFriend = () => {
   // Send friend request
   const sendFriendReequest = async (id) => {
     try {
-      await axiosInstance.put(`${getServerUrl()}/api/handle-friends/`, {
+      await axiosInstance.put("/api/handle-friends/", {
         id,
         action: "add",
       })

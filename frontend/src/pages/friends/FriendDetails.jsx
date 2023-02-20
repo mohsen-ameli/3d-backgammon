@@ -2,7 +2,6 @@ import gsap from "gsap"
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import useAxios from "../../components/hooks/useAxios"
-import getServerUrl from "../../components/utils/getServerUrl"
 import notification from "../../components/utils/Notification"
 
 /**
@@ -16,9 +15,7 @@ const FriendDetails = ({ friend, setLoading }) => {
 
   // Going to the chat room between the two users
   const goToChat = async (friend) => {
-    const res = await axiosInstance.get(
-      `${getServerUrl()}/api/get-chat-uuid/${friend.id}/`
-    )
+    const res = await axiosInstance.get(`/api/get-chat-uuid/${friend.id}/`)
     navigate(`/chat`, {
       state: {
         uuid: res.data.chat_uuid,
@@ -32,7 +29,7 @@ const FriendDetails = ({ friend, setLoading }) => {
   // Deleting a friend
   const deleteFriend = async (id) => {
     setLoading(true)
-    await axiosInstance.put(`${getServerUrl()}/api/handle-friends/`, {
+    await axiosInstance.put("/api/handle-friends/", {
       id,
       action: "remove",
     })
@@ -42,13 +39,10 @@ const FriendDetails = ({ friend, setLoading }) => {
   const play = async (friend) => {
     if (!friend.is_online) return
 
-    const res = await axiosInstance.put(
-      `${getServerUrl()}/api/game/handle-match-request/`,
-      {
-        action: "send",
-        friend_id: friend.id,
-      }
-    )
+    const res = await axiosInstance.put("/api/game/handle-match-request/", {
+      action: "send",
+      friend_id: friend.id,
+    })
     if (!res.data.success) notification("Your friend is not online!", "error")
   }
 

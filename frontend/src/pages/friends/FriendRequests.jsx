@@ -3,18 +3,17 @@ import useFetch from "../../components/hooks/useFetch"
 import Container from "../../components/ui/Container"
 import Header from "../../components/ui/Header"
 import Loading from "../../components/ui/Loading"
-import getServerUrl from "../../components/utils/getServerUrl"
 
 const FriendRequests = () => {
   const { data, loading, setLoading, fetchData } = useFetch(
-    `${getServerUrl()}/api/handle-friends/`
+    "/api/handle-friends/"
   )
 
   const axiosInstance = useAxios()
 
   const acceptFriendRequest = async (id) => {
     setLoading(true)
-    await axiosInstance.put(`${getServerUrl()}/api/handle-friends/`, {
+    await axiosInstance.put("/api/handle-friends/", {
       id,
       action: "accept",
     })
@@ -23,7 +22,7 @@ const FriendRequests = () => {
 
   const rejectFriendRequest = async (id) => {
     setLoading(true)
-    await axiosInstance.put(`${getServerUrl()}/api/handle-friends/`, {
+    await axiosInstance.put("/api/handle-friends/", {
       id,
       action: "reject",
     })

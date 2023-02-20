@@ -43,7 +43,7 @@ const Signup = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-y-4"
+        className="flex flex-col gap-y-6"
         autoComplete="on"
       >
         <FormField
@@ -76,7 +76,7 @@ const Signup = () => {
         <Button
           type="submit"
           className={
-            (clicked && "cursor-not-allowed ") + "mt-3 px-8 self-center"
+            "mt-4 w-32 self-center " + (clicked && "cursor-not-allowed")
           }
         >
           {clicked ? <ButtonLoading /> : "Sign Up"}

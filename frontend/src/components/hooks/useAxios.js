@@ -3,6 +3,7 @@ import jwt_decode from "jwt-decode"
 import { AuthContext } from "../../context/AuthContext"
 import { useContext } from "react"
 import useGetFreshTokens from "./useGetFreshTokens"
+import getServerUrl from "../utils/getServerUrl"
 
 /**
  * Hook used for all types of fetch requests. (Usually not GET, because useFetch handles that)
@@ -21,6 +22,10 @@ const useAxios = () => {
 
   // Interceptor to check if the access token is expired
   axiosInstance.interceptors.request.use(async (request) => {
+    // Changing the url, so we dynamically hit the server based
+    // on if we're in production or development
+    request.url = getServerUrl() + request.url
+
     // Checking if the access token is expired
     const expire = jwt_decode(tokens.access).exp
     const now = Date.now() / 1000

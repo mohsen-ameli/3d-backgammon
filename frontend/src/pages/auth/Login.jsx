@@ -40,7 +40,7 @@ const Login = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-y-4"
+        className="flex flex-col gap-y-4 w-full h-full"
         autoComplete="on"
       >
         <FormField label="Username" name="username" placeholder="Username" />
@@ -55,7 +55,7 @@ const Login = () => {
         <Button
           type="submit"
           className={
-            (clicked && "cursor-not-allowed ") + "mt-3 px-8 self-center"
+            "mt-6 w-32 self-center " + (clicked && "cursor-not-allowed")
           }
         >
           {clicked ? <ButtonLoading /> : "Log In"}

@@ -17,6 +17,7 @@ import useStatus from "./UserStatus"
 import ViewPort from "./game/ViewPort"
 import { Suspense } from "react"
 import useLoadingScreen from "./components/hooks/useLoadingScreen"
+import NotFound from "./pages/NotFound"
 
 const App = () => {
   // Getting the user status. (Game requests and game request rejections)
@@ -96,6 +97,8 @@ const App = () => {
             </PrivateRoute>
           }
         />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   )

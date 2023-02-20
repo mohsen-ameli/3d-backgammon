@@ -3,12 +3,11 @@ import { useNavigate, useParams } from "react-router-dom"
 import { AuthContext } from "../context/AuthContext"
 import useFetch from "../components/hooks/useFetch"
 import notification from "../components/utils/Notification"
-import getServerUrl from "../components/utils/getServerUrl"
 
 const FriendGame = () => {
   const { gameId } = useParams()
   const { setInGame, gameMode } = useContext(AuthContext)
-  const { data } = useFetch(`${getServerUrl()}/api/game/valid-match/${gameId}/`)
+  const { data } = useFetch(`/api/game/valid-match/${gameId}/`)
   const navigate = useNavigate()
 
   const validateGame = () => {
