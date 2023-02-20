@@ -1,3 +1,4 @@
+asgiref==3.6.0
 async-timeout==4.0.2
 attrs==22.2.0
 autobahn==22.12.1
@@ -21,6 +22,7 @@ importlib-metadata==6.0.0
 incremental==22.10.0
 Markdown==3.4.1
 msgpack==1.0.4
+psycopg2==2.9.5
 psycopg2-binary==2.9.5
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
