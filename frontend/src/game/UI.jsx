@@ -42,10 +42,10 @@ const UI = () => {
             as="div"
             transform
             scale={0.2}
-            position={[-1.75, 0.5, 0]}
+            position={[-1.85, 0.5, 0]}
             sprite
           >
-            <div className="flex flex-col items-center gap-4 select-none">
+            <div className="relative flex flex-col items-center gap-y-4 w-[140px] h-[200px] select-none">
               {/* Flipping the board */}
               <Button className="text-white" onClick={resetOrbit.current}>
                 Reset controls
@@ -56,12 +56,13 @@ const UI = () => {
                 className="text-white"
                 onClick={() => toggleControls.current(true)}
               >
-                Toggle controls
+                Lock controls
               </Button>
 
+              {/* Who's playing and with what dice nums */}
               <div
                 className={
-                  "p-3 rounded-lg text-center " +
+                  "absolute top-1/2 mt-2 p-2 rounded-sm text-center w-full " +
                   (userChecker.current === "white"
                     ? "bg-slate-200 text-black"
                     : "bg-slate-600 text-white")
@@ -70,7 +71,7 @@ const UI = () => {
                 <h1>{toCapitalize(userChecker.current)} to play!</h1>
                 {dice.current.moves > 0 && (
                   <div className="flex flex-col items-center mt-2">
-                    <h1>Dice moves</h1>
+                    <h1 className="mb-1">Dice moves</h1>
                     <DiceMoves dice={dice.current} />
                   </div>
                 )}

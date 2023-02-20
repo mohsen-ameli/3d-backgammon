@@ -22,7 +22,7 @@ export const GameState = createContext()
 const Game = () => {
   const { user, inGame, gameMode } = useContext(AuthContext)
 
-  // Orbit control
+  // Orbit control functions. These are defined in the Controls component
   const resetOrbit = useRef(() => null)
   const toggleControls = useRef(() => null)
   const orbitRef = useRef()

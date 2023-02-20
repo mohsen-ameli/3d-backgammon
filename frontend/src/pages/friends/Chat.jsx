@@ -142,7 +142,7 @@ const Chat = () => {
           className="w-full"
         />
 
-        <Button>
+        <Button className="w-fit">
           <i className="fa-solid fa-paper-plane"></i>
         </Button>
       </form>

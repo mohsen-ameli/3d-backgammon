@@ -37,9 +37,9 @@ const Interface = () => {
       </h1>
 
       <div className="flex gap-x-8 justify-center">
-        <Link to="/play-random">
+        {/* <Link to="/play-random">
           <Button>Play With a Random</Button>
-        </Link>
+        </Link> */}
         <Link to="/pass-and-play">
           <Button>Pass & Play</Button>
         </Link>

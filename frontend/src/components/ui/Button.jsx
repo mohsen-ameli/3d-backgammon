@@ -3,7 +3,7 @@ const Button = ({ className, ...props }) => {
     <button
       type="submit"
       className={
-        "relative group px-4 w-fit h-10 rounded-lg border-2 outline-none border-orange-800 " +
+        "relative group px-4 w-full h-10 rounded-lg border-2 outline-none border-orange-800 " +
         className
       }
       {...props}

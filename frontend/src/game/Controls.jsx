@@ -84,7 +84,9 @@ const Controls = forwardRef(({}, orbitRef) => {
     })
 
     setTimeout(() => {
-      orbitRef.current.enabled = true
+      if (orbitRef.orbitEnabled["changable"]) {
+        orbitRef.current.enabled = true
+      }
     }, duration * 1000)
   }
 

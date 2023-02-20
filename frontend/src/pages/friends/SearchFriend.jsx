@@ -109,7 +109,9 @@ const AddButton = ({ sendFriendReequest, friend, setError, error }) => {
       {clicked && !error ? (
         <i className="fa-solid fa-check p-1 text-2xl mr-4 text-green-700" />
       ) : (
-        <Button onClick={handleClick}>Add</Button>
+        <Button onClick={handleClick} className="w-fit">
+          Add
+        </Button>
       )}
     </>
   )
