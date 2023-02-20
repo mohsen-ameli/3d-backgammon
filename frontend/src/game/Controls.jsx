@@ -11,11 +11,6 @@ import {
 const Controls = forwardRef(({}, orbitRef) => {
   const { resetOrbit, toggleControls } = useContext(GameState)
 
-  // const { dampingFactor, rotateSpeed } = useControls({
-  //   dampingFactor: { value: 0.1, min: 0, max: 0.2, step: 0.001 },
-  //   rotateSpeed: { value: 0.2, min: 0, max: 1, step: 0.001 },
-  // })
-
   useEffect(() => {
     // Setting the functions used in the game state
     resetOrbit.current = resetOrbit_

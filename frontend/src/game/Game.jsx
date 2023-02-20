@@ -1,8 +1,7 @@
-import { useGLTF, Environment, useProgress } from "@react-three/drei"
-import { createContext, Suspense, useContext, useRef, useState } from "react"
+import { useGLTF, Environment } from "@react-three/drei"
+import { createContext, useContext, useRef, useState } from "react"
 import models from "../assets/models/models.glb"
-import { Perf } from "r3f-perf"
-import { Debug, Physics } from "@react-three/rapier"
+import { Physics } from "@react-three/rapier"
 import Dices from "./Dices"
 import UI from "./UI"
 import Checkers from "./Checkers"
@@ -15,6 +14,7 @@ import notification from "../components/utils/Notification"
 import toCapitalize from "../components/utils/ToCapitalize"
 import Controls from "./Controls"
 import userSwitch from "../assets/sounds/user-switch.mp3"
+import getServerUrl from "../components/utils/getServerUrl"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext()
@@ -89,7 +89,7 @@ const Game = () => {
       const gameId = gameMode.current.split("_")[1]
 
       // Starting a websocket connection to let the fun begin
-      setWs(() => new WebSocket(`ws://localhost:8000/ws/game/${gameId}/`))
+      setWs(() => new WebSocket(`${getServerUrl(false)}/ws/game/${gameId}/`))
     }
   }, [inGame])
 

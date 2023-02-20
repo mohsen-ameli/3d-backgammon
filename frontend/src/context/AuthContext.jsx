@@ -2,6 +2,7 @@ import axios from "axios"
 import { createContext, useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import jwt_decode from "jwt-decode"
+import getServerUrl from "../components/utils/getServerUrl"
 
 export const AuthContext = createContext()
 
@@ -35,7 +36,7 @@ const AuthContextProvider = (props) => {
   useEffect(() => {
     if (user && tokens) {
       // prettier-ignore
-      setWs(() => new WebSocket(`ws://localhost:8000/ws/status/${tokens.refresh}/`))
+      setWs(() => new WebSocket(`${getServerUrl(false)}/ws/status/${tokens.refresh}/`))
     }
   }, [])
 
@@ -47,7 +48,7 @@ const AuthContextProvider = (props) => {
         password,
       }
 
-      const res = await axios.post("api/token/", context)
+      const res = await axios.post(`${getServerUrl()}/api/token/`, context)
       if (res.status === 200) {
         const newTokens = {
           access: res.data.access,
@@ -64,7 +65,7 @@ const AuthContextProvider = (props) => {
         if (ws && isOpen(ws)) {
           ws.send(JSON.stringify({ new_refresh: newTokens.refresh, is_online: true }))
         } else {
-          setWs(() => new WebSocket(`ws://localhost:8000/ws/status/${newTokens.refresh}/`))
+          setWs(() => new WebSocket(`${getServerUrl(false)}/ws/status/${newTokens.refresh}/`))
         }
 
         // Going home
@@ -102,7 +103,7 @@ const AuthContextProvider = (props) => {
         password,
         password2,
       }
-      const res = await axios.post("api/signup/", context)
+      const res = await axios.post(`${getServerUrl()}/api/signup/`, context)
       if (res.status === 200) {
         // Going home
         navigate("/login")

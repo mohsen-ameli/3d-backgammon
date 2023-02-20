@@ -2,9 +2,12 @@ import Container from "../../components/ui/Container"
 import Header from "../../components/ui/Header"
 import useFetch from "../../components/hooks/useFetch"
 import Loading from "../../components/ui/Loading"
+import getServerUrl from "../../components/utils/getServerUrl"
 
 const Profile = () => {
-  const { data, loading, error } = useFetch("api/get-user-profile/")
+  const { data, loading, error } = useFetch(
+    `${getServerUrl()}/api/get-user-profile/`
+  )
 
   if (loading) return <Loading />
   if (error) return <div>Error</div>

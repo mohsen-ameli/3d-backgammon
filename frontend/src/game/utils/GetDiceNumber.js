@@ -1,4 +1,4 @@
-import * as THREE from "three"
+import { Euler } from "three"
 import throwDice from "./ThrowDices"
 
 /**
@@ -10,7 +10,7 @@ import throwDice from "./ThrowDices"
  */
 
 const getDiceNumber = (dice) => {
-  const euler = new THREE.Euler()
+  const euler = new Euler()
   euler.setFromQuaternion(dice.rotation())
 
   const x = euler.x

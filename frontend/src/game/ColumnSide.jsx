@@ -1,6 +1,6 @@
 import { useContext, useRef } from "react"
 import { COLOUMN_HOVER_COLOR } from "./data/Data"
-import * as THREE from "three"
+import { MeshStandardMaterial } from "three"
 import { GameState } from "./Game"
 import { useMemo } from "react"
 import Endgame from "./utils/Endgame"
@@ -18,7 +18,7 @@ const ColumnSide = ({ node }) => {
   const blackOrWhite = useRef()
 
   const material = useMemo(() => {
-    const mat = new THREE.MeshStandardMaterial()
+    const mat = new MeshStandardMaterial()
     mat.copy(materials.BoardWood2)
     if (node.name === "WhiteHouse") {
       blackOrWhite.current = "white"

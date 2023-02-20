@@ -1,7 +1,7 @@
-import * as THREE from "three"
+import { Quaternion } from "three"
 
 const resetDiceRotation = (dices) => {
-  const quat = new THREE.Quaternion(
+  const quat = new Quaternion(
     0.00048353226156905293,
     0.005327336024492979,
     -0.00011967308091698214,

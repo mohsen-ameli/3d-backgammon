@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import useAxios from "./components/hooks/useAxios"
+import getServerUrl from "./components/utils/getServerUrl"
 import notification from "./components/utils/Notification"
 import { AuthContext } from "./context/AuthContext"
 
@@ -15,10 +16,13 @@ const useStatus = () => {
 
   // Accepting a game request
   const accept = async (id) => {
-    const res = await axiosInstance.put("/api/game/handle-match-request/", {
-      action: "accept",
-      friend_id: id,
-    })
+    const res = await axiosInstance.put(
+      `${getServerUrl()}/api/game/handle-match-request/`,
+      {
+        action: "accept",
+        friend_id: id,
+      }
+    )
 
     if (res.status !== 200) return
 
@@ -28,18 +32,24 @@ const useStatus = () => {
 
   // Rejecting the game request
   const reject = async (id) => {
-    await axiosInstance.put("/api/game/handle-match-request/", {
-      action: "reject",
-      friend_id: id,
-    })
+    await axiosInstance.put(
+      `${getServerUrl()}/api/game/handle-match-request/`,
+      {
+        action: "reject",
+        friend_id: id,
+      }
+    )
     showReqNotif.current = true
   }
 
   // Deleting a "game request rejected" message
   const deleteRejected = async () => {
-    await axiosInstance.put("/api/game/handle-match-request/", {
-      action: "delete-rejected",
-    })
+    await axiosInstance.put(
+      `${getServerUrl()}/api/game/handle-match-request/`,
+      {
+        action: "delete-rejected",
+      }
+    )
     showRejNotif.current = true
   }
 

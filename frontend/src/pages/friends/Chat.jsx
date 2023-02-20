@@ -6,6 +6,7 @@ import Input from "../../components/ui/Input"
 import Header from "../../components/ui/Header"
 import { AuthContext } from "../../context/AuthContext"
 import Loading from "../../components/ui/Loading"
+import getServerUrl from "../../components/utils/getServerUrl"
 
 /**
  * This chat componenet is used to display the chat between the user and a friend.
@@ -22,7 +23,8 @@ const Chat = () => {
 
   // Create WebSocket connection.
   const [ws] = useState(
-    () => new WebSocket(`ws://localhost:8000/ws/chat/${location.state.uuid}/`)
+    () =>
+      new WebSocket(`${getServerUrl(false)}/ws/chat/${location.state.uuid}/`)
   )
 
   useEffect(() => {

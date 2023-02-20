@@ -1,7 +1,7 @@
 import { useContext, useLayoutEffect, useRef } from "react"
 import ColumnSide from "./ColumnSide"
 import { GameState } from "./Game"
-import * as THREE from "three"
+import { Quaternion, Vector3, Matrix4, Euler, Color } from "three"
 import { COLOUMN_HOVER_COLOR } from "./data/Data"
 
 const Columns = () => {
@@ -13,15 +13,15 @@ const Columns = () => {
   const count = 24
 
   useLayoutEffect(() => {
-    const quaternion = new THREE.Quaternion()
-    const scale = new THREE.Vector3(1, 1, 1)
+    const quaternion = new Quaternion()
+    const scale = new Vector3(1, 1, 1)
 
     for (let i = 0; i < count; i++) {
-      const matrix = new THREE.Matrix4()
+      const matrix = new Matrix4()
       const position = nodes[`col_${i + 1}`].position
 
       if (i >= 12) {
-        const rotated = new THREE.Euler(0, Math.PI, 0)
+        const rotated = new Euler(0, Math.PI, 0)
         matrix.compose(position, quaternion.setFromEuler(rotated), scale)
       } else {
         matrix.compose(position, quaternion, scale)
@@ -43,7 +43,7 @@ const Columns = () => {
     if (checkerPicked.current) {
       const node = e.object
       const id = e.instanceId
-      const color = new THREE.Color(COLOUMN_HOVER_COLOR)
+      const color = new Color(COLOUMN_HOVER_COLOR)
 
       node.setColorAt(id, color)
       node.instanceColor.needsUpdate = true

@@ -4,10 +4,11 @@ import { useEffect, useState } from "react"
 import Button from "../../components/ui/Button"
 import useAxios from "../../components/hooks/useAxios"
 import Header from "../../components/ui/Header"
+import getServerUrl from "../../components/utils/getServerUrl"
 
 const SearchFriend = () => {
   const [ws] = useState(
-    () => new WebSocket("ws://localhost:8000/ws/search-friend/")
+    () => new WebSocket(`${getServerUrl(false)}/ws/search-friend/`)
   )
   const [friends, setFriends] = useState([])
   const [error, setError] = useState()
@@ -46,7 +47,10 @@ const SearchFriend = () => {
   // Send friend request
   const sendFriendReequest = async (id) => {
     try {
-      await axiosInstance.put("api/handle-friends/", { id, action: "add" })
+      await axiosInstance.put(`${getServerUrl()}/api/handle-friends/`, {
+        id,
+        action: "add",
+      })
     } catch (err) {
       setError(err.response.data[0])
     }

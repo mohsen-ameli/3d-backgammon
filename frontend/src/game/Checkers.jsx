@@ -1,15 +1,13 @@
-import { InstancedRigidBodies } from "@react-three/rapier"
-import { useContext, useMemo, useRef } from "react"
+import { useContext } from "react"
 import Checker from "./Checker"
 import { GameState } from "./Game"
-import getCheckerPos from "./utils/GetCheckerPos"
 
 // ms = 0.5; calls = 35; geos = 22; instancedMesh = false; checkers = false; plugged = false
 // ms = 0.2; calls = 36; geos = 23; instancedMesh = true; checkers = false; plugged = false
 // ms = 1.6 -> 0.7; calls = 65; geos = 23; instancedMesh = false; checkers = true; plugged = false
 
 const Checkers = () => {
-  const { checkers, nodes, materials } = useContext(GameState)
+  const { checkers } = useContext(GameState)
 
   // const allCheckers = useMemo(() => {
   //   const whitePositions = []

@@ -2,6 +2,7 @@ import jwt_decode from "jwt-decode"
 import axios from "axios"
 import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
+import getServerUrl from "../utils/getServerUrl"
 
 /**
  * This hook will check if the access token is expired. If it is, it will use the refresh token to get a new access token.
@@ -24,9 +25,12 @@ const useGetFreshTokens = (tokens, skip = false) => {
 
     // Access token is expired. Will use the refresh token to get a new access token
     try {
-      const response = await axios.post("/api/token/refresh/", {
-        refresh: tokens.refresh,
-      })
+      const response = await axios.post(
+        `${getServerUrl()}/api/token/refresh/`,
+        {
+          refresh: tokens.refresh,
+        }
+      )
 
       if (response.status === 200) {
         const freshTokens = {

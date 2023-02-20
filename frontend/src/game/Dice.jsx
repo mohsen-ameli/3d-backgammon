@@ -1,11 +1,9 @@
 import { RigidBody } from "@react-three/rapier"
-import { forwardRef, useContext, useRef, useState } from "react"
+import { forwardRef, useContext, useState } from "react"
 import * as data from "./data/Data"
 import { GameState } from "./Game"
 import getDiceNumber from "./utils/GetDiceNumber"
-import dice from "../assets/sounds/dice.mp3"
 import newDice from "../assets/sounds/NewDice.wav"
-import hit from "../assets/sounds/hit.mp3"
 
 const Dice = forwardRef(({ index, position, setFinishedThrow }, ref) => {
   const { nodes, materials, dice } = useContext(GameState)
