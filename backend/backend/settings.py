@@ -11,7 +11,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = str(os.environ.get("DEBUG")) == "1"
 
-ALLOWED_HOSTS = ["www.3d-backgammon.com", "3d-backgammon.com", "3d-backgammon.up.railway.app", "www.3d-backgammon.up.railway.app", "192.168.0.173", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["3d-backgammon.up.railway.app", "www.3d-backgammon.up.railway.app", "www.3d-backgammon.com", "3d-backgammon.com", "localhost"]
 
 INTERNAL_IPS = (
     '127.0.0.1'
@@ -190,7 +190,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
+    # SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 2592000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
@@ -198,23 +198,12 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
 
 # CORS
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'https://www.3d-backgammon.com',
-    'https://3d-backgammon.up.railway.app'
-)
-
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
     'https://www.3d-backgammon.com',
-    'https://3d-backgammon.up.railway.app'
-]
-
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://\w+\.3d-backgammon\.com$",
-    r"^https://\w+\.3d-backgammon\.up\.railway\.app$",
+    'https://3d-backgammon.up.railway.app',
+    'https://railway.app'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
