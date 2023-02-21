@@ -205,4 +205,10 @@ CORS_ALLOWED_ORIGINS = [
     'https://3d-backgammon.vercel.app'
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://www.3d-backgammon.com',
+    'https://3d-backgammon.com',
+    'https://3d-backgammon.up.railway.app',
+]
+
 CORS_ALLOW_CREDENTIALS = True
