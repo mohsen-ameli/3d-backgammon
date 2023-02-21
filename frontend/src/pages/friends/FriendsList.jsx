@@ -48,7 +48,7 @@ const FriendsList = () => {
     <Container className="gap-y-2">
       {/* Header */}
       <Header to="/" title="Friends List">
-        <div className="flex gap-x-2 absolute right-0 top-0">
+        <div className="flex gap-x-2 absolute right-0 -top-1">
           {/* Search for new friends */}
           <Link to="/search-friend">
             <Button className="relative px-2 py-1">
@@ -70,28 +70,29 @@ const FriendsList = () => {
         </div>
       </Header>
 
-      {/* Friends list */}
-      <div className="text-xl mb-1 pb-2 border-b-2 grid grid-cols-5 text-center">
-        <p className="col-span-2">Name</p>
-        <p>Chat</p>
-        <p>Play</p>
-        <p>Remove</p>
-      </div>
-
       {loading ? (
         <Loading basic />
       ) : data && data.friends.length !== 0 ? (
-        <div className="custom-scroll-bar flex flex-col gap-y-4">
-          {data.friends.map((friend) => (
-            <FriendDetails
-              key={friend.id}
-              friend={friend}
-              setLoading={setLoading}
-            />
-          ))}
-        </div>
+        <>
+          {/* Friends list */}
+          <div className="text-xl mb-1 pb-2 border-b-2 grid grid-cols-5 text-center">
+            <p className="col-span-2">Name</p>
+            <p>Chat</p>
+            <p>Play</p>
+            <p>Remove</p>
+          </div>
+          <div className="custom-scroll-bar flex flex-col gap-y-4">
+            {data.friends.map((friend) => (
+              <FriendDetails
+                key={friend.id}
+                friend={friend}
+                setLoading={setLoading}
+              />
+            ))}
+          </div>
+        </>
       ) : (
-        <p className="text-center">No friends online</p>
+        <p className="text-xl font-semibold text-center mt-4">No friends :(</p>
       )}
     </Container>
   )

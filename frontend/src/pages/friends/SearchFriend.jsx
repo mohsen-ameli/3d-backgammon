@@ -1,7 +1,7 @@
 import Container from "../../components/ui/Container"
 import Input from "../../components/ui/Input"
-import { useEffect, useState } from "react"
-import Button from "../../components/ui/Button"
+import { useEffect, useRef, useState } from "react"
+import Button, { ButtonLoading } from "../../components/ui/Button"
 import useAxios from "../../components/hooks/useAxios"
 import Header from "../../components/ui/Header"
 import getServerUrl from "../../components/utils/getServerUrl"
@@ -12,6 +12,7 @@ const SearchFriend = () => {
   )
   const [friends, setFriends] = useState([])
   const [error, setError] = useState()
+  const [typed, setTyped] = useState("")
 
   const axiosInstance = useAxios()
 
@@ -19,11 +20,8 @@ const SearchFriend = () => {
     // Getting list of potential friends
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data)
-      if (data.results.length > 0) {
-        setFriends(data.results)
-      } else {
-        setFriends([])
-      }
+
+      setFriends(data.results.length > 0 ? data.results : [])
     }
 
     return () => ws.close()
@@ -31,15 +29,17 @@ const SearchFriend = () => {
 
   // Searching for potential friends
   const search = (e) => {
-    const typed = e.target.value
+    const searchFor = e.target.value
 
-    if (typed === "") return
+    setTyped(searchFor)
+
+    if (searchFor === "") return
 
     error && setError(false)
     // fetch
     ws.send(
       JSON.stringify({
-        typed,
+        typed: searchFor,
       })
     )
   }
@@ -51,6 +51,7 @@ const SearchFriend = () => {
         id,
         action: "add",
       })
+      setError(null)
     } catch (err) {
       setError(err.response.data[0])
     }
@@ -64,39 +65,44 @@ const SearchFriend = () => {
         className="mb-4"
         type="text"
         placeholder="Name or Email"
+        maxLength={60}
         onChange={search}
       />
 
-      {friends.length > 0 ? (
-        <div className="custom-scroll-bar">
-          {friends.map((friend) => (
+      {typed !== "" &&
+        (friends.length > 0 ? (
+          friends.map((friend) => (
             <div
               key={friend.id}
-              className="flex items-center justify-between p-2 mb-2 mr-2 rounded-lg bg-slate-200"
+              className="flex items-center justify-between px-2 h-14 mb-1 rounded-lg bg-slate-200"
             >
               <p>{friend.username}</p>
               <AddButton
                 sendFriendReequest={sendFriendReequest}
                 friend={friend}
-                setError={setError}
                 error={error}
               />
             </div>
-          ))}
-        </div>
-      ) : (
-        <p>
-          No user found with the specified name or email. (Did you spell
-          something wrong?)
-        </p>
-      )}
+          ))
+        ) : (
+          <ErrorMsg />
+        ))}
 
       {error && <p className="text-red-500">{error}</p>}
     </Container>
   )
 }
 
-const AddButton = ({ sendFriendReequest, friend, setError, error }) => {
+const ErrorMsg = () => {
+  return (
+    <p>
+      No user found with the specified name or email. (Did you spell something
+      wrong?)
+    </p>
+  )
+}
+
+const AddButton = ({ sendFriendReequest, friend, error }) => {
   const [clicked, setClicked] = useState(false)
 
   const handleClick = () => {
@@ -104,17 +110,25 @@ const AddButton = ({ sendFriendReequest, friend, setError, error }) => {
     setClicked(true)
   }
 
-  return (
-    <>
-      {clicked && !error ? (
+  if (clicked) {
+    if (error === null) {
+      return (
         <i className="fa-solid fa-check p-1 text-2xl mr-4 text-green-700" />
-      ) : (
-        <Button onClick={handleClick} className="w-fit">
-          Add
+      )
+    } else if (error === undefined) {
+      return (
+        <Button className="w-20">
+          <ButtonLoading />
         </Button>
-      )}
-    </>
-  )
+      )
+    }
+  } else {
+    return (
+      <Button onClick={handleClick} className="w-20">
+        Add
+      </Button>
+    )
+  }
 }
 
 export default SearchFriend

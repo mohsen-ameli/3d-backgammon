@@ -43,7 +43,7 @@ const Signup = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-y-6"
+        className="flex flex-col gap-y-4"
         autoComplete="on"
       >
         <FormField

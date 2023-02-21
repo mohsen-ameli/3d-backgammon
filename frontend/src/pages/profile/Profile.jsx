@@ -30,7 +30,9 @@ const Profile = () => {
     <Container>
       <Header to="/" title="Profile" />
 
-      <p className="text-lg mb-6">A member since {getDateJoined()}</p>
+      <p className="mb-6 text-lg text-center">
+        A member since {getDateJoined()}
+      </p>
 
       <div className="flex flex-col items-center gap-y-4 text-lg">
         <h1 className="w-full text-center border-b-2 border-blue-400">

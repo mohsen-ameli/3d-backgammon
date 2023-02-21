@@ -18,7 +18,7 @@ const FormField = ({ label, type = "text", autoComplete = "on", required = true,
         {...props}
       />
       {errors && errors.code === props.name && (
-        <p className="text-red-500 text-sm absolute -bottom-5 left-0">{errors.message}</p>
+        <p className="text-red-500 text-sm">{errors.message}</p>
       )}
     </div>
   )

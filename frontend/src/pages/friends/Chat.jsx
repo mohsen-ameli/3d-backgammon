@@ -123,7 +123,9 @@ const Chat = () => {
               }
             })
           ) : (
-            <p>Wow this is an empty chat...</p>
+            <p className="text-xl font-semibold text-center mt-1">
+              Wow this is an empty chat...
+            </p>
           )}
         </div>
       )}
@@ -160,8 +162,8 @@ const MessageBox = ({ type, message, sender, date }) => {
       }
     >
       <p className="text-lg break-all">{message}</p>
-      <p className="absolute bottom-0 right-1 text-xs text-slate-500">
-        {sender} at {date}
+      <p className="absolute bottom-0 right-1 text-xs text-slate-500 break-normal">
+        {date}
       </p>
     </div>
   )
@@ -176,15 +178,40 @@ const Status = () => {
       setStatus("Online")
       return
     }
-    const f = new Intl.DateTimeFormat("default", {
-      hour: "numeric",
-      hour12: true,
-      minute: "numeric",
-    })
 
-    let date = new Date(location.state.lastLogin * 1000)
-    date = f.format(date)
-    setStatus(`Last seen ${date}`)
+    const date = new Date(location.state.lastLogin * 1000)
+    const today = new Date()
+    let lastSeen = ""
+
+    // Seen within a few years
+    if (date.getFullYear() < today.getFullYear()) {
+      lastSeen = "a long time ago."
+    }
+    // Seen within this year
+    else if (date.getMonth() < today.getMonth()) {
+      lastSeen = "a while ago."
+    }
+    // Seen within this month
+    else if (date.getDate() < today.getDate()) {
+      const ago = today.getDate() - date.getDate()
+      lastSeen = ago + " days ago."
+    }
+    // Seen today
+    else if (date.getHours() < today.getHours()) {
+      const f = new Intl.DateTimeFormat("default", {
+        hour: "numeric",
+        hour12: true,
+        minute: "numeric",
+      })
+      lastSeen = "today around " + f.format(date)
+    }
+    // Seen within the last hour
+    else {
+      const ago = today.getMinutes() - date.getMinutes()
+      lastSeen = ago + " minutes ago."
+    }
+
+    setStatus("Last seen " + lastSeen)
   }
 
   useEffect(() => {

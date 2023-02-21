@@ -1,9 +1,8 @@
-import json, jwt, asyncio, time
+import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
-from django.conf import settings
-from django.utils import timezone
+from django.db.models import F
 
 from .models import Game
 from users.models import CustomUser
@@ -41,18 +40,34 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.initialFetch()
         elif "winner" in data:
             winner = await database_sync_to_async(CustomUser.objects.get)(id=data["winner"])
+            
             self.game.winner = winner.username
             self.game.finished = True
 
+            # White and black users
             white = await database_sync_to_async(CustomUser.objects.get)(id=self.game.white.id)
             black = await database_sync_to_async(CustomUser.objects.get)(id=self.game.black.id)
 
+            # Updating live game and the total game counter
             white.live_game = None
             black.live_game = None
+            white.total_games = F('total_games') + 1
+            black.total_games = F('total_games') + 1
 
+            # Setting winner and loser stats
+            if white.id == winner.id:
+                white.games_won = F('games_won') + 1
+                black.games_lost = F('games_lost') + 1
+            else:
+                black.games_won = F('games_won') + 1
+                white.games_lost = F('games_lost') + 1
+
+            # Saving everything
             await database_sync_to_async(self.game.save)()
             await database_sync_to_async(white.save)()
             await database_sync_to_async(black.save)()
+
+            # Sending back updates
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {

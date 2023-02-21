@@ -43,6 +43,8 @@ class PrimaryUserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"message": "Username cannot contain whitespace", "code": "username"})
         if len(self.initial_data['username']) < 5:
             raise serializers.ValidationError({"message": "Username must be at least 5 characters long", "code": "username"})
+        elif len(self.initial_data['username']) > 15:
+            raise serializers.ValidationError({"message": "Username must be at most 15 characters long", "code": "username"})
         elif CustomUser.objects.filter(username=self.initial_data['username']).exists():
             raise serializers.ValidationError({"message": "Username already exists", "code": "username"})
         
