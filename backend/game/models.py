@@ -84,3 +84,12 @@ class Game(models.Model):
 
     def __str__(self):
         return f"{self.id}"
+
+
+class InGameMessages(models.Model):
+    id = models.IntegerField(primary_key=True)
+    message = models.CharField(max_length=200)
+    show = models.BooleanField(default=True)
+
+    def __str__(self) -> str:
+        return f"{self.id} - {self.message}"

@@ -1,4 +1,6 @@
-import { toast } from "react-toastify"
+import { cssTransition, toast } from "react-toastify"
+import "animate.css/animate.min.css"
+import "react-toastify/dist/ReactToastify.css"
 
 const Msg = ({ closeToast, toastProps, msg, accept, reject }) => (
   <div className="flex flex-col gap-y-2 text-black">
@@ -65,6 +67,23 @@ const notification = (msg, type = "default", props) => {
       pauseOnHover: false,
       hideProgressBar: true,
       onClose: () => props.deleteRejected(),
+    })
+  } else if (type === "messsage") {
+    const transition = cssTransition({
+      enter: "animate__animated animate__tada",
+      exit: "animate__animated animate__lightSpeedOutLeft",
+    })
+
+    toast.dark(msg, {
+      position: "bottom-left",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      theme: "light",
+      className: "w-fit",
+      transition,
     })
   }
 }

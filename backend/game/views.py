@@ -5,8 +5,9 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from django.core.exceptions import ValidationError
 
-from .models import Game
+from .models import Game, InGameMessages
 from users.models import CustomUser
+from .serializers import InGameMessagesSerializer
 
 
 # This method will handle all the requests for a match
@@ -103,3 +104,10 @@ def valid_match(request: Request, game_id):
 
     # Game is not user's
     return Response({"valid": False})
+
+# This method will get all of the available in game messages
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_in_game_messages(request: Request):
+    serializer = InGameMessagesSerializer(InGameMessages.objects.all().order_by("id"), many=True)
+    return Response(serializer.data)

@@ -9,12 +9,13 @@ import {
 } from "./data/Data"
 
 const Controls = forwardRef(({}, orbitRef) => {
-  const { resetOrbit, toggleControls } = useContext(GameState)
+  const { resetOrbit, toggleControls, toggleZoom } = useContext(GameState)
 
   useEffect(() => {
     // Setting the functions used in the game state
     resetOrbit.current = resetOrbit_
     toggleControls.current = toggleControls_
+    toggleZoom.current = toggleZoom_
 
     // Default enabled values
     orbitRef["orbitEnabled"] = {
@@ -90,13 +91,17 @@ const Controls = forwardRef(({}, orbitRef) => {
     }, duration * 1000)
   }
 
+  const toggleZoom_ = () => {
+    orbitRef.current.enableZoom = !orbitRef.current.enableZoom
+  }
+
   return (
     <OrbitControls
       ref={orbitRef}
       makeDefault
       minPolarAngle={-2}
       maxPolarAngle={Math.PI / 2}
-      dampingFactor={0.1}
+      dampingFactor={0.05}
       rotateSpeed={0.2}
       screenSpacePanning={true}
       zoomSpeed={0.5}

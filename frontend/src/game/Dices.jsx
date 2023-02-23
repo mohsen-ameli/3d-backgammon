@@ -10,9 +10,13 @@ import switchPlayers from "./utils/SwitchPlayers"
 import resetDiceRotation from "./utils/ResetDiceRotation"
 import hasMoves from "./utils/HasMoves"
 import notification from "../components/utils/Notification"
+import InGameChat from "./InGameChat"
+import useFetch from "../components/hooks/useFetch"
+import { AuthContext } from "../context/AuthContext"
 
 const Dices = () => {
-  const { dice, phase, setPhase, checkers, userChecker, myTurn, ws } = useContext(GameState) // prettier-ignore
+  const { dice, phase, setPhase, checkers, userChecker, myTurn, ws, toggleZoom } = useContext(GameState) // prettier-ignore
+  const { user } = useContext(AuthContext)
 
   const dice1 = useRef()
   const dice2 = useRef()
@@ -26,6 +30,8 @@ const Dices = () => {
   // State to show the "throw dice" button
   const [showThrowBtn, setShowThrowBtn] = useState(false)
 
+  const { data: messages } = useFetch("/api/game/get-in-game-messages/")
+
   // Updating backend live game
   const updateLiveGame = (updateUsers) => {
     ws.send(
@@ -36,6 +42,12 @@ const Dices = () => {
         turn: userChecker.current,
       })
     )
+  }
+
+  const throwDice = () => {
+    setShowThrowBtn(false)
+    resetDices([dice1.current, dice2.current])
+    throwDices([dice1.current, dice2.current])
   }
 
   // Handling the dice throws
@@ -123,20 +135,35 @@ const Dices = () => {
 
   return (
     <>
-      <Html as="div" transform scale={0.2} position={[1.75, 0.5, 0]} sprite>
-        {/* Throwing the dice */}
-        {showThrowBtn && (
-          <Button
-            className="text-white select-none"
-            onClick={() => {
-              setShowThrowBtn(false)
-              resetDices([dice1.current, dice2.current])
-              throwDices([dice1.current, dice2.current])
-            }}
-          >
-            Throw Dice
-          </Button>
-        )}
+      <Html
+        as="div"
+        transform
+        scale={0.2}
+        position={[1.75, 0.5, ws ? -0.25 : 0]}
+        sprite
+      >
+        <div
+          onPointerEnter={toggleZoom.current}
+          onPointerLeave={toggleZoom.current}
+          className="w-[150px] h-[125px] flex flex-col gap-y-4"
+        >
+          {/* Throwing the dice */}
+          {showThrowBtn && (
+            <Button className="text-white select-none" onClick={throwDice}>
+              Throw Dice
+            </Button>
+          )}
+
+          {/* In game chat */}
+          {ws && (
+            <InGameChat
+              ws={ws}
+              toggleZoom={toggleZoom.current}
+              messages={messages}
+              user={user.username}
+            />
+          )}
+        </div>
       </Html>
 
       <Dice

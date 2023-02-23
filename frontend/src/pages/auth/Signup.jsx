@@ -4,11 +4,11 @@ import Button, { ButtonLoading } from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import FormField from "../../components/ui/FormField"
 import Header from "../../components/ui/Header"
+import { Link } from "react-router-dom"
 
 const Signup = () => {
-  const [clicked, setClicked] = useState(false)
-  // Context
   const { signup, errors, setErrors } = useContext(AuthContext)
+  const [clicked, setClicked] = useState(false)
 
   useEffect(() => {
     // Clear the errors when the component mounts
@@ -75,12 +75,20 @@ const Signup = () => {
 
         <Button
           type="submit"
-          className={
-            "mt-4 w-32 self-center " + (clicked && "cursor-not-allowed")
-          }
+          className={"mt-4 self-center " + (clicked && "cursor-not-allowed")}
         >
           {clicked ? <ButtonLoading /> : "Sign Up"}
         </Button>
+
+        <div className="text-sm text-center">
+          Forogot you password?{" "}
+          <Link
+            to=""
+            className="text-gray-600 hover:text-white hover:ease-in-out duration-200"
+          >
+            Reset it here
+          </Link>
+        </div>
       </form>
     </Container>
   )

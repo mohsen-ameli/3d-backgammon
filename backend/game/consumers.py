@@ -11,16 +11,24 @@ class GameConsumer(AsyncWebsocketConsumer):
     users = 0
     
     async def connect(self):
+        '''
+            Connecting a user to the game.
+        '''
+
+        # Game uuid
         game_id = self.scope['url_route']['kwargs']['game_id']
 
         # Getting the game object
         self.game = await database_sync_to_async(Game.objects.get)(id=game_id)
         self.room_group_name = game_id
 
+        # Adding one to the users connected to this game
         GameConsumer.users += 1
 
         await self.accept()
 
+        # Making sure there's only two connected users to one game. 
+        # We deal with the case of there being more than 2 users, in the frontend.
         if GameConsumer.users > 2:
             await self.send(text_data=json.dumps({
                 "too_many_users": True
@@ -32,6 +40,12 @@ class GameConsumer(AsyncWebsocketConsumer):
             )
     
     async def receive(self, text_data):
+        '''
+            Used to communicate with the frontend. When it initially connects,
+            there will be an "initial" in data, when there's a winner, there
+            will be a "winner" key in data, and so on.
+        '''
+
         # Data recieved
         data = json.loads(text_data)
 
@@ -82,9 +96,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             if not data["update"]:
                 return
 
-            await self.channel_layer.group_send(
-            self.room_group_name,
-            {
+            context = {
                 "type": "send_updates",
                 "initial": False,
                 "turn": data["turn"],
@@ -94,11 +106,36 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "white": self.game.white.id,
                 "black": self.game.black.id
             }
-        )
-            
+
+            await self.channel_layer.group_send(self.room_group_name, context)
+        elif "message" in data:
+            await self.channel_layer.group_send(self.room_group_name, {
+                "type": "send_message",
+                "message": data["message"],
+                "user": data["user"]
+            })
+
         return
 
+    async def send_message(self, event):
+        '''
+            Used to send in game messages between users.
+        '''
+
+        messsage = event["message"]
+        user = event["user"]
+        
+        await self.send(text_data=json.dumps({
+            "message": messsage,
+            "user": user
+        }))
+
     async def game_is_over(self, event):
+        '''
+            Used to send both users stats about the game winners,
+            when the game is done
+        '''
+
         winner = event["winner"]
         finished = event["finished"]
 
@@ -110,6 +147,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(context))
 
     async def send_updates(self, event):
+        '''
+            Main update function, to update users on the new board,
+            dice, turn, and finished status.
+        '''
+
         initial = event["initial"]
         turn = event["turn"]
         board = event["board"]
@@ -131,10 +173,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(context))
 
     async def initialFetch(self):
+        '''
+            This will fetch the initial stage of the game.
+        '''
+
         context = await get_game_state(self.game)
         await self.send(text_data=json.dumps(context))
 
     async def disconnect(self, code):
+        '''
+            When a user is disconnected.
+        '''
+
         GameConsumer.users -= 1
 
         await self.channel_layer.group_discard(
@@ -143,6 +193,10 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 @database_sync_to_async
 def update_game_state(game: Game, board, dice, turn):
+    '''
+        Updating the game instance
+    '''
+
     game.board = board
     game.dice = dice
     game.turn = turn
@@ -150,6 +204,10 @@ def update_game_state(game: Game, board, dice, turn):
 
 @database_sync_to_async
 def get_game_state(game: Game) -> dict:
+    '''
+        Getting the current game state.
+    '''
+
     context = {}
 
     context["initial"] = True
@@ -159,5 +217,7 @@ def get_game_state(game: Game) -> dict:
     context["finished"] = game.finished
     context["white"] = game.white.id
     context["black"] = game.black.id
+    context["white-name"] = game.white.username
+    context["black-name"] = game.black.username
 
     return context

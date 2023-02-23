@@ -25,11 +25,18 @@ const Game = () => {
   // Orbit control functions. These are defined in the Controls component
   const resetOrbit = useRef(() => null)
   const toggleControls = useRef(() => null)
+  const toggleZoom = useRef(() => null)
   const orbitRef = useRef()
 
+  // Current players (Only set in a live game)
+  const players = useRef({
+    me: { name: "", color: "" },
+    enemy: { name: "", color: "" },
+  })
+
   // The numbers on the dice, and how many times the user is allowed to move
-  // ex: [dice1: 2, dice2: 5, moves: 2] -> The dice shows 2 and 5, therefore the user can move twice
-  // ex: [dice1: 6, dice2: 6, moves: 4] -> The dice shows 6 and 6, therefore the user can move four times
+  // ex: {dice1: 2, dice2: 5, moves: 2} -> The dice shows 2 and 5, therefore the user can move twice
+  // ex: {dice1: 6, dice2: 6, moves: 4} -> The dice shows 6 and 6, therefore the user can move four times
   const dice = useRef({ dice1: 0, dice2: 0, moves: 0 })
 
   // The current checker color that is being moved
@@ -43,10 +50,10 @@ const Game = () => {
 
   /* checkers: [
     id: int,
-    color: str = "white" | "black",
+    color: "white" | "black",
     col: int = 0-23 normal | -1 removed white checker | -2 removed black checker | -3 endbar white checker | -4 endbar black checker,
     row: int = 0 - 4,
-    removed: Boolean
+    removed: boolean
   ] */
 
   // All of the checkers' default positions
@@ -120,6 +127,12 @@ const Game = () => {
         return
       }
 
+      // If there is a message
+      if (data["message"]) {
+        notification(`${data["user"]} said ${data["message"]}`, "messsage")
+        return
+      }
+
       userChecker.current = data["turn"]
       checkers.current = data["board"]
       dice.current = data["dice"]
@@ -139,14 +152,29 @@ const Game = () => {
       // Setting the phase to initial
       if (data.initial) {
         setPhase("initial")
+
+        // Filling the players reference
+        const myColor = data.white === user.user_id ? "white" : "black"
+        const enemyColor = myColor === "white" ? "black" : "white"
+
+        players.current.me.id = user.user_id
+        players.current.me.name = user.username
+        players.current.me.color = myColor
+
+        players.current.enemy.id =
+          myColor === "white" ? data["black"] : data["white"]
+        players.current.enemy.name =
+          myColor === "white" ? data["black-name"] : data["white-name"]
+        players.current.enemy.color = enemyColor
+
         return
       }
 
-      // Return, if i am the user
       if (dice.current.moves !== 0) {
         // Complicated state changes. Essentially making sure that
         // whether the user is spectating or playing, they get the
-        // neweset updates from the backend.
+        // neweset updates from the backend. (aka, making sure
+        // all the checker positions are updated)
 
         // User is spectating
         if (!turn) {
@@ -191,6 +219,7 @@ const Game = () => {
   const value = {
     nodes,
     materials,
+    players,
     dice,
     userChecker,
     myTurn,
@@ -202,6 +231,7 @@ const Game = () => {
     setPhase,
     toggleControls,
     resetOrbit,
+    toggleZoom,
   }
 
   return (
