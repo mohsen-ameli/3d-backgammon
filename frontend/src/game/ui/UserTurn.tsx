@@ -9,7 +9,7 @@ const UserTurn = ({ userChecker, dice }: UserTurnProps) => {
   return (
     <div
       className={
-        "absolute top-1/2 mt-2 w-full rounded-sm p-2 text-center " +
+        "absolute top-[80%] mt-2 w-full rounded-sm p-2 text-center " +
         (userChecker === "white"
           ? "bg-slate-200 text-black"
           : "bg-slate-600 text-white")

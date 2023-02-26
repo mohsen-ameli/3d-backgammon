@@ -1,6 +1,9 @@
 import { Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 
+// Stage
+export const DEFAULT_ENV_MAP_INTENSITY = 2
+
 // Columns
 export const COLOUMN_HOVER_COLOR = "red"
 

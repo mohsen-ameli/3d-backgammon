@@ -435,34 +435,13 @@ const Checker = ({ thisChecker }: CheckerProps) => {
 
   return (
     <>
-      {/* <a.instancedMesh
-        {...bind()}
-        {...spring}
-        ref={instanceMesh}
-        args={[
-          nodes.WhiteChecker.geometry,
-          color === "white"
-            ? materials.WhiteCheckerMat
-            : materials.DarkCheckerMat,
-          15,
-        ]}
-        onPointerEnter={() => {
-          // Change the cusror to grab
-          document.body.style.cursor = "grab"
-        }}
-        onPointerLeave={() => {
-          // Change the cusror to default
-          document.body.style.cursor = "default"
-        }}
-      /> */}
-
       {/* The physics */}
       <RigidBody
         ref={checker}
         type="kinematicPosition"
         position={pos as Vector3}
       >
-        <CuboidCollider args={[0.08, 0.02, 0.08]} />
+        <CuboidCollider args={[0.08, 0.04, 0.08]} position={[0, 0.04, 0]} />
       </RigidBody>
 
       {/* The mesh */}
@@ -471,6 +450,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
         {...spring}
         {...bind()}
         name="WhiteChecker"
+        castShadow
         geometry={nodes.WhiteChecker.geometry}
         material={
           thisChecker.color === "white"

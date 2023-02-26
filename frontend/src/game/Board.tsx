@@ -1,31 +1,38 @@
 import { useFrame } from "@react-three/fiber"
 import { CuboidCollider, RigidBody } from "@react-three/rapier"
 import { useContext, useRef } from "react"
-import { Group } from "three"
+import { Mesh } from "three"
 import { AuthContext } from "../context/AuthContext"
 import { GameState } from "./Game"
 
 const Board = () => {
   const { nodes, materials } = useContext(GameState)
   const { gameMode } = useContext(AuthContext)
-  const board = useRef<Group>(null!)
+  const board = useRef<Mesh>(null!)
+  const boardHinge = useRef<Mesh>(null!)
 
   useFrame((clock, delta) => {
-    const speed = delta / 15
+    const speed = delta / 12
 
     if (!gameMode.current) {
-      board.current.rotation.x += speed
       board.current.rotation.y += speed
+      boardHinge.current.rotation.y += speed
     } else {
-      board.current.rotation.x = 0
       board.current.rotation.y = 0
+      boardHinge.current.rotation.y = 0
     }
   })
 
   return (
-    <group ref={board}>
+    <group>
       {/* Board Hinge */}
-      <mesh geometry={nodes.Hinge.geometry} material={materials.Hinge} />
+      <mesh
+        ref={boardHinge}
+        rotation-x={!gameMode.current ? -Math.PI / 6 : 0}
+        geometry={nodes.Hinge.geometry}
+        material={materials.Hinge}
+        receiveShadow
+      />
 
       <RigidBody type="fixed" colliders={false}>
         {/* Surface */}
@@ -46,10 +53,13 @@ const Board = () => {
         {/* Bottom */}
         <CuboidCollider args={[1.175, 0.5, 0.07]} position={[0, 0.06, 1]} />
 
-        {/* Dice Holder */}
-        <CuboidCollider args={[0.5, 0.1, 0.5]} position={[0, 0.6, 2]} />
-
-        <mesh geometry={nodes.Board.geometry} material={materials.BoardWood2} />
+        <mesh
+          ref={board}
+          rotation-x={!gameMode.current ? -Math.PI / 6 : 0}
+          geometry={nodes.Board.geometry}
+          material={materials.BoardWood2}
+          receiveShadow
+        />
       </RigidBody>
     </group>
   )

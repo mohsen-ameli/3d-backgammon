@@ -12,6 +12,8 @@ const Experience = () => {
       camera={{
         position: [0, 3.5, 0],
         fov: 45,
+        near: 0.2,
+        far: 10,
       }}
       shadows
     >

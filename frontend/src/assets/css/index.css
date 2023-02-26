@@ -11,6 +11,7 @@ body,
   height: 100%;
   font-family: "Caveat", cursive;
   font-family: "Josefin Sans", sans-serif;
+  user-select: none;
 }
 
 /* If the user is on mobile, then turn this on somehow */

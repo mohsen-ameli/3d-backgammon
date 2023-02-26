@@ -13,13 +13,14 @@ type DiceProps = {
   index: 0 | 1
   position: Vector3
   setFinishedThrow: React.Dispatch<React.SetStateAction<finishedThrowType>>
+  setSleeping: React.Dispatch<React.SetStateAction<finishedThrowType>>
 }
 
 /**
  * Individual die
  */
 const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
-  const { index, position, setFinishedThrow } = props
+  const { index, position, setFinishedThrow, setSleeping } = props
   const { nodes, materials, dice } = useContext(GameState)
 
   // Rigid body reference of each die
@@ -48,8 +49,11 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
   // When the die goes to sleep
   const onSleep = () => {
-    if (!DiceOnBoard(rigidBody)) return
-    // => MAYBE: You could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
+    if (!DiceOnBoard(rigidBody)) {
+      setSleeping({ 0: true, 1: true })
+      return
+    }
+    // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
 
     // Getting the die number and saving it to the dice ref
     if (!IsInitial(rigidBody.rotation())) {
@@ -84,11 +88,13 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
           name="DiceGeo"
           geometry={nodes.DiceGeo.geometry}
           material={materials.DiceWhite}
+          castShadow
         />
         <mesh
           name="DiceGeo_1"
           geometry={nodes.DiceGeo_1.geometry}
           material={materials.DiceDark}
+          castShadow
         />
       </group>
     </RigidBody>

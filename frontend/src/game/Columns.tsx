@@ -23,13 +23,11 @@ const Columns = () => {
   const columns = useRef<Group>(null!)
 
   useFrame((clock, delta) => {
-    const speed = delta / 15
+    const speed = delta / 12
 
     if (!gameMode.current) {
-      columns.current.rotation.x += speed
       columns.current.rotation.y += speed
     } else {
-      columns.current.rotation.x = 0
       columns.current.rotation.y = 0
     }
   })
@@ -95,7 +93,7 @@ const Columns = () => {
   }
 
   return (
-    <group ref={columns}>
+    <group ref={columns} rotation-x={!gameMode.current ? -Math.PI / 6 : 0}>
       <instancedMesh
         onPointerOver={handleHover}
         onPointerLeave={handleHoverFinished}

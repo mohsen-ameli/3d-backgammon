@@ -1,6 +1,6 @@
 import { Html } from "@react-three/drei"
 import { useContext, useEffect, useRef, useState } from "react"
-import Button from "../../components/ui/Button"
+import Button, { ButtonLoading } from "../../components/ui/Button"
 import Dice from "./Dice"
 import { GameState } from "../Game"
 import resetDices from "../utils/ResetDices"
@@ -11,7 +11,7 @@ import notification from "../../components/utils/Notification"
 import InGameChat from "../ui/InGameChat"
 import useFetch from "../../components/hooks/useFetch"
 import { AuthContext } from "../../context/AuthContext"
-import { RigidBodyApi } from "@react-three/rapier"
+import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
 import { finishedThrowType } from "../types/Dice.type"
 import { MessgaeType } from "../types/Message.type"
 import { DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../data/Data"
@@ -38,6 +38,12 @@ const Dices = () => {
 
   // To keep track of the dices finished throwing state
   const [finishedThrow, setFinishedThrow] = useState<finishedThrowType>(null!)
+
+  // To keep track of the dice sleeping state
+  const [sleeping, setSleeping] = useState<finishedThrowType>({
+    0: false,
+    1: false,
+  })
 
   // State to show the "throw dice" button
   const [showThrowBtn, setShowThrowBtn] = useState(false)
@@ -163,10 +169,16 @@ const Dices = () => {
           className="flex h-[125px] w-[150px] flex-col gap-y-4"
         >
           {/* Throwing the dice */}
-          {showThrowBtn && (
+          {showThrowBtn && sleeping[0] && sleeping[1] ? (
             <Button className="w-full text-white" onClick={throwDice}>
               Throw Dice
             </Button>
+          ) : (
+            showThrowBtn && (
+              <Button className="w-full cursor-default break-all text-white">
+                Loading dice...
+              </Button>
+            )
           )}
 
           {/* In game chat */}
@@ -181,17 +193,22 @@ const Dices = () => {
         </div>
       </Html>
 
+      {/* Dice Holder */}
+      <CuboidCollider args={[0.5, 0.1, 0.5]} position={[0, 0.6, 2]} />
+
       <Dice
         ref={dice1}
         index={0}
         position={DICE_1_DEFAULT_POS}
         setFinishedThrow={setFinishedThrow}
+        setSleeping={setSleeping}
       />
       <Dice
         ref={dice2}
         index={1}
         position={DICE_2_DEFAULT_POS}
         setFinishedThrow={setFinishedThrow}
+        setSleeping={setSleeping}
       />
     </>
   )

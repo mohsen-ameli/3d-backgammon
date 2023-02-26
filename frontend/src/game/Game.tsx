@@ -1,6 +1,6 @@
-import { useGLTF, Environment, EnvironmentProps } from "@react-three/drei"
+import { useGLTF } from "@react-three/drei"
 import { useEffect, createContext, useContext, useRef, useState } from "react"
-import { Physics } from "@react-three/rapier"
+import { Debug, Physics } from "@react-three/rapier"
 import { GLTFResult } from "./types/GLTFResult.type"
 
 import Dices from "./dice/Dices"
@@ -20,44 +20,12 @@ import userSwitch from "../assets/sounds/user-switch.mp3"
 import useViewPort from "./utils/useViewPort"
 import { CheckerType } from "./types/Checker.type"
 import { DiceType } from "./types/Dice.type"
-import { button, useControls } from "leva"
-
-type Presets =
-  | "sunset"
-  | "dawn"
-  | "night"
-  | "warehouse"
-  | "forest"
-  | "apartment"
-  | "studio"
-  | "city"
-  | "park"
-  | "lobby"
+import Stage from "./Stage"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext({} as types.GameStateType)
 
 const Game = () => {
-  const [preset, setPreset] = useState<Presets>("dawn")
-
-  const { blur } = useControls(
-    "environment",
-    {
-      sunset: button(() => setPreset("sunset")),
-      dawn: button(() => setPreset("dawn")),
-      night: button(() => setPreset("night")),
-      warehouse: button(() => setPreset("warehouse")),
-      forest: button(() => setPreset("forest")),
-      apartment: button(() => setPreset("apartment")),
-      studio: button(() => setPreset("studio")),
-      city: button(() => setPreset("city")),
-      park: button(() => setPreset("park")),
-      lobby: button(() => setPreset("lobby")),
-      blur: { value: 0.01, min: 0, max: 1, step: 0.0001 },
-    },
-    { collapsed: true }
-  )
-
   const { user, inGame, gameMode } = useContext(AuthContext)
 
   // View port
@@ -271,31 +239,24 @@ const Game = () => {
   }
 
   return (
-    <>
-      <Environment preset={preset} background blur={blur} />
+    <GameState.Provider value={value}>
+      <Stage />
 
-      <ambientLight intensity={1} />
-      <directionalLight position={[-5, 10, 5]} intensity={0.5} />
+      <Controls />
 
-      {/* <Perf position="top-left" /> */}
+      <UI />
 
-      <GameState.Provider value={value}>
-        <Controls />
+      <Columns />
 
-        <UI />
+      <Physics>
+        {/* <Debug /> */}
 
-        <Columns />
+        <Board />
 
-        <Physics>
-          {/* <Debug /> */}
-
-          <Board />
-
-          {inGame && <Dices />}
-          {inGame && <Checkers />}
-        </Physics>
-      </GameState.Provider>
-    </>
+        {inGame && <Dices />}
+        {inGame && <Checkers />}
+      </Physics>
+    </GameState.Provider>
   )
 }
 
