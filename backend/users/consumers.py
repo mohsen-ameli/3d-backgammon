@@ -10,7 +10,9 @@ from .models import CustomUser, Chat, Message
 from .consumer_utils import *
 
 
-# Searching for friends (/search-friend)
+'''
+    Searching for friends (/search-friend)
+'''
 class SearchFriendConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
@@ -27,7 +29,9 @@ class SearchFriendConsumer(AsyncWebsocketConsumer):
         await self.close(close_code)
 
 
-# Chatting between users (/chat)
+'''
+    Chatting between users (/chat)
+'''
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         chat_id = self.scope['url_route']['kwargs']['chat_id']
@@ -42,13 +46,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-    async def fetch_messages(self):
-        # Fetching the messages of the chat from the database
-        # and sending them to the client
-        context = await get_messages_context(self.chat)
-        await self.send(text_data=json.dumps(context))
-
     async def receive(self, text_data):
+        '''
+            One of the users has sent a message over
+            Or frontend wants initial data
+        '''
+        
         data = json.loads(text_data)
 
         # If the client is initially requesting the messages
@@ -80,8 +83,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
         await database_sync_to_async(self.chat.messages.add)(msg)
 
+    async def fetch_messages(self):
+        '''
+            Fetching the messages of the chat from the database
+            and sending them to the client
+        '''
+
+        context = await get_all_chat_msg(self.chat)
+        await self.send(text_data=json.dumps(context))
+
     async def send_message(self, event):
-        # Used to send a message to the chat, when one of the users sends a message
+        '''
+            Used to send a message to the chat, when one of the users sends a message
+        '''
+
         message = event['message']
         sender = event['sender']
         timestamp = event['timestamp']
@@ -95,39 +110,52 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps([context]))
 
     async def disconnect(self, close_code):
+        '''
+            Disconnecting a user from the chat consumer
+        '''
+
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
 
 
-# Updating the user's online status, as well their last login time
+'''
+    Updating the user's online status, as well their last login time.
+    This consumer is presistent throughout the users session, even when
+    they're in a game.
+'''
 class StatusConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         token = self.scope['url_route']['kwargs']['token']
 
-        # Should the websocket send updates or not
-        self.paused = False
         # Getting the user
         await self.set_user(token)
         # Updating the user's online status, and last login time
         await update_user(self.user, is_online=True, last_login=timezone.now())
+
         # Starting live updates
         self.updates_on = "status"
+        # Should the websocket send updates or not
+        self.paused = False
+        # Async function to send updates every x amount of seconds
         self.thread = asyncio.create_task(self.send_updates())
-        # Accepting the conection
+        
         await self.accept()
 
     async def receive(self, text_data):
-        # Data recieved
+        '''
+            User has done something in the frontend
+        '''
+
         data = json.loads(text_data)
 
-        # Front end is pausing/resuming the updates
+        # Frontend is pausing/resuming the updates (Aka a live game has started)
         if "paused" in data:
             self.paused = data["paused"]
             if not self.paused:
                 self.thread = asyncio.create_task(self.send_updates())
 
-        # Front end wants updates on new fields of the user
+        # Frontend wants updates on new fields of the user
         if "updates_on" in data:
             self.updates_on = data["updates_on"]
 
@@ -142,7 +170,10 @@ class StatusConsumer(AsyncWebsocketConsumer):
             await update_user(self.user, is_online=data["is_online"], last_login=timezone.now())
 
     async def set_user(self, token):
-        # This function sets the user based on the JWT access token given
+        '''
+            This function sets/saves the user to memory based on the JWT access token given        
+        '''
+
         try:
             jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
             self.user_id = jwt_token['user_id']
@@ -152,6 +183,11 @@ class StatusConsumer(AsyncWebsocketConsumer):
             return
     
     async def send_updates(self):
+        '''
+            Asynchornous updates. For example, if one of the users friends send them
+            a game request, and user is in their profile, this becomes essential.
+        '''
+
         while not self.paused:
             # Send an update to the client with the current list of friends and friend requests
             response = await get_updates(self.user_id, self.updates_on)
@@ -159,6 +195,10 @@ class StatusConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(settings.UPDATE_INTERVAL)
 
     async def disconnect(self, close_code):
+        '''
+            User has disconnected from the website.
+        '''
+
         # User has left the lobby, so deleting all match requests
         await reset_match_requests(self.user)
         # Updating user's online status
@@ -168,6 +208,6 @@ class StatusConsumer(AsyncWebsocketConsumer):
             self.thread.cancel()
         except AttributeError:
             pass
-        # Closing connection
+
         await self.close(close_code)
 

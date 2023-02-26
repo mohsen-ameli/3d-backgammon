@@ -6,15 +6,21 @@ import getServerUrl from "../components/utils/getServerUrl"
 
 export const AuthContext = createContext()
 
+/**
+ * Auth provider for the entire app. Responsible for logging users in, and out.
+ * TODO: Try to get rid of the couple game related states in this component.
+ * @param {*} props -> All of the children of the different pages
+ * @returns A context provider
+ */
 const AuthContextProvider = (props) => {
   // Navigate
   const navigate = useNavigate()
 
-  // Whether the user is in game or not
-  const [inGame, setInGame] = useState(false)
-
   // Game mode
   const gameMode = useRef()
+
+  // Whether the user is in game or not
+  const [inGame, setInGame] = useState(false)
 
   // User authentication info
   const [user, setUser] = useState(() =>
@@ -22,22 +28,24 @@ const AuthContextProvider = (props) => {
       ? jwt_decode(JSON.parse(localStorage.getItem("tokens")).access)
       : null
   )
+
   // Access and refresh tokens
   const [tokens, setTokens] = useState(() =>
     localStorage.getItem("tokens")
       ? JSON.parse(localStorage.getItem("tokens"))
       : ""
   )
+
   // Form errors
   const [errors, setErrors] = useState(null)
 
-  // Connection for changing the status of the user
+  // Connection for changing the status of the user (backend)
   const [ws, setWs] = useState(() => {})
+
+  // Setting the websocket connection, if ther's a user and a valid token
   useEffect(() => {
-    if (user && tokens) {
-      // prettier-ignore
-      setWs(() => new WebSocket(`${getServerUrl(false)}/ws/status/${tokens.refresh}/`))
-    }
+    if (user && tokens)
+      setWs(() => new WebSocket(`${getServerUrl(false)}/ws/status/${tokens.refresh}/`)) // prettier-ignore
   }, [])
 
   // Login
@@ -62,7 +70,7 @@ const AuthContextProvider = (props) => {
         setUser(jwt_decode(newTokens.access))
 
         // prettier-ignore
-        if (ws && isOpen(ws)) {
+        if (ws && ws.readyState === ws.OPEN) {
           ws.send(JSON.stringify({ new_refresh: newTokens.refresh, is_online: true }))
         } else {
           setWs(() => new WebSocket(`${getServerUrl(false)}/ws/status/${newTokens.refresh}/`))
@@ -86,7 +94,6 @@ const AuthContextProvider = (props) => {
     setTokens(null)
     setUser(null)
 
-    // prettier-ignore
     ws && ws.send(JSON.stringify({ is_online: false }))
 
     // Going home
@@ -103,7 +110,9 @@ const AuthContextProvider = (props) => {
         password,
         password2,
       }
+
       const res = await axios.post(`${getServerUrl()}/api/signup/`, context)
+
       if (res.status === 200) {
         // Going home
         navigate("/login")
@@ -134,10 +143,6 @@ const AuthContextProvider = (props) => {
   return (
     <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>
   )
-}
-
-function isOpen(ws) {
-  return ws?.readyState === ws?.OPEN
 }
 
 export default AuthContextProvider

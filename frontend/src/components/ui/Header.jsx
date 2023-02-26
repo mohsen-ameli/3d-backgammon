@@ -1,5 +1,11 @@
 import { useNavigate } from "react-router-dom"
 
+/**
+ * Header that is used within all of the pages
+ * @param {*} className -> Extra classNames
+ * @param {*} props -> Any other props to be attached to the header
+ * @returns A nice dive with a back button
+ */
 const Header = ({ className, ...props }) => {
   return (
     <div className="relative mb-6 w-full">
@@ -13,6 +19,7 @@ const Header = ({ className, ...props }) => {
   )
 }
 
+// Back button
 const Back = ({ to }) => {
   const navigate = useNavigate()
 

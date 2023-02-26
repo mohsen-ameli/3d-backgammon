@@ -1,3 +1,8 @@
+/**
+ * Used to get the url for the server, based on the environment
+ * @param {*} http: boolean -> Used to differentiate between http and websocket connections
+ * @returns A string that is the url to be hit
+ */
 const getServerUrl = (http = true) => {
   if (process.env.NODE_ENV === "development") {
     return http ? "http://localhost:8000" : "ws://localhost:8000"

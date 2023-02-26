@@ -16,7 +16,9 @@ from .utils import (
 
 # ----------------- CUSTOM TOKEN CLAIMS JWT ----------------- #
 
-# Custome JWT token
+'''
+    Custom JWT token class based view
+'''
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -28,13 +30,17 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
+'''
+    JWT token serializer
+'''
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
 # ----------------- USER VIEWS ----------------- #
-
-# Registering a user
+'''
+    Registering a user
+'''
 @api_view(['POST'])
 @permission_classes([])
 def register_user(request):
@@ -46,7 +52,9 @@ def register_user(request):
     return Response(serializer.errors)
 
 
-# Hnadling friends and friend requests
+'''
+    Hnadling friends and friend requests
+'''
 @api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
 def handle_friends(request):
@@ -75,7 +83,9 @@ def handle_friends(request):
             return reject_friend_request(user, friend)
 
 
-# This will get the chat uuid between the user and the friend
+'''
+    This will get the chat uuid between the user and the friend
+'''
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_chat_uuid(request, friend_id):
@@ -94,7 +104,9 @@ def get_chat_uuid(request, friend_id):
             return Response({'chat_uuid': chat_room.uuid})
 
 
-# Getting information about the user (aka their profile)
+'''
+    Getting information about the user (aka their profile)
+'''
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_profile(request):

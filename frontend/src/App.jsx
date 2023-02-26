@@ -1,7 +1,5 @@
-import { Canvas } from "@react-three/fiber"
 import { Route, Routes } from "react-router-dom"
 import FriendsList from "./pages/friends/FriendsList"
-import Game from "./game/Game"
 import Interface from "./pages/interface/Interface"
 import Login from "./pages/auth/Login"
 import PlayRandom from "./game/PlayRandom"
@@ -14,31 +12,16 @@ import PassAndPlay from "./game/PassAndPlay"
 import Profile from "./pages/profile/Profile"
 import FriendGame from "./game/FriendGame"
 import useStatus from "./UserStatus"
-import ViewPort from "./game/ViewPort"
-import { Suspense } from "react"
-import useLoadingScreen from "./components/hooks/useLoadingScreen"
 import NotFound from "./pages/NotFound"
+import Experience from "./game/Experience"
 
 const App = () => {
   // Getting the user status. (Game requests and game request rejections)
   useStatus()
 
-  // Loader
-  const Loader = useLoadingScreen()
-
   return (
     <>
-      <Canvas
-        camera={{
-          position: [0, 3.5, 0],
-          fov: 45,
-        }}
-      >
-        <Suspense fallback={Loader}>
-          <Game />
-          <ViewPort />
-        </Suspense>
-      </Canvas>
+      <Experience />
 
       <Routes>
         {/* Public routes */}

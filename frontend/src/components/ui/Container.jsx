@@ -1,5 +1,11 @@
 import Center from "./Center"
 
+/**
+ * Container for all pages
+ * @param {*} className -> Extra classNames
+ * @param {*} props -> Any other props to be attached to the button
+ * @returns The children
+ */
 const Container = ({ className, ...props }) => {
   return (
     <Center className="z-10">

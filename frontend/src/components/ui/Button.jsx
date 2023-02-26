@@ -1,3 +1,9 @@
+/**
+ * A button that has a somewhat cool hover effect
+ * @param {*} className -> Extra classNames
+ * @param {*} props -> Any other props to be attached to the button
+ * @returns A nice button
+ */
 const Button = ({ className, ...props }) => {
   return (
     <button

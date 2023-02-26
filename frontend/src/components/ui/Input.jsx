@@ -1,5 +1,12 @@
 import { forwardRef } from "react"
 
+/**
+ * A nice input
+ * @param {*} className -> Extra classNames
+ * @param {*} type -> The type of the input
+ * @param {*} props -> Any other props to be attached to the input
+ * @returns A nice input
+ */
 const Input = forwardRef(({ className, type = "text", ...props }, ref) => {
   return (
     <input

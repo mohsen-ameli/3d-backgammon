@@ -6,14 +6,18 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 
 
-# Serializer for getting user's friends
+'''
+    Serializer for getting user's friends
+'''
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ("id", "username", "is_online")
 
 
-# Serializer used for getting user's profile
+'''
+    Serializer used for getting user's profile
+'''
 class ProfileUserSerializer(serializers.ModelSerializer):
     date_joined = serializers.SerializerMethodField(read_only=True)
 
@@ -24,7 +28,10 @@ class ProfileUserSerializer(serializers.ModelSerializer):
     def get_date_joined(self, obj):
         return obj.get_date_joined
 
-# Primary serializer used for registering
+
+'''
+    Primary serializer used for registering
+'''
 class PrimaryUserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
 

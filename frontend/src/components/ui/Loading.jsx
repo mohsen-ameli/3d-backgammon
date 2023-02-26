@@ -2,6 +2,11 @@ import { ThreeDots } from "react-loader-spinner"
 import Center from "./Center"
 import Container from "./Container"
 
+/**
+ * Loading screen for some pages
+ * @param {boolean} basice -> if true, then the loader will not be centered
+ * @returns
+ */
 const Loading = ({ basic }) => {
   if (basic)
     return (

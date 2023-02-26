@@ -6,7 +6,6 @@ import useAxios from "./useAxios"
  * @param url -> URL to fetch data from
  * @returns -> the data, loading state, error messages, and a function to re-fetch the data
  */
-
 const useFetch = (url) => {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)

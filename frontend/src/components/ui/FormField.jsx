@@ -1,7 +1,18 @@
 import Input from "./Input"
 
-// prettier-ignore
-const FormField = ({ label, type = "text", autoComplete = "on", required = true, errors, ...props }) => {
+/**
+ * A form field with labels and inputs
+ * @param {*} props -> Any other props to be attached to the input
+ * @returns A nice input
+ */
+const FormField = ({
+  label,
+  type = "text",
+  autoComplete = "on",
+  required = true,
+  errors,
+  ...props
+}) => {
   return (
     <div className="flex flex-col relative">
       <label

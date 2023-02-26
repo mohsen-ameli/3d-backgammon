@@ -1,7 +1,11 @@
 import { Html, useProgress } from "@react-three/drei"
 
+/**
+ * Used for loading the experience of the user
+ * @returns Some html code, with a progress bar
+ */
 const useLoadingScreen = () => {
-  const { progress, loaded, total } = useProgress()
+  const { loaded, total } = useProgress()
 
   // const bar = progress.toFixed(1)
   const bar = ((loaded / total) * 100).toFixed(1)

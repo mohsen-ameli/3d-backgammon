@@ -1,3 +1,8 @@
+/**
+ * Centers the children
+ * @param {*} className -> Extra classNames
+ * @returns The children
+ */
 const Center = ({ className, ...props }) => {
   return (
     <div

@@ -191,6 +191,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.room_group_name, self.channel_name
         )
 
+
 @database_sync_to_async
 def update_game_state(game: Game, board, dice, turn):
     '''
@@ -201,6 +202,7 @@ def update_game_state(game: Game, board, dice, turn):
     game.dice = dice
     game.turn = turn
     game.save()
+
 
 @database_sync_to_async
 def get_game_state(game: Game) -> dict:
@@ -217,7 +219,7 @@ def get_game_state(game: Game) -> dict:
     context["finished"] = game.finished
     context["white"] = game.white.id
     context["black"] = game.black.id
-    context["white-name"] = game.white.username
-    context["black-name"] = game.black.username
+    context["white_name"] = game.white.username
+    context["black_name"] = game.black.username
 
     return context

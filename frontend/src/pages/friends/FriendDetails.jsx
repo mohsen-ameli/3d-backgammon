@@ -57,6 +57,7 @@ const FriendDetails = ({ friend, setLoading }) => {
       >
         {friend.username}
       </div>
+
       {/* Status */}
       <div
         className={
@@ -64,13 +65,16 @@ const FriendDetails = ({ friend, setLoading }) => {
           (friend.is_online ? "bg-green-500" : "bg-red-500")
         }
       />
+
       {/* Chat */}
       <button
         onClick={() => goToChat(friend)}
         className="fa-solid fa-comment-dots self-center justify-self-center text-xl text-emerald-600 hover:text-emerald-900 hover:ease-in-out duration-75"
       />
+
       {/* Play */}
       <PlayButton friend={friend} play={play} />
+
       {/* Remove */}
       <button
         className="fa-solid fa-trash-can self-center justify-self-center text-red-600 hover:text-red-900"

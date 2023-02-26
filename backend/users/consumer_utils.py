@@ -6,9 +6,13 @@ from django.db.models import Q
 from .models import CustomUser, Chat
 
 
-# Takes a chat object in, and return a list filled with the messages
+# TODO: Probably convert this to a serializer
 @database_sync_to_async
-def get_messages_context(chat: Chat) -> list:
+def get_all_chat_msg(chat: Chat) -> list:
+    '''
+        Takes a chat object in, and return a list filled with the chat messages
+    '''
+
     messages = chat.messages.all()
     context = []
 
@@ -23,9 +27,13 @@ def get_messages_context(chat: Chat) -> list:
     return context
 
 
-# Gets all friends and number of friend requests of a user
 @database_sync_to_async
 def get_updates(id: int, updates_on: str) -> dict:
+    '''
+        Gets all friends and number of friend requests of a user,
+        and returns it as a dictionary.
+    '''
+
     if updates_on not in ["status", "friends-list"]:
         return ValueError("updates_on has is a strict string passed down from the frontend!")
     
@@ -52,7 +60,7 @@ def get_updates(id: int, updates_on: str) -> dict:
     dict_to_return['rejected_request'] = None
     dict_to_return['live_game'] = str(user.live_game.id) if user.live_game else None
 
-    # If user's friend rejected this user's game request
+    # If user's friend rejected the current user's game request
     rejected = user.rejected_request
     if rejected:
         dict_to_return['rejected_request'] = {"id": rejected.id, "username": rejected.username}
@@ -64,21 +72,31 @@ def get_updates(id: int, updates_on: str) -> dict:
     return dict_to_return
 
 
-# Updating user's fields
 @database_sync_to_async
 def update_user(user: CustomUser, **kwargs):
+    '''
+        Method for updating CustomUser's fields
+    '''
+
     for key, value in kwargs.items():
         user.update(**{key: value})
 
-# Reseting all of user's game requests (When they leave the applicaiton)
+
 @database_sync_to_async
 def reset_match_requests(user: CustomUser):
+    '''
+        Reseting all of user's game requests (When they leave the applicaiton)
+    '''
+
     user.first().game_requests.clear()
 
 
-# Querying the database for matching username or email, based on user's input
 @database_sync_to_async
 def search(typed: str):
+    '''
+        Querying the database for matching username or email, based on user's input
+    '''
+
     results = CustomUser.objects.filter(
         Q(username__iexact=typed) | Q(email__iexact=typed)
     )

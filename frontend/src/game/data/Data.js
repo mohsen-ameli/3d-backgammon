@@ -22,7 +22,7 @@ export const BOARD_H = 0.855
 // Default orbit controls
 export const DEFAULT_ORBIT_POSITION = {
   x: 0,
-  y: 3,
+  y: 3.5,
   z: 0,
 }
 
