@@ -77,7 +77,11 @@ const UI = () => {
         <Html as="div" transform scale={0.2} position={[-1.85, 0.5, 0]} sprite>
           <div className="relative flex h-[200px] w-[140px] select-none flex-col items-center gap-y-4">
             {/* Go back to home page */}
-            {!ws && (
+            {ws ? (
+              <Button className="w-full text-white" onClick={() => {}}>
+                Resign
+              </Button>
+            ) : (
               <Button
                 className="w-full text-white"
                 onClick={() => navigate("/")}

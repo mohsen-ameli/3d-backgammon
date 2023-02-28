@@ -14,20 +14,11 @@ const resetDices = (dice: RigidBodyApi[]): void => {
   )
 
   for (const die of dice) {
-    die.setRotation(quat, false)
-    die.setRotation(quat, false)
-    // ref.current.setOrientation(0, 0, 0, 1)
-    // ref.current.setAngularVelocity(0, 0, 0)
-    // ref.current.setLinearVelocity(0, 0, 0)
+    die.resetForces()
+    die.resetTorques()
 
-    die.setTranslation(
-      {
-        x: data.DICE_1_DEFAULT_POS.x,
-        y: data.DICE_1_DEFAULT_POS.y,
-        z: data.DICE_1_DEFAULT_POS.z,
-      },
-      false
-    )
+    die.setRotation(quat, false)
+    die.setTranslation({ ...data.DICE_1_DEFAULT_POS }, false)
   }
 }
 

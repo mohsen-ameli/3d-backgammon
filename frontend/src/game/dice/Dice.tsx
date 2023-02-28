@@ -21,7 +21,7 @@ type DiceProps = {
  */
 const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   const { index, position, setFinishedThrow, setSleeping } = props
-  const { nodes, materials, dice } = useContext(GameState)
+  const { nodes, materials, dice, myTurn } = useContext(GameState)
 
   // Rigid body reference of each die
   const rigidBody = (ref as React.MutableRefObject<RigidBodyApi>).current
@@ -40,6 +40,9 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
   // When the die wakes up
   const onWake = () => {
+    // If the user is not playing, meaning other user has thrown their dice, and we're just viewing the animation
+    if (!myTurn) return
+
     setFinishedThrow((current) => {
       const newCurrent = { ...current }
       newCurrent[index] = false
@@ -49,11 +52,16 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
   // When the die goes to sleep
   const onSleep = () => {
+    // When the dice go to sleep, if it's our turn AND the dice were not thrown because of syncing puposes, then get and set the dice numbers.
+
     if (!DiceOnBoard(rigidBody)) {
       setSleeping({ 0: true, 1: true })
       return
     }
     // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
+
+    // If the user is not playing, meaning other user has thrown their dice, and we're just viewing the animation
+    if (!myTurn) return
 
     // Getting the die number and saving it to the dice ref
     if (!IsInitial(rigidBody.rotation())) {
@@ -83,20 +91,18 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
       onSleep={onSleep}
       onCollisionEnter={colissionEnter}
     >
-      <group name="Dice">
-        <mesh
-          name="DiceGeo"
-          geometry={nodes.DiceGeo.geometry}
-          material={materials.DiceWhite}
-          castShadow
-        />
-        <mesh
-          name="DiceGeo_1"
-          geometry={nodes.DiceGeo_1.geometry}
-          material={materials.DiceDark}
-          castShadow
-        />
-      </group>
+      <mesh
+        name="DiceGeo"
+        geometry={nodes.DiceGeo.geometry}
+        material={materials.DiceWhite}
+        castShadow
+      />
+      <mesh
+        name="DiceGeo_1"
+        geometry={nodes.DiceGeo_1.geometry}
+        material={materials.DiceDark}
+        castShadow
+      />
     </RigidBody>
   )
 })

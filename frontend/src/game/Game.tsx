@@ -19,7 +19,7 @@ import gltfModel from "../assets/models/models.glb"
 import userSwitch from "../assets/sounds/user-switch.mp3"
 import useViewPort from "./utils/useViewPort"
 import { CheckerType } from "./types/Checker.type"
-import { DiceType } from "./types/Dice.type"
+import { DicePhysics, DiceType } from "./types/Dice.type"
 import Stage from "./Stage"
 
 // The grandious game state. This is where the magic is held in place.
@@ -35,6 +35,9 @@ const Game = () => {
   const resetOrbit = useRef(() => null)
   const toggleControls = useRef(() => null)
   const toggleZoom = useRef(() => null)
+
+  // Dice physics
+  const dicePhysics = useRef<DicePhysics>()
 
   // Current players (Only set in a live game)
   const players = useRef<types.PlayersType>({
@@ -80,6 +83,125 @@ const Game = () => {
       )
     })
 
+  // User is connecting to the game initially
+  const onOpen = () => ws?.send(JSON.stringify({ initial: true }))
+
+  // Backend has sent updates
+  const onMessage = (e: MessageEvent) => {
+    const data: types.GameDataTypes = JSON.parse(e.data)
+
+    // If there are too many sessions active
+    if (data.too_many_users) {
+      const errorMsg = "Please continue this game on your other active session!"
+      notification(errorMsg, "error")
+      return
+    }
+
+    // If game has ended
+    if (data.finished) {
+      userChecker.current = data.winner!
+      setPhase("ended")
+      setWs(undefined)
+      notification(`${toCapitalize(data.winner!)} is the winner!`)
+      return
+    }
+
+    // If there is a chat message
+    if (data.message) {
+      const msg = `${data.user} said ${data.message}`
+      notification(msg, "messsage")
+      return
+    }
+
+    // If there are dice physics info
+    // There are two ways to this. Either the user who is spectating is getting the other user's dice phycis info,
+    // or it's the current user, who's getting it. If it's the current user, then return immidietly,
+    if (data.physics) {
+      // If the current user has not thrown the dice (aka it's the other user's turn)
+      if (user?.user_id !== data.physics.id) {
+        // Throw the dice for the other user
+        setPhase("diceSync")
+        dicePhysics.current = data.physics
+      }
+      return
+    }
+
+    userChecker.current = data.turn!
+    checkers.current = data.board!
+    dice.current = data.dice!
+    let turn = false
+
+    // User is playing as white and it's their turn
+    if (data.white === user?.user_id && userChecker.current === "white") {
+      turn = true
+    }
+    // Player is playing as black and it's their turn
+    else if (data.black === user?.user_id && userChecker.current === "black") {
+      turn = true
+    }
+
+    setMyTurn(turn)
+
+    // Setting the phase to initial
+    if (data.initial && players.current && user) {
+      console.log(data.initial_physics)
+
+      // If user has, for some reason, thrown the dice, then maybe left the page
+      // and come back, and the dice numbers weren't detected, then we want to
+      // throw the dice for them
+      // if (data.initial_physics && turn && dice.current.moves === 0) {
+      //   setPhase("diceRollPhysics")
+      //   dicePhysics.current = data.initial_physics
+      // } else {
+      //   setPhase("initial")
+      // }
+
+      setPhase("initial")
+
+      // Filling the players reference
+      const myColor = data.white === user?.user_id ? "white" : "black"
+      const enemyColor = myColor === "white" ? "black" : "white"
+
+      players.current.me.id = user.user_id
+      players.current.me.name = user.username
+      players.current.me.color = myColor
+
+      players.current.enemy.id = myColor === "white" ? data.black! : data.white!
+      players.current.enemy.name =
+        myColor === "white" ? data.black_name! : data.white_name!
+      players.current.enemy.color = enemyColor
+
+      return
+    }
+
+    if (dice.current.moves !== 0) {
+      // Complicated state changes. Essentially making sure that
+      // whether the user is spectating or playing, they get the
+      // neweset updates from the backend. (aka, making sure
+      // all the checker positions are updated)
+
+      // User is spectating
+      if (!turn) {
+        setPhase((curr) => {
+          return curr === "spectate" ? "spectating" : "spectate"
+        })
+      }
+      // User is playing
+      else {
+        setPhase((curr) => {
+          return curr === "checkerMove" ? "checkerMoveAgain" : "checkerMove"
+        })
+      }
+      return
+    }
+
+    // Making sure there is a rerender in the checkers component
+    // so that both user's boards get updated
+    setPhase((curr) => {
+      return curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"
+    })
+  }
+
   // User has potentially entered the game
   useEffect(() => {
     if (!inGame) return
@@ -104,103 +226,8 @@ const Game = () => {
   useEffect(() => {
     if (!ws) return
 
-    // Requesting initial data
-    ws.onopen = () => ws.send(JSON.stringify({ initial: true }))
-
-    ws.onmessage = (e: MessageEvent) => {
-      const data: types.GameDataTypes = JSON.parse(e.data)
-
-      // If there are too many sessions active
-      if (data.too_many_users) {
-        notification(
-          "Please continue this game on your other active session!",
-          "error"
-        )
-        return
-      }
-
-      // If game has ended
-      if (data.finished) {
-        userChecker.current = data.winner!
-        setPhase("ended")
-        setWs(undefined)
-        notification(`${toCapitalize(data.winner!)} is the winner!`)
-        return
-      }
-
-      // If there is a message
-      if (data.message) {
-        notification(`${data.user} said ${data.message}`, "messsage")
-        return
-      }
-
-      userChecker.current = data.turn!
-      checkers.current = data.board!
-      dice.current = data.dice!
-      let turn = false
-
-      // User is playing as white
-      if (data.white === user?.user_id && userChecker.current === "white") {
-        turn = true
-      }
-      // Player is playing as black
-      else if (
-        data.black === user?.user_id &&
-        userChecker.current === "black"
-      ) {
-        turn = true
-      }
-
-      setMyTurn(turn)
-
-      // Setting the phase to initial
-      if (players.current && user && data.initial) {
-        setPhase("initial")
-
-        // Filling the players reference
-        const myColor = data.white === user?.user_id ? "white" : "black"
-        const enemyColor = myColor === "white" ? "black" : "white"
-
-        players.current.me.id = user.user_id
-        players.current.me.name = user.username
-        players.current.me.color = myColor
-
-        players.current.enemy.id =
-          myColor === "white" ? data.black! : data.white!
-        players.current.enemy.name =
-          myColor === "white" ? data.black_name! : data.white_name!
-        players.current.enemy.color = enemyColor
-
-        return
-      }
-
-      if (dice.current.moves !== 0) {
-        // Complicated state changes. Essentially making sure that
-        // whether the user is spectating or playing, they get the
-        // neweset updates from the backend. (aka, making sure
-        // all the checker positions are updated)
-
-        // User is spectating
-        if (!turn) {
-          setPhase((curr) => {
-            return curr === "spectate" ? "spectating" : "spectate"
-          })
-        }
-        // User is playing
-        else {
-          setPhase((curr) => {
-            return curr === "checkerMove" ? "checkerMoveAgain" : "checkerMove"
-          })
-        }
-        return
-      }
-
-      // Making sure there is a rerender in the checkers component
-      // so that both user's boards get updated
-      setPhase((curr) => {
-        return curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"
-      })
-    }
+    ws.onopen = onOpen
+    ws.onmessage = onMessage
   }, [ws])
 
   // Playing sound effect when the user changes (live game)
@@ -229,6 +256,7 @@ const Game = () => {
     myTurn,
     checkers,
     checkerPicked,
+    dicePhysics,
     newCheckerPosition,
     ws,
     phase,

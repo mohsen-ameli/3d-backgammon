@@ -126,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'users.CustomUser'
 
 # The interval at which the client will receive updates (in seconds)
-UPDATE_INTERVAL = DEBUG and 1 or 5
+UPDATE_INTERVAL = DEBUG and 1 or 2
 
 # REST Framework
 REST_FRAMEWORK = {

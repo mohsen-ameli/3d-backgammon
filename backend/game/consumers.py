@@ -19,7 +19,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         game_id = self.scope['url_route']['kwargs']['game_id']
 
         # Getting the game object
-        self.game = await database_sync_to_async(Game.objects.get)(id=game_id)
+        self.game_obj = await database_sync_to_async(Game.objects.filter)(id=game_id)
+        self.game = await database_sync_to_async(self.game_obj.first)()
         self.room_group_name = game_id
 
         # Adding one to the users connected to this game
@@ -50,8 +51,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
 
         # User has connected to the game
-        if "initial" in data:
-            await self.initialFetch()
+        if "physics" in data:
+            await database_sync_to_async(self.game_obj.update)(dicePhysics=data["user"])
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "send_dice_physics",
+                    "physics": data["user"],
+                }
+            )
+        elif "initial" in data:
+            context = await get_game_state(self.game)
+            await self.send(text_data=json.dumps(context))
         elif "winner" in data:
             winner = await database_sync_to_async(CustomUser.objects.get)(id=data["winner"])
             
@@ -92,7 +103,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             )
             await self.disconnect("")
         elif "update" in data:
-            await update_game_state(self.game, data["board"], data["dice"], data["turn"])
+            # Frontend wants to update the game state
+            await update_game_state(self.game_obj, data["board"], data["dice"], data["turn"])
+
+            # If frontend wants not to update the other user
             if not data["update"]:
                 return
 
@@ -109,13 +123,18 @@ class GameConsumer(AsyncWebsocketConsumer):
 
             await self.channel_layer.group_send(self.room_group_name, context)
         elif "message" in data:
+            # A user is sending a message
+
             await self.channel_layer.group_send(self.room_group_name, {
                 "type": "send_message",
                 "message": data["message"],
                 "user": data["user"]
             })
-
         return
+    
+    async def send_dice_physics(self, event):
+        physics = event["physics"]
+        await self.send(text_data=json.dumps({"physics": physics}))
 
     async def send_message(self, event):
         '''
@@ -172,14 +191,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps(context))
 
-    async def initialFetch(self):
-        '''
-            This will fetch the initial stage of the game.
-        '''
-
-        context = await get_game_state(self.game)
-        await self.send(text_data=json.dumps(context))
-
     async def disconnect(self, code):
         '''
             When a user is disconnected.
@@ -198,16 +209,15 @@ def update_game_state(game: Game, board, dice, turn):
         Updating the game instance
     '''
 
-    game.board = board
-    game.dice = dice
-    game.turn = turn
-    game.save()
+    game.update(board=board)
+    game.update(dice=dice)
+    game.update(turn=turn)
 
 
 @database_sync_to_async
 def get_game_state(game: Game) -> dict:
     '''
-        Getting the current game state.
+        Used for initial loading. Getting the current game state.
     '''
 
     context = {}
@@ -217,6 +227,7 @@ def get_game_state(game: Game) -> dict:
     context["board"] = game.board
     context["dice"] = game.dice
     context["finished"] = game.finished
+    context["initial_physics"] = game.dicePhysics
     context["white"] = game.white.id
     context["black"] = game.black.id
     context["white_name"] = game.white.username

@@ -4,7 +4,7 @@ import Button, { ButtonLoading } from "../../components/ui/Button"
 import Dice from "./Dice"
 import { GameState } from "../Game"
 import resetDices from "../utils/ResetDices"
-import throwDices from "../utils/ThrowDices"
+import throwDices, { throwDicePhysics } from "../utils/ThrowDices"
 import switchPlayers from "../utils/SwitchPlayers"
 import hasMoves from "../utils/HasMoves"
 import notification from "../../components/utils/Notification"
@@ -29,6 +29,7 @@ const Dices = () => {
     myTurn,
     ws,
     toggleZoom,
+    dicePhysics,
   } = useContext(GameState)
   const { user } = useContext(AuthContext)
 
@@ -53,10 +54,10 @@ const Dices = () => {
   const messages: MessgaeType[] = data
 
   // Updating backend live game
-  const updateLiveGame = (updateUsers: boolean) => {
+  const updateLiveGame = () => {
     ws?.send(
       JSON.stringify({
-        update: updateUsers,
+        update: true,
         board: checkers.current,
         dice: dice.current,
         turn: userChecker.current,
@@ -69,7 +70,20 @@ const Dices = () => {
     toggleZoom.current(true)
     setShowThrowBtn(false)
     resetDices([dice1.current, dice2.current])
-    throwDices([dice1.current, dice2.current])
+
+    const physics = throwDices([dice1.current, dice2.current])
+
+    if (ws && user && userChecker.current) {
+      ws.send(
+        JSON.stringify({
+          physics: true,
+          user: {
+            id: user.user_id,
+            physics,
+          },
+        })
+      )
+    }
   }
 
   // Handling the dice throws
@@ -103,7 +117,7 @@ const Dices = () => {
           setShowThrowBtn(true)
         } else {
           // Updating the backend, if user is playing a live game
-          updateLiveGame(true)
+          updateLiveGame()
         }
 
         // Show a message that the user has no valid moves
@@ -122,7 +136,7 @@ const Dices = () => {
       }
 
       // Saving the dices in the DB, if user is playing a live game
-      ws && updateLiveGame(true)
+      ws && updateLiveGame()
 
       // Setting the phase to checkerMove
       setPhase("checkerMove")
@@ -131,26 +145,46 @@ const Dices = () => {
 
   // Handling the phase changes
   useEffect(() => {
+    // User already has dice physics, and it's their turn, and they don't have the numbers on the dice saved
+    // if (phase === "diceRollPhysics") {
+    //   setTimeout(() => {
+    //     if (dicePhysics.current) {
+    //       resetDices([dice1.current, dice2.current])
+    //       throwDicePhysics(
+    //         [dice1.current, dice2.current],
+    //         dicePhysics.current.physics
+    //       )
+    //     }
+    //   }, 1000)
+    //   setShowThrowBtn(false)
+    //   return
+    // }
+
+    if (phase === "diceSync") {
+      resetDices([dice1.current, dice2.current])
+      throwDicePhysics(
+        [dice1.current, dice2.current],
+        dicePhysics.current?.physics
+      )
+      return
+    }
+
     // If it's not the user's turn or if the game has ended
-    if (!myTurn || phase === "ended") {
+    if (phase === "ended" || !myTurn) {
       setShowThrowBtn(false)
       return
     }
 
     if (phase === "diceRoll" || phase === "diceRollAgain") {
       setShowThrowBtn(true)
-    } else if (phase === "initial") {
-      // User has initially connected to the game, with no
-      // available/previous dice moves
-      if (dice.current.moves === 0) {
-        resetDices([dice1.current, dice2.current])
-        setShowThrowBtn(true)
-      }
-      // User has leftover moves
-      // (from a previous session that's saved on the DB)
-      else {
-        setFinishedThrow({ 0: true, 1: true })
-      }
+      return
+    }
+
+    if (phase === "initial") {
+      // User has initially connected to the game, with no available/previous dice moves
+      if (dice.current.moves === 0) setShowThrowBtn(true)
+      // User has leftover moves (from a previous session that's saved on the DB)
+      else setFinishedThrow({ 0: true, 1: true })
     }
   }, [phase])
 
