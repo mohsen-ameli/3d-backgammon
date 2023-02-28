@@ -45,8 +45,11 @@ const UI = () => {
     setPhase(undefined)
   }
 
+  // User is resigning.. what a loser
+  const resign = () => {}
+
+  // Checking for winners
   useEffect(() => {
-    // Somebody's won
     if (phase === "ended") {
       setWinner(toCapitalize(userChecker.current!))
       setInGame(false)
@@ -69,8 +72,7 @@ const UI = () => {
       />
     )
 
-  // User needs to have a game phase, as well as be in game
-  // to see the button layout
+  // User needs to have a game phase, as well as be in game to see the button layout
   if (phase && inGame) {
     return (
       <>
@@ -78,7 +80,7 @@ const UI = () => {
           <div className="relative flex h-[200px] w-[140px] select-none flex-col items-center gap-y-4">
             {/* Go back to home page */}
             {ws ? (
-              <Button className="w-full text-white" onClick={() => {}}>
+              <Button className="w-full text-white" onClick={resign}>
                 Resign
               </Button>
             ) : (

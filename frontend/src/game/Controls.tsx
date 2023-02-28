@@ -17,7 +17,9 @@ type OrbitType = {
 }
 
 /**
- * Orbit controls
+ * Orbit controls. This component contains functions to reset the orbit controls
+ * position to its original position, toggle the orcbit controls, and toggle
+ * the zoom.
  */
 const Controls = () => {
   const { resetOrbit, toggleControls, toggleZoom } = useContext(GameState)
@@ -42,30 +44,24 @@ const Controls = () => {
 
   // Function to toggle orbit controls
   const toggleControls_ = (ui: boolean = false, drag: boolean = false) => {
-    let changes
+    const changes = {
+      enabled: !orbitRef.current.orbitEnabled.enabled,
+    } as {
+      enabled: boolean
+      changable: boolean
+    }
 
     // If we're changing the controls from the UI component
-    if (ui) {
-      changes = {
-        enabled: !orbitRef.current.orbitEnabled.enabled,
-        changable: !orbitRef.current.orbitEnabled.changable,
-      }
-    }
+    if (ui) changes.changable = !orbitRef.current.orbitEnabled.changable
     // If we're changing the controls from the checker component
     else if (drag) {
       if (!orbitRef.current.orbitEnabled.enabled) return
-      changes = {
-        enabled: !orbitRef.current.orbitEnabled.enabled,
-        changable: orbitRef.current.orbitEnabled.changable,
-      }
+      changes.changable = orbitRef.current.orbitEnabled.changable
     }
+
     // Just toggling the controls
-    else if (orbitRef.current.orbitEnabled.changable) {
-      changes = {
-        enabled: !orbitRef.current.orbitEnabled.enabled,
-        changable: orbitRef.current.orbitEnabled.changable,
-      }
-    }
+    else if (orbitRef.current.orbitEnabled.changable)
+      changes.changable = orbitRef.current.orbitEnabled.changable
 
     if (!changes) return
 

@@ -1,14 +1,15 @@
 import { useContext, useRef } from "react"
-import { COLOUMN_HOVER_COLOR } from "./data/Data"
+import { COLOUMN_HOVER_COLOR } from "../data/Data"
 import { MeshStandardMaterial } from "three"
-import { GameState } from "./Game"
+import { GameState } from "../Game"
 import { useMemo } from "react"
-import Endgame from "./utils/Endgame"
-import toCapitalize from "../components/utils/ToCapitalize"
-import { NodeType, UserCheckerType } from "./types/Game.type"
+import Endgame from "../utils/Endgame"
+import toCapitalize from "../../components/utils/ToCapitalize"
+import { NodeType, UserCheckerType } from "../types/Game.type"
 
 /**
- * End columns for each user.
+ * End columns for each user. This component is some what simlar to the
+ * Columns component.
  */
 const ColumnSide = ({ node }: NodeType) => {
   const {
@@ -21,33 +22,26 @@ const ColumnSide = ({ node }: NodeType) => {
 
   const blackOrWhite = useRef<UserCheckerType>()
 
+  // Setting the material for the column
   const material = useMemo(() => {
     const mat = new MeshStandardMaterial()
     mat.copy(materials.BoardWood2)
-    if (node.name === "WhiteHouse") {
-      blackOrWhite.current = "white"
-    } else {
-      blackOrWhite.current = "black"
-    }
+
+    blackOrWhite.current = node.name === "WhiteHouse" ? "white" : "black"
 
     return mat
   }, [])
 
   // User has hovered over the end column
   const handleHover = () => {
-    if (checkerPicked.current) {
-      if (node.name.includes(toCapitalize(userChecker.current!))) {
-        const end = Endgame(checkers.current, userChecker.current!)
-        if (end) {
-          material.color.set(COLOUMN_HOVER_COLOR)
-          if (node.name === "WhiteHouse") {
-            newCheckerPosition.current = -3
-          } else {
-            newCheckerPosition.current = -4
-          }
-        }
-      }
-    }
+    if (!checkerPicked.current) return
+    if (!node.name.includes(toCapitalize(userChecker.current!))) return
+
+    const end = Endgame(checkers.current, userChecker.current!)
+    if (!end) return
+
+    material.color.set(COLOUMN_HOVER_COLOR)
+    newCheckerPosition.current = node.name === "WhiteHouse" ? -3 : -4
   }
 
   // User has finished hovering over the end column

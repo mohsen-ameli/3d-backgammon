@@ -9,6 +9,10 @@ type SideProps = {
   players?: PlayersType
 }
 
+/**
+ * Each player has a side, with their profile picture, name, their checker color,
+ * and a timer for them to see how much time they have left to make a move.
+ */
 const Side = ({ ws, player, color, userChecker, players }: SideProps) => {
   // const [timer, setTimer] = useState(60) // 60 seconds
 

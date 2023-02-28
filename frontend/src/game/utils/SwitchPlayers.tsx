@@ -1,11 +1,10 @@
 import { UserCheckerType } from "../types/Game.type"
 
-// Literally does what it says
+/**
+ * Literally does what it says
+ */
 const switchPlayers = (current: UserCheckerType): UserCheckerType => {
-  if (current === "white") {
-    return "black"
-  }
-  return "white"
+  return current === "white" ? "black" : "white"
 }
 
 export default switchPlayers

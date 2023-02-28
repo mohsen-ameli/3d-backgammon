@@ -5,6 +5,9 @@ import DiceMoves from "./DiceMoves"
 
 type UserTurnProps = { userChecker: UserCheckerType; dice: DiceType }
 
+/**
+ * Part of the UI, where users can see their dice moves.
+ */
 const UserTurn = ({ userChecker, dice }: UserTurnProps) => {
   return (
     <div

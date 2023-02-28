@@ -2,7 +2,7 @@ import { UserCheckerType } from "../types/Game.type"
 import { CheckerType } from "../types/Checker.type"
 
 /**
- * @returns Returns the length of removed checkers of a given color
+ * @returns the length of removed checkers of a given color
  */
 const lenRemovedCheckers = (
   checkers: CheckerType[],

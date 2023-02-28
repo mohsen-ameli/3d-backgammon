@@ -5,9 +5,9 @@ import { GLTFResult } from "./types/GLTFResult.type"
 
 import Dices from "./dice/Dices"
 import UI from "./ui/UI"
+import Board from "./board/Board"
+import Columns from "./board/Columns"
 import Checkers from "./checkers/Checkers"
-import Board from "./Board"
-import Columns from "./Columns"
 import Controls from "./Controls"
 import * as types from "./types/Game.type"
 import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
@@ -21,6 +21,7 @@ import useViewPort from "./utils/useViewPort"
 import { CheckerType } from "./types/Checker.type"
 import { DicePhysics, DiceType } from "./types/Dice.type"
 import Stage from "./Stage"
+import switchPlayers from "./utils/SwitchPlayers"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameState = createContext({} as types.GameStateType)
@@ -131,12 +132,13 @@ const Game = () => {
     dice.current = data.dice!
     let turn = false
 
-    // User is playing as white and it's their turn
+    // Settings user turn
     if (data.white === user?.user_id && userChecker.current === "white") {
       turn = true
-    }
-    // Player is playing as black and it's their turn
-    else if (data.black === user?.user_id && userChecker.current === "black") {
+    } else if (
+      data.black === user?.user_id &&
+      userChecker.current === "black"
+    ) {
       turn = true
     }
 
@@ -144,7 +146,7 @@ const Game = () => {
 
     // Setting the phase to initial
     if (data.initial && players.current && user) {
-      console.log(data.initial_physics)
+      // console.log(data.initial_physics)
 
       // If user has, for some reason, thrown the dice, then maybe left the page
       // and come back, and the dice numbers weren't detected, then we want to
@@ -159,67 +161,57 @@ const Game = () => {
       setPhase("initial")
 
       // Filling the players reference
-      const myColor = data.white === user?.user_id ? "white" : "black"
-      const enemyColor = myColor === "white" ? "black" : "white"
+      const myColor = data.white === user.user_id ? "white" : "black"
 
       players.current.me.id = user.user_id
       players.current.me.name = user.username
       players.current.me.color = myColor
 
       players.current.enemy.id = myColor === "white" ? data.black! : data.white!
-      players.current.enemy.name =
-        myColor === "white" ? data.black_name! : data.white_name!
-      players.current.enemy.color = enemyColor
+      players.current.enemy.name = myColor === "white" ? data.black_name! : data.white_name! //prettier-ignore
+      players.current.enemy.color = switchPlayers(myColor)
 
       return
     }
 
+    // if user is playing or spectating
     if (dice.current.moves !== 0) {
       // Complicated state changes. Essentially making sure that
       // whether the user is spectating or playing, they get the
       // neweset updates from the backend. (aka, making sure
       // all the checker positions are updated)
 
-      // User is spectating
-      if (!turn) {
-        setPhase((curr) => {
-          return curr === "spectate" ? "spectating" : "spectate"
-        })
-      }
-      // User is playing
-      else {
-        setPhase((curr) => {
-          return curr === "checkerMove" ? "checkerMoveAgain" : "checkerMove"
-        })
-      }
+      if (!turn)
+        setPhase((curr) => (curr === "spectate" ? "spectating" : "spectate"))
+      else
+        setPhase((curr) =>
+          curr === "checkerMove" ? "checkerMoveAgain" : "checkerMove"
+        )
+
       return
     }
 
-    // Making sure there is a rerender in the checkers component
-    // so that both user's boards get updated
-    setPhase((curr) => {
-      return curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"
-    })
+    // Making sure there is a rerender in the checkers component so that both user's boards get updated
+    setPhase((curr) =>
+      curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"
+    )
   }
 
   // User has potentially entered the game
   useEffect(() => {
     if (!inGame) return
 
-    // If the game mode is pass and play
     if (gameMode.current === "pass-and-play") {
       setPhase("initial")
       userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
       checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
+      return
     }
 
-    // If the game mode is a "live game"
-    if (gameMode.current?.includes("game")) {
-      const gameId = gameMode.current?.split("_")[1]
-
-      // Starting a websocket connection to let the fun begin
-      setWs(() => new WebSocket(`${getServerUrl(false)}/ws/game/${gameId}/`))
-    }
+    // User is playing a live game
+    const gameId = gameMode.current?.split("_")[1]
+    const url = `${getServerUrl(false)}/ws/game/${gameId}/`
+    setWs(() => new WebSocket(url))
   }, [inGame])
 
   // Connecting to the backend (live game)
@@ -228,23 +220,14 @@ const Game = () => {
 
     ws.onopen = onOpen
     ws.onmessage = onMessage
+
+    return () => ws.close()
   }, [ws])
 
-  // Playing sound effect when the user changes (live game)
+  // Playing sound effect when the user changes
   useEffect(() => {
-    if (!phase || phase === "initial") return
-    playAudio()
-  }, [myTurn])
-
-  // Playing sound effect when the user changes (pass and play)
-  useEffect(() => {
-    if (
-      gameMode.current === "pass-and-play" &&
-      (phase === "diceRoll" || phase === "diceRollAgain")
-    ) {
-      playAudio()
-    }
-  }, [phase])
+    if (phase === "diceRoll" || phase === "diceRollAgain") playAudio()
+  }, [phase, myTurn])
 
   // Game state values
   const value = {

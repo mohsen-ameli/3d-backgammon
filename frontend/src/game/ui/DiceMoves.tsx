@@ -1,25 +1,12 @@
 import { DiceType } from "../types/Dice.type"
 
-const getMoves = (num: number) => {
-  if (num === 1) {
-    return <i className="fa-solid fa-dice-one text-[18pt]"></i>
-  } else if (num === 2) {
-    return <i className="fa-solid fa-dice-two text-[18pt]"></i>
-  } else if (num === 3) {
-    return <i className="fa-solid fa-dice-three text-[18pt]"></i>
-  } else if (num === 4) {
-    return <i className="fa-solid fa-dice-four text-[18pt]"></i>
-  } else if (num === 5) {
-    return <i className="fa-solid fa-dice-five text-[18pt]"></i>
-  } else if (num === 6) {
-    return <i className="fa-solid fa-dice-six text-[18pt]"></i>
-  }
-}
-
 type DiceMovesProps = {
   dice: DiceType
 }
 
+/**
+ * Small function used in UI to get the dice icons.
+ */
 const DiceMoves = ({ dice }: DiceMovesProps) => {
   const jsx = []
 
@@ -43,6 +30,22 @@ const DiceMoves = ({ dice }: DiceMovesProps) => {
       ))}
     </div>
   )
+}
+
+const getMoves = (num: number) => {
+  if (num === 1) {
+    return <i className="fa-solid fa-dice-one text-[18pt]"></i>
+  } else if (num === 2) {
+    return <i className="fa-solid fa-dice-two text-[18pt]"></i>
+  } else if (num === 3) {
+    return <i className="fa-solid fa-dice-three text-[18pt]"></i>
+  } else if (num === 4) {
+    return <i className="fa-solid fa-dice-four text-[18pt]"></i>
+  } else if (num === 5) {
+    return <i className="fa-solid fa-dice-five text-[18pt]"></i>
+  } else if (num === 6) {
+    return <i className="fa-solid fa-dice-six text-[18pt]"></i>
+  }
 }
 
 export default DiceMoves

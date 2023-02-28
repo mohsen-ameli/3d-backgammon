@@ -10,6 +10,12 @@ type InGameChatProps = {
   user: string
 }
 
+/**
+ * In game chat system, where we fetch the available messages from the backend,
+ * and show them to the user. When the user clicks on one, a message is sent to
+ * the backend, and back to both to users, to show the message, which is a
+ * notification for now.
+ */
 const InGameChat = ({ ws, toggleZoom, messages, user }: InGameChatProps) => {
   const [showChat, setShowChat] = useState(false)
 
@@ -18,21 +24,19 @@ const InGameChat = ({ ws, toggleZoom, messages, user }: InGameChatProps) => {
     setShowChat(false)
     toggleZoom(true)
 
-    ws &&
-      ws.send(
-        JSON.stringify({
-          user,
-          message,
-        })
-      )
+    ws?.send(
+      JSON.stringify({
+        user,
+        message,
+      })
+    )
   }
+
+  const toggleChat = () => setShowChat((curr) => !curr)
 
   return (
     <div className="relative select-none">
-      <Button
-        className="w-full text-white"
-        onClick={() => setShowChat((curr) => !curr)}
-      >
+      <Button className="w-full text-white" onClick={toggleChat}>
         <i className="fa-regular fa-comments" /> Chat{" "}
         <i
           className={

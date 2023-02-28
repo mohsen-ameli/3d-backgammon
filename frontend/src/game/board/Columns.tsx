@@ -1,6 +1,6 @@
 import { useContext, useLayoutEffect, useRef } from "react"
 import ColumnSide from "./ColumnSide"
-import { GameState } from "./Game"
+import { GameState } from "../Game"
 import {
   Quaternion,
   Vector3,
@@ -11,10 +11,14 @@ import {
   InstancedBufferAttribute,
   Group,
 } from "three"
-import { COLOUMN_HOVER_COLOR } from "./data/Data"
+import { COLOUMN_HOVER_COLOR } from "../data/Data"
 import { ThreeEvent, useFrame } from "@react-three/fiber"
-import { AuthContext } from "../context/AuthContext"
+import { AuthContext } from "../../context/AuthContext"
 
+/**
+ * The 24 columns on the board, where checkers get dropped in. This component
+ * contains logic for changing the column checkers colour when user hovers over it.
+ */
 const Columns = () => {
   const { nodes, materials, checkerPicked, newCheckerPosition } =
     useContext(GameState)
@@ -36,6 +40,7 @@ const Columns = () => {
 
   const count = 24
 
+  // Saving the default positions of the columns.
   useLayoutEffect(() => {
     const quaternion = new Quaternion()
     const scale = new Vector3(1, 1, 1)

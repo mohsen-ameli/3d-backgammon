@@ -8,16 +8,16 @@ type WinnerOverlayProps = {
   goHome: () => void
 }
 
-const WinnerOverlay = ({
-  winner,
-  gameMode,
-  playAgain,
-  goHome,
-}: WinnerOverlayProps) => {
+/**
+ * An overlay when someone wins a live game.
+ */
+const WinnerOverlay = (props: WinnerOverlayProps) => {
+  const { winner, gameMode, playAgain, goHome } = props
+
   return (
     <Html as="div" transform scale={0.2} center sprite>
       <div className="h-full w-full rounded-lg bg-[#cbd5e18f] p-8">
-        <h1 className="mb-4 text-center text-4xl">{winner} wins!</h1>
+        <h1 className="mb-4 text-center text-4xl">{winner} is the winner!</h1>
         <div className="flex w-full flex-col gap-y-2">
           {gameMode === "pass-and-play" && (
             <Button onClick={playAgain}>Play again</Button>

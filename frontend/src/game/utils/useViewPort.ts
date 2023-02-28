@@ -7,11 +7,9 @@ const useViewPort = () => {
   const aspect = size.width / size.height
 
   useEffect(() => {
-    if (aspect < 1.6) {
-      notification(
-        "Please consider switching to horizontal view for a better experience!",
-        "info"
-      )
+    if (aspect < 1.6 && process.env.NODE_ENV !== "development") {
+      const msg = "Please consider switching to horizontal view for a better experience!" //prettier-ignore
+      notification(msg, "info")
     }
   }, [])
 }

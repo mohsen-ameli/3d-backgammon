@@ -2,15 +2,19 @@ import { useFrame } from "@react-three/fiber"
 import { CuboidCollider, RigidBody } from "@react-three/rapier"
 import { useContext, useRef } from "react"
 import { Mesh } from "three"
-import { AuthContext } from "../context/AuthContext"
-import { GameState } from "./Game"
+import { AuthContext } from "../../context/AuthContext"
+import { GameState } from "../Game"
 
+/**
+ * Primary board mesh.
+ */
 const Board = () => {
   const { nodes, materials } = useContext(GameState)
   const { gameMode } = useContext(AuthContext)
   const board = useRef<Mesh>(null!)
   const boardHinge = useRef<Mesh>(null!)
 
+  // A little animation, so the user doesn't get bored
   useFrame((clock, delta) => {
     const speed = delta / 12
 

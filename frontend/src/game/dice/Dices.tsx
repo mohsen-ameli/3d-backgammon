@@ -1,10 +1,9 @@
 import { Html } from "@react-three/drei"
 import { useContext, useEffect, useRef, useState } from "react"
-import Button, { ButtonLoading } from "../../components/ui/Button"
+import Button from "../../components/ui/Button"
 import Dice from "./Dice"
 import { GameState } from "../Game"
-import resetDices from "../utils/ResetDices"
-import throwDices, { throwDicePhysics } from "../utils/ThrowDices"
+import { throwDice, throwDicePhysics } from "../utils/ThrowDice"
 import switchPlayers from "../utils/SwitchPlayers"
 import hasMoves from "../utils/HasMoves"
 import notification from "../../components/utils/Notification"
@@ -65,13 +64,11 @@ const Dices = () => {
     )
   }
 
-  // Throw the dice
-  const throwDice = () => {
+  // Function to throw the dice
+  const throwDice_ = () => {
     toggleZoom.current(true)
     setShowThrowBtn(false)
-    resetDices([dice1.current, dice2.current])
-
-    const physics = throwDices([dice1.current, dice2.current])
+    const physics = throwDice([dice1.current, dice2.current])
 
     if (ws && user && userChecker.current) {
       ws.send(
@@ -88,59 +85,43 @@ const Dices = () => {
 
   // Handling the dice throws
   useEffect(() => {
-    // Dices have finished throwing
-    if (finishedThrow && finishedThrow[0] && finishedThrow[1]) {
-      // Get and set the dice moves
-      // If the dice numbers match, the user can move 4 times, otherwise 2
+    // Dices have not finished throwing
+    if (!finishedThrow || !finishedThrow[0] || !finishedThrow[1]) return
 
-      // Check if user has any valid moves
-      const moves = hasMoves(
-        checkers.current,
-        dice.current,
-        userChecker.current!
-      )
+    // Check if user has any valid moves
+    const moves = hasMoves(checkers.current, dice.current, userChecker.current!)
 
-      // User has no moves
-      if (!moves) {
-        // Switch players
-        userChecker.current = switchPlayers(userChecker.current!)
+    // User has no moves
+    if (!moves) {
+      // Switch players
+      userChecker.current = switchPlayers(userChecker.current!)
 
-        // Reset the dice moves
-        dice.current.moves = 0
-        dice.current.dice1 = 0
-        dice.current.dice2 = 0
+      // Reset the dice moves
+      dice.current.moves = 0
+      dice.current.dice1 = 0
+      dice.current.dice2 = 0
 
-        // Set the phase to diceRoll
-        if (!ws) {
-          setPhase("diceRollAgain")
-          // Show the throw button again
-          setShowThrowBtn(true)
-        } else {
-          // Updating the backend, if user is playing a live game
-          updateLiveGame()
-        }
-
-        // Show a message that the user has no valid moves
-        notification("You don't have a move!", "error")
-
-        return
+      // Set the phase to diceRoll
+      if (!ws) {
+        setPhase("diceRollAgain")
+        setShowThrowBtn(true)
+      } else {
+        updateLiveGame()
       }
 
-      // Set the dice moves
-      if (dice.current.moves === 0) {
-        if (dice.current.dice1 === dice.current.dice2) {
-          dice.current.moves = 4
-        } else {
-          dice.current.moves = 2
-        }
-      }
-
-      // Saving the dices in the DB, if user is playing a live game
-      ws && updateLiveGame()
-
-      // Setting the phase to checkerMove
-      setPhase("checkerMove")
+      // Show a message that the user has no valid moves
+      notification("You don't have a move!", "error")
+      return
     }
+
+    // If the dice numbers match, user can move 4 times, otherwise 2
+    if (dice.current.moves === 0)
+      dice.current.moves = dice.current.dice1 === dice.current.dice2 ? 4 : 2
+
+    // Updating the backend
+    ws && updateLiveGame()
+
+    setPhase("checkerMove")
   }, [finishedThrow])
 
   // Handling the phase changes
@@ -149,10 +130,9 @@ const Dices = () => {
     // if (phase === "diceRollPhysics") {
     //   setTimeout(() => {
     //     if (dicePhysics.current) {
-    //       resetDices([dice1.current, dice2.current])
     //       throwDicePhysics(
     //         [dice1.current, dice2.current],
-    //         dicePhysics.current.physics
+    //         dicePhysics.current.physics!
     //       )
     //     }
     //   }, 1000)
@@ -160,11 +140,11 @@ const Dices = () => {
     //   return
     // }
 
+    // If our dice are being synced with the other user
     if (phase === "diceSync") {
-      resetDices([dice1.current, dice2.current])
       throwDicePhysics(
         [dice1.current, dice2.current],
-        dicePhysics.current?.physics
+        dicePhysics.current?.physics!
       )
       return
     }
@@ -204,7 +184,7 @@ const Dices = () => {
         >
           {/* Throwing the dice */}
           {showThrowBtn && sleeping[0] && sleeping[1] ? (
-            <Button className="w-full text-white" onClick={throwDice}>
+            <Button className="w-full text-white" onClick={throwDice_}>
               Throw Dice
             </Button>
           ) : (

@@ -1,30 +1,11 @@
-import { button, useControls } from "leva"
 import { useContext, useEffect, useRef, useState } from "react"
-import {
-  BakeShadows,
-  ContactShadows,
-  Environment,
-  useHelper,
-} from "@react-three/drei"
-import { DirectionalLight, DirectionalLightHelper } from "three"
-import { Perf } from "r3f-perf"
+import { ContactShadows, Environment } from "@react-three/drei"
+import { DirectionalLight } from "three"
 import bell_park_pier_2k from "../assets/hdr/bell_park_pier_2k.hdr"
 import { GameState } from "./Game"
 import { DEFAULT_ENV_MAP_INTENSITY } from "./data/Data"
 import { AuthContext } from "../context/AuthContext"
 import { useLocation } from "react-router-dom"
-
-type Presets =
-  | "sunset"
-  | "dawn"
-  | "night"
-  | "warehouse"
-  | "forest"
-  | "apartment"
-  | "studio"
-  | "city"
-  | "park"
-  | "lobby"
 
 /**
  * Staging for our scene
@@ -34,11 +15,8 @@ const Stage = () => {
   const { materials } = useContext(GameState)
 
   const directionalLight = useRef<DirectionalLight>(null!)
-  // const [showHelper, setShowHelper] = useState(true)
-  // useHelper(showHelper && directionalLight, DirectionalLightHelper, 1)
 
   const location = useLocation()
-  // const [preset, setPreset] = useState<Presets>("forest")
   const [contactShadows, setContactShadows] = useState<boolean>(
     gameMode.current ? true : false
   )
@@ -50,6 +28,34 @@ const Stage = () => {
   const [envMapIntensity, setEnvMapIntensity] = useState<number>(
     DEFAULT_ENV_MAP_INTENSITY
   )
+
+  // Setting the environement maps
+  useEffect(() => {
+    materials.BoardWood2.envMapIntensity = envMapIntensity
+    materials.ColumnDark.envMapIntensity = envMapIntensity
+    materials.ColumnWhite.envMapIntensity = envMapIntensity
+    materials.DarkCheckerMat.envMapIntensity = envMapIntensity
+    materials.DiceDark.envMapIntensity = envMapIntensity
+    materials.DiceWhite.envMapIntensity = envMapIntensity
+    materials.Hinge.envMapIntensity = envMapIntensity
+    materials.WhiteCheckerMat.envMapIntensity = envMapIntensity
+  }, [envMapIntensity])
+
+  // type Presets =
+  //   | "sunset"
+  //   | "dawn"
+  //   | "night"
+  //   | "warehouse"
+  //   | "forest"
+  //   | "apartment"
+  //   | "studio"
+  //   | "city"
+  //   | "park"
+  //   | "lobby"
+
+  // const [showHelper, setShowHelper] = useState(true)
+  // useHelper(showHelper && directionalLight, DirectionalLightHelper, 1)
+  // const [preset, setPreset] = useState<Presets>("forest")
 
   // Environment maps
   // const { envBlur } = useControls(
@@ -103,22 +109,12 @@ const Stage = () => {
   //   { collapsed: true }
   // )
 
-  // Setting the environement maps
-  useEffect(() => {
-    materials.BoardWood2.envMapIntensity = envMapIntensity
-    materials.ColumnDark.envMapIntensity = envMapIntensity
-    materials.ColumnWhite.envMapIntensity = envMapIntensity
-    materials.DarkCheckerMat.envMapIntensity = envMapIntensity
-    materials.DiceDark.envMapIntensity = envMapIntensity
-    materials.DiceWhite.envMapIntensity = envMapIntensity
-    materials.Hinge.envMapIntensity = envMapIntensity
-    materials.WhiteCheckerMat.envMapIntensity = envMapIntensity
-  }, [envMapIntensity])
-
   return (
     <>
+      {/* Performance monitor */}
       {/* <Perf position="top-left" /> */}
 
+      {/* Shadows */}
       {contactShadows && (
         <ContactShadows
           position={[0, -0.05, 0]}
@@ -130,9 +126,11 @@ const Stage = () => {
         />
       )}
 
+      {/* Environment */}
       {/* <Environment preset={preset} background blur={0} /> */}
       <Environment background files={bell_park_pier_2k} blur={0} />
 
+      {/* Lights */}
       <ambientLight intensity={0.5} />
       <directionalLight
         ref={directionalLight}

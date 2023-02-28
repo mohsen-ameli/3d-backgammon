@@ -25,15 +25,19 @@ const getCheckersOnCol = (
   let onCol = {} as ReturnType
 
   // The first checker on the column is the same color as the one being moved
-  if (lenCheckersOnCol === 0 || checkersOnCol[0].color === color)
+  if (lenCheckersOnCol === 0 || checkersOnCol[0].color === color) {
     onCol = { action: "valid", numCheckers: lenCheckersOnCol }
+  }
+
   // There is exactly one checker on this column that belongs to the enemy
-  else if (lenCheckersOnCol === 1)
+  else if (lenCheckersOnCol === 1) {
     onCol = {
       action: "remove",
       numCheckers: 1,
       rmChecker: checkersOnCol[0],
     }
+  }
+
   // Invalid move
   else onCol = { action: "invalid", numCheckers: NaN }
 

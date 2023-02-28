@@ -35,7 +35,11 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
     audio.currentTime = 0
     audio.volume = Math.random()
-    audio.play()
+    audio.play().catch(() => {
+      console.log(
+        "Error playing audio, since user hasn't interacted with the website."
+      )
+    })
   }
 
   // When the die wakes up
@@ -51,14 +55,13 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   }
 
   // When the die goes to sleep
+  // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
   const onSleep = () => {
-    // When the dice go to sleep, if it's our turn AND the dice were not thrown because of syncing puposes, then get and set the dice numbers.
-
+    // If the dice are not on the board, then return
     if (!DiceOnBoard(rigidBody)) {
       setSleeping({ 0: true, 1: true })
       return
     }
-    // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
 
     // If the user is not playing, meaning other user has thrown their dice, and we're just viewing the animation
     if (!myTurn) return
@@ -66,11 +69,8 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
     // Getting the die number and saving it to the dice ref
     if (!IsInitial(rigidBody.rotation())) {
       const number = getDiceNumber(rigidBody)
-      if (index === 0) {
-        dice.current.dice1 = number
-      } else {
-        dice.current.dice2 = number
-      }
+      if (index === 0) dice.current.dice1 = number
+      else dice.current.dice2 = number
     }
 
     setFinishedThrow((current) => {

@@ -1,6 +1,10 @@
 import { Euler } from "three"
-import throwDice from "./ThrowDices"
+import { throwDice } from "./ThrowDice"
 import { RigidBodyApi } from "@react-three/rapier"
+
+const roundToTwo = (num: number) => {
+  return Number(num.toFixed(2))
+}
 
 /**
  * This method is a hot mess. But it works! I had to do a lot of pattern recognision
@@ -56,6 +60,7 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
     }
     return 4
   }
+
   // Don't know what the number is (Dice is on a slant angle)
   console.log("Don't know what the dice number is!")
   throwDice([dice])
@@ -122,10 +127,6 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
   // x: 1.5704696590969753, y: 0.0010615663990524216, z: -3.084984119105789
   // x: 1.5713303634432196, y: 0.0009733864302914862, z: 2.397477015782778
   // x: 1.571480189229249, y: -0.0008750758125155607, z: 0.42114216012832184
-}
-
-const roundToTwo = (num: number) => {
-  return Number(num.toFixed(2))
 }
 
 export default getDiceNumber
