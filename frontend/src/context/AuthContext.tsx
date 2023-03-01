@@ -100,7 +100,11 @@ const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     setTokens(null)
     setUser(null)
 
-    ws && ws.send(JSON.stringify({ is_online: false }))
+    if (ws) {
+      ws.send(JSON.stringify({ is_online: false }))
+      ws.close()
+      setWs(undefined)
+    }
 
     // Going home
     navigate("/")

@@ -1,6 +1,6 @@
 import { CheckerType } from "../types/Checker.type"
 
-const LOTS_OF_REMOVABLES: CheckerType[] = [
+export const LOTS_OF_REMOVABLES: CheckerType[] = [
   { id: 0, color: "white", col: 0, row: 0, removed: false },
   { id: 1, color: "white", col: 0, row: 1, removed: false },
   { id: 2, color: "white", col: 18, row: 0, removed: false },
@@ -34,11 +34,11 @@ const LOTS_OF_REMOVABLES: CheckerType[] = [
   { id: 29, color: "black", col: 23, row: 1, removed: false },
 ]
 
-const NO_MOVES_REMOVED: CheckerType[] = [
-  { id: 0, color: "white", col: 10, row: 0, removed: false },
-  { id: 1, color: "white", col: 10, row: 1, removed: false },
-  { id: 2, color: "white", col: 18, row: 0, removed: false },
-  { id: 3, color: "white", col: 18, row: 1, removed: false },
+export const WHITE_HOUSE_FULL: CheckerType[] = [
+  { id: 0, color: "white", col: 18, row: 0, removed: false },
+  { id: 1, color: "white", col: 18, row: 1, removed: false },
+  { id: 2, color: "white", col: 18, row: 2, removed: false },
+  { id: 3, color: "white", col: 18, row: 3, removed: false },
   { id: 4, color: "white", col: 19, row: 0, removed: false },
   { id: 5, color: "white", col: 19, row: 1, removed: false },
   { id: 6, color: "white", col: 20, row: 0, removed: false },
@@ -68,7 +68,7 @@ const NO_MOVES_REMOVED: CheckerType[] = [
   { id: 29, color: "black", col: 1, row: 0, removed: false },
 ]
 
-const REMOVABLES_EVERYWHERE: CheckerType[] = [
+export const REMOVABLES_EVERYWHERE: CheckerType[] = [
   { id: 0, color: "white", col: 0, row: 0, removed: false },
   { id: 1, color: "white", col: 0, row: 1, removed: false },
   { id: 2, color: "white", col: 18, row: 0, removed: false },
@@ -102,7 +102,7 @@ const REMOVABLES_EVERYWHERE: CheckerType[] = [
   { id: 29, color: "black", col: 13, row: 6, removed: false },
 ]
 
-const WHITE_ALMOST_WON: CheckerType[] = [
+export const WHITE_ALMOST_WON: CheckerType[] = [
   { id: 0, color: "white", col: -3, row: 0, removed: false },
   { id: 1, color: "white", col: -3, row: 1, removed: false },
   { id: 2, color: "white", col: -3, row: 2, removed: false },

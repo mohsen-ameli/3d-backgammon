@@ -4,6 +4,7 @@ import useAxios from "./useAxios"
 import notification from "../utils/Notification"
 import { AuthContext } from "../../context/AuthContext"
 import { BaseUser } from "../../context/BaseUser.type"
+import wsGood from "../utils/wsGood"
 
 type DataType = {
   live_game?: string
@@ -42,14 +43,6 @@ const useStatus = () => {
     showReqNotif.current = true
   }
 
-  // Deleting a "game request rejected" message
-  const deleteRejected = async () => {
-    await axiosInstance.put("/api/game/handle-match-request/", {
-      action: "delete-rejected",
-    })
-    showRejNotif.current = true
-  }
-
   // Handling updates coming from the backend
   const onMessage = (e: MessageEvent) => {
     const data: DataType = JSON.parse(e.data)
@@ -64,13 +57,8 @@ const useStatus = () => {
       showRejNotif.current = false
 
       // Showing a notification
-      notification(
-        `${data.rejected_request.username} rejected your match request.`,
-        "deleteRejected",
-        undefined,
-        undefined,
-        deleteRejected
-      )
+      const msg = `${data.rejected_request.username} rejected your match request.`
+      notification(msg, "deleteRejected")
     }
 
     // If there are game requests
@@ -79,7 +67,7 @@ const useStatus = () => {
       showReqNotif.current = false
 
       // Showing all game requests of a user
-      data.game_requests?.map((user: BaseUser) =>
+      data.game_requests?.map((user) =>
         notification(
           `${user.username} wants to play with you.`,
           "match",
@@ -94,8 +82,7 @@ const useStatus = () => {
     if (!ws || inGame) return
 
     // User is not in game, so making sure the websocket is running
-    if (ws.readyState !== WebSocket.CONNECTING)
-      ws.send(JSON.stringify({ paused: false }))
+    if (wsGood(ws)) ws.send(JSON.stringify({ paused: false }))
 
     ws.addEventListener("message", onMessage)
 
@@ -103,8 +90,7 @@ const useStatus = () => {
       ws.removeEventListener("message", onMessage)
 
       // Pausing the websocket from sending updates
-      if (ws.readyState !== WebSocket.CONNECTING)
-        ws.send(JSON.stringify({ paused: true }))
+      if (wsGood(ws)) ws.send(JSON.stringify({ paused: true }))
 
       // Reseting notification references
       showRejNotif.current = true

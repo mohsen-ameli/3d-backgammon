@@ -9,6 +9,7 @@ import Loading from "../../../components/ui/Loading"
 import getServerUrl from "../../../components/utils/getServerUrl"
 import MessageBox from "./MessageBox"
 import Status from "./Status"
+import wsGood from "../../../components/utils/wsGood"
 
 type MessageType = {
   timestamp: number
@@ -60,8 +61,10 @@ const Chat = () => {
     ws.onmessage = onMessage
 
     return () => {
-      ws.close()
-      navigate("/friends")
+      if (wsGood(ws)) {
+        ws.close()
+        navigate("/friends")
+      }
     }
   }, [ws])
 

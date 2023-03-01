@@ -9,6 +9,7 @@ import { AuthContext } from "../../context/AuthContext"
 import Loading from "../../components/ui/Loading"
 import { FriendType } from "./Friend.type"
 import { BaseUser } from "../../context/BaseUser.type"
+import wsGood from "../../components/utils/wsGood"
 
 type FriendData = {
   num_requests: number
@@ -45,11 +46,11 @@ const FriendsList = () => {
     ws.addEventListener("message", onMessage)
 
     // prettier-ignore
-    if (ws.readyState !== WebSocket.CLOSED && ws.readyState !== WebSocket.CONNECTING)
+    if (wsGood(ws))
       onOpen()
 
     return () => {
-      ws.send(JSON.stringify({ updates_on: "status" }))
+      wsGood(ws) && ws.send(JSON.stringify({ updates_on: "status" }))
       ws.removeEventListener("message", onMessage)
       ws.removeEventListener("open", onOpen)
     }

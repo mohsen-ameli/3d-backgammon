@@ -40,7 +40,8 @@ const Status = () => {
     // Seen within the last hour
     else {
       const ago = today.getMinutes() - date.getMinutes()
-      lastSeen = ago + " minutes ago"
+      if (ago < 1) lastSeen = "just now"
+      else lastSeen = ago + " minutes ago"
     }
 
     setStatus("Last seen " + lastSeen)
@@ -50,7 +51,7 @@ const Status = () => {
     location && getStatus()
   }, [location])
 
-  return <p className="text-center text-xs text-slate-500">{status}</p>
+  return <p className="text-center text-xs text-slate-800">{status}</p>
 }
 
 export default Status

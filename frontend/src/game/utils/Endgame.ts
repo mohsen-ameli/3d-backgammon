@@ -5,7 +5,6 @@ import { CheckerType } from "../types/Checker.type"
  * This method will return true if the game is in endgame for the color of the checkers provided.
  * @returns True if the game is in endgame, otherwise false
  */
-
 const Endgame = (checkers: CheckerType[], color: UserCheckerType): boolean => {
   const userCheckers = checkers.filter((checker) => checker.color === color)
 

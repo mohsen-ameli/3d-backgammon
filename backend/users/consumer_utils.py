@@ -89,6 +89,7 @@ def reset_match_requests(user: CustomUser):
     '''
 
     user.first().game_requests.clear()
+    user.update(rejected_request=None)
 
 
 @database_sync_to_async

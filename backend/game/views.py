@@ -16,17 +16,7 @@ from .serializers import InGameMessagesSerializer
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def handle_match_request(request: Request):
-    def remove_request(user: CustomUser, friend: CustomUser):
-        user.game_requests.remove(friend)
-
     action = request.data["action"]
-
-    # User is deleting a rejected request
-    if action == "delete-rejected":
-        request.user.rejected_request = None
-        request.user.save()
-        return Response({"success": True})
-
     friend_id = request.data["friend_id"]
     friend = CustomUser.objects.get(id=friend_id)
 
@@ -38,7 +28,7 @@ def handle_match_request(request: Request):
 
     # User has accepted a match request
     elif action == "accept":
-        remove_request(request.user, friend)
+        request.user.game_requests.remove(friend)
         newGame = Game()
 
         if random.random() > 0.5:
@@ -62,7 +52,7 @@ def handle_match_request(request: Request):
         
     # User has rejected a match request
     elif action == "reject":
-        remove_request(request.user, friend)
+        request.user.game_requests.remove(friend)
         friend.rejected_request = request.user
         friend.save()
 

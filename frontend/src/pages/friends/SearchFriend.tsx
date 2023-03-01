@@ -7,6 +7,7 @@ import Header from "../../components/ui/Header"
 import getServerUrl from "../../components/utils/getServerUrl"
 import { AxiosError } from "axios"
 import { FriendType } from "./Friend.type"
+import wsGood from "../../components/utils/wsGood"
 
 const SearchFriend = () => {
   const [ws] = useState(
@@ -26,7 +27,9 @@ const SearchFriend = () => {
       setFriends(data.results.length > 0 ? data.results : [])
     }
 
-    return () => ws.close()
+    return () => {
+      wsGood(ws) && ws.close()
+    }
   }, [ws])
 
   // Searching for potential friends

@@ -1,7 +1,11 @@
 import { cssTransition, toast, ToastOptions } from "react-toastify"
 import "animate.css/animate.min.css"
 import "react-toastify/dist/ReactToastify.css"
+import Msg from "./Msg"
 
+/**
+ * Used to send beautiful notifications, throughout the app.
+ */
 const notification = (
   msg: string,
   type:
@@ -12,8 +16,7 @@ const notification = (
     | "messsage"
     | "default" = "default",
   reject?: () => void,
-  accept?: () => void,
-  deleteRejected?: () => void
+  accept?: () => void
 ) => {
   const args: ToastOptions<{}> = {
     position: "top-center",
@@ -34,18 +37,16 @@ const notification = (
       toast.error(msg, args)
       break
     case "match": {
-      const onClose = (skip = false) => {
-        if (!skip) {
-          reject?.()
-        }
-      }
-
-      toast.info(<Msg msg={msg} accept={accept} reject={reject} />, {
+      toast.info(<Msg msg={msg} accept={accept!} reject={reject!} />, {
         ...args,
         autoClose: 10000,
         closeButton: false,
         pauseOnHover: false,
-        onClose: () => onClose(),
+      })
+      toast.onChange((payload) => {
+        if (payload.status === "removed") {
+          reject?.()
+        }
       })
 
       break
@@ -56,7 +57,6 @@ const notification = (
         autoClose: 3000,
         pauseOnHover: false,
         hideProgressBar: true,
-        onClose: () => deleteRejected?.(),
       })
       break
     case "messsage": {
@@ -84,38 +84,5 @@ const notification = (
       break
   }
 }
-
-type MsgProps = {
-  closeToast?: (close: boolean) => void
-  msg: string
-  accept?: () => void
-  reject?: () => void
-}
-
-const Msg = ({ closeToast, msg, accept, reject }: MsgProps) => (
-  <div className="flex flex-col gap-y-2 text-black">
-    {msg}
-    <div className="flex justify-end gap-x-2">
-      <button
-        onClick={() => {
-          closeToast?.(false)
-          reject?.()
-        }}
-        className="rounded-lg border-2 border-red-500 px-2 py-1 duration-100 hover:bg-red-500 hover:text-white hover:ease-in-out"
-      >
-        Reject
-      </button>
-      <button
-        onClick={() => {
-          closeToast?.(true)
-          accept?.()
-        }}
-        className="rounded-lg border-2 border-green-500 px-2 py-1 duration-100 hover:bg-green-500 hover:text-white hover:ease-in-out"
-      >
-        Accept
-      </button>
-    </div>
-  </div>
-)
 
 export default notification

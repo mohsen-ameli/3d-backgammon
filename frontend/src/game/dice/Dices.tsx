@@ -183,7 +183,10 @@ const Dices = () => {
           className="flex h-[125px] w-[150px] flex-col gap-y-4"
         >
           {/* Throwing the dice */}
-          {showThrowBtn && sleeping[0] && sleeping[1] ? (
+          {(showThrowBtn && sleeping[0] && sleeping[1]) ||
+          (["diceRoll", "diceRollAgain"].includes(phase!) &&
+            myTurn &&
+            showThrowBtn) ? (
             <Button className="w-full text-white" onClick={throwDice_}>
               Throw Dice
             </Button>

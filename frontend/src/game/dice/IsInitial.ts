@@ -1,14 +1,9 @@
 import { Quaternion } from "three"
+import { DEFAULT_DICE_QUATERNION } from "../data/Data"
 
 // Are the dice in their initial position
 const IsInitial = (quatornion: Quaternion) => {
-  if (
-    quatornion.x === 0.00048353226156905293 &&
-    quatornion.y === 0.005327336024492979 &&
-    quatornion.z === -0.00011967308091698214 &&
-    quatornion.w === 0.9999856352806091
-  )
-    return true
+  if (quatornion === DEFAULT_DICE_QUATERNION) return true
   return false
 }
 

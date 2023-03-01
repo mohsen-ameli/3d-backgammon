@@ -1,5 +1,9 @@
 import { RigidBodyApi } from "@react-three/rapier"
-import { DEFAULT_DICE_QUATERNION, DICE_1_DEFAULT_POS } from "../data/Data"
+import {
+  DEFAULT_DICE_QUATERNION,
+  DICE_1_DEFAULT_POS,
+  DICE_2_DEFAULT_POS,
+} from "../data/Data"
 import { DiePhysics } from "../types/Dice.type"
 
 /**
@@ -13,6 +17,8 @@ export const throwDice = (dice: RigidBodyApi[]) => {
 
   let i = 0
 
+  resetDice(dice)
+
   for (const die of dice) {
     const impulse = {
       x: Math.random() * 0.5,
@@ -25,8 +31,6 @@ export const throwDice = (dice: RigidBodyApi[]) => {
       y: Math.random() / 200 - 0.005,
       z: Math.random() / 200 - 0.005,
     }
-
-    resetDie(die)
 
     die.applyImpulse(impulse, true)
     die.applyTorqueImpulse(torque, true)
@@ -55,9 +59,9 @@ type Physics = {
 export const throwDicePhysics = (dice: RigidBodyApi[], physics: Physics) => {
   let i = 0
 
-  for (const die of dice) {
-    resetDie(die)
+  resetDice(dice)
 
+  for (const die of dice) {
     die.applyImpulse(
       i === 0 ? physics.die1.impulse : physics.die2.impulse,
       true
@@ -74,10 +78,19 @@ export const throwDicePhysics = (dice: RigidBodyApi[], physics: Physics) => {
 /**
  * This will reset the dice positions and rotations
  */
-const resetDie = (die: RigidBodyApi): void => {
-  die.resetForces()
-  die.resetTorques()
+const resetDice = (dice: RigidBodyApi[]): void => {
+  let i = 0
 
-  die.setRotation(DEFAULT_DICE_QUATERNION, false)
-  die.setTranslation({ ...DICE_1_DEFAULT_POS }, false)
+  for (const die of dice) {
+    die.resetForces()
+    die.resetTorques()
+
+    die.setRotation(DEFAULT_DICE_QUATERNION, false)
+    die.setTranslation(
+      i === 0 ? { ...DICE_1_DEFAULT_POS } : { ...DICE_2_DEFAULT_POS },
+      false
+    )
+
+    i++
+  }
 }

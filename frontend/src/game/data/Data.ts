@@ -1,5 +1,6 @@
 import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
+import * as extra from "./Extra"
 
 // Stage
 export const DEFAULT_ENV_MAP_INTENSITY = 2
