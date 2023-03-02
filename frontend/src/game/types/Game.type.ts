@@ -15,6 +15,7 @@ export type GameDataTypes = {
   too_many_users?: boolean
   finished?: boolean
   winner?: UserCheckerType
+  resigner?: UserCheckerType
   message?: string
   user?: string
   initial?: boolean

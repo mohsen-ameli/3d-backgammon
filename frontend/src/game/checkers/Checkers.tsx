@@ -11,7 +11,7 @@ const Checkers = () => {
   if (checkers.current)
     return (
       <>
-        {checkers.current.map((data) => (
+        {checkers.current.map(data => (
           <Checker thisChecker={data} key={data.id} />
         ))}
       </>

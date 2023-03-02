@@ -5,14 +5,15 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 }
 
 /**
- * A nice input
+ * A custom input
  */
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const { className, ...rest } = props
 
   return (
     <input
-      className={`rounded-lg border-2 border-transparent px-2 py-2 outline-none duration-200 focus:border-orange-400 focus:ease-in-out ${className}`}
+      className={`rounded-lg border-2 border-transparent px-2 py-2 outline-none 
+                  duration-200 focus:border-orange-400 focus:ease-in-out ${className}`}
       ref={ref}
       {...rest}
     />

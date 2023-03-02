@@ -49,7 +49,7 @@ const Chat = () => {
   // Listen for messages from server
   const onMessage = (e: MessageEvent) => {
     const data = JSON.parse(e.data)
-    setMessages((old) => [...old, ...data])
+    setMessages(old => [...old, ...data])
     setTimeout(() => {
       chatContainer.current.scrollTop = 1000000
     }, 50)
@@ -97,7 +97,7 @@ const Chat = () => {
   }
 
   return (
-    <Container className="select-none">
+    <Container>
       <Header to="/" title={location.state.friend}>
         <Status />
       </Header>

@@ -8,7 +8,7 @@ const lenRemovedCheckers = (
   checkers: CheckerType[],
   color: UserCheckerType
 ): number => {
-  const removed = checkers.filter((checker) => {
+  const removed = checkers.filter(checker => {
     return checker.color === color ? checker.removed : null
   })
 

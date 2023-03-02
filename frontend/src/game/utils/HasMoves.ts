@@ -59,7 +59,7 @@ const checkCheckers = (
 
   // All of the user's checkers that are not removed NOR in the outside columns
   const userCheckers = checkers.filter(
-    (checker) =>
+    checker =>
       checker.color === color &&
       checker.removed === false &&
       checker.col !== -3 &&
@@ -93,7 +93,7 @@ const checkCheckers = (
         if (colToBeChecked <= 23 && colToBeChecked >= 0) {
           // Checkers on the destination with opposite colors
           const checkerOnIndex = checkers.filter(
-            (checker_) =>
+            checker_ =>
               checker_.col === colToBeChecked &&
               checker_.color === oppositeColor
           )
@@ -112,11 +112,11 @@ const checkCheckers = (
             // Getting the number of checkers behind the current checker (inside the loop)
             if (color === "black") {
               backRankCheckers = checkers.filter(
-                (check) => check.col > checker.col && check.color === color
+                check => check.col > checker.col && check.color === color
               ).length
             } else {
               backRankCheckers = checkers.filter(
-                (check) =>
+                check =>
                   check.col >= 18 &&
                   check.col < checker.col &&
                   check.color === color
@@ -134,7 +134,7 @@ const checkCheckers = (
         }
       }
 
-      notAllowed[dieNum] = validMoves.every((item) => item === false)
+      notAllowed[dieNum] = validMoves.every(item => item === false)
     }
   }
 
@@ -145,7 +145,7 @@ const checkCheckers = (
   if (invalidMoves.length === 0) return true
 
   // If user has ONLY invalid moves
-  if (invalidMoves.every((item) => item === true)) return false
+  if (invalidMoves.every(item => item === true)) return false
 
   // User has at least one valid move
   return true
@@ -224,7 +224,7 @@ const checkRemoved = (
   if (invalidMoves.length === 0) return true
 
   // If user has ONLY invalid moves
-  if (invalidMoves.every((item) => item === true)) return false
+  if (invalidMoves.every(item => item === true)) return false
 
   // User has at least one valid move
   return true

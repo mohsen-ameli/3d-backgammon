@@ -20,7 +20,7 @@ const getCheckersOnCol = (
   col: number,
   color: UserCheckerType
 ): ReturnType => {
-  const checkersOnCol = checkers.filter((item) => item.col === col)
+  const checkersOnCol = checkers.filter(item => item.col === col)
   const lenCheckersOnCol = checkersOnCol.length
   let onCol = {} as ReturnType
 

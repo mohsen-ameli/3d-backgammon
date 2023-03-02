@@ -10,6 +10,7 @@ import { AuthContext } from "../../context/AuthContext"
 import WinnerOverlay from "./WinnerOverlay"
 import Side from "./Side"
 import UserTurn from "./UserTurn"
+import notification from "../../components/utils/Notification"
 
 /**
  * UI elements to control the game flow. Mostly consists of normal HTML.
@@ -46,7 +47,15 @@ const UI = () => {
   }
 
   // User is resigning.. what a loser
-  const resign = () => {}
+  const resign = () => {
+    const msg = "Confirm resignation?"
+    const context = JSON.stringify({
+      resign: true,
+      winner: players.current.enemy.id,
+      resigner: players.current.me.id,
+    })
+    notification(msg, "resign", undefined, undefined, () => ws?.send(context))
+  }
 
   // Checking for winners
   useEffect(() => {
@@ -76,7 +85,7 @@ const UI = () => {
   if (phase && inGame) {
     return (
       <>
-        <Html as="div" transform scale={0.2} position={[-1.85, 0.5, 0]} sprite>
+        <Html transform scale={0.2} position={[-1.85, 0.5, 0]} sprite>
           <div className="relative flex h-[200px] w-[140px] select-none flex-col items-center gap-y-4">
             {/* Go back to home page */}
             {ws ? (

@@ -47,7 +47,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
     // If the user is not playing, meaning other user has thrown their dice, and we're just viewing the animation
     if (!myTurn) return
 
-    setFinishedThrow((current) => {
+    setFinishedThrow(current => {
       const newCurrent = { ...current }
       newCurrent[index] = false
       return newCurrent
@@ -73,7 +73,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
       else dice.current.dice2 = number
     }
 
-    setFinishedThrow((current) => {
+    setFinishedThrow(current => {
       const newCurrent = { ...current }
       newCurrent[index] = true
       return newCurrent

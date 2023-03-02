@@ -1,11 +1,13 @@
 import { Canvas } from "@react-three/fiber"
 import Game from "./Game"
-import { Suspense } from "react"
+import { Suspense, useEffect, useState } from "react"
 import useLoadingScreen from "../components/hooks/useLoadingScreen"
 
 const Experience = () => {
+  const [zIndex, setZIndex] = useState(20)
+
   // Loader
-  const Loader = useLoadingScreen()
+  const Loader = useLoadingScreen(setZIndex)
 
   return (
     <Canvas
@@ -16,6 +18,7 @@ const Experience = () => {
         far: 10,
       }}
       shadows
+      style={{ zIndex: zIndex }}
     >
       <Suspense fallback={Loader}>
         <Game />

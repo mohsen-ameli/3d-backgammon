@@ -46,7 +46,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
   const { size, viewport } = useThree()
   const aspect = size.width / viewport.width
 
-  const checker = useRef<RigidBodyApi>(null!)
+  const checker = useRef<RigidBodyApi>(null)
 
   // Checker's position
   const [pos, setPos] = useState<number[] | Vector3>([0, 0, 0])
@@ -73,7 +73,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     set({ position, rotation })
 
     // Setting the checker's physics position
-    checker.current.setTranslation({
+    checker.current?.setTranslation({
       x: position[0],
       y: position[1],
       z: position[2],
@@ -170,7 +170,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
         }
 
         const checkersOnEndCol = checkers.current.filter(
-          (checker) => checker.col === to
+          checker => checker.col === to
         )
         const checker_ = {
           col: to,
@@ -260,7 +260,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     set({ position: newPositions, rotation })
 
     // Setting the checker's physics position
-    checker.current.setTranslation({
+    checker.current?.setTranslation({
       x: newPositions[0],
       y: newPositions[1],
       z: newPositions[2],
@@ -302,7 +302,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       // since in a live game, this exact same code gets run (check
       // useEffect with ws deppendency in Game)
       !ws &&
-        setPhase((curr) =>
+        setPhase(curr =>
           curr === "checkerMove" ? "checkerMoveAgain" : "checkerMove"
         )
     }

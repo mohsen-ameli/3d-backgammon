@@ -67,7 +67,7 @@ const useStatus = () => {
       showReqNotif.current = false
 
       // Showing all game requests of a user
-      data.game_requests?.map((user) =>
+      data.game_requests?.map(user =>
         notification(
           `${user.username} wants to play with you.`,
           "match",
@@ -86,6 +86,7 @@ const useStatus = () => {
 
     ws.addEventListener("message", onMessage)
 
+    // When user logs out, or starts a game
     return () => {
       ws.removeEventListener("message", onMessage)
 

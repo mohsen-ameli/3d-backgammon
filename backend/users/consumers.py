@@ -1,29 +1,32 @@
-import json, jwt, asyncio
-from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
+import asyncio
+import json
+import jwt
+
 from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
 from django.conf import settings
 from django.utils import timezone
 from jwt.exceptions import ExpiredSignatureError
 
-from .models import CustomUser, Chat, Message
 from .consumer_utils import *
-
+from .models import Chat, CustomUser, Message
 
 '''
     Searching for friends (/search-friend)
 '''
+
 class SearchFriendConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
 
     async def receive(self, text_data):
         # Getting the user's input
-        self.typed = json.loads(text_data)['typed']
-        
+        self.typed = json.loads(text_data)["typed"]
+
         results = await search(self.typed)
 
-        await self.send(json.dumps({'results': results}))
+        await self.send(json.dumps({"results": results}))
 
     async def disconnect(self, close_code):
         await self.close(close_code)
@@ -32,17 +35,16 @@ class SearchFriendConsumer(AsyncWebsocketConsumer):
 '''
     Chatting between users (/chat)
 '''
+
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        chat_id = self.scope['url_route']['kwargs']['chat_id']
+        chat_id = self.scope["url_route"]["kwargs"]["chat_id"]
 
         # Getting the chat object
         self.chat = await database_sync_to_async(Chat.objects.get)(uuid=chat_id)
         self.room_group_name = chat_id
 
-        await self.channel_layer.group_add(
-            self.room_group_name, self.channel_name
-        )
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
         await self.accept()
 
@@ -51,7 +53,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             One of the users has sent a message over
             Or frontend wants initial data
         '''
-        
+
         data = json.loads(text_data)
 
         # If the client is initially requesting the messages
@@ -59,18 +61,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.fetch_messages()
             return
 
-        message = data['message']
-        sender = data['sender']
-        timestamp = data['timestamp']
+        message = data["message"]
+        sender = data["sender"]
+        timestamp = data["timestamp"]
 
         await self.channel_layer.group_send(
             self.room_group_name,
             {
-                'type': 'send_message',
-                'message': message,
-                'sender': sender,
-                'timestamp': timestamp
-            }
+                "type": "send_message",
+                "message": message,
+                "sender": sender,
+                "timestamp": timestamp,
+            },
         )
 
         # Getting the sender user
@@ -97,15 +99,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             Used to send a message to the chat, when one of the users sends a message
         '''
 
-        message = event['message']
-        sender = event['sender']
-        timestamp = event['timestamp']
+        message = event["message"]
+        sender = event["sender"]
+        timestamp = event["timestamp"]
 
-        context = {
-            'message': message,
-            'sender': sender,
-            'timestamp' : timestamp
-        }
+        context = {"message": message, "sender": sender, "timestamp": timestamp}
 
         await self.send(text_data=json.dumps([context]))
 
@@ -114,9 +112,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             Disconnecting a user from the chat consumer
         '''
 
-        await self.channel_layer.group_discard(
-            self.room_group_name, self.channel_name
-        )
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
 
 '''
@@ -124,9 +120,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
     This consumer is presistent throughout the users session, even when
     they're in a game.
 '''
+
 class StatusConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        token = self.scope['url_route']['kwargs']['token']
+        token = self.scope["url_route"]["kwargs"]["token"]
 
         # Getting the user
         await self.set_user(token)
@@ -139,7 +136,7 @@ class StatusConsumer(AsyncWebsocketConsumer):
         self.paused = False
         # Async function to send updates every x amount of seconds
         self.thread = asyncio.create_task(self.send_updates())
-        
+
         await self.accept()
 
     async def receive(self, text_data):
@@ -151,6 +148,8 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
         # Frontend is pausing/resuming the updates (Aka a live game has started)
         if "paused" in data:
+            await reset_match_requests(self.user)
+
             self.paused = data["paused"]
             if not self.paused:
                 self.thread = asyncio.create_task(self.send_updates())
@@ -167,21 +166,23 @@ class StatusConsumer(AsyncWebsocketConsumer):
 
         # Updating the user's online status
         if "is_online" in data:
-            await update_user(self.user, is_online=data["is_online"], last_login=timezone.now())
+            await update_user(
+                self.user, is_online=data["is_online"], last_login=timezone.now()
+            )
 
     async def set_user(self, token):
         '''
-            This function sets/saves the user to memory based on the JWT access token given        
+            This function sets/saves the user to memory based on the JWT access token given
         '''
 
         try:
             jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
-            self.user_id = jwt_token['user_id']
+            self.user_id = jwt_token["user_id"]
             self.user = await database_sync_to_async(CustomUser.objects.filter)(id=self.user_id)
         except ExpiredSignatureError:
             await self.close()
             return
-    
+
     async def send_updates(self):
         '''
             Asynchornous updates. For example, if one of the users friends send them
@@ -210,4 +211,3 @@ class StatusConsumer(AsyncWebsocketConsumer):
             pass
 
         await self.close(close_code)
-

@@ -7,6 +7,36 @@ from django.db.models import F
 from .models import Game
 from users.models import CustomUser
 
+@database_sync_to_async
+def setWinner(game: Game, id: int) -> str:
+    winner = CustomUser.objects.get(id=id)
+    white = CustomUser.objects.get(id=game.white.id)
+    black = CustomUser.objects.get(id=game.black.id)
+
+    game.winner = winner.username
+    game.finished = True
+
+    # Updating live game and the total game counter
+    white.live_game = None
+    black.live_game = None
+    white.total_games = F('total_games') + 1
+    black.total_games = F('total_games') + 1
+
+    # Setting winner and loser stats
+    if white.id == winner.id:
+        white.games_won = F('games_won') + 1
+        black.games_lost = F('games_lost') + 1
+    else:
+        black.games_won = F('games_won') + 1
+        white.games_lost = F('games_lost') + 1
+
+    # Saving everything
+    game.save()
+    white.save()
+    black.save()
+
+    return winner.username
+
 class GameConsumer(AsyncWebsocketConsumer):
     users = 0
     
@@ -53,55 +83,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         # User has connected to the game
         if "physics" in data:
             await database_sync_to_async(self.game_obj.update)(dicePhysics=data["user"])
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    "type": "send_dice_physics",
-                    "physics": data["user"],
-                }
-            )
+
+            context = {"type": "send_dice_physics", "physics": data["user"]}
+            await self.channel_layer.group_send(self.room_group_name, context)
         elif "initial" in data:
             context = await get_game_state(self.game)
             await self.send(text_data=json.dumps(context))
-        elif "winner" in data:
-            winner = await database_sync_to_async(CustomUser.objects.get)(id=data["winner"])
-            
-            self.game.winner = winner.username
-            self.game.finished = True
-
-            # White and black users
-            white = await database_sync_to_async(CustomUser.objects.get)(id=self.game.white.id)
-            black = await database_sync_to_async(CustomUser.objects.get)(id=self.game.black.id)
-
-            # Updating live game and the total game counter
-            white.live_game = None
-            black.live_game = None
-            white.total_games = F('total_games') + 1
-            black.total_games = F('total_games') + 1
-
-            # Setting winner and loser stats
-            if white.id == winner.id:
-                white.games_won = F('games_won') + 1
-                black.games_lost = F('games_lost') + 1
-            else:
-                black.games_won = F('games_won') + 1
-                white.games_lost = F('games_lost') + 1
-
-            # Saving everything
-            await database_sync_to_async(self.game.save)()
-            await database_sync_to_async(white.save)()
-            await database_sync_to_async(black.save)()
-
-            # Sending back updates
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    "type": "game_is_over",
-                    "winner": winner.username,
-                    "finished": True,
-                }
-            )
-            await self.disconnect("")
         elif "update" in data:
             # Frontend wants to update the game state
             await update_game_state(self.game_obj, data["board"], data["dice"], data["turn"])
@@ -124,12 +111,31 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, context)
         elif "message" in data:
             # A user is sending a message
-
-            await self.channel_layer.group_send(self.room_group_name, {
+            context = {
                 "type": "send_message",
                 "message": data["message"],
                 "user": data["user"]
-            })
+            }
+            await self.channel_layer.group_send(self.room_group_name, context)
+        elif "resign" in data:
+            # Sending back updates
+            winner = await setWinner(self.game, data["winner"])
+            resigner = await database_sync_to_async(CustomUser.objects.get)(id=data["resigner"])
+            context = {
+                "type": "resigned_game",
+                "winner": winner,
+                "resigner": resigner.username
+            }
+            await self.channel_layer.group_send(self.room_group_name, context)
+            await self.disconnect("")
+        elif "winner" in data:
+            # Sending back updates
+            winner = await setWinner(self.game, data["winner"])
+            context = { "type": "game_is_over", "winner": winner}
+            
+            await self.channel_layer.group_send(self.room_group_name, context)
+            await self.disconnect("")
+
         return
     
     async def send_dice_physics(self, event):
@@ -149,18 +155,28 @@ class GameConsumer(AsyncWebsocketConsumer):
             "user": user
         }))
 
+    async def resigned_game(self, event):
+        '''
+            When someone resigns, we finish the game, set winners and resigner,
+            and update both users about this.
+        '''
+        winner = event["winner"]
+        resigner = event["resigner"]
+        context = {
+            "winner": winner,
+            "resigner": resigner,
+            "finished": True
+        }
+        await self.send(text_data=json.dumps(context))
+
     async def game_is_over(self, event):
         '''
             Used to send both users stats about the game winners,
             when the game is done
         '''
-
-        winner = event["winner"]
-        finished = event["finished"]
-
         context = {
-            "winner": winner,
-            "finished": finished
+            "winner": event["winner"],
+            "finished": True
         }
 
         await self.send(text_data=json.dumps(context))

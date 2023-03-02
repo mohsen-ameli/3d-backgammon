@@ -9,14 +9,11 @@ type HeaderProps = {
 
 /**
  * Header that is used within all of the pages
- * @param {*} className -> Extra classNames
- * @param {*} props -> Any other props to be attached to the header
  * @returns A nice dive with a back button
  */
 const Header = ({ className, to, title, children }: HeaderProps) => {
   return (
     <div className="relative mb-5 w-full">
-      {/* Header section */}
       <Back to={to} />
       <div className={`mx-auto max-w-[240px] ${className}`}>
         <h1 className="text-center text-xl font-semibold">{title}</h1>

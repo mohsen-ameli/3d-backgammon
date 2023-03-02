@@ -103,7 +103,16 @@ const Game = () => {
       userChecker.current = data.winner!
       setPhase("ended")
       setWs(undefined)
-      notification(`${toCapitalize(data.winner!)} is the winner!`)
+
+      let msg
+      if (data.resigner) {
+        setTimeout(() => {
+          notification(`${toCapitalize(data.resigner!)} has resigned the game.`)
+        }, 500)
+      } else {
+        notification(`${toCapitalize(data.winner!)} is the winner!`)
+      }
+
       return
     }
 
@@ -182,9 +191,9 @@ const Game = () => {
       // all the checker positions are updated)
 
       if (!turn)
-        setPhase((curr) => (curr === "spectate" ? "spectating" : "spectate"))
+        setPhase(curr => (curr === "spectate" ? "spectating" : "spectate"))
       else
-        setPhase((curr) =>
+        setPhase(curr =>
           curr === "checkerMove" ? "checkerMoveAgain" : "checkerMove"
         )
 
@@ -192,9 +201,7 @@ const Game = () => {
     }
 
     // Making sure there is a rerender in the checkers component so that both user's boards get updated
-    setPhase((curr) =>
-      curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"
-    )
+    setPhase(curr => (curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"))
   }
 
   // User has potentially entered the game

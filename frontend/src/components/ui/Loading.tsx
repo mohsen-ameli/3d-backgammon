@@ -6,8 +6,7 @@ type LoadingProps = { basic?: boolean }
 
 /**
  * Loading screen for some pages
- * @param {boolean} basice -> if true, then the loader will not be centered
- * @returns
+ * @param {boolean} basic if true, then the loader will not be centered
  */
 const Loading = ({ basic = false }: LoadingProps) => {
   if (basic)

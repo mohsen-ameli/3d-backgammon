@@ -14,9 +14,11 @@ const notification = (
     | "match"
     | "deleteRejected"
     | "messsage"
+    | "resign"
     | "default" = "default",
   reject?: () => void,
-  accept?: () => void
+  accept?: () => void,
+  resign?: () => void
 ) => {
   const args: ToastOptions<{}> = {
     position: "top-center",
@@ -37,13 +39,22 @@ const notification = (
       toast.error(msg, args)
       break
     case "match": {
-      toast.info(<Msg msg={msg} accept={accept!} reject={reject!} />, {
-        ...args,
-        autoClose: 10000,
-        closeButton: false,
-        pauseOnHover: false,
-      })
-      toast.onChange((payload) => {
+      toast.info(
+        <Msg
+          msg={msg}
+          green="Accept"
+          red="Reject"
+          accept={accept!}
+          reject={reject!}
+        />,
+        {
+          ...args,
+          autoClose: 10000,
+          closeButton: false,
+          pauseOnHover: false,
+        }
+      )
+      toast.onChange(payload => {
         if (payload.status === "removed") {
           reject?.()
         }
@@ -77,6 +88,17 @@ const notification = (
         transition,
       })
 
+      break
+    }
+    case "resign": {
+      toast.info(
+        <Msg msg={msg} green="Confirm" red="Go back" accept={resign!} />,
+        {
+          ...args,
+          autoClose: 10000,
+          pauseOnHover: false,
+        }
+      )
       break
     }
     default:

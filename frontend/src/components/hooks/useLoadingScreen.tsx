@@ -1,13 +1,19 @@
 import { Html, useProgress } from "@react-three/drei"
+import { useEffect, SetStateAction, Dispatch } from "react"
 
 /**
  * Used for loading the experience of the user
  * @returns Some html code, with a progress bar
  */
-const useLoadingScreen = () => {
-  const { loaded, total } = useProgress()
+const useLoadingScreen = (setZIndex: Dispatch<SetStateAction<number>>) => {
+  const { loaded, total, progress } = useProgress()
 
   const bar = ((loaded / total) * 100).toFixed(1)
+
+  // Putting the canvas behind everything else, after this loader is done.
+  useEffect(() => {
+    if (progress === 100) setTimeout(() => setZIndex(1), 500)
+  }, [progress])
 
   return (
     <Html

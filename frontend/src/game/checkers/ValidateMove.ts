@@ -20,12 +20,12 @@ const ValidateMove = (
   // Getting the number of checkers in the back of the current checker
   if (thisChecker.color === "black") {
     backRankCheckers = checkers.filter(
-      (checker) =>
+      checker =>
         checker.col > thisChecker.col && checker.color === thisChecker.color
     )
   } else {
     backRankCheckers = checkers.filter(
-      (checker) =>
+      checker =>
         checker.col >= 18 &&
         checker.col < thisChecker.col &&
         checker.color === thisChecker.color

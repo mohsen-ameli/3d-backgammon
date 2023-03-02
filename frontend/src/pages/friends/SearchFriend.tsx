@@ -21,7 +21,7 @@ const SearchFriend = () => {
 
   useEffect(() => {
     // Getting list of potential friends
-    ws.onmessage = (e) => {
+    ws.onmessage = e => {
       const data = JSON.parse(e.data)
 
       setFriends(data.results.length > 0 ? data.results : [])

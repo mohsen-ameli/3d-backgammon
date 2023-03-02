@@ -1,21 +1,21 @@
-import { Route, Routes } from "react-router-dom"
-import Interface from "./pages/interface/Interface"
-import Login from "./pages/auth/Login"
-import Signup from "./pages/auth/Signup"
-import SearchFriend from "./pages/friends/SearchFriend"
-import Chat from "./pages/friends/chat/Chat"
-import FriendRequests from "./pages/friends/FriendRequests"
-import NotFound from "./pages/NotFound"
-import Profile from "./pages/profile/Profile"
-import FriendsList from "./pages/friends/FriendsList"
+import { Route, Routes } from 'react-router-dom'
+import Interface from './pages/interface/Interface'
+import Login from './pages/auth/Login'
+import Signup from './pages/auth/Signup'
+import SearchFriend from './pages/friends/SearchFriend'
+import Chat from './pages/friends/chat/Chat'
+import FriendRequests from './pages/friends/FriendRequests'
+import NotFound from './pages/NotFound'
+import Profile from './pages/profile/Profile'
+import FriendsList from './pages/friends/FriendsList'
 
-import useStatus from "./components/hooks/useStatus"
-import PrivateRoute from "./components/utils/PrivateRoute"
+import useStatus from './components/hooks/useStatus'
+import PrivateRoute from './components/utils/PrivateRoute'
 
-import Experience from "./game/Experience"
-import PlayRandom from "./game/modes/PlayRandom"
-import PassAndPlay from "./game/modes/PassAndPlay"
-import FriendGame from "./game/modes/FriendGame"
+import Experience from './game/Experience'
+import PlayRandom from './game/modes/PlayRandom'
+import PassAndPlay from './game/modes/PassAndPlay'
+import FriendGame from './game/modes/FriendGame'
 
 /**
  * Main application

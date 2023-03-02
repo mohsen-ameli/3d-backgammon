@@ -21,7 +21,7 @@ const useAxios = () => {
   })
 
   // Interceptor to check if the access token is expired
-  axiosInstance.interceptors.request.use(async (request) => {
+  axiosInstance.interceptors.request.use(async request => {
     // Changing the url, so we dynamically hit the server based
     // on if we're in production or development
     request.url = getServerUrl() + request.url
