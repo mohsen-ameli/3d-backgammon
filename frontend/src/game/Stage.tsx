@@ -138,21 +138,21 @@ const Stage = () => {
       <Environment
         background
         files={["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]}
-        path={"../src/assets/env/cube/diamond_hall/0/"}
+        path="/env/cube/diamond_hall/0/"
       />
 
       {/* Briliant Hall */}
       {/* <Environment
         background
         files={["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]}
-        path={"../src/assets/env/cube/briliant_hall/0/"}
+        path="/env/cube/briliant_hall/0/"
       /> */}
 
       {/* Fin Garden */}
       {/* <Environment
         background
         files={["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]}
-        path="../src/assets/env/cube/fin_garden/0/"
+        path="/env/cube/fin_garden/0/"
       /> */}
 
       {/* Lights */}

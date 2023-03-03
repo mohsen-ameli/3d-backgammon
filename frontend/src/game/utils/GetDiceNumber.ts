@@ -47,6 +47,8 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
       return 5
     } else {
       console.log("Not a 2 and not a 5")
+      console.log(`x: ${x}, y: ${y}, z: ${z}`)
+      throwDice([dice])
       return 0
     }
   }
@@ -63,6 +65,7 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
 
   // Don't know what the number is (Dice is on a slant angle)
   console.log("Don't know what the dice number is!")
+  console.log(`x: ${x}, y: ${y}, z: ${z}`)
   throwDice([dice])
   return 0
 
@@ -77,6 +80,7 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
   // x: 3.140433369281573, y: 0.3143679093589594, z: 0.0006222094766355095
   // x: 0.0011179750282526919, y: 0.16692008339263928, z: -3.1415144481399584
   // x: 3.1353754603318778, y: -1.392534909366675, z: -0.005855192785914245
+  // x: 2.453168729756934, y: -1.5690479799581099, z:-0.6881431960179334
 
   // 2:
   // x: 3.1403126538063306, y: 0.5320433465144419, z: 1.5711823081418979
@@ -110,6 +114,8 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
   // x: 3.1394243203247236, y: 1.0562896138266822, z: -1.5686419821260387
   // x: 0.0015637240502939837, y: -0.819817763541371, z: 1.5722060134228375
   // x: 0.0012046405399716957, y: -0.4829356227141875, z: 1.571622279308555
+  // ERROR:
+  // x: 2.7543638535573343, y: -1.5679557494656726, z: -1.957737619525883
 
   // 3:
   // x: -1.571931367850722, y: 0.0001881356373814687, z: 1.1767776045592004

@@ -30,7 +30,7 @@ const Dices = () => {
     toggleZoom,
     dicePhysics,
   } = useContext(GameState)
-  const { user } = useContext(AuthContext)
+  const { user, gameMode } = useContext(AuthContext)
 
   // Refs for the two dice
   const dice1 = useRef<RigidBodyApi>(null!)
@@ -54,37 +54,33 @@ const Dices = () => {
 
   // Updating backend live game
   const updateLiveGame = () => {
-    ws?.send(
-      JSON.stringify({
-        update: true,
-        board: checkers.current,
-        dice: dice.current,
-        turn: userChecker.current,
-      })
-    )
+    const context = {
+      update: true,
+      board: checkers.current,
+      dice: dice.current,
+      turn: userChecker.current,
+    }
+    ws?.send(JSON.stringify(context))
   }
 
   // Function to throw the dice
   const throwDice_ = () => {
     toggleZoom.current(true)
     setShowThrowBtn(false)
-    const physics = throwDice([dice1.current, dice2.current])
 
-    if (ws && user && userChecker.current) {
-      ws.send(
-        JSON.stringify({
-          physics: true,
-          user: {
-            user: {
-              id: user.user_id,
-              name: user.username,
-              color: userChecker.current,
-            },
-            physics,
-          },
-        })
-      )
+    const physics = throwDice([dice1.current, dice2.current])
+    const context = {
+      physics: true,
+      user: {
+        user: {
+          id: user?.user_id,
+          name: user?.username,
+          color: userChecker.current,
+        },
+        physics,
+      },
     }
+    ws?.send(JSON.stringify(context))
   }
 
   // Handling the dice throws
@@ -99,11 +95,8 @@ const Dices = () => {
     if (!moves) {
       // Switch players
       userChecker.current = switchPlayers(userChecker.current!)
-
-      // Reset the dice moves
-      dice.current.moves = 0
-      dice.current.dice1 = 0
-      dice.current.dice2 = 0
+      // Reset the dice
+      dice.current = { dice1: 0, dice2: 0, moves: 0 }
 
       // Set the phase to diceRoll
       if (!ws) {
@@ -153,13 +146,14 @@ const Dices = () => {
       return
     }
 
-    // ORDER IMPORTANT: initial first then ended
+    /**
+     * ORDER IMPORTANT: (1) initial (2) ended (3) diceRoll or diceRollAgain
+     */
     if (phase === "initial") {
+      if (!myTurn && gameMode.current !== "pass-and-play") return
+
       // User has initially connected to the game, with no available/previous dice moves
-      if (dice.current.moves === 0) {
-        setShowThrowBtn(true)
-        setSleeping({ 0: true, 1: true })
-      }
+      if (dice.current.moves === 0) setShowThrowBtn(true)
       // User has leftover moves (from a previous session that's saved on the DB)
       else setFinishedThrow({ 0: true, 1: true })
       return
@@ -171,6 +165,7 @@ const Dices = () => {
       return
     }
 
+    // If user has thrown the dice
     if (phase === "diceRoll" || phase === "diceRollAgain") {
       setShowThrowBtn(true)
       return
@@ -192,10 +187,7 @@ const Dices = () => {
           className="flex h-[125px] w-[150px] flex-col gap-y-4"
         >
           {/* Throwing the dice */}
-          {(showThrowBtn && sleeping[0] && sleeping[1]) ||
-          (["diceRoll", "diceRollAgain"].includes(phase!) &&
-            myTurn &&
-            showThrowBtn) ? (
+          {showThrowBtn && sleeping[0] && sleeping[1] ? (
             <Button className="w-full text-white" onClick={throwDice_}>
               Throw Dice
             </Button>
