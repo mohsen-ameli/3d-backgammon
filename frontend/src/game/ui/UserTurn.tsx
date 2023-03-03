@@ -18,7 +18,7 @@ const UserTurn = ({ userChecker, dice }: UserTurnProps) => {
           : "bg-slate-600 text-white")
       }
     >
-      <h1>{toCapitalize(userChecker!)} to play!</h1>
+      <h1>{toCapitalize(userChecker)} to play!</h1>
       {dice.moves > 0 && (
         <div className="mt-2 flex flex-col items-center">
           <h1 className="mb-1">Dice moves</h1>

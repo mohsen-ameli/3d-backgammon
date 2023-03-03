@@ -19,6 +19,7 @@ const UI = () => {
   const { inGame, setInGame, gameMode } = useContext(AuthContext)
   const {
     players,
+    winner,
     userChecker,
     toggleControls,
     phase,
@@ -30,7 +31,7 @@ const UI = () => {
   } = useContext(GameState)
   const navigate = useNavigate()
 
-  const [winner, setWinner] = useState<string | null>()
+  const [winner_, setWinner] = useState<string | undefined>()
 
   // Function to request a rematch
   const playAgain = () => {
@@ -60,21 +61,25 @@ const UI = () => {
   // Checking for winners
   useEffect(() => {
     if (phase === "ended") {
-      setWinner(toCapitalize(userChecker.current!))
+      const winnerr =
+        winner.current?.id === players.current.me.id
+          ? "You are the winner!"
+          : `${winner.current?.name} is the winner!`
+      setWinner(toCapitalize(winnerr!))
       setInGame(false)
       dice.current.dice1 = 0
       dice.current.dice2 = 0
       dice.current.moves = 0
     } else {
-      winner && setWinner(null)
+      winner && setWinner(undefined)
     }
   }, [phase])
 
   // Show an overlay when someone wins
-  if (phase && winner)
+  if (phase && winner_)
     return (
       <WinnerOverlay
-        winner={winner}
+        winner={winner_}
         gameMode={gameMode.current!}
         playAgain={playAgain}
         goHome={goHome}

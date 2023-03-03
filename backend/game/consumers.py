@@ -8,7 +8,7 @@ from .models import Game
 from users.models import CustomUser
 
 @database_sync_to_async
-def setWinner(game: Game, id: int) -> str:
+def setWinner(game: Game, id: int) -> dict:
     winner = CustomUser.objects.get(id=id)
     white = CustomUser.objects.get(id=game.white.id)
     black = CustomUser.objects.get(id=game.black.id)
@@ -35,10 +35,13 @@ def setWinner(game: Game, id: int) -> str:
     white.save()
     black.save()
 
-    return winner.username
+    color = "white" if winner.id == white.id else "black"
+
+    return {"id": winner.id, "name": winner.username, "color": color}
 
 class GameConsumer(AsyncWebsocketConsumer):
-    users = 0
+    users_count = 0
+    users = {}
     
     async def connect(self):
         '''
@@ -54,17 +57,20 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.room_group_name = game_id
 
         # Adding one to the users connected to this game
-        GameConsumer.users += 1
+        GameConsumer.users[GameConsumer.users_count] = {"user": GameConsumer.users_count}
+        GameConsumer.users_count += 1
 
+        # print(GameConsumer.users)
+        
         await self.accept()
 
         # Making sure there's only two connected users to one game. 
         # We deal with the case of there being more than 2 users, in the frontend.
-        if GameConsumer.users > 2:
+        if GameConsumer.users_count > 2:
             await self.send(text_data=json.dumps({
                 "too_many_users": True
             }))
-            GameConsumer.users -= 1
+            GameConsumer.users_count -= 1
         else:
             await self.channel_layer.group_add(
                 self.room_group_name, self.channel_name
@@ -121,10 +127,13 @@ class GameConsumer(AsyncWebsocketConsumer):
             # Sending back updates
             winner = await setWinner(self.game, data["winner"])
             resigner = await database_sync_to_async(CustomUser.objects.get)(id=data["resigner"])
+            resigner_color = "white" if winner["color"] == "black" else "black"
+            resigner_ = {"id": resigner.id, "name": resigner.username, "color": resigner_color}
+
             context = {
                 "type": "resigned_game",
                 "winner": winner,
-                "resigner": resigner.username
+                "resigner": resigner_
             }
             await self.channel_layer.group_send(self.room_group_name, context)
             await self.disconnect("")
@@ -174,11 +183,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             Used to send both users stats about the game winners,
             when the game is done
         '''
-        context = {
-            "winner": event["winner"],
-            "finished": True
-        }
-
+        context = { "winner": event["winner"], "finished": True }
         await self.send(text_data=json.dumps(context))
 
     async def send_updates(self, event):
@@ -212,7 +217,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             When a user is disconnected.
         '''
 
-        GameConsumer.users -= 1
+        GameConsumer.users_count -= 1
 
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name

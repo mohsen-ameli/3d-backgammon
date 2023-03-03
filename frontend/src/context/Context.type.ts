@@ -6,8 +6,10 @@ export type AuthContextProviderProps = {
   children: React.ReactNode
 }
 
+export type GameModeType = "pass-and-play" | string | undefined
+
 export type AuthContextType = {
-  gameMode: React.MutableRefObject<string | undefined>
+  gameMode: React.MutableRefObject<GameModeType>
   ws: WebSocket | undefined
 
   user: UserType

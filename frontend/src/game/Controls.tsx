@@ -110,8 +110,8 @@ const Controls = () => {
     <OrbitControls
       ref={orbitRef}
       makeDefault
-      minPolarAngle={-2}
-      maxPolarAngle={Math.PI / 2}
+      // minPolarAngle={-2}
+      // maxPolarAngle={Math.PI / 2}
       dampingFactor={0.05}
       rotateSpeed={0.2}
       screenSpacePanning={true}

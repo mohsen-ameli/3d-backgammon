@@ -47,9 +47,7 @@ const useGetFreshTokens = (tokens: TokenType, skip: boolean = false) => {
 
         return freshTokens
       }
-    } catch (error) {
-      console.log("Error getting fresh token: ", error)
-    }
+    } catch (error) {}
   }
 
   return getFreshTokens

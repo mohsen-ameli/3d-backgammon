@@ -6,7 +6,11 @@ import getServerUrl from "../components/utils/getServerUrl"
 import { UserType } from "./User.type"
 import { TokenType } from "./Token.type"
 import { ErrorType } from "./Error.type"
-import { AuthContextProviderProps, AuthContextType } from "./Context.type"
+import {
+  AuthContextProviderProps,
+  AuthContextType,
+  GameModeType,
+} from "./Context.type"
 
 export const AuthContext = createContext({} as AuthContextType)
 
@@ -19,7 +23,7 @@ const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const navigate = useNavigate()
 
   // Game mode
-  const gameMode = useRef<string>()
+  const gameMode = useRef<GameModeType>()
 
   // Whether the user is in game or not
   const [inGame, setInGame] = useState(false)

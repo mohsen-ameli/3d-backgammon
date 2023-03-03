@@ -3,7 +3,8 @@
  * @param {*} str -> A string
  * @returns Capital verrsion of that string
  */
-const toCapitalize = (str: string): string => {
+const toCapitalize = (str: string | undefined): string => {
+  if (!str) return ""
   return str[0].toUpperCase() + str.slice(1)
 }
 

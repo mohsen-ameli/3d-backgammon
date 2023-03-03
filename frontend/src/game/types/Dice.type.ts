@@ -1,3 +1,5 @@
+import { PlayerType } from "./Game.type"
+
 export type finishedThrowType = {
   0: boolean
   1: boolean
@@ -19,7 +21,7 @@ export type DiePhysics = {
 }
 
 export type DicePhysics = {
-  id: number
+  user: PlayerType
   physics: {
     die1: DiePhysics
     die2: DiePhysics

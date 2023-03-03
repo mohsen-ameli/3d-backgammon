@@ -14,8 +14,8 @@ export type PlayersType = {
 export type GameDataTypes = {
   too_many_users?: boolean
   finished?: boolean
-  winner?: UserCheckerType
-  resigner?: UserCheckerType
+  winner?: PlayerType
+  resigner?: PlayerType
   message?: string
   user?: string
   initial?: boolean
@@ -38,10 +38,24 @@ export type MaterialType = Record<string, MeshStandardMaterial>
 
 export type ToggleZoomType = (newValue: boolean) => void
 
+export type PhaseType =
+  | "checkerMove"
+  | "checkerMoveAgain"
+  | "diceRoll"
+  | "diceRollAgain"
+  | "diceRollPhysics"
+  | "diceSync"
+  | "initial"
+  | "ended"
+  | "spectate"
+  | "spectating"
+  | undefined
+
 export type GameStateType = {
   nodes: NodeType
   materials: MaterialType
   players: React.MutableRefObject<PlayersType>
+  winner: React.MutableRefObject<PlayerType | undefined>
   dice: React.MutableRefObject<DiceType>
   userChecker: React.MutableRefObject<UserCheckerType | undefined>
   myTurn: boolean
@@ -50,8 +64,8 @@ export type GameStateType = {
   dicePhysics: React.MutableRefObject<DicePhysics | undefined>
   newCheckerPosition: React.MutableRefObject<number | undefined>
   ws: WebSocket | undefined
-  phase: string | undefined
-  setPhase: React.Dispatch<React.SetStateAction<string | undefined>>
+  phase: PhaseType
+  setPhase: React.Dispatch<React.SetStateAction<PhaseType>>
   toggleControls: React.MutableRefObject<(ui?: boolean, drag?: boolean) => void>
   resetOrbit: React.MutableRefObject<() => void>
   toggleZoom: React.MutableRefObject<ToggleZoomType>

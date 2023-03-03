@@ -52,6 +52,9 @@ const Game = () => {
   // The current checker color that is being moved
   const userChecker = useRef<types.UserCheckerType>()
 
+  // The current checker color that is being moved
+  const winner = useRef<types.PlayerType>()
+
   // If the checker has been picked up or not
   const checkerPicked = useRef(false)
 
@@ -62,7 +65,7 @@ const Game = () => {
   const checkers = useRef<CheckerType[]>(null!)
 
   // The current phase of the game
-  const [phase, setPhase] = useState<string>()
+  const [phase, setPhase] = useState<types.PhaseType>()
 
   // Game websocket
   const [ws, setWs] = useState<WebSocket>()
@@ -77,12 +80,7 @@ const Game = () => {
   const { nodes, materials } = useGLTF(gltfModel) as GLTFResult
 
   // Plays the audio switching users
-  const playAudio = () =>
-    audio.play().catch(() => {
-      console.log(
-        "Error playing audio, since user hasn't interacted with the website."
-      )
-    })
+  const playAudio = () => audio.play().catch(() => {})
 
   // User is connecting to the game initially
   const onOpen = () => ws?.send(JSON.stringify({ initial: true }))
@@ -100,18 +98,26 @@ const Game = () => {
 
     // If game has ended
     if (data.finished) {
-      userChecker.current = data.winner!
-      setPhase("ended")
-      setWs(undefined)
+      winner.current = data.winner
 
-      let msg
+      // Showing a notification of the winner
       if (data.resigner) {
         setTimeout(() => {
-          notification(`${toCapitalize(data.resigner!)} has resigned the game.`)
+          notification(
+            `${toCapitalize(data.resigner?.name!)} has resigned the game.`
+          )
         }, 500)
       } else {
-        notification(`${toCapitalize(data.winner!)} is the winner!`)
+        notification(`${toCapitalize(data.winner?.name!)} is the winner!`)
       }
+
+      // TODO: Maybe add some confetti?
+
+      // Cleaning
+      dice.current = { dice1: 0, dice2: 0, moves: 0 }
+      userChecker.current = undefined
+      setPhase("ended")
+      setWs(undefined)
 
       return
     }
@@ -128,7 +134,7 @@ const Game = () => {
     // or it's the current user, who's getting it. If it's the current user, then return immidietly,
     if (data.physics) {
       // If the current user has not thrown the dice (aka it's the other user's turn)
-      if (user?.user_id !== data.physics.id) {
+      if (user?.user_id !== data.physics.user.id) {
         // Throw the dice for the other user
         setPhase("diceSync")
         dicePhysics.current = data.physics
@@ -204,10 +210,11 @@ const Game = () => {
     setPhase(curr => (curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"))
   }
 
-  // User has potentially entered the game
+  // User has entered the game
   useEffect(() => {
     if (!inGame) return
 
+    // GameMode is pass and play
     if (gameMode.current === "pass-and-play") {
       setPhase("initial")
       userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
@@ -241,6 +248,7 @@ const Game = () => {
     nodes,
     materials,
     players,
+    winner,
     dice,
     userChecker,
     myTurn,

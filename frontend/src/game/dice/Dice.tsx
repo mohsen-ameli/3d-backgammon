@@ -14,13 +14,14 @@ type DiceProps = {
   position: Vector3
   setFinishedThrow: React.Dispatch<React.SetStateAction<finishedThrowType>>
   setSleeping: React.Dispatch<React.SetStateAction<finishedThrowType>>
+  showThrowBtn: boolean
 }
 
 /**
  * Individual die
  */
 const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
-  const { index, position, setFinishedThrow, setSleeping } = props
+  const { index, position, setFinishedThrow, setSleeping, showThrowBtn } = props
   const { nodes, materials, dice, myTurn } = useContext(GameState)
 
   // Rigid body reference of each die
@@ -35,11 +36,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
     audio.currentTime = 0
     audio.volume = Math.random()
-    audio.play().catch(() => {
-      console.log(
-        "Error playing audio, since user hasn't interacted with the website."
-      )
-    })
+    audio.play().catch(() => {})
   }
 
   // When the die wakes up
@@ -54,11 +51,11 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
     })
   }
 
-  // When the die goes to sleep
+  // When the die goes to sleep, get the number on the dice, and save it.
   // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
   const onSleep = () => {
     // If the dice are not on the board, then return
-    if (!DiceOnBoard(rigidBody)) {
+    if (!DiceOnBoard(rigidBody) || showThrowBtn) {
       setSleeping({ 0: true, 1: true })
       return
     }

@@ -75,7 +75,11 @@ const Dices = () => {
         JSON.stringify({
           physics: true,
           user: {
-            id: user.user_id,
+            user: {
+              id: user.user_id,
+              name: user.username,
+              color: userChecker.current,
+            },
             physics,
           },
         })
@@ -141,11 +145,23 @@ const Dices = () => {
     // }
 
     // If our dice are being synced with the other user
-    if (phase === "diceSync") {
+    if (phase === "diceSync" && dicePhysics.current) {
       throwDicePhysics(
         [dice1.current, dice2.current],
-        dicePhysics.current?.physics!
+        dicePhysics.current.physics
       )
+      return
+    }
+
+    // ORDER IMPORTANT: initial first then ended
+    if (phase === "initial") {
+      // User has initially connected to the game, with no available/previous dice moves
+      if (dice.current.moves === 0) {
+        setShowThrowBtn(true)
+        setSleeping({ 0: true, 1: true })
+      }
+      // User has leftover moves (from a previous session that's saved on the DB)
+      else setFinishedThrow({ 0: true, 1: true })
       return
     }
 
@@ -158,13 +174,6 @@ const Dices = () => {
     if (phase === "diceRoll" || phase === "diceRollAgain") {
       setShowThrowBtn(true)
       return
-    }
-
-    if (phase === "initial") {
-      // User has initially connected to the game, with no available/previous dice moves
-      if (dice.current.moves === 0) setShowThrowBtn(true)
-      // User has leftover moves (from a previous session that's saved on the DB)
-      else setFinishedThrow({ 0: true, 1: true })
     }
   }, [phase])
 
@@ -219,6 +228,7 @@ const Dices = () => {
         position={DICE_1_DEFAULT_POS}
         setFinishedThrow={setFinishedThrow}
         setSleeping={setSleeping}
+        showThrowBtn={showThrowBtn}
       />
       <Dice
         ref={dice2}
@@ -226,6 +236,7 @@ const Dices = () => {
         position={DICE_2_DEFAULT_POS}
         setFinishedThrow={setFinishedThrow}
         setSleeping={setSleeping}
+        showThrowBtn={showThrowBtn}
       />
     </>
   )

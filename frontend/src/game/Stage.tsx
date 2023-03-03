@@ -1,11 +1,12 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { ContactShadows, Environment } from "@react-three/drei"
 import { DirectionalLight } from "three"
-import bell_park_pier_2k from "../assets/hdr/bell_park_pier_2k.hdr"
+// import bell_park_pier_2k from "../assets/env/hdr/bell_park_pier_2k.hdr"
 import { GameState } from "./Game"
 import { DEFAULT_ENV_MAP_INTENSITY } from "./data/Data"
 import { AuthContext } from "../context/AuthContext"
 import { useLocation } from "react-router-dom"
+// import { button, useControls } from "leva"
 
 /**
  * Staging for our scene
@@ -82,6 +83,13 @@ const Stage = () => {
   //   { collapsed: true }
   // )
 
+  // const [env, setEnv] = useState(0)
+  // useControls("Environment Maps", {
+  //   briliant_hall_0: button(() => setEnv(0)),
+  //   briliant_hall_1: button(() => setEnv(1)),
+  //   briliant_hall_3: button(() => setEnv(3)),
+  // })
+
   // // Contact shadows
   // const { color, opacity, blur } = useControls(
   //   "Contact Shadows",
@@ -126,9 +134,26 @@ const Stage = () => {
         />
       )}
 
-      {/* Environment */}
-      {/* <Environment preset={preset} background blur={0} /> */}
-      <Environment background files={bell_park_pier_2k} blur={0} />
+      {/* Diamond Hall */}
+      <Environment
+        background
+        files={["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]}
+        path={"../src/assets/env/cube/diamond_hall/0/"}
+      />
+
+      {/* Briliant Hall */}
+      {/* <Environment
+        background
+        files={["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]}
+        path={"../src/assets/env/cube/briliant_hall/0/"}
+      /> */}
+
+      {/* Fin Garden */}
+      {/* <Environment
+        background
+        files={["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]}
+        path="../src/assets/env/cube/fin_garden/0/"
+      /> */}
 
       {/* Lights */}
       <ambientLight intensity={0.5} />

@@ -28,11 +28,11 @@ const Side = ({ ws, player, color, userChecker, players }: SideProps) => {
   // If user has timed out, then we will resign them
   const resign = () => {
     if (userChecker === players?.me.color) {
-      console.log("resign: ", userChecker)
+      // console.log("resign: ", userChecker)
       // I've been offline for too long
       // ws?.send(JSON.stringify({ finished: true, winner: players?.enemy.id }))
     } else {
-      console.log("resign: ", userChecker)
+      // console.log("resign: ", userChecker)
       // Enemy has been offline for too long
       // ws?.send(JSON.stringify({ finished: true, winner: players?.me.id }))
     }
@@ -136,7 +136,7 @@ const Side = ({ ws, player, color, userChecker, players }: SideProps) => {
         </h1>
         {/* <img src="" alt="pfp" /> */}
 
-        {userChecker === color &&
+        {/* {userChecker === color &&
           timer > 0 &&
           (timer / BASE_TIME) * 100 < 34 && (
             <h1
@@ -150,7 +150,7 @@ const Side = ({ ws, player, color, userChecker, players }: SideProps) => {
             >
               {timer} {timer > 1 ? "seconds" : "second"} left !
             </h1>
-          )}
+          )} */}
       </div>
     </Html>
   )
