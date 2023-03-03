@@ -1,7 +1,7 @@
-import { DiceType } from "../types/Dice.type"
+import { DiceMoveType } from "../types/Dice.type"
 
 type DiceMovesProps = {
-  dice: DiceType
+  dice: DiceMoveType
 }
 
 /**

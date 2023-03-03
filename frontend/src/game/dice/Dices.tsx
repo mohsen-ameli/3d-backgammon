@@ -11,7 +11,7 @@ import InGameChat from "../ui/InGameChat"
 import useFetch from "../../components/hooks/useFetch"
 import { AuthContext } from "../../context/AuthContext"
 import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
-import { finishedThrowType } from "../types/Dice.type"
+import { DiceReadyType } from "../types/Dice.type"
 import { MessgaeType } from "../types/Message.type"
 import { DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../data/Data"
 
@@ -19,6 +19,7 @@ import { DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../data/Data"
  * This is the container for the two dice.
  */
 const Dices = () => {
+  // Game context
   const {
     dice,
     phase,
@@ -30,6 +31,8 @@ const Dices = () => {
     toggleZoom,
     dicePhysics,
   } = useContext(GameState)
+
+  // Auth context
   const { user, gameMode } = useContext(AuthContext)
 
   // Refs for the two dice
@@ -37,12 +40,15 @@ const Dices = () => {
   const dice2 = useRef<RigidBodyApi>(null!)
 
   // To keep track of the dices finished throwing state
-  const [finishedThrow, setFinishedThrow] = useState<finishedThrowType>(null!)
+  const [finishedThrow, setFinishedThrow] = useState<DiceReadyType>({
+    dice1: false,
+    dice2: false,
+  })
 
   // To keep track of the dice sleeping state
-  const [sleeping, setSleeping] = useState<finishedThrowType>({
-    0: false,
-    1: false,
+  const [sleeping, setSleeping] = useState<DiceReadyType>({
+    dice1: false,
+    dice2: false,
   })
 
   // State to show the "throw dice" button
@@ -86,7 +92,7 @@ const Dices = () => {
   // Handling the dice throws
   useEffect(() => {
     // Dices have not finished throwing
-    if (!finishedThrow || !finishedThrow[0] || !finishedThrow[1]) return
+    if (!finishedThrow || !finishedThrow.dice1 || !finishedThrow.dice2) return
 
     // Check if user has any valid moves
     const moves = hasMoves(checkers.current, dice.current, userChecker.current!)
@@ -155,7 +161,7 @@ const Dices = () => {
       // User has initially connected to the game, with no available/previous dice moves
       if (dice.current.moves === 0) setShowThrowBtn(true)
       // User has leftover moves (from a previous session that's saved on the DB)
-      else setFinishedThrow({ 0: true, 1: true })
+      else setFinishedThrow({ dice1: true, dice2: true })
       return
     }
 
@@ -187,7 +193,7 @@ const Dices = () => {
           className="flex h-[125px] w-[150px] flex-col gap-y-4"
         >
           {/* Throwing the dice */}
-          {showThrowBtn && sleeping[0] && sleeping[1] ? (
+          {showThrowBtn && sleeping && sleeping.dice1 && sleeping.dice2 ? (
             <Button className="w-full text-white" onClick={throwDice_}>
               Throw Dice
             </Button>

@@ -1,5 +1,5 @@
 import { CheckerType } from "../types/Checker.type"
-import { DiceType } from "../types/Dice.type"
+import { DiceMoveType } from "../types/Dice.type"
 
 /**
  * Utility used in checkers to determine whether the move done by the user
@@ -11,7 +11,7 @@ import { DiceType } from "../types/Dice.type"
 const ValidateMove = (
   checkers: CheckerType[],
   thisChecker: CheckerType,
-  dice: DiceType,
+  dice: DiceMoveType,
   moved: number
 ): boolean => {
   let backRankCheckers

@@ -1,11 +1,11 @@
 import { PlayerType } from "./Game.type"
 
-export type finishedThrowType = {
-  0: boolean
-  1: boolean
+export type DiceReadyType = {
+  dice1: boolean
+  dice2: boolean
 }
 
-export type DiceType = { dice1: number; dice2: number; moves: number }
+export type DiceMoveType = { dice1: number; dice2: number; moves: number }
 
 export type DiePhysics = {
   impulse: {

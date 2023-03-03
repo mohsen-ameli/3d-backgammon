@@ -1,9 +1,9 @@
 import toCapitalize from "../../components/utils/ToCapitalize"
-import { DiceType } from "../types/Dice.type"
+import { DiceMoveType } from "../types/Dice.type"
 import { UserCheckerType } from "../types/Game.type"
 import DiceMoves from "./DiceMoves"
 
-type UserTurnProps = { userChecker: UserCheckerType; dice: DiceType }
+type UserTurnProps = { userChecker: UserCheckerType; dice: DiceMoveType }
 
 /**
  * Part of the UI, where users can see their dice moves.

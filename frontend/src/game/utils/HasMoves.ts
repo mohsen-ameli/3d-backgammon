@@ -3,7 +3,7 @@ import lenRemovedCheckers from "./LenRemovedCheckers"
 import switchPlayers from "./SwitchPlayers"
 import { UserCheckerType } from "../types/Game.type"
 import { CheckerType } from "../types/Checker.type"
-import { DiceType } from "../types/Dice.type"
+import { DiceMoveType } from "../types/Dice.type"
 
 /**
  * This method does 3 things:
@@ -26,7 +26,7 @@ type Die = "dice1" | "dice2"
 
 const hasMoves = (
   checkers: CheckerType[],
-  dice: DiceType,
+  dice: DiceMoveType,
   color: UserCheckerType
 ): boolean => {
   oppositeColor = switchPlayers(color)
@@ -45,7 +45,7 @@ const hasMoves = (
 // For checking checkers that are NOT removed
 const checkCheckers = (
   checkers: CheckerType[],
-  dice: DiceType,
+  dice: DiceMoveType,
   color: UserCheckerType
 ) => {
   // Variable to hold list of boolean values.
@@ -154,7 +154,7 @@ const checkCheckers = (
 // For checking checkers that ARE removed
 const checkRemoved = (
   checkers: CheckerType[],
-  dice: DiceType,
+  dice: DiceMoveType,
   color: UserCheckerType
 ) => {
   type checkersOnEnemyColsType = { [key: number]: number }

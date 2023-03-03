@@ -19,7 +19,7 @@ import gltfModel from "../assets/models/models.glb"
 import userSwitch from "../assets/sounds/user-switch.mp3"
 import useViewPort from "./utils/useViewPort"
 import { CheckerType } from "./types/Checker.type"
-import { DicePhysics, DiceType } from "./types/Dice.type"
+import { DicePhysics, DiceMoveType } from "./types/Dice.type"
 import Stage from "./Stage"
 import switchPlayers from "./utils/SwitchPlayers"
 
@@ -47,7 +47,7 @@ const Game = () => {
   })
 
   // The numbers on the dice, and how many times the user is allowed to move
-  const dice = useRef<DiceType>({ dice1: 0, dice2: 0, moves: 0 })
+  const dice = useRef<DiceMoveType>({ dice1: 0, dice2: 0, moves: 0 })
 
   // The current checker color that is being moved
   const userChecker = useRef<types.UserCheckerType>()

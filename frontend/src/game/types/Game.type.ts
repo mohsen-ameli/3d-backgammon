@@ -1,6 +1,6 @@
 import { BufferGeometry, Material, Mesh, MeshStandardMaterial } from "three"
 import { CheckerType } from "./Checker.type"
-import { DicePhysics, DiceType } from "./Dice.type"
+import { DicePhysics, DiceMoveType } from "./Dice.type"
 
 export type UserCheckerType = "black" | "white"
 
@@ -25,7 +25,7 @@ export type GameDataTypes = {
   white_name?: string
   turn?: UserCheckerType
   board?: CheckerType[]
-  dice?: DiceType
+  dice?: DiceMoveType
   physics?: DicePhysics
   initial_physics?: DicePhysics
 }
@@ -56,7 +56,7 @@ export type GameStateType = {
   materials: MaterialType
   players: React.MutableRefObject<PlayersType>
   winner: React.MutableRefObject<PlayerType | undefined>
-  dice: React.MutableRefObject<DiceType>
+  dice: React.MutableRefObject<DiceMoveType>
   userChecker: React.MutableRefObject<UserCheckerType | undefined>
   myTurn: boolean
   checkers: React.MutableRefObject<CheckerType[]>

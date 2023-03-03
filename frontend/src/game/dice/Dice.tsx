@@ -4,7 +4,7 @@ import * as data from "../data/Data"
 import { GameState } from "../Game"
 import newDice from "../../assets/sounds/NewDice.wav"
 import { Vector3 } from "three"
-import { finishedThrowType } from "../types/Dice.type"
+import { DiceReadyType } from "../types/Dice.type"
 import getDiceNumber from "../utils/GetDiceNumber"
 import IsInitial from "./IsInitial"
 import DiceOnBoard from "./DiceOnBoard"
@@ -12,8 +12,8 @@ import DiceOnBoard from "./DiceOnBoard"
 type DiceProps = {
   index: 0 | 1
   position: Vector3
-  setFinishedThrow: React.Dispatch<React.SetStateAction<finishedThrowType>>
-  setSleeping: React.Dispatch<React.SetStateAction<finishedThrowType>>
+  setFinishedThrow: React.Dispatch<React.SetStateAction<DiceReadyType>>
+  setSleeping: React.Dispatch<React.SetStateAction<DiceReadyType>>
   showThrowBtn: boolean
 }
 
@@ -22,6 +22,8 @@ type DiceProps = {
  */
 const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   const { index, position, setFinishedThrow, setSleeping, showThrowBtn } = props
+
+  // Game context
   const { nodes, materials, dice, myTurn } = useContext(GameState)
 
   // Rigid body reference of each die
@@ -46,7 +48,8 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
     setFinishedThrow(current => {
       const newCurrent = { ...current }
-      newCurrent[index] = false
+      if (index === 0) newCurrent.dice1 = false
+      else newCurrent.dice2 = false
       return newCurrent
     })
   }
@@ -56,7 +59,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   const onSleep = () => {
     // If the dice are not on the board, then return
     if (!DiceOnBoard(rigidBody) || showThrowBtn) {
-      setSleeping({ 0: true, 1: true })
+      setSleeping({ dice1: true, dice2: true })
       return
     }
 
@@ -72,7 +75,8 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
     setFinishedThrow(current => {
       const newCurrent = { ...current }
-      newCurrent[index] = true
+      if (index === 0) newCurrent.dice1 = true
+      else newCurrent.dice2 = true
       return newCurrent
     })
   }
