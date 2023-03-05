@@ -3,7 +3,7 @@ import { CuboidCollider, RigidBody, RigidBodyApi } from "@react-three/rapier"
 import { useThree } from "@react-three/fiber"
 import { useDrag, UserDragConfig } from "@use-gesture/react"
 import { useSpring, animated } from "@react-spring/three"
-import { GameState } from "../Game"
+import { GameContext } from "../context/GameContext"
 import getCheckerPos from "../utils/GetCheckerPos"
 import getCheckersOnCol from "../utils/GetCheckersOnCol"
 import lenRemovedCheckers from "../utils/LenRemovedCheckers"
@@ -39,7 +39,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     phase,
     setPhase,
     toggleControls,
-  } = useContext(GameState)
+  } = useContext(GameContext)
   const { user } = useContext(AuthContext)
 
   // Checkers

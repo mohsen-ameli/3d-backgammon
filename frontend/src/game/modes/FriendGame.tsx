@@ -1,8 +1,8 @@
 import { useContext, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { AuthContext } from "../../context/AuthContext"
 import useFetch from "../../components/hooks/useFetch"
 import notification from "../../components/utils/Notification"
+import { GameWrapperContext } from "../context/GameWrapperContext"
 
 /**
  * A game between two friends.
@@ -14,7 +14,7 @@ type DataType = {
 }
 
 const FriendGame = () => {
-  const { setInGame, gameMode } = useContext(AuthContext)
+  const { setInGame, gameMode } = useContext(GameWrapperContext)
   const navigate = useNavigate()
   const { gameId } = useParams()
   const { data: temp } = useFetch(`/api/game/valid-match/${gameId}/`)

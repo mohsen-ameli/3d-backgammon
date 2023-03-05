@@ -1,32 +1,22 @@
 import axios, { AxiosError } from "axios"
-import { createContext, useEffect, useRef, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import jwt_decode from "jwt-decode"
 import getServerUrl from "../components/utils/getServerUrl"
 import { UserType } from "./User.type"
 import { TokenType } from "./Token.type"
 import { ErrorType } from "./Error.type"
-import {
-  AuthContextProviderProps,
-  AuthContextType,
-  GameModeType,
-} from "./Context.type"
+import { AuthContextType } from "./Context.type"
+import { RChildren } from "../components/children.type"
 
 export const AuthContext = createContext({} as AuthContextType)
 
 /**
  * Auth provider for the entire app. Responsible for logging users in, and out.
- * TODO: Try to get rid of the couple game related states in this component.
  */
-const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
+const AuthContextProvider = ({ children }: RChildren) => {
   // Navigate
   const navigate = useNavigate()
-
-  // Game mode
-  const gameMode = useRef<GameModeType>()
-
-  // Whether the user is in game or not
-  const [inGame, setInGame] = useState(false)
 
   // User authentication info
   const [user, setUser] = useState<UserType>(() =>
@@ -144,8 +134,6 @@ const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   // Context value
   const value = {
-    inGame,
-    gameMode,
     ws,
     user,
     tokens,
@@ -153,7 +141,6 @@ const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     setErrors,
     setUser,
     setTokens,
-    setInGame,
     login,
     logout,
     signup,

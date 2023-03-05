@@ -1,6 +1,6 @@
 import gsap, { Power4 } from "gsap"
 import { useContext, useEffect, useRef } from "react"
-import { GameState } from "./Game"
+import { GameContext } from "./context/GameContext"
 import { OrbitControls } from "@react-three/drei"
 import {
   DEFAULT_ORBIT_POSITION,
@@ -22,7 +22,7 @@ type OrbitType = {
  * the zoom.
  */
 const Controls = () => {
-  const { resetOrbit, toggleControls, toggleZoom } = useContext(GameState)
+  const { resetOrbit, toggleControls, toggleZoom } = useContext(GameContext)
 
   const orbitRef = useRef<OrbitControlType & OrbitType>(null!)
 

@@ -1,7 +1,7 @@
 import { RigidBody, RigidBodyApi } from "@react-three/rapier"
 import { forwardRef, useContext, useState } from "react"
 import * as data from "../data/Data"
-import { GameState } from "../Game"
+import { GameContext } from "../context/GameContext"
 import newDice from "../../assets/sounds/NewDice.wav"
 import { Vector3 } from "three"
 import { DiceReadyType } from "../types/Dice.type"
@@ -24,7 +24,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   const { index, position, setFinishedThrow, setSleeping, showThrowBtn } = props
 
   // Game context
-  const { nodes, materials, dice, myTurn } = useContext(GameState)
+  const { nodes, materials, dice, myTurn } = useContext(GameContext)
 
   // Rigid body reference of each die
   const rigidBody = (ref as React.MutableRefObject<RigidBodyApi>).current

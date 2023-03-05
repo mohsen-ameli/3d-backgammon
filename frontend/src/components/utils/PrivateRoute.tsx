@@ -11,7 +11,7 @@ type PrivateRouteProps = { children: React.ReactNode }
  */
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const { user } = useContext(AuthContext)
-  let location = useLocation()
+  const location = useLocation()
 
   if (!user) return <Navigate to="/login" state={{ from: location }} />
 

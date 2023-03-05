@@ -1,19 +1,20 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { ContactShadows, Environment } from "@react-three/drei"
 import { DirectionalLight } from "three"
-// import bell_park_pier_2k from "../assets/env/hdr/bell_park_pier_2k.hdr"
-import { GameState } from "./Game"
+import { GameContext } from "./context/GameContext"
 import { DEFAULT_ENV_MAP_INTENSITY } from "./data/Data"
-import { AuthContext } from "../context/AuthContext"
 import { useLocation } from "react-router-dom"
+import { GameWrapperContext } from "./context/GameWrapperContext"
+
+// import bell_park_pier_2k from "../assets/env/hdr/bell_park_pier_2k.hdr"
 // import { button, useControls } from "leva"
 
 /**
  * Staging for our scene
  */
 const Stage = () => {
-  const { gameMode } = useContext(AuthContext)
-  const { materials } = useContext(GameState)
+  const { gameMode } = useContext(GameWrapperContext)
+  const { materials } = useContext(GameContext)
 
   const directionalLight = useRef<DirectionalLight>(null!)
 

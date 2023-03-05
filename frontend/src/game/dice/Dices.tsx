@@ -2,7 +2,7 @@ import { Html } from "@react-three/drei"
 import { useContext, useEffect, useRef, useState } from "react"
 import Button from "../../components/ui/Button"
 import Dice from "./Dice"
-import { GameState } from "../Game"
+import { GameContext } from "../context/GameContext"
 import { throwDice, throwDicePhysics } from "../utils/ThrowDice"
 import switchPlayers from "../utils/SwitchPlayers"
 import hasMoves from "../utils/HasMoves"
@@ -14,6 +14,7 @@ import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
 import { DiceReadyType } from "../types/Dice.type"
 import { MessgaeType } from "../types/Message.type"
 import { DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../data/Data"
+import { GameWrapperContext } from "../context/GameWrapperContext"
 
 /**
  * This is the container for the two dice.
@@ -30,10 +31,13 @@ const Dices = () => {
     ws,
     toggleZoom,
     dicePhysics,
-  } = useContext(GameState)
+  } = useContext(GameContext)
 
   // Auth context
-  const { user, gameMode } = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
+
+  // GameWrapper
+  const { gameMode } = useContext(GameWrapperContext)
 
   // Refs for the two dice
   const dice1 = useRef<RigidBodyApi>(null!)
@@ -130,18 +134,16 @@ const Dices = () => {
   // Handling the phase changes
   useEffect(() => {
     // User already has dice physics, and it's their turn, and they don't have the numbers on the dice saved
-    // if (phase === "diceRollPhysics") {
-    //   setTimeout(() => {
-    //     if (dicePhysics.current) {
-    //       throwDicePhysics(
-    //         [dice1.current, dice2.current],
-    //         dicePhysics.current.physics!
-    //       )
-    //     }
-    //   }, 1000)
-    //   setShowThrowBtn(false)
-    //   return
-    // }
+    if (phase === "diceRollPhysics") {
+      setTimeout(() => {
+        throwDicePhysics(
+          [dice1.current, dice2.current],
+          dicePhysics.current?.physics!
+        )
+      }, 1000)
+      setShowThrowBtn(false)
+      return
+    }
 
     // If our dice are being synced with the other user
     if (phase === "diceSync" && dicePhysics.current) {

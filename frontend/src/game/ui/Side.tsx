@@ -1,7 +1,7 @@
 import { Html } from "@react-three/drei"
 import gsap, { Power1, Power2 } from "gsap"
 import { useContext, useEffect, useRef, useState } from "react"
-import { GameState } from "../Game"
+import { GameContext } from "../context/GameContext"
 import { PlayersType, UserCheckerType } from "../types/Game.type"
 
 type SideProps = {
@@ -21,7 +21,7 @@ const BASE_TIME = 20
 const GRACE_TIME = 5
 
 const Side = ({ ws, player, color, userChecker, players }: SideProps) => {
-  const { phase } = useContext(GameState)
+  const { phase } = useContext(GameContext)
 
   const [timer, setTimer] = useState(BASE_TIME + 1)
 

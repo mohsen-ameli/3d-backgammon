@@ -5,6 +5,7 @@ import notification from "../utils/Notification"
 import { AuthContext } from "../../context/AuthContext"
 import { BaseUser } from "../../context/BaseUser.type"
 import wsGood from "../utils/wsGood"
+import { GameWrapperContext } from "../../game/context/GameWrapperContext"
 
 type DataType = {
   live_game?: string
@@ -13,9 +14,11 @@ type DataType = {
 }
 
 const useStatus = () => {
+  const { ws } = useContext(AuthContext)
+  const { inGame } = useContext(GameWrapperContext)
+
   const axiosInstance = useAxios()
   const navigate = useNavigate()
-  const { ws, inGame } = useContext(AuthContext)
 
   // Needed for game request notifications
   const showReqNotif = useRef(true)

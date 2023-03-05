@@ -1,6 +1,6 @@
 import { useContext, useLayoutEffect, useRef } from "react"
 import ColumnSide from "./ColumnSide"
-import { GameState } from "../Game"
+import { GameContext } from "../context/GameContext"
 import {
   Quaternion,
   Vector3,
@@ -13,7 +13,7 @@ import {
 } from "three"
 import { COLOUMN_HOVER_COLOR } from "../data/Data"
 import { ThreeEvent, useFrame } from "@react-three/fiber"
-import { AuthContext } from "../../context/AuthContext"
+import { GameWrapperContext } from "../context/GameWrapperContext"
 
 /**
  * The 24 columns on the board, where checkers get dropped in. This component
@@ -21,8 +21,8 @@ import { AuthContext } from "../../context/AuthContext"
  */
 const Columns = () => {
   const { nodes, materials, checkerPicked, newCheckerPosition } =
-    useContext(GameState)
-  const { gameMode } = useContext(AuthContext)
+    useContext(GameContext)
+  const { gameMode } = useContext(GameWrapperContext)
 
   const columns = useRef<Group>(null!)
 

@@ -2,15 +2,16 @@ import { useFrame } from "@react-three/fiber"
 import { CuboidCollider, RigidBody } from "@react-three/rapier"
 import { useContext, useRef } from "react"
 import { Mesh } from "three"
-import { AuthContext } from "../../context/AuthContext"
-import { GameState } from "../Game"
+import { GameContext } from "../context/GameContext"
+import { GameWrapperContext } from "../context/GameWrapperContext"
 
 /**
  * Primary board mesh.
  */
 const Board = () => {
-  const { nodes, materials } = useContext(GameState)
-  const { gameMode } = useContext(AuthContext)
+  const { nodes, materials } = useContext(GameContext)
+  const { gameMode } = useContext(GameWrapperContext)
+
   const board = useRef<Mesh>(null!)
   const boardHinge = useRef<Mesh>(null!)
 

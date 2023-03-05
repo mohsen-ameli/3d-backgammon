@@ -5,18 +5,17 @@ import { useNavigate } from "react-router-dom"
 import Button from "../../components/ui/Button"
 import toCapitalize from "../../components/utils/ToCapitalize"
 import { DEFAULT_CHECKER_POSITIONS } from "../data/Data"
-import { GameState } from "../Game"
-import { AuthContext } from "../../context/AuthContext"
+import { GameContext } from "../context/GameContext"
 import WinnerOverlay from "./WinnerOverlay"
 import Side from "./Side"
 import UserTurn from "./UserTurn"
 import notification from "../../components/utils/Notification"
+import { GameWrapperContext } from "../context/GameWrapperContext"
 
 /**
  * UI elements to control the game flow. Mostly consists of normal HTML.
  */
 const UI = () => {
-  const { inGame, setInGame, gameMode } = useContext(AuthContext)
   const {
     players,
     winner,
@@ -28,7 +27,10 @@ const UI = () => {
     resetOrbit,
     dice,
     ws,
-  } = useContext(GameState)
+  } = useContext(GameContext)
+
+  const { inGame, setInGame, gameMode } = useContext(GameWrapperContext)
+
   const navigate = useNavigate()
 
   const [winner_, setWinner] = useState<string | undefined>()

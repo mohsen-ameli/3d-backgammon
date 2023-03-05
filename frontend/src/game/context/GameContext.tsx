@@ -1,33 +1,35 @@
 import { useGLTF } from "@react-three/drei"
 import { useEffect, createContext, useContext, useRef, useState } from "react"
 import { Debug, Physics } from "@react-three/rapier"
-import { GLTFResult } from "./types/GLTFResult.type"
+import { GLTFResult } from "../types/GLTFResult.type"
 
-import Dices from "./dice/Dices"
-import UI from "./ui/UI"
-import Board from "./board/Board"
-import Columns from "./board/Columns"
-import Checkers from "./checkers/Checkers"
-import Controls from "./Controls"
-import * as types from "./types/Game.type"
-import { DEFAULT_CHECKER_POSITIONS } from "./data/Data"
-import { AuthContext } from "../context/AuthContext"
-import notification from "../components/utils/Notification"
-import toCapitalize from "../components/utils/ToCapitalize"
-import getServerUrl from "../components/utils/getServerUrl"
-import gltfModel from "../assets/models/models.glb"
-import userSwitch from "../assets/sounds/user-switch.mp3"
-import useViewPort from "./utils/useViewPort"
-import { CheckerType } from "./types/Checker.type"
-import { DicePhysics, DiceMoveType } from "./types/Dice.type"
-import Stage from "./Stage"
-import switchPlayers from "./utils/SwitchPlayers"
+import Dices from "../dice/Dices"
+import UI from "../ui/UI"
+import Board from "../board/Board"
+import Columns from "../board/Columns"
+import Checkers from "../checkers/Checkers"
+import Controls from "../Controls"
+import * as types from "../types/Game.type"
+import { DEFAULT_CHECKER_POSITIONS } from "../data/Data"
+import { AuthContext } from "../../context/AuthContext"
+import notification from "../../components/utils/Notification"
+import toCapitalize from "../../components/utils/ToCapitalize"
+import getServerUrl from "../../components/utils/getServerUrl"
+import gltfModel from "../../assets/models/models.glb"
+import userSwitch from "../../assets/sounds/user-switch.mp3"
+import useViewPort from "../utils/useViewPort"
+import { CheckerType } from "../types/Checker.type"
+import { DicePhysics, DiceMoveType } from "../types/Dice.type"
+import Stage from "../Stage"
+import switchPlayers from "../utils/SwitchPlayers"
+import { GameWrapperContext } from "./GameWrapperContext"
 
 // The grandious game state. This is where the magic is held in place.
-export const GameState = createContext({} as types.GameStateType)
+export const GameContext = createContext({} as types.GameContextType)
 
-const Game = () => {
-  const { user, inGame, gameMode } = useContext(AuthContext)
+const GameContextProvider = () => {
+  const { user } = useContext(AuthContext)
+  const { inGame, gameMode } = useContext(GameWrapperContext)
 
   // View port
   useViewPort()
@@ -161,19 +163,21 @@ const Game = () => {
 
     // Setting the phase to initial
     if (data.initial && players.current && user) {
-      // console.log(data.initial_physics)
-
       // If user has, for some reason, thrown the dice, then maybe left the page
-      // and come back, and the dice numbers weren't detected, then we want to
-      // throw the dice for them
-      // if (data.initial_physics && turn && dice.current.moves === 0) {
-      //   setPhase("diceRollPhysics")
-      //   dicePhysics.current = data.initial_physics
-      // } else {
-      //   setPhase("initial")
-      // }
-
-      setPhase("initial")
+      // and the dice numbers weren't detected in time, and then they come back
+      // then we want to throw the dice for them
+      if (
+        data.initial_physics &&
+        Object.keys(data.initial_physics).length !== 0 &&
+        data.initial_physics.user.id === user.user_id &&
+        turn &&
+        dice.current.moves === 0
+      ) {
+        setPhase("diceRollPhysics")
+        dicePhysics.current = data.initial_physics
+      } else {
+        setPhase("initial")
+      }
 
       // Filling the players reference
       const myColor = data.white === user.user_id ? "white" : "black"
@@ -265,7 +269,7 @@ const Game = () => {
   }
 
   return (
-    <GameState.Provider value={value}>
+    <GameContext.Provider value={value}>
       <Stage />
 
       <Controls />
@@ -282,10 +286,10 @@ const Game = () => {
         {inGame && <Dices />}
         {inGame && <Checkers />}
       </Physics>
-    </GameState.Provider>
+    </GameContext.Provider>
   )
 }
 
 useGLTF.preload(gltfModel)
 
-export default Game
+export default GameContextProvider

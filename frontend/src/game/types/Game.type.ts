@@ -51,7 +51,7 @@ export type PhaseType =
   | "spectating"
   | undefined
 
-export type GameStateType = {
+export type GameContextType = {
   nodes: NodeType
   materials: MaterialType
   players: React.MutableRefObject<PlayersType>

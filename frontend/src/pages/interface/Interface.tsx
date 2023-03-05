@@ -40,10 +40,10 @@ const Interface = () => {
       </h1>
 
       <div className="flex justify-center gap-x-8">
-        {/* <Link to="/play-random">
+        {/* <Link to="/game/play-random">
           <Button>Play With a Random</Button>
         </Link> */}
-        <Link to="/pass-and-play">
+        <Link to="/game/pass-and-play">
           <Button>Pass & Play</Button>
         </Link>
       </div>

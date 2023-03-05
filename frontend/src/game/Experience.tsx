@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber"
-import Game from "./Game"
+import Game from "./context/GameContext"
 import { Suspense, useEffect, useState } from "react"
 import useLoadingScreen from "../components/hooks/useLoadingScreen"
 
@@ -12,7 +12,7 @@ const Experience = () => {
   return (
     <Canvas
       camera={{
-        position: [0, 3.5, 0],
+        position: [0, 2.52, 0],
         fov: 45,
         near: 0.2,
         far: 10,

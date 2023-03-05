@@ -1,7 +1,7 @@
 import { useContext, useRef } from "react"
 import { COLOUMN_HOVER_COLOR } from "../data/Data"
 import { MeshStandardMaterial } from "three"
-import { GameState } from "../Game"
+import { GameContext } from "../context/GameContext"
 import { useMemo } from "react"
 import Endgame from "../utils/Endgame"
 import toCapitalize from "../../components/utils/ToCapitalize"
@@ -18,7 +18,7 @@ const ColumnSide = ({ node }: NodeType) => {
     newCheckerPosition,
     checkers,
     userChecker,
-  } = useContext(GameState)
+  } = useContext(GameContext)
 
   const blackOrWhite = useRef<UserCheckerType>()
 
