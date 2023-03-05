@@ -1,7 +1,8 @@
 import { Canvas } from "@react-three/fiber"
-import Game from "./context/GameContext"
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useState } from "react"
 import useLoadingScreen from "../components/hooks/useLoadingScreen"
+import GameContextProvider from "./context/GameContext"
+import { DEFAULT_CAMERA_POSITION } from "./data/Data"
 
 const Experience = () => {
   const [zIndex, setZIndex] = useState(20)
@@ -12,7 +13,11 @@ const Experience = () => {
   return (
     <Canvas
       camera={{
-        position: [0, 2.52, 0],
+        position: [
+          DEFAULT_CAMERA_POSITION.x,
+          DEFAULT_CAMERA_POSITION.y,
+          DEFAULT_CAMERA_POSITION.z,
+        ],
         fov: 45,
         near: 0.2,
         far: 10,
@@ -21,7 +26,7 @@ const Experience = () => {
       style={{ zIndex: zIndex }}
     >
       <Suspense fallback={Loader}>
-        <Game />
+        <GameContextProvider />
       </Suspense>
     </Canvas>
   )

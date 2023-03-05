@@ -29,7 +29,6 @@ const Dices = () => {
     userChecker,
     myTurn,
     ws,
-    toggleZoom,
     dicePhysics,
   } = useContext(GameContext)
 
@@ -37,7 +36,12 @@ const Dices = () => {
   const { user } = useContext(AuthContext)
 
   // GameWrapper
-  const { gameMode } = useContext(GameWrapperContext)
+  const {
+    gameMode,
+    toggleZoom,
+    throwDice: throwDiceContext,
+    setShowThrow,
+  } = useContext(GameWrapperContext)
 
   // Refs for the two dice
   const dice1 = useRef<RigidBodyApi>(null!)
@@ -79,19 +83,37 @@ const Dices = () => {
     setShowThrowBtn(false)
 
     const physics = throwDice([dice1.current, dice2.current])
+
+    if (!ws || !user) return
+
     const context = {
       physics: true,
       user: {
         user: {
-          id: user?.user_id,
-          name: user?.username,
+          id: user.user_id,
+          name: user.username,
           color: userChecker.current,
         },
         physics,
       },
     }
-    ws?.send(JSON.stringify(context))
+    ws.send(JSON.stringify(context))
   }
+
+  // Saving the dices functions to the gameWrapperContext
+  useEffect(() => {
+    throwDiceContext.current = throwDice_
+  }, [])
+
+  useEffect(() => {
+    if (showThrowBtn && sleeping && sleeping.dice1 && sleeping.dice2) {
+      setShowThrow(true)
+    } else if (showThrowBtn) {
+      setShowThrow(false)
+    } else {
+      setShowThrow(null)
+    }
+  }, [showThrowBtn, sleeping])
 
   // Handling the dice throws
   useEffect(() => {
@@ -194,19 +216,6 @@ const Dices = () => {
           onPointerLeave={() => toggleZoom.current(true)}
           className="flex h-[125px] w-[150px] flex-col gap-y-4"
         >
-          {/* Throwing the dice */}
-          {showThrowBtn && sleeping && sleeping.dice1 && sleeping.dice2 ? (
-            <Button className="w-full text-white" onClick={throwDice_}>
-              Throw Dice
-            </Button>
-          ) : (
-            showThrowBtn && (
-              <Button className="w-full cursor-default break-all text-white">
-                Loading dice...
-              </Button>
-            )
-          )}
-
           {/* In game chat */}
           {ws && (
             <InGameChat

@@ -1,13 +1,13 @@
 import gsap, { Power4 } from "gsap"
 import { useContext, useEffect, useRef } from "react"
-import { GameContext } from "./context/GameContext"
 import { OrbitControls } from "@react-three/drei"
 import {
-  DEFAULT_ORBIT_POSITION,
+  DEFAULT_CAMERA_POSITION,
   DEFAULT_ORBIT_QUATERNION,
   DEFAULT_ORBIT_TARGET,
 } from "./data/Data"
 import { OrbitControls as OrbitControlType } from "three-stdlib/controls/OrbitControls"
+import { GameWrapperContext } from "./context/GameWrapperContext"
 
 type OrbitType = {
   orbitEnabled: {
@@ -22,7 +22,8 @@ type OrbitType = {
  * the zoom.
  */
 const Controls = () => {
-  const { resetOrbit, toggleControls, toggleZoom } = useContext(GameContext)
+  const { resetOrbit, toggleControls, toggleZoom } =
+    useContext(GameWrapperContext)
 
   const orbitRef = useRef<OrbitControlType & OrbitType>(null!)
 
@@ -77,7 +78,7 @@ const Controls = () => {
 
     // Snapping back to original camera position
     gsap.to(orbitRef.current.object.position, {
-      ...DEFAULT_ORBIT_POSITION,
+      ...DEFAULT_CAMERA_POSITION,
       duration,
       ease: Power4.easeInOut,
     })

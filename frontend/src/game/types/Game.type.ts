@@ -36,8 +36,6 @@ export type NodeType = Record<
 >
 export type MaterialType = Record<string, MeshStandardMaterial>
 
-export type ToggleZoomType = (newValue: boolean) => void
-
 export type PhaseType =
   | "checkerMove"
   | "checkerMoveAgain"
@@ -66,7 +64,4 @@ export type GameContextType = {
   ws: WebSocket | undefined
   phase: PhaseType
   setPhase: React.Dispatch<React.SetStateAction<PhaseType>>
-  toggleControls: React.MutableRefObject<(ui?: boolean, drag?: boolean) => void>
-  resetOrbit: React.MutableRefObject<() => void>
-  toggleZoom: React.MutableRefObject<ToggleZoomType>
 }

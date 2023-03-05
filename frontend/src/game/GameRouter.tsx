@@ -5,13 +5,14 @@ import GameWrapperProvider from "./context/GameWrapperContext"
 import FriendGame from "./modes/FriendGame"
 import PassAndPlay from "./modes/PassAndPlay"
 import PlayRandom from "./modes/PlayRandom"
-import Overlay from "./ui/Overlay"
+import Layout from "./ui/Layout"
 
 const GameRouter = () => {
   return (
     <GameWrapperProvider>
       <Experience />
-      {/* <Overlay /> */}
+      <Layout />
+
       <Routes>
         <Route
           path="/game/:gameId"

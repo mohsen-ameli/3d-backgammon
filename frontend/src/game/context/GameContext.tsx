@@ -34,11 +34,6 @@ const GameContextProvider = () => {
   // View port
   useViewPort()
 
-  // Orbit control functions. These are defined in the Controls component
-  const resetOrbit = useRef(() => null)
-  const toggleControls = useRef(() => null)
-  const toggleZoom = useRef(() => null)
-
   // Dice physics
   const dicePhysics = useRef<DicePhysics>()
 
@@ -263,9 +258,6 @@ const GameContextProvider = () => {
     ws,
     phase,
     setPhase,
-    toggleControls,
-    resetOrbit,
-    toggleZoom,
   }
 
   return (

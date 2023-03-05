@@ -16,20 +16,10 @@ import { GameWrapperContext } from "../context/GameWrapperContext"
  * UI elements to control the game flow. Mostly consists of normal HTML.
  */
 const UI = () => {
-  const {
-    players,
-    winner,
-    userChecker,
-    toggleControls,
-    phase,
-    setPhase,
-    checkers,
-    resetOrbit,
-    dice,
-    ws,
-  } = useContext(GameContext)
+  const { players, winner, userChecker, phase, setPhase, checkers, dice, ws } =
+    useContext(GameContext)
 
-  const { inGame, setInGame, gameMode } = useContext(GameWrapperContext)
+  const { inGame, setInGame, gameMode, resign } = useContext(GameWrapperContext)
 
   const navigate = useNavigate()
 
@@ -50,7 +40,7 @@ const UI = () => {
   }
 
   // User is resigning.. what a loser
-  const resign = () => {
+  const resign_ = () => {
     const msg = "Confirm resignation?"
     const context = JSON.stringify({
       resign: true,
@@ -59,6 +49,11 @@ const UI = () => {
     })
     notification(msg, "resign", undefined, undefined, () => ws?.send(context))
   }
+
+  // Saving the ui functions to the gameWrapperContext
+  useEffect(() => {
+    resign.current = resign_
+  }, [])
 
   // Checking for winners
   useEffect(() => {
@@ -94,33 +89,6 @@ const UI = () => {
       <>
         <Html transform scale={0.2} position={[-1.85, 0.5, 0]} sprite>
           <div className="relative flex h-[200px] w-[140px] select-none flex-col items-center gap-y-4">
-            {/* Go back to home page */}
-            {ws ? (
-              <Button className="w-full text-white" onClick={resign}>
-                Resign
-              </Button>
-            ) : (
-              <Button
-                className="w-full text-white"
-                onClick={() => navigate("/")}
-              >
-                Go back home
-              </Button>
-            )}
-
-            {/* Resetting the controls */}
-            <Button className="w-full text-white" onClick={resetOrbit.current}>
-              Reset controls
-            </Button>
-
-            {/* Toggling orbit controls */}
-            <Button
-              className="w-full text-white"
-              onClick={() => toggleControls.current(true)}
-            >
-              Lock controls
-            </Button>
-
             {/* Who's playing and with what dice nums */}
             <UserTurn userChecker={userChecker.current!} dice={dice.current!} />
           </div>

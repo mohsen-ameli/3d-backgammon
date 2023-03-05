@@ -33,9 +33,9 @@ export const BOARD_W = 1.17148 - CHECKER_HALF
 export const BOARD_H = 0.855
 
 // Default orbit controls
-export const DEFAULT_ORBIT_POSITION = {
+export const DEFAULT_CAMERA_POSITION = {
   x: 0,
-  y: 3.5,
+  y: 2.52,
   z: 0,
 }
 
