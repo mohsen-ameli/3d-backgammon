@@ -13,16 +13,14 @@ import {
 } from "three"
 import { COLOUMN_HOVER_COLOR } from "../data/Data"
 import { ThreeEvent, useFrame } from "@react-three/fiber"
-import { GameWrapperContext } from "../context/GameWrapperContext"
 
 /**
  * The 24 columns on the board, where checkers get dropped in. This component
  * contains logic for changing the column checkers colour when user hovers over it.
  */
 const Columns = () => {
-  const { nodes, materials, checkerPicked, newCheckerPosition } =
+  const { nodes, materials, checkerPicked, newCheckerPosition, gameMode } =
     useContext(GameContext)
-  const { gameMode } = useContext(GameWrapperContext)
 
   const columns = useRef<Group>(null!)
 
@@ -47,7 +45,7 @@ const Columns = () => {
 
     for (let i = 0; i < count; i++) {
       const matrix = new Matrix4()
-      const position = nodes[`col_${i + 1}`].position
+      const position = nodes?.[`col_${i + 1}`].position
 
       if (i >= 12) {
         const rotated = new Euler(0, Math.PI, 0)

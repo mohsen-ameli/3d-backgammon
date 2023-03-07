@@ -20,7 +20,6 @@ body,
   body,
   #root {
     /* pointer-events: none; */
-    user-select: none;
   }
 }
 
@@ -37,16 +36,16 @@ canvas {
   overflow-y: auto;
 }
 .custom-scroll-bar::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 .custom-scroll-bar::-webkit-scrollbar-track {
-  background: #aec2da;
-  border-radius: 10px;
+  background: #dacbae;
+  border-radius: 5px;
 }
 .custom-scroll-bar::-webkit-scrollbar-thumb {
-  background: #2150a2;
-  border-radius: 10px;
+  background: #a26621;
+  border-radius: 5px;
 }
 .custom-scroll-bar::-webkit-scrollbar-thumb:hover {
-  background: rgb(17, 48, 102);
+  background: #633b0e;
 }

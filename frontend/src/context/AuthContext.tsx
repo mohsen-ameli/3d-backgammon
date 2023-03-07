@@ -7,14 +7,14 @@ import { UserType } from "./User.type"
 import { TokenType } from "./Token.type"
 import { ErrorType } from "./Error.type"
 import { AuthContextType } from "./Context.type"
-import { RChildren } from "../components/children.type"
+import { Children } from "../components/children.type"
 
 export const AuthContext = createContext({} as AuthContextType)
 
 /**
  * Auth provider for the entire app. Responsible for logging users in, and out.
  */
-const AuthContextProvider = ({ children }: RChildren) => {
+const AuthContextProvider = ({ children }: Children) => {
   // Navigate
   const navigate = useNavigate()
 

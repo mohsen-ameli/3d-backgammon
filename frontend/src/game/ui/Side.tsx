@@ -1,5 +1,5 @@
 import { Html } from "@react-three/drei"
-import gsap, { Power1, Power2 } from "gsap"
+import gsap, { Power1 } from "gsap"
 import { useContext, useEffect, useRef, useState } from "react"
 import { GameContext } from "../context/GameContext"
 import { PlayersType, UserCheckerType } from "../types/Game.type"

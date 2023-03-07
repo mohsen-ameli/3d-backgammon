@@ -1,41 +1,65 @@
+import { createContext, useContext, useEffect, useRef, useState } from "react"
 import { useGLTF } from "@react-three/drei"
-import { useEffect, createContext, useContext, useRef, useState } from "react"
-import { Debug, Physics } from "@react-three/rapier"
-import { GLTFResult } from "../types/GLTFResult.type"
 
-import Dices from "../dice/Dices"
-import UI from "../ui/UI"
-import Board from "../board/Board"
-import Columns from "../board/Columns"
-import Checkers from "../checkers/Checkers"
-import Controls from "../Controls"
+import { Children } from "../../components/children.type"
+import { DiceMoveType, DicePhysics } from "../types/Dice.type"
 import * as types from "../types/Game.type"
-import { DEFAULT_CHECKER_POSITIONS } from "../data/Data"
+import { CheckerType } from "../types/Checker.type"
+import { GLTFResult } from "../types/GLTFResult.type"
+import getServerUrl from "../../components/utils/getServerUrl"
 import { AuthContext } from "../../context/AuthContext"
+import { DEFAULT_CHECKER_POSITIONS } from "../data/Data"
+import switchPlayers from "../utils/SwitchPlayers"
 import notification from "../../components/utils/Notification"
 import toCapitalize from "../../components/utils/ToCapitalize"
-import getServerUrl from "../../components/utils/getServerUrl"
+import userSwitchAudio from "../../assets/sounds/user-switch.mp3"
 import gltfModel from "../../assets/models/models.glb"
-import userSwitch from "../../assets/sounds/user-switch.mp3"
-import useViewPort from "../utils/useViewPort"
-import { CheckerType } from "../types/Checker.type"
-import { DicePhysics, DiceMoveType } from "../types/Dice.type"
-import Stage from "../Stage"
-import switchPlayers from "../utils/SwitchPlayers"
-import { GameWrapperContext } from "./GameWrapperContext"
 
 // The grandious game state. This is where the magic is held in place.
 export const GameContext = createContext({} as types.GameContextType)
 
-const GameContextProvider = () => {
+const GameContextProvider = ({ children }: Children) => {
   const { user } = useContext(AuthContext)
-  const { inGame, gameMode } = useContext(GameWrapperContext)
 
-  // View port
-  useViewPort()
+  // Load the models
+  const { nodes, materials } = useGLTF(gltfModel) as GLTFResult
 
-  // Dice physics
-  const dicePhysics = useRef<DicePhysics>()
+  /**
+   * Functions
+   */
+
+  // Toggles orbit controls. Defined in the Controls component
+  const toggleControls = useRef(() => null)
+
+  // Resets orbit controls. Defined in the Controls component
+  const resetOrbit = useRef(() => null)
+
+  // Toggles the zoom on orbit controls. Defined in the Controls component
+  const toggleZoom = useRef(() => null)
+
+  // Throws the dice onto the board. Defined in Dices
+  const throwDice = useRef(() => null)
+
+  // User is resigning.. what a loser
+  const resign = () => {
+    const msg = "Confirm resignation?"
+    const context = JSON.stringify({
+      resign: true,
+      winner: players.current.enemy.id,
+      resigner: players.current.me.id,
+    })
+    notification(msg, "resign", undefined, undefined, () => ws?.send(context))
+  }
+
+  /**
+   * Game refs
+   */
+
+  // Game mode
+  const gameMode = useRef<types.GameModeType>()
+
+  // The current checker color that is being moved
+  const userChecker = useRef<types.UserCheckerType>()
 
   // Current players (Only set in a live game)
   const players = useRef<types.PlayersType>({
@@ -43,14 +67,17 @@ const GameContextProvider = () => {
     enemy: { id: 0, name: "", color: "white" },
   })
 
+  // The current checker color that is being moved
+  const winner = useRef<types.PlayerType>()
+
   // The numbers on the dice, and how many times the user is allowed to move
   const dice = useRef<DiceMoveType>({ dice1: 0, dice2: 0, moves: 0 })
 
-  // The current checker color that is being moved
-  const userChecker = useRef<types.UserCheckerType>()
+  // Dice physics
+  const dicePhysics = useRef<DicePhysics>()
 
-  // The current checker color that is being moved
-  const winner = useRef<types.PlayerType>()
+  // All of the checkers' default positions
+  const checkers = useRef<CheckerType[]>(null!)
 
   // If the checker has been picked up or not
   const checkerPicked = useRef(false)
@@ -58,23 +85,27 @@ const GameContextProvider = () => {
   // The new position of the checker (in checkers used for calculating the moved variable)
   const newCheckerPosition = useRef<number | undefined>()
 
-  // All of the checkers' default positions
-  const checkers = useRef<CheckerType[]>(null!)
-
-  // The current phase of the game
-  const [phase, setPhase] = useState<types.PhaseType>()
-
-  // Game websocket
-  const [ws, setWs] = useState<WebSocket>()
+  /**
+   * States
+   */
 
   // Boolean to keep track of if it's the user's turn or not
   const [myTurn, setMyTurn] = useState(true)
 
-  // Audio to play when users switch
-  const [audio] = useState(() => new Audio(userSwitch))
+  // Game websocket
+  const [ws, setWs] = useState<WebSocket>()
 
-  // Load the models
-  const { nodes, materials } = useGLTF(gltfModel) as GLTFResult
+  // Whether the user is in game
+  const [inGame, setInGame] = useState(false)
+
+  // Whether to show the throw button
+  const [showThrow, setShowThrow] = useState<boolean | null>(false)
+
+  // The current phase of the game
+  const [phase, setPhase] = useState<types.PhaseType>()
+
+  // Audio to play when users switch
+  const [audio] = useState(() => new Audio(userSwitchAudio))
 
   // Plays the audio switching users
   const playAudio = () => audio.play().catch(() => {})
@@ -85,6 +116,8 @@ const GameContextProvider = () => {
   // Backend has sent updates
   const onMessage = (e: MessageEvent) => {
     const data: types.GameDataTypes = JSON.parse(e.data)
+
+    // console.log(data)
 
     // If there are too many sessions active
     if (data.too_many_users) {
@@ -115,6 +148,7 @@ const GameContextProvider = () => {
       userChecker.current = undefined
       setPhase("ended")
       setWs(undefined)
+      setInGame(false)
 
       return
     }
@@ -130,12 +164,11 @@ const GameContextProvider = () => {
     // There are two ways to this. Either the user who is spectating is getting the other user's dice phycis info,
     // or it's the current user, who's getting it. If it's the current user, then return immidietly,
     if (data.physics) {
-      // If the current user has not thrown the dice (aka it's the other user's turn)
-      if (user?.user_id !== data.physics.user.id) {
-        // Throw the dice for the other user
-        setPhase("diceSync")
-        dicePhysics.current = data.physics
-      }
+      if (user?.user_id === data.physics.user.id) return
+
+      // Throw the dice for the other user
+      setPhase("diceSync")
+      dicePhysics.current = data.physics
       return
     }
 
@@ -244,42 +277,40 @@ const GameContextProvider = () => {
 
   // Game state values
   const value = {
-    nodes,
-    materials,
+    // Functions
+    toggleControls,
+    resetOrbit,
+    toggleZoom,
+    resign,
+    throwDice,
+
+    // Refs
+    gameMode,
+    userChecker,
     players,
     winner,
     dice,
-    userChecker,
-    myTurn,
+    dicePhysics,
     checkers,
     checkerPicked,
-    dicePhysics,
     newCheckerPosition,
+
+    // States
+    myTurn,
     ws,
+    inGame,
+    setInGame,
+    showThrow,
+    setShowThrow,
     phase,
     setPhase,
+
+    // Other
+    nodes,
+    materials,
   }
 
-  return (
-    <GameContext.Provider value={value}>
-      <Stage />
-
-      <Controls />
-
-      <UI />
-
-      <Columns />
-
-      <Physics>
-        {/* <Debug /> */}
-
-        <Board />
-
-        {inGame && <Dices />}
-        {inGame && <Checkers />}
-      </Physics>
-    </GameContext.Provider>
-  )
+  return <GameContext.Provider value={value}>{children}</GameContext.Provider>
 }
 
 useGLTF.preload(gltfModel)

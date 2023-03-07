@@ -1,20 +1,14 @@
-import { Html } from "@react-three/drei"
-import { useContext, useEffect, useRef, useState } from "react"
-import Button from "../../components/ui/Button"
+import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import Dice from "./Dice"
 import { GameContext } from "../context/GameContext"
 import { throwDice, throwDicePhysics } from "../utils/ThrowDice"
 import switchPlayers from "../utils/SwitchPlayers"
 import hasMoves from "../utils/HasMoves"
 import notification from "../../components/utils/Notification"
-import InGameChat from "../ui/InGameChat"
-import useFetch from "../../components/hooks/useFetch"
-import { AuthContext } from "../../context/AuthContext"
 import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
 import { DiceReadyType } from "../types/Dice.type"
-import { MessgaeType } from "../types/Message.type"
 import { DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../data/Data"
-import { GameWrapperContext } from "../context/GameWrapperContext"
+import wsGood from "../../components/utils/wsGood"
 
 /**
  * This is the container for the two dice.
@@ -30,18 +24,11 @@ const Dices = () => {
     myTurn,
     ws,
     dicePhysics,
-  } = useContext(GameContext)
-
-  // Auth context
-  const { user } = useContext(AuthContext)
-
-  // GameWrapper
-  const {
     gameMode,
-    toggleZoom,
     throwDice: throwDiceContext,
     setShowThrow,
-  } = useContext(GameWrapperContext)
+    players,
+  } = useContext(GameContext)
 
   // Refs for the two dice
   const dice1 = useRef<RigidBodyApi>(null!)
@@ -62,10 +49,6 @@ const Dices = () => {
   // State to show the "throw dice" button
   const [showThrowBtn, setShowThrowBtn] = useState(false)
 
-  // In game messages
-  const { data } = useFetch("/api/game/get-in-game-messages/")
-  const messages: MessgaeType[] = data
-
   // Updating backend live game
   const updateLiveGame = () => {
     const context = {
@@ -78,44 +61,34 @@ const Dices = () => {
   }
 
   // Function to throw the dice
-  const throwDice_ = () => {
-    toggleZoom.current(true)
+  throwDiceContext.current = useCallback(() => {
     setShowThrowBtn(false)
 
     const physics = throwDice([dice1.current, dice2.current])
-
-    if (!ws || !user) return
 
     const context = {
       physics: true,
       user: {
         user: {
-          id: user.user_id,
-          name: user.username,
+          id: players.current.me.id,
+          name: players.current.me.name,
           color: userChecker.current,
         },
         physics,
       },
     }
-    ws.send(JSON.stringify(context))
-  }
 
-  // Saving the dices functions to the gameWrapperContext
-  useEffect(() => {
-    throwDiceContext.current = throwDice_
-  }, [])
+    if (ws && wsGood(ws)) ws.send(JSON.stringify(context))
+  }, [ws])
 
+  // Saving the show throw button in game context
   useEffect(() => {
-    if (showThrowBtn && sleeping && sleeping.dice1 && sleeping.dice2) {
-      setShowThrow(true)
-    } else if (showThrowBtn) {
-      setShowThrow(false)
-    } else {
-      setShowThrow(null)
-    }
+    if (showThrowBtn && sleeping.dice1 && sleeping.dice2) setShowThrow(true)
+    else if (showThrowBtn) setShowThrow(false)
+    else setShowThrow(null)
   }, [showThrowBtn, sleeping])
 
-  // Handling the dice throws
+  // Game logic: Handling the dice throws
   useEffect(() => {
     // Dices have not finished throwing
     if (!finishedThrow || !finishedThrow.dice1 || !finishedThrow.dice2) return
@@ -144,7 +117,11 @@ const Dices = () => {
     }
 
     // If the dice numbers match, user can move 4 times, otherwise 2
-    if (dice.current.moves === 0)
+    if (
+      dice.current.moves === 0 &&
+      dice.current.dice1 !== 0 &&
+      dice.current.dice2 !== 0
+    )
       dice.current.moves = dice.current.dice1 === dice.current.dice2 ? 4 : 2
 
     // Updating the backend
@@ -153,7 +130,7 @@ const Dices = () => {
     setPhase("checkerMove")
   }, [finishedThrow])
 
-  // Handling the phase changes
+  // Game logic: Handling the phase changes
   useEffect(() => {
     // User already has dice physics, and it's their turn, and they don't have the numbers on the dice saved
     if (phase === "diceRollPhysics") {
@@ -204,30 +181,6 @@ const Dices = () => {
 
   return (
     <>
-      <Html
-        as="div"
-        transform
-        scale={0.2}
-        position={[1.75, 0.5, ws ? -0.25 : 0]}
-        sprite
-      >
-        <div
-          onPointerEnter={() => toggleZoom.current(false)}
-          onPointerLeave={() => toggleZoom.current(true)}
-          className="flex h-[125px] w-[150px] flex-col gap-y-4"
-        >
-          {/* In game chat */}
-          {ws && (
-            <InGameChat
-              ws={ws}
-              toggleZoom={toggleZoom.current}
-              messages={messages}
-              user={user?.username!}
-            />
-          )}
-        </div>
-      </Html>
-
       {/* Dice Holder */}
       <CuboidCollider args={[0.5, 0.1, 0.5]} position={[0, 0.6, 2]} />
 

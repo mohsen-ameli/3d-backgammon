@@ -1,10 +1,8 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { ContactShadows, Environment } from "@react-three/drei"
 import { DirectionalLight } from "three"
-import { GameContext } from "./context/GameContext"
 import { DEFAULT_ENV_MAP_INTENSITY } from "./data/Data"
-import { useLocation } from "react-router-dom"
-import { GameWrapperContext } from "./context/GameWrapperContext"
+import { GameContext } from "./context/GameContext"
 
 // import bell_park_pier_2k from "../assets/env/hdr/bell_park_pier_2k.hdr"
 // import { button, useControls } from "leva"
@@ -13,19 +11,9 @@ import { GameWrapperContext } from "./context/GameWrapperContext"
  * Staging for our scene
  */
 const Stage = () => {
-  const { gameMode } = useContext(GameWrapperContext)
-  const { materials } = useContext(GameContext)
+  const { materials, inGame } = useContext(GameContext)
 
   const directionalLight = useRef<DirectionalLight>(null!)
-
-  const location = useLocation()
-  const [contactShadows, setContactShadows] = useState<boolean>(
-    gameMode.current ? true : false
-  )
-
-  useEffect(() => {
-    setContactShadows(gameMode.current ? true : false)
-  }, [location])
 
   const [envMapIntensity, setEnvMapIntensity] = useState<number>(
     DEFAULT_ENV_MAP_INTENSITY
@@ -120,11 +108,8 @@ const Stage = () => {
 
   return (
     <>
-      {/* Performance monitor */}
-      {/* <Perf position="top-left" /> */}
-
       {/* Shadows */}
-      {contactShadows && (
+      {inGame && (
         <ContactShadows
           position={[0, -0.05, 0]}
           scale={5}

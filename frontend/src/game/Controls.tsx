@@ -1,5 +1,5 @@
 import gsap, { Power4 } from "gsap"
-import { useContext, useEffect, useRef } from "react"
+import { useCallback, useContext, useEffect, useRef } from "react"
 import { OrbitControls } from "@react-three/drei"
 import {
   DEFAULT_CAMERA_POSITION,
@@ -7,7 +7,7 @@ import {
   DEFAULT_ORBIT_TARGET,
 } from "./data/Data"
 import { OrbitControls as OrbitControlType } from "three-stdlib/controls/OrbitControls"
-import { GameWrapperContext } from "./context/GameWrapperContext"
+import { GameContext } from "./context/GameContext"
 
 type OrbitType = {
   orbitEnabled: {
@@ -22,17 +22,11 @@ type OrbitType = {
  * the zoom.
  */
 const Controls = () => {
-  const { resetOrbit, toggleControls, toggleZoom } =
-    useContext(GameWrapperContext)
+  const { resetOrbit, toggleControls, toggleZoom } = useContext(GameContext)
 
   const orbitRef = useRef<OrbitControlType & OrbitType>(null!)
 
   useEffect(() => {
-    // Setting the functions used in the game state
-    resetOrbit.current = resetOrbit_
-    toggleControls.current = toggleControls_
-    toggleZoom.current = toggleZoom_
-
     // Default enabled values
     orbitRef.current.orbitEnabled = {
       enabled: true,
@@ -44,34 +38,37 @@ const Controls = () => {
   }, [])
 
   // Function to toggle orbit controls
-  const toggleControls_ = (ui: boolean = false, drag: boolean = false) => {
-    const changes = {
-      enabled: !orbitRef.current.orbitEnabled.enabled,
-    } as {
-      enabled: boolean
-      changable: boolean
-    }
+  toggleControls.current = useCallback(
+    (ui: boolean = false, drag: boolean = false) => {
+      const changes = {
+        enabled: !orbitRef.current.orbitEnabled.enabled,
+      } as {
+        enabled: boolean
+        changable: boolean
+      }
 
-    // If we're changing the controls from the UI component
-    if (ui) changes.changable = !orbitRef.current.orbitEnabled.changable
-    // If we're changing the controls from the checker component
-    else if (drag) {
-      if (!orbitRef.current.orbitEnabled.enabled) return
-      changes.changable = orbitRef.current.orbitEnabled.changable
-    }
+      // If we're changing the controls from the UI component
+      if (ui) changes.changable = !orbitRef.current.orbitEnabled.changable
+      // If we're changing the controls from the checker component
+      else if (drag) {
+        if (!orbitRef.current.orbitEnabled.enabled) return
+        changes.changable = orbitRef.current.orbitEnabled.changable
+      }
 
-    // Just toggling the controls
-    else if (orbitRef.current.orbitEnabled.changable)
-      changes.changable = orbitRef.current.orbitEnabled.changable
+      // Just toggling the controls
+      else if (orbitRef.current.orbitEnabled.changable)
+        changes.changable = orbitRef.current.orbitEnabled.changable
 
-    if (!changes) return
+      if (!changes) return
 
-    orbitRef.current.orbitEnabled = changes
-    orbitRef.current.enabled = changes["enabled"]
-  }
+      orbitRef.current.orbitEnabled = changes
+      orbitRef.current.enabled = changes["enabled"]
+    },
+    []
+  )
 
   // Resets the orbit
-  const resetOrbit_ = () => {
+  resetOrbit.current = useCallback(() => {
     const duration = 1
 
     orbitRef.current.enabled = false
@@ -100,12 +97,12 @@ const Controls = () => {
         orbitRef.current.enabled = true
       }
     }, duration * 1000)
-  }
+  }, [])
 
   // Toggles zoom
-  const toggleZoom_ = (newValue: boolean) => {
+  toggleZoom.current = useCallback((newValue: boolean) => {
     orbitRef.current.enableZoom = newValue
-  }
+  }, [])
 
   return (
     <OrbitControls

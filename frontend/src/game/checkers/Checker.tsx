@@ -17,7 +17,6 @@ import { AuthContext } from "../../context/AuthContext"
 import { Mesh, MeshStandardMaterial, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import ValidateMove from "./ValidateMove"
-import { GameWrapperContext } from "../context/GameWrapperContext"
 
 type CheckerProps = {
   thisChecker: CheckerType
@@ -39,9 +38,9 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     userChecker,
     phase,
     setPhase,
+    toggleControls,
   } = useContext(GameContext)
   const { user } = useContext(AuthContext)
-  const { toggleControls } = useContext(GameWrapperContext)
 
   // Checkers
   const { size, viewport } = useThree()

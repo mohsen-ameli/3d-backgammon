@@ -1,16 +1,16 @@
 import { useContext, useEffect } from "react"
-import { AuthContext } from "../../context/AuthContext"
-import { GameWrapperContext } from "../context/GameWrapperContext"
+import { GameContext } from "../context/GameContext"
 
 /**
  * Pass and play game mode. User is playing with themselves (perhaps with someone else irl)
  */
 const PassAndPlay = () => {
-  const { setInGame, gameMode } = useContext(GameWrapperContext)
+  const { setInGame, gameMode, dice } = useContext(GameContext)
 
   useEffect(() => {
     setInGame(true)
     gameMode.current = "pass-and-play"
+    dice.current = { dice1: 0, dice2: 0, moves: 0 }
 
     return () => {
       setInGame(false)

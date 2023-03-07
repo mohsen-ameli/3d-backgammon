@@ -9,7 +9,6 @@ import NotFound from "./pages/NotFound"
 import Profile from "./pages/profile/Profile"
 import FriendsList from "./pages/friends/FriendsList"
 
-import useStatus from "./components/hooks/useStatus"
 import PrivateRoute from "./components/utils/PrivateRoute"
 import GameRouter from "./game/GameRouter"
 
@@ -18,9 +17,6 @@ import GameRouter from "./game/GameRouter"
  * @returns THE WEBSITE DUH
  */
 const App = () => {
-  // Getting the user status. (Game requests and game request rejections)
-  useStatus()
-
   return (
     <>
       <GameRouter />

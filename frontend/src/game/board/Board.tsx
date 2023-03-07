@@ -3,14 +3,12 @@ import { CuboidCollider, RigidBody } from "@react-three/rapier"
 import { useContext, useRef } from "react"
 import { Mesh } from "three"
 import { GameContext } from "../context/GameContext"
-import { GameWrapperContext } from "../context/GameWrapperContext"
 
 /**
  * Primary board mesh.
  */
 const Board = () => {
-  const { nodes, materials } = useContext(GameContext)
-  const { gameMode } = useContext(GameWrapperContext)
+  const { nodes, materials, gameMode } = useContext(GameContext)
 
   const board = useRef<Mesh>(null!)
   const boardHinge = useRef<Mesh>(null!)

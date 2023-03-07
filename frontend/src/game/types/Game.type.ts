@@ -49,19 +49,40 @@ export type PhaseType =
   | "spectating"
   | undefined
 
+export type ToggleZoomType = (newValue: boolean) => void
+
+export type GameModeType = "pass-and-play" | string | undefined
+
 export type GameContextType = {
-  nodes: NodeType
-  materials: MaterialType
+  // Functions
+  toggleControls: React.MutableRefObject<(ui?: boolean, drag?: boolean) => void>
+  resetOrbit: React.MutableRefObject<() => void>
+  toggleZoom: React.MutableRefObject<ToggleZoomType>
+  resign: () => void
+  throwDice: React.MutableRefObject<() => void>
+
+  // Refs
+  gameMode: React.MutableRefObject<GameModeType>
+  userChecker: React.MutableRefObject<UserCheckerType | undefined>
   players: React.MutableRefObject<PlayersType>
   winner: React.MutableRefObject<PlayerType | undefined>
   dice: React.MutableRefObject<DiceMoveType>
-  userChecker: React.MutableRefObject<UserCheckerType | undefined>
-  myTurn: boolean
+  dicePhysics: React.MutableRefObject<DicePhysics | undefined>
   checkers: React.MutableRefObject<CheckerType[]>
   checkerPicked: React.MutableRefObject<boolean>
-  dicePhysics: React.MutableRefObject<DicePhysics | undefined>
   newCheckerPosition: React.MutableRefObject<number | undefined>
+
+  // States
+  myTurn: boolean
   ws: WebSocket | undefined
+  inGame: boolean
+  setInGame: React.Dispatch<React.SetStateAction<boolean>>
+  showThrow: boolean | null
+  setShowThrow: React.Dispatch<React.SetStateAction<boolean | null>>
   phase: PhaseType
   setPhase: React.Dispatch<React.SetStateAction<PhaseType>>
+
+  // Other
+  nodes: NodeType
+  materials: MaterialType
 }
