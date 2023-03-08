@@ -1,10 +1,10 @@
-from rest_framework import serializers
-from .models import CustomUser
 from django.contrib.auth.hashers import make_password
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from rest_framework import serializers
 
+from .models import CustomUser
 
 '''
     Serializer for getting user's friends
@@ -23,7 +23,7 @@ class ProfileUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("id", "total_games", "games_won", "games_lost", "date_joined")
+        fields = ("id", "username", "image", "total_games", "games_won", "games_lost", "date_joined")
 
     def get_date_joined(self, obj):
         return obj.get_date_joined
@@ -37,7 +37,7 @@ class PrimaryUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("username", "email", "password", "password2")
+        fields = ("username", "email", "password", "password2", "image")
 
     def is_valid(self, *, raise_exception=False):
         # Stripping whitespaces from username and email

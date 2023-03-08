@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import { useGLTF } from "@react-three/drei"
 
 import { Children } from "../../components/children.type"
@@ -63,8 +70,8 @@ const GameContextProvider = ({ children }: Children) => {
 
   // Current players (Only set in a live game)
   const players = useRef<types.PlayersType>({
-    me: { id: 0, name: "", color: "white" },
-    enemy: { id: 0, name: "", color: "white" },
+    me: { id: 0, name: "", image: "", color: "white" },
+    enemy: { id: 0, name: "", image: "", color: "white" },
   })
 
   // The current checker color that is being moved
@@ -114,7 +121,7 @@ const GameContextProvider = ({ children }: Children) => {
   const onOpen = () => ws?.send(JSON.stringify({ initial: true }))
 
   // Backend has sent updates
-  const onMessage = (e: MessageEvent) => {
+  const onMessage = useCallback((e: MessageEvent) => {
     const data: types.GameDataTypes = JSON.parse(e.data)
 
     // console.log(data)
@@ -175,14 +182,12 @@ const GameContextProvider = ({ children }: Children) => {
     userChecker.current = data.turn!
     checkers.current = data.board!
     dice.current = data.dice!
-    let turn = false
 
     // Settings user turn
-    if (data.white === user?.user_id && userChecker.current === "white") {
-      turn = true
-    } else if (
-      data.black === user?.user_id &&
-      userChecker.current === "black"
+    let turn = false
+    if (
+      (data.white === user?.user_id && userChecker.current === "white") ||
+      (data.black === user?.user_id && userChecker.current === "black")
     ) {
       turn = true
     }
@@ -212,10 +217,12 @@ const GameContextProvider = ({ children }: Children) => {
 
       players.current.me.id = user.user_id
       players.current.me.name = user.username
+      players.current.me.image = getServerUrl() + (myColor === "white" ? data.white_image! : data.black_image!) //prettier-ignore
       players.current.me.color = myColor
 
       players.current.enemy.id = myColor === "white" ? data.black! : data.white!
       players.current.enemy.name = myColor === "white" ? data.black_name! : data.white_name! //prettier-ignore
+      players.current.enemy.image = getServerUrl() + (myColor === "white" ? data.black_image! : data.white_image!) //prettier-ignore
       players.current.enemy.color = switchPlayers(myColor)
 
       return
@@ -240,7 +247,7 @@ const GameContextProvider = ({ children }: Children) => {
 
     // Making sure there is a rerender in the checkers component so that both user's boards get updated
     setPhase(curr => (curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"))
-  }
+  }, [])
 
   // User has entered the game
   useEffect(() => {

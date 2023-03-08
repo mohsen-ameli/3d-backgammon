@@ -10,8 +10,8 @@ import { DiceMoveType } from "../types/Dice.type"
 import { GameModeType, PlayerType, UserCheckerType } from "../types/Game.type"
 import WinnerOverlay from "./WinnerOverlay"
 import { UserType } from "../../context/User.type"
-import Center from "../../components/ui/Center"
 import { Children } from "../../components/children.type"
+import getImageUrl from "../../components/utils/getImageUrl"
 
 const Layout = () => {
   const { inGame } = useContext(GameContext)
@@ -75,7 +75,7 @@ const Side = ({
               className={
                 "absolute inset-2 h-[20px] w-[20px] rounded-full " +
                 ((gameMode === "pass-and-play" && userChecker === "white") ||
-                player.color === "white"
+                (gameMode !== "pass-and-play" && player.color === "white")
                   ? "bg-slate-200"
                   : "bg-slate-900")
               }
@@ -112,7 +112,7 @@ const MainLayout = () => {
   if (gameMode.current === "pass-and-play")
     return (
       <Side
-        img="/person2.jpg"
+        img={getImageUrl(user?.username!)}
         dice={dice.current}
         userChecker={userChecker.current!}
         player={players.current.me}
@@ -126,19 +126,19 @@ const MainLayout = () => {
   return (
     <>
       <Side
-        img="/person1.jpg"
-        dice={dice.current}
-        userChecker={userChecker.current!}
-        player={players.current.enemy}
-        sideType="enemy"
-        gameMode={gameMode.current}
-      />
-      <Side
-        img="/person2.jpg"
+        img={players.current.me.image}
         dice={dice.current}
         userChecker={userChecker.current!}
         player={players.current.me}
         sideType="me"
+        gameMode={gameMode.current}
+      />
+      <Side
+        img={players.current.enemy.image}
+        dice={dice.current}
+        userChecker={userChecker.current!}
+        player={players.current.enemy}
+        sideType="enemy"
         gameMode={gameMode.current}
       />
     </>

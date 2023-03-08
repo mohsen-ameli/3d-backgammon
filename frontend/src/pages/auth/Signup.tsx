@@ -5,10 +5,14 @@ import Container from "../../components/ui/Container"
 import FormField from "../../components/ui/FormField"
 import Header from "../../components/ui/Header"
 import { Link } from "react-router-dom"
+import ImageUploader from "../../components/ui/ImageUploader"
+import { ImageType } from "../../components/ui/Image.type"
 
 const Signup = () => {
   const { signup, errors, setErrors } = useContext(AuthContext)
   const [btnClicked, setBtnClicked] = useState(false)
+
+  const [image, setImage] = useState<ImageType>(null)
 
   // Clearing the errors when the component mounts
   useEffect(() => {
@@ -39,8 +43,8 @@ const Signup = () => {
 
     // prettier-ignore
     if (username !== "" && email !== "" && password !== "" && password2 !== "") {
-      // sing the user up
-      signup(username, email, password, password2)
+      // Register the user
+      signup(username, email, password, password2, image)
       setBtnClicked(true)
     }
   }
@@ -81,10 +85,15 @@ const Signup = () => {
           errors={errors}
         />
 
+        <div className="">
+          <label htmlFor="image-input">Profile Picture (Not mandatory)</label>
+          <ImageUploader image={image} setImage={setImage} />
+        </div>
+
         <Button
           type="submit"
           className={
-            "mt-4 w-full self-center " + (btnClicked && "cursor-not-allowed")
+            "mt-3 w-full self-center " + (btnClicked && "cursor-not-allowed")
           }
         >
           {btnClicked ? <ButtonLoading /> : "Sign Up"}

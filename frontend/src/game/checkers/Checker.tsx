@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { CuboidCollider, RigidBody, RigidBodyApi } from "@react-three/rapier"
 import { useThree } from "@react-three/fiber"
 import { useDrag, UserDragConfig } from "@use-gesture/react"
@@ -78,7 +78,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       y: position[1],
       z: position[2],
     })
-  }, [thisChecker, thisChecker.removed])
+  }, [thisChecker.col, thisChecker.row, thisChecker.removed])
 
   // Some config for the useDrag
   const dragConfig: UserDragConfig = {
@@ -125,129 +125,131 @@ const Checker = ({ thisChecker }: CheckerProps) => {
 
       // Setting the checker's mesh position (not the physics)
       set({ position: [x / aspect, 0.2, y / aspect] })
-    } else {
-      toggleControls.current()
-      checkerPicked.current = false
 
-      // Number of removed checkers of the current player/user
-      const removedCheckersLen = lenRemovedCheckers(
+      return
+    }
+
+    toggleControls.current()
+    checkerPicked.current = false
+
+    // Number of removed checkers of the current player/user
+    const removedCheckersLen = lenRemovedCheckers(
+      checkers.current,
+      userChecker.current
+    )
+
+    // Current checker instance
+    const currentChecker = checkers.current[thisChecker.id]
+
+    // From, to, and moved column numbers
+    const to = newCheckerPosition.current!
+    let from
+    let moved
+
+    if (thisChecker.col === -1) from = -1
+    else if (thisChecker.col === -2) from = 24
+    else from = thisChecker.col
+
+    if (to === -3) moved = 24 - from
+    else if (to === -4) moved = from + 1
+    else moved = thisChecker.color === "white" ? to - from : from - to
+
+    /**
+     * User is tring to bear off their checker
+     */
+    if ([-3, -4].includes(to)) {
+      const end = Endgame(checkers.current, userChecker.current)
+      if (!end) return // Not in endgame yet
+
+      const validMove = ValidateMove(
         checkers.current,
-        userChecker.current
+        thisChecker,
+        dice.current,
+        moved
       )
-
-      // Current checker instance
-      const currentChecker = checkers.current[thisChecker.id]
-
-      // From, to, and moved column numbers
-      const to = newCheckerPosition.current!
-      let from
-      let moved
-
-      if (thisChecker.col === -1) from = -1
-      else if (thisChecker.col === -2) from = 24
-      else from = thisChecker.col
-
-      if (to === -3) moved = 24 - from
-      else if (to === -4) moved = from + 1
-      else moved = thisChecker.color === "white" ? to - from : from - to
-
-      /**
-       * User is tring to move to the end columns
-       */
-      if ([-3, -4].includes(to)) {
-        const end = Endgame(checkers.current, userChecker.current)
-        if (!end) return // Not in endgame yet
-
-        const validMove = ValidateMove(
-          checkers.current,
-          thisChecker,
-          dice.current,
-          moved
-        )
-        if (!validMove) {
-          goToOriginalPos(currentChecker)
-          return
-        }
-
-        const checkersOnEndCol = checkers.current.filter(
-          checker => checker.col === to
-        )
-        const checker_ = {
-          col: to,
-          row: checkersOnEndCol.length,
-          removed: false,
-        } as CheckerType
-        const positions = getCheckerPos(checker_)
-
-        // Saving the new position of the checker
-        currentChecker.col = to
-        currentChecker.row = checkersOnEndCol.length
-        currentChecker.removed = false
-
-        // Checking if user has won
-        const possibleWinner = userChecker.current!
-        const won = GameWon(checkers.current, possibleWinner)
-        if (!won) {
-          updateStuff(positions, moved, [Math.PI / 3, 0, 0])
-          return
-        }
-
-        /**
-         * !! User has won the game wohoo !!
-         */
-        if (ws) {
-          updateGameWinner()
-          return
-        }
-        setPhase("ended")
-        userChecker.current! = possibleWinner
-        set({ position: positions, rotation: [Math.PI / 3, 0, 0] })
-        notification(`${toCapitalize(userChecker.current!)} is the winner!`)
-
-        return
-      }
-
-      /**
-       * User is trying to move to a column within the board
-       */
-      const { action, numCheckers, rmChecker } = getCheckersOnCol(checkers.current, to, thisChecker.color) // prettier-ignore
-
-      // If user is moving wrongly, move them back to their original position
-      if (
-        action === "invalid" ||
-        isNaN(moved) ||
-        moved <= 0 ||
-        ![dice.current.dice1, dice.current.dice2].includes(moved) ||
-        (removedCheckersLen <= 0 && thisChecker.removed) ||
-        (removedCheckersLen !== 0 && !thisChecker.removed)
-      ) {
+      if (!validMove) {
         goToOriginalPos(currentChecker)
         return
       }
 
+      const checkersOnEndCol = checkers.current.filter(
+        checker => checker.col === to
+      )
+      const checker_ = {
+        col: to,
+        row: checkersOnEndCol.length,
+        removed: false,
+      } as CheckerType
+      const positions = getCheckerPos(checker_)
+
+      // Saving the new position of the checker
+      currentChecker.col = to
+      currentChecker.row = checkersOnEndCol.length
+      currentChecker.removed = false
+
+      // Checking if user has won
+      const possibleWinner = userChecker.current!
+      const won = GameWon(checkers.current, possibleWinner)
+      if (!won) {
+        updateStuff(positions, moved, [Math.PI / 3, 0, 0])
+        return
+      }
+
       /**
-       * User is making a valid move. Nice..
+       * !! User has won the game wohoo !!
        */
-      currentChecker.col = to // updating this checker
-      currentChecker.removed = false // updating this checker
+      if (ws) {
+        updateGameWinner()
+        return
+      }
+      setPhase("ended")
+      userChecker.current! = possibleWinner
+      set({ position: positions, rotation: [Math.PI / 3, 0, 0] })
+      notification(`${toCapitalize(userChecker.current!)} is the winner!`)
 
-      // User is removing a checker
-      if (action === "remove" && rmChecker) {
-        currentChecker.row = numCheckers - 1 // updating this checker
-
-        // Removed checker instance
-        const removedChecker = checkers.current[rmChecker.id]
-
-        // Saving the new position of the removed checker
-        removedChecker.col = rmChecker.color === "white" ? -1 : -2
-        removedChecker.row = lenRemovedCheckers(checkers.current, rmChecker.color) //prettier-ignore
-        removedChecker.removed = true
-      } else currentChecker.row = numCheckers // updating this checker
-
-      // End of logic... phew!
-      updateStuff(getCheckerPos(thisChecker), moved)
       return
     }
+
+    /**
+     * User is trying to move to a column within the board
+     */
+    const { action, numCheckers, rmChecker } = getCheckersOnCol(checkers.current, to, thisChecker.color) // prettier-ignore
+
+    // If user is moving wrongly, move them back to their original position
+    if (
+      action === "invalid" ||
+      isNaN(moved) ||
+      moved <= 0 ||
+      ![dice.current.dice1, dice.current.dice2].includes(moved) ||
+      (removedCheckersLen <= 0 && thisChecker.removed) ||
+      (removedCheckersLen !== 0 && !thisChecker.removed)
+    ) {
+      goToOriginalPos(currentChecker)
+      return
+    }
+
+    /**
+     * User is making a valid move. Nice..
+     */
+    currentChecker.col = to // updating this checker
+    currentChecker.removed = false // updating this checker
+
+    // User is removing a checker
+    if (action === "remove" && rmChecker) {
+      currentChecker.row = numCheckers - 1 // updating this checker
+
+      // Removed checker instance
+      const removedChecker = checkers.current[rmChecker.id]
+
+      // Saving the new position of the removed checker
+      removedChecker.col = rmChecker.color === "white" ? -1 : -2
+      removedChecker.row = lenRemovedCheckers(checkers.current, rmChecker.color) //prettier-ignore
+      removedChecker.removed = true
+    } else currentChecker.row = numCheckers // updating this checker
+
+    // End of logic... phew!
+    updateStuff(getCheckerPos(thisChecker), moved)
+    return
   }, dragConfig)
 
   // Updating backend

@@ -12,6 +12,7 @@ class CustomUserAdmin(UserAdmin):
             'User Info',
             {
                 'fields': (
+                    'image',
                     'games_won',
                     'games_lost',
                     'total_games',

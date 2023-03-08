@@ -4,6 +4,7 @@ import Input from "./Input"
 type FormFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string
   name: string
+  mandatory?: boolean
   errors?: {
     message: string
     code: string
@@ -15,13 +16,16 @@ type FormFieldProps = InputHTMLAttributes<HTMLInputElement> & {
  * @returns A nice input
  */
 const FormField = (props: FormFieldProps) => {
-  const { label, name, errors } = props
+  const { label, name, errors, mandatory = true } = props
 
   return (
     <div className="relative flex flex-col">
       <label
         htmlFor={name}
-        className="after:ml-1 after:text-xl after:text-red-500 after:content-['*']"
+        className={
+          "after:ml-1 after:text-xl " +
+          (mandatory && "after:text-red-500 after:content-['*']")
+        }
       >
         {label}
       </label>

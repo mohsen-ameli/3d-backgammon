@@ -4,7 +4,12 @@ import { DicePhysics, DiceMoveType } from "./Dice.type"
 
 export type UserCheckerType = "black" | "white"
 
-export type PlayerType = { id: number; name: string; color: UserCheckerType }
+export type PlayerType = {
+  id: number
+  name: string
+  image: string
+  color: UserCheckerType
+}
 
 export type PlayersType = {
   me: PlayerType
@@ -23,6 +28,8 @@ export type GameDataTypes = {
   white?: number
   black_name?: string
   white_name?: string
+  white_image?: string
+  black_image?: string
   turn?: UserCheckerType
   board?: CheckerType[]
   dice?: DiceMoveType

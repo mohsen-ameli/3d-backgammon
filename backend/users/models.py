@@ -1,11 +1,17 @@
-import uuid
+import uuid, io
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.files.base import ContentFile
+from randimage import get_random_image
+import matplotlib as plt
 
 from game.models import Game
 
 class CustomUser(AbstractUser):
+    image = models.ImageField(upload_to="profile_pics", null=True, blank=True)
     games_won = models.IntegerField(default=0)
     games_lost = models.IntegerField(default=0)
     total_games = models.IntegerField(default=0)
@@ -32,6 +38,22 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"user: {self.username}, pk: {self.pk}"
+
+
+def update_profile_picture(user: CustomUser, image_array):
+    buf = io.BytesIO()
+    plt.image.imsave(buf, image_array, format="PNG")
+    image_file = ContentFile(buf.getvalue())
+
+    user.image.save(f'{user.username}.jpg', image_file, save=True)
+
+
+@receiver(post_save, sender=CustomUser)
+def some(sender, **kwargs):
+    if kwargs["instance"].image == None:
+        print("USER DOESN'T HAVE AN IMAGE")
+        image_array = get_random_image((128,128))
+        update_profile_picture(kwargs["instance"], image_array)
 
 
 class Chat(models.Model):

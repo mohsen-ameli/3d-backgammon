@@ -2,9 +2,13 @@ import Container from "../../components/ui/Container"
 import Header from "../../components/ui/Header"
 import useFetch from "../../components/hooks/useFetch"
 import Loading from "../../components/ui/Loading"
+import { useEffect, useState } from "react"
+import getServerUrl from "../../components/utils/getServerUrl"
 
 type Data = {
   data: {
+    username: string
+    image: string
     games_won: number
     games_lost: number
     total_games: number
@@ -19,6 +23,12 @@ type Data = {
  */
 const Profile = () => {
   const { data, loading, error }: Data = useFetch("/api/get-user-profile/")
+
+  const [img, setImg] = useState<string>()
+
+  useEffect(() => {
+    if (data) setImg(getServerUrl() + data.image)
+  }, [data])
 
   if (loading) return <Loading />
   if (error) return <div>Error</div>
@@ -44,18 +54,32 @@ const Profile = () => {
     <Container>
       <Header to="/" title="Profile" />
 
-      <p className="mb-6 text-center text-lg">
-        A member since {getDateJoined()}
-      </p>
+      <div className="flex flex-col items-center justify-center gap-y-2">
+        <img
+          src={img}
+          alt="Profile Pic"
+          className="h-[50px] w-[50px] rounded-full object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]"
+        />
+        <h1 className="text-lg">{data.username}</h1>
+        <p className="text-center text-lg">A member since {getDateJoined()}</p>
+      </div>
 
-      <div className="flex flex-col items-center gap-y-4 text-lg">
-        <h1 className="w-full border-b-2 border-blue-400 text-center">
+      <div className="my-4 w-full border-b-2 border-blue-400"></div>
+
+      <div className="flex flex-col items-center gap-y-2 text-lg">
+        {/* <h1 className="w-full border-b-2 border-blue-400 text-center">
           Games stats
-        </h1>
+        </h1> */}
         {data.total_games > 0 ? (
           <>
-            <p>Games won: {getGamesWon()}%</p>
-            <p>Games lost: {getGamesLost()}%</p>
+            <p>
+              Games won: {data.games_won} / {data.total_games} or{" "}
+              {getGamesWon()}%
+            </p>
+            <p>
+              Games lost: {data.games_lost} / {data.total_games} or{" "}
+              {getGamesLost()}%
+            </p>
             <p>Total Games: {data.total_games}</p>
           </>
         ) : (

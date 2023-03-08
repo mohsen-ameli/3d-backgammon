@@ -8,6 +8,7 @@ import { TokenType } from "./Token.type"
 import { ErrorType } from "./Error.type"
 import { AuthContextType } from "./Context.type"
 import { Children } from "../components/children.type"
+import { ImageType } from "../components/ui/Image.type"
 
 export const AuthContext = createContext({} as AuthContextType)
 
@@ -110,17 +111,37 @@ const AuthContextProvider = ({ children }: Children) => {
     username: string,
     email: string,
     password: string,
-    password2: string
+    password2: string,
+    image: ImageType
   ) => {
     try {
+      const newImage =
+        image &&
+        new File([image.file], username + ".jpg", {
+          type: "image/jpeg",
+        })
+
       const context = {
         username,
         email,
         password,
         password2,
+        image: newImage,
       }
 
-      const res = await axios.post(`${getServerUrl()}/api/signup/`, context)
+      const config = image
+        ? {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        : {}
+
+      const res = await axios.post(
+        `${getServerUrl()}/api/signup/`,
+        context,
+        config
+      )
 
       if (res.status === 200) {
         // Going home

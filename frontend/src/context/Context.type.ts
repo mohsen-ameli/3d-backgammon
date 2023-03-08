@@ -1,3 +1,4 @@
+import { ImageType } from "../components/ui/Image.type"
 import { ErrorType } from "./Error.type"
 import { TokenType } from "./Token.type"
 import { UserType } from "./User.type"
@@ -17,6 +18,7 @@ export type AuthContextType = {
     username: string,
     email: string,
     password: string,
-    password2: string
+    password2: string,
+    image: ImageType
   ) => void
 }

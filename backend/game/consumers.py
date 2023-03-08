@@ -253,5 +253,7 @@ def get_game_state(game: Game) -> dict:
     context["black"] = game.black.id
     context["white_name"] = game.white.username
     context["black_name"] = game.black.username
+    context["white_image"] = game.white.image.url
+    context["black_image"] = game.black.image.url
 
     return context
