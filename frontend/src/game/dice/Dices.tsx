@@ -9,6 +9,7 @@ import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
 import { DiceReadyType } from "../types/Dice.type"
 import { DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../data/Data"
 import wsGood from "../../components/utils/wsGood"
+import useUpdateLiveGame from "../utils/useUpdateLiveGame"
 
 /**
  * This is the container for the two dice.
@@ -30,6 +31,9 @@ const Dices = () => {
     players,
   } = useContext(GameContext)
 
+  // Update live game hook
+  const { updateLiveGame } = useUpdateLiveGame()
+
   // Refs for the two dice
   const dice1 = useRef<RigidBodyApi>(null!)
   const dice2 = useRef<RigidBodyApi>(null!)
@@ -48,17 +52,6 @@ const Dices = () => {
 
   // State to show the "throw dice" button
   const [showThrowBtn, setShowThrowBtn] = useState(false)
-
-  // Updating backend live game
-  const updateLiveGame = () => {
-    const context = {
-      update: true,
-      board: checkers.current,
-      dice: dice.current,
-      turn: userChecker.current,
-    }
-    ws?.send(JSON.stringify(context))
-  }
 
   // Function to throw the dice
   throwDiceContext.current = useCallback(() => {

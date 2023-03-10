@@ -16,6 +16,8 @@ export type PlayersType = {
   enemy: PlayerType
 }
 
+export type TimerType = { id: number; time: number }
+
 export type GameDataTypes = {
   too_many_users?: boolean
   finished?: boolean
@@ -30,6 +32,7 @@ export type GameDataTypes = {
   white_name?: string
   white_image?: string
   black_image?: string
+  player_timer?: TimerType
   turn?: UserCheckerType
   board?: CheckerType[]
   dice?: DiceMoveType
@@ -65,7 +68,7 @@ export type GameContextType = {
   toggleControls: React.MutableRefObject<(ui?: boolean, drag?: boolean) => void>
   resetOrbit: React.MutableRefObject<() => void>
   toggleZoom: React.MutableRefObject<ToggleZoomType>
-  resign: () => void
+  resign: (winnerId: number, loserId: number, send?: boolean) => void
   throwDice: React.MutableRefObject<() => void>
 
   // Refs
@@ -78,6 +81,7 @@ export type GameContextType = {
   checkers: React.MutableRefObject<CheckerType[]>
   checkerPicked: React.MutableRefObject<boolean>
   newCheckerPosition: React.MutableRefObject<number | undefined>
+  timer: React.MutableRefObject<TimerType | undefined>
 
   // States
   myTurn: boolean

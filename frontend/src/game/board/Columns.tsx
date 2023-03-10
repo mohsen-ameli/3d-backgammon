@@ -12,7 +12,7 @@ import {
   Group,
 } from "three"
 import { COLOUMN_HOVER_COLOR } from "../data/Data"
-import { ThreeEvent, useFrame } from "@react-three/fiber"
+import { ThreeEvent } from "@react-three/fiber"
 
 /**
  * The 24 columns on the board, where checkers get dropped in. This component
@@ -24,22 +24,14 @@ const Columns = () => {
 
   const columns = useRef<Group>(null!)
 
-  useFrame((clock, delta) => {
-    const speed = delta / 12
-
-    if (!gameMode.current) {
-      columns.current.rotation.y += speed
-    } else {
-      columns.current.rotation.y = 0
-    }
-  })
-
-  const columnsRef = useRef<InstancedMesh>(null!)
+  const columnsRef = useRef<InstancedMesh | null>(null)
 
   const count = 24
 
   // Saving the default positions of the columns.
   useLayoutEffect(() => {
+    if (!columnsRef.current) return
+
     const quaternion = new Quaternion()
     const scale = new Vector3(1, 1, 1)
 
@@ -96,7 +88,7 @@ const Columns = () => {
   }
 
   return (
-    <group ref={columns} rotation-x={!gameMode.current ? -Math.PI / 6 : 0}>
+    <group ref={columns}>
       <instancedMesh
         onPointerOver={handleHover}
         onPointerLeave={handleHoverFinished}

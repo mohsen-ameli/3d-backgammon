@@ -58,7 +58,7 @@ const WinnerOverlay = () => {
   return (
     <Center className="z-[10]">
       <div className="h-full w-full rounded-lg bg-[#cbd5e18f] p-6">
-        <h1 className="mb-4 text-center text-xl font-bold lg:text-4xl">
+        <h1 className="mb-4 text-center text-xl font-semibold lg:text-4xl">
           {winnerName}
         </h1>
         <div className="flex w-full flex-col gap-y-2 text-sm lg:text-base">

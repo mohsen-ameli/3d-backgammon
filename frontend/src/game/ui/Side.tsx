@@ -1,158 +1,186 @@
-import { Html } from "@react-three/drei"
-import gsap, { Power1 } from "gsap"
-import { useContext, useEffect, useRef, useState } from "react"
+import { PlayerType, TimerType } from "../types/Game.type"
+import { CountdownCircleTimer } from "react-countdown-circle-timer"
+import { UserType } from "../../context/User.type"
+import ThrowButton from "./ThrowButton"
+import DiceMoves from "./DiceMoves"
+import Center from "../../components/ui/Center"
+import { useContext, useEffect, useState } from "react"
 import { GameContext } from "../context/GameContext"
-import { PlayersType, UserCheckerType } from "../types/Game.type"
+import notification from "../../components/utils/Notification"
+import { USER_TURN_DURATION } from "../data/Data"
 
 type SideProps = {
-  ws?: WebSocket
-  player: string
-  color: UserCheckerType
-  userChecker?: UserCheckerType
-  players?: PlayersType
+  img: string
+  // userChecker: UserCheckerType
+  player: PlayerType
+  // dice: DiceMoveType
+  sideType: "enemy" | "me"
+  // gameMode: GameModeType
+  timer?: TimerType
+
+  // For pass-and-play
+  showThrow?: boolean | null
+  user?: UserType
 }
 
 /**
  * Each player has a side, with their profile picture, name, their checker color,
  * and a timer for them to see how much time they have left to make a move.
  */
+const Side = (props: SideProps) => {
+  const { img, player, sideType, user } = props
 
-const BASE_TIME = 20
-const GRACE_TIME = 5
+  const {
+    phase,
+    resign,
+    players,
+    timer,
+    gameMode,
+    dice,
+    userChecker,
+    showThrow,
+  } = useContext(GameContext)
 
-const Side = ({ ws, player, color, userChecker, players }: SideProps) => {
-  const { phase } = useContext(GameContext)
+  const [duration, setDuration] = useState(USER_TURN_DURATION)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [key, setKey] = useState(Math.random())
+  const [size, setSize] = useState(() => resize())
 
-  const [timer, setTimer] = useState(BASE_TIME + 1)
+  // Handling page resize, for the width of the timer ring
+  function resize() {
+    const width = window.innerWidth
+    if (width <= 1024) return 62
+    else if (width <= 1280) return 90
+    else return 115
+  }
 
-  // If user has timed out, then we will resign them
-  const resign = () => {
-    if (userChecker === players?.me.color) {
-      // console.log("resign: ", userChecker)
-      // I've been offline for too long
-      // ws?.send(JSON.stringify({ finished: true, winner: players?.enemy.id }))
+  // Auto resign function
+  function autoResign(id: number) {
+    // If I'm losing
+    if (id === players.current.me.id) {
+      resign(players.current.enemy.id, id, true)
+      notification(`${players.current.me.name} has timed out.`, "info")
     } else {
-      // console.log("resign: ", userChecker)
-      // Enemy has been offline for too long
-      // ws?.send(JSON.stringify({ finished: true, winner: players?.me.id }))
+      resign(players.current.me.id, players.current.enemy.id, true)
+      notification(`${players.current.enemy.name} has timed out.`, "info")
     }
   }
 
-  const breatheEl = useRef<HTMLDivElement>(null)
-
-  const animation = useRef<gsap.core.Tween>()
-
-  const pause = () => {
-    animation.current?.restart()
-    animation.current?.pause()
-  }
-  const play = () => animation.current?.play()
-
-  // useEffect(() => {
-  // const shadowColor =
-  //   (timer / BASE_TIME) * 100 < 17
-  //     ? "#EF4444"
-  //     : (timer / BASE_TIME) * 100 < 34
-  //     ? "#F97316"
-  //     : "#71e90ea3"
-
-  // animation.current = gsap.fromTo(
-  //   breatheEl.current,
-  //   { boxShadow: `0 0 0px 0px #71e90ea3`, paused: true },
-  //   {
-  //     duration: 1.75,
-  //     boxShadow: `0 0 5px 5px #71e90ea3`,
-  //     yoyo: true,
-  //     repeat: -1,
-  //     ease: Power1.easeInOut,
-  //     paused: true,
-  //   }
-  // )
-
-  // if (animation.current)
-  //   animation.current.vars.boxShadow = `0 0 0px 0px ${shadowColor}`
-  // }, [timer])
-
+  // Handling the timer
   useEffect(() => {
-    // Breathing animation
-    animation.current = gsap.fromTo(
-      breatheEl.current,
-      { boxShadow: `0 0 0px 0px #71e90ea3`, paused: true },
-      {
-        duration: 1.75,
-        boxShadow: `0 0 5px 5px #71e90ea3`,
-        yoyo: true,
-        repeat: -1,
-        ease: Power1.easeInOut,
-        paused: true,
-      }
+    if (
+      !timer.current ||
+      !["initial", "diceRoll", "diceRollAgain"].includes(phase!)
     )
+      return
 
-    // Timer
-    let newTime = timer
-
-    const timeout = () => {
-      setTimer(t => {
-        newTime = t - 1
-        return newTime
-      })
-
-      if (newTime > -GRACE_TIME) {
-        setTimeout(timeout, 1000)
-      } else {
-        // Auto resign
-        resign()
-      }
+    // If user has been offline for too long then auto resign them
+    if (Date.now() >= timer.current.time) {
+      autoResign(timer.current.id)
+    } else if (player.id === timer.current.id) {
+      const timeLeft = (timer.current.time - Date.now()) / 1000
+      setDuration(timeLeft)
+      setIsPlaying(true)
+      return
+    } else {
+      setKey(Math.random())
+      setIsPlaying(false)
     }
-
-    if (userChecker === color) timeout()
-  }, [])
-
-  // Playing and pausing the animation
-  useEffect(() => {
-    if (userChecker === color) play()
-    else pause()
   }, [phase])
 
-  return (
-    <Html
-      transform
-      scale={0.2}
-      position={[0, 0.25, player.includes("You") ? 1.2 : -1.2]}
-      sprite
-    >
-      <div
-        ref={breatheEl}
-        className={
-          "flex h-full w-full items-center gap-x-2 rounded-full px-4 py-2 " +
-          (color === "white"
-            ? "bg-slate-200 text-black"
-            : "bg-slate-600 text-white")
-        }
-      >
-        <i className="fa-solid fa-user"></i>
-        <h1 className="text-lg">
-          {player} playing as {color}.
-        </h1>
-        {/* <img src="" alt="pfp" /> */}
+  // Handling resize
+  useEffect(() => {
+    const handleResize = () => setSize(resize())
 
-        {/* {userChecker === color &&
-          timer > 0 &&
-          (timer / BASE_TIME) * 100 < 34 && (
-            <h1
+    window.addEventListener("resize", handleResize)
+
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  // The counter component. If the gameMode is pass and play, then just show the image
+  const Counter =
+    gameMode.current === "pass-and-play" ? (
+      <img
+        src={img}
+        alt={sideType}
+        className="h-[50px] w-[50px] rounded-full object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]"
+      />
+    ) : (
+      <CountdownCircleTimer
+        key={key}
+        size={size}
+        strokeWidth={4}
+        isPlaying={isPlaying}
+        duration={duration}
+        colors={["#609633", "#f79501", "#A30000", "#681919"]}
+        colorsTime={[duration, duration / 4, duration / 10, 0]}
+        onComplete={() => autoResign(player.id)}
+      >
+        {({ remainingTime }) => (
+          <div className="relative">
+            {(remainingTime / duration) * 100 <= 25 && (
+              <div className="absolute h-full w-full rounded-full bg-[#6e6e6e99] text-red-500 lg:text-lg lg:font-bold">
+                <Center className="w-full text-center">
+                  {remainingTime} sec
+                </Center>
+              </div>
+            )}
+            <img
+              src={img}
+              alt={sideType}
+              className="h-[50px] w-[50px] rounded-full bg-[#f79501] object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]"
+            />
+          </div>
+        )}
+      </CountdownCircleTimer>
+    )
+
+  return (
+    <div
+      className={
+        "absolute top-1/2 z-[10] m-2 h-fit w-[130px] -translate-y-1/2 rounded-md bg-orange-900 px-2 py-4 lg:w-[180px] " +
+        (sideType === "enemy" ? "left-0" : "right-0")
+      }
+    >
+      <div className="flex flex-col items-center justify-center gap-y-4 text-white lg:gap-y-12">
+        <div className="flex flex-col items-center">
+          {Counter}
+
+          <div className="mt-2 flex flex-col items-center justify-center pb-10 text-xs lg:text-lg">
+            <h1>{player.name !== "" ? player.name : user?.username}</h1>
+
+            <div
               className={
-                (timer / BASE_TIME) * 100 < 17
-                  ? "text-red-500"
-                  : (timer / BASE_TIME) * 100 < 34
-                  ? "text-orange-500"
-                  : ""
+                "absolute inset-2 h-[20px] w-[20px] rounded-full " +
+                ((gameMode.current === "pass-and-play" &&
+                  userChecker.current === "white") ||
+                (gameMode.current !== "pass-and-play" &&
+                  player.color === "white")
+                  ? "bg-slate-200"
+                  : "bg-slate-900")
               }
-            >
-              {timer} {timer > 1 ? "seconds" : "second"} left !
-            </h1>
-          )} */}
+            />
+
+            {/* Showing the throw dice, and dice moves dynamically based on gameMode */}
+            {gameMode.current === "pass-and-play" ? (
+              <>
+                <ThrowButton className="absolute bottom-0 my-3 px-2" />
+                {!showThrow && <DiceMoves dice={dice.current} />}
+              </>
+            ) : (
+              userChecker.current === player.color && (
+                <>
+                  {sideType === "me" && (
+                    <ThrowButton className="absolute bottom-0 my-3 px-2" />
+                  )}
+                  <DiceMoves dice={dice.current} />
+                </>
+              )
+            )}
+          </div>
+        </div>
       </div>
-    </Html>
+    </div>
   )
 }
 

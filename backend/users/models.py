@@ -11,7 +11,7 @@ import matplotlib as plt
 from game.models import Game
 
 class CustomUser(AbstractUser):
-    image = models.ImageField(upload_to="profile_pics", null=True, blank=True)
+    image = models.ImageField(upload_to="profile_pics/", null=True, blank=True)
     games_won = models.IntegerField(default=0)
     games_lost = models.IntegerField(default=0)
     total_games = models.IntegerField(default=0)
@@ -44,16 +44,14 @@ def update_profile_picture(user: CustomUser, image_array):
     buf = io.BytesIO()
     plt.image.imsave(buf, image_array, format="PNG")
     image_file = ContentFile(buf.getvalue())
-
     user.image.save(f'{user.username}.jpg', image_file, save=True)
 
 
 @receiver(post_save, sender=CustomUser)
-def some(sender, **kwargs):
-    if kwargs["instance"].image == None:
-        print("USER DOESN'T HAVE AN IMAGE")
+def create_profile_picture(sender, instance: CustomUser, created: bool, **kwargs):
+    if instance.image == None or instance.image == "":
         image_array = get_random_image((128,128))
-        update_profile_picture(kwargs["instance"], image_array)
+        update_profile_picture(instance, image_array)
 
 
 class Chat(models.Model):

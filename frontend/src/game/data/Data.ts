@@ -2,6 +2,9 @@ import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import * as extra from "./Extra"
 
+// User turn duration (Synced with backend in settings.py)
+export const USER_TURN_DURATION = 70
+
 // Stage
 export const DEFAULT_ENV_MAP_INTENSITY = 2
 

@@ -86,7 +86,7 @@ const Signup = () => {
         />
 
         <div className="">
-          <label htmlFor="image-input">Profile Picture (Not mandatory)</label>
+          <label htmlFor="image-input">Profile Picture (optional)</label>
           <ImageUploader image={image} setImage={setImage} />
         </div>
 

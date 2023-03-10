@@ -24,9 +24,11 @@ type OrbitType = {
 const Controls = () => {
   const { resetOrbit, toggleControls, toggleZoom } = useContext(GameContext)
 
-  const orbitRef = useRef<OrbitControlType & OrbitType>(null!)
+  const orbitRef = useRef<OrbitControlType & OrbitType>(null)
 
   useEffect(() => {
+    if (!orbitRef.current) return
+
     // Default enabled values
     orbitRef.current.orbitEnabled = {
       enabled: true,
@@ -40,6 +42,8 @@ const Controls = () => {
   // Function to toggle orbit controls
   toggleControls.current = useCallback(
     (ui: boolean = false, drag: boolean = false) => {
+      if (!orbitRef.current) return
+
       const changes = {
         enabled: !orbitRef.current.orbitEnabled.enabled,
       } as {
@@ -69,7 +73,9 @@ const Controls = () => {
 
   // Resets the orbit
   resetOrbit.current = useCallback(() => {
-    const duration = 1
+    if (!orbitRef.current) return
+
+    const duration = 2
 
     orbitRef.current.enabled = false
 
@@ -93,14 +99,15 @@ const Controls = () => {
     })
 
     setTimeout(() => {
-      if (orbitRef.current.orbitEnabled.changable) {
+      if (orbitRef.current?.orbitEnabled.changable) {
         orbitRef.current.enabled = true
       }
-    }, duration * 1000)
+    }, duration * 1000 + 1000)
   }, [])
 
   // Toggles zoom
   toggleZoom.current = useCallback((newValue: boolean) => {
+    if (!orbitRef.current) return
     orbitRef.current.enableZoom = newValue
   }, [])
 

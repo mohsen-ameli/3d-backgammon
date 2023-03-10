@@ -17,6 +17,7 @@ import { AuthContext } from "../../context/AuthContext"
 import { Mesh, MeshStandardMaterial, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import ValidateMove from "./ValidateMove"
+import useUpdateLiveGame from "../utils/useUpdateLiveGame"
 
 type CheckerProps = {
   thisChecker: CheckerType
@@ -41,6 +42,9 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     toggleControls,
   } = useContext(GameContext)
   const { user } = useContext(AuthContext)
+
+  // Update live game hook
+  const { updateLiveGame } = useUpdateLiveGame()
 
   // Checkers
   const { size, viewport } = useThree()
@@ -318,19 +322,6 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     if (!ws || !user) return
 
     const context = { finished: true, winner: user.user_id }
-    ws.send(JSON.stringify(context))
-  }
-
-  // Updating the current game instance
-  const updateLiveGame = () => {
-    if (!ws) return
-
-    const context = {
-      update: true,
-      board: checkers.current,
-      dice: dice.current,
-      turn: userChecker.current,
-    }
     ws.send(JSON.stringify(context))
   }
 

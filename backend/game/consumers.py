@@ -88,16 +88,16 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # User has connected to the game
         if "physics" in data:
-            await database_sync_to_async(self.game_obj.update)(dicePhysics=data["user"])
+            await database_sync_to_async(self.game_obj.update)(dice_physics=data["user"])
 
             context = {"type": "send_dice_physics", "physics": data["user"]}
             await self.channel_layer.group_send(self.room_group_name, context)
         elif "initial" in data:
-            context = await get_game_state(self.game)
+            context = await get_initial_game_state(self.game)
             await self.send(text_data=json.dumps(context))
         elif "update" in data:
             # Frontend wants to update the game state
-            await update_game_state(self.game_obj, data["board"], data["dice"], data["turn"])
+            await update_game_state(self.game_obj, data)
 
             # If frontend wants not to update the other user
             if not data["update"]:
@@ -106,6 +106,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             context = {
                 "type": "send_updates",
                 "initial": False,
+                "player_timer": data["player_timer"] if data["player_timer"] else self.game.player_timer,
                 "turn": data["turn"],
                 "board": data["board"],
                 "dice": data["dice"],
@@ -193,6 +194,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         '''
 
         initial = event["initial"]
+        player_timer = event["player_timer"]
         turn = event["turn"]
         board = event["board"]
         dice = event["dice"]
@@ -202,6 +204,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         context = {
             "initial": initial,
+            "player_timer": player_timer,
             "turn": turn,
             "board": board,
             "dice": dice,
@@ -225,18 +228,20 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 
 @database_sync_to_async
-def update_game_state(game: Game, board, dice, turn):
+def update_game_state(game: Game, data):
     '''
         Updating the game instance
     '''
 
-    game.update(board=board)
-    game.update(dice=dice)
-    game.update(turn=turn)
+    game.update(board=data["board"])
+    game.update(dice=data["dice"])
+    game.update(turn=data["turn"])
+    if data["player_timer"]:
+        game.update(player_timer=data["player_timer"])
 
 
 @database_sync_to_async
-def get_game_state(game: Game) -> dict:
+def get_initial_game_state(game: Game) -> dict:
     '''
         Used for initial loading. Getting the current game state.
     '''
@@ -244,11 +249,12 @@ def get_game_state(game: Game) -> dict:
     context = {}
 
     context["initial"] = True
+    context["player_timer"] = game.player_timer
     context["turn"] = game.turn
     context["board"] = game.board
     context["dice"] = game.dice
     context["finished"] = game.finished
-    context["initial_physics"] = game.dicePhysics
+    context["initial_physics"] = game.dice_physics
     context["white"] = game.white.id
     context["black"] = game.black.id
     context["white_name"] = game.white.username

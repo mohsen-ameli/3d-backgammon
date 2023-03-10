@@ -3,15 +3,11 @@ import { Link } from "react-router-dom"
 import { AuthContext } from "../../context/AuthContext"
 import { GameContext } from "../context/GameContext"
 import ChatButton from "./ChatButton"
-import DiceMoves from "./DiceMoves"
 import LayoutBtn from "./LayoutBtn"
-import ThrowButton from "./ThrowButton"
-import { DiceMoveType } from "../types/Dice.type"
-import { GameModeType, PlayerType, UserCheckerType } from "../types/Game.type"
 import WinnerOverlay from "./WinnerOverlay"
-import { UserType } from "../../context/User.type"
-import { Children } from "../../components/children.type"
 import getImageUrl from "../../components/utils/getImageUrl"
+import Side from "./Side"
+import Dialog from "./Dialog"
 
 const Layout = () => {
   const { inGame } = useContext(GameContext)
@@ -27,98 +23,16 @@ const Layout = () => {
   )
 }
 
-type SideProps = {
-  img: string
-  userChecker: UserCheckerType
-  player: PlayerType
-  dice: DiceMoveType
-  sideType: "enemy" | "me"
-  gameMode: GameModeType
-
-  // For pass-and-play
-  showThrow?: boolean | null
-  user?: UserType
-}
-
-/**
- * Side cards that contain the user image, name, and dynamically switches between showing the
- * throw button, and the dice moves.
- */
-const Side = ({
-  img,
-  dice,
-  userChecker,
-  player,
-  sideType,
-  gameMode,
-  showThrow,
-  user,
-}: SideProps) => {
-  return (
-    <div
-      className={
-        "absolute top-1/2 z-[10] m-2 h-fit w-[130px] -translate-y-1/2 rounded-md bg-orange-900 px-2 py-4 lg:w-[180px] " +
-        (sideType === "enemy" ? "left-0" : "right-0")
-      }
-    >
-      <div className="flex flex-col items-center justify-center gap-y-4 text-white lg:gap-y-12">
-        <div className="flex flex-col items-center">
-          <img
-            src={img}
-            alt={sideType}
-            className="h-[50px] w-[50px] rounded-full object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]"
-          />
-          <div className="mt-2 flex flex-col items-center justify-center pb-10 text-xs lg:text-lg">
-            <h1>{player.name !== "" ? player.name : user?.username}</h1>
-
-            <div
-              className={
-                "absolute inset-2 h-[20px] w-[20px] rounded-full " +
-                ((gameMode === "pass-and-play" && userChecker === "white") ||
-                (gameMode !== "pass-and-play" && player.color === "white")
-                  ? "bg-slate-200"
-                  : "bg-slate-900")
-              }
-            />
-
-            {/* Showing the throw dice, and dice moves dynamically based on gameMode */}
-            {gameMode === "pass-and-play" ? (
-              <>
-                <ThrowButton className="absolute bottom-0 my-3 px-2" />
-                {!showThrow && <DiceMoves dice={dice} />}
-              </>
-            ) : (
-              userChecker === player.color && (
-                <>
-                  {sideType === "me" && (
-                    <ThrowButton className="absolute bottom-0 my-3 px-2" />
-                  )}
-                  <DiceMoves dice={dice} />
-                </>
-              )
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 const MainLayout = () => {
   const { user } = useContext(AuthContext)
-  const { dice, gameMode, userChecker, players, showThrow } =
-    useContext(GameContext)
+  const { gameMode, players } = useContext(GameContext)
 
   if (gameMode.current === "pass-and-play")
     return (
       <Side
         img={getImageUrl(user?.username!)}
-        dice={dice.current}
-        userChecker={userChecker.current!}
         player={players.current.me}
         sideType="me"
-        gameMode={gameMode.current}
-        showThrow={showThrow}
         user={user}
       />
     )
@@ -127,26 +41,22 @@ const MainLayout = () => {
     <>
       <Side
         img={players.current.me.image}
-        dice={dice.current}
-        userChecker={userChecker.current!}
         player={players.current.me}
         sideType="me"
-        gameMode={gameMode.current}
       />
       <Side
         img={players.current.enemy.image}
-        dice={dice.current}
-        userChecker={userChecker.current!}
         player={players.current.enemy}
         sideType="enemy"
-        gameMode={gameMode.current}
       />
     </>
   )
 }
 
 const RightLayout = () => {
-  const { resign, gameMode } = useContext(GameContext)
+  const { resign, gameMode, players } = useContext(GameContext)
+
+  const resignMe = () => resign(players.current.enemy.id, players.current.me.id)
 
   return (
     <div className="absolute top-0 right-0 flex items-center justify-center gap-x-1 p-1 md:gap-x-2 md:p-2">
@@ -160,7 +70,7 @@ const RightLayout = () => {
             </LayoutBtn>
           </Link>
         ) : (
-          <LayoutBtn title="Resign" onClick={resign}>
+          <LayoutBtn title="Resign" onClick={resignMe}>
             <i className="fa-regular fa-flag -rotate-[20deg]"></i>
           </LayoutBtn>
         )}
@@ -209,13 +119,13 @@ const LeftLayout = () => {
       </div>
 
       {settingsOpen && (
-        <Caruosel setOpen={setSettingsOpen}>
+        <Dialog setOpen={setSettingsOpen}>
           <h1>Settings</h1>
-        </Caruosel>
+        </Dialog>
       )}
 
       {infoOpen && (
-        <Caruosel setOpen={setInfoOpen}>
+        <Dialog setOpen={setInfoOpen}>
           <h1 className="mb-2 text-xl font-bold">How to play the game:</h1>
           <ul className="ml-8 list-disc leading-7">
             <li>
@@ -240,35 +150,8 @@ const LeftLayout = () => {
               their checkers off, will be the winner!
             </li>
           </ul>
-        </Caruosel>
+        </Dialog>
       )}
-    </>
-  )
-}
-
-type CarouselProps = Children & {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const Caruosel = ({ setOpen, children }: CarouselProps) => {
-  return (
-    <>
-      <div
-        className="absolute top-0 left-0 z-[20] h-screen w-screen bg-[#0000005a]"
-        onClick={() => setOpen(false)}
-      />
-      <div className="fixed left-1/2 top-1/2 z-[20] -translate-x-1/2 -translate-y-1/2 text-white">
-        <div className="custom-scroll-bar max-h-screen min-w-[300px] max-w-[600px] rounded-md border-2 border-orange-700 bg-orange-900 p-8">
-          {children}
-        </div>
-
-        <button
-          className="absolute top-2 right-5 text-2xl duration-100 hover:text-slate-400 hover:ease-in-out"
-          onClick={() => setOpen(false)}
-        >
-          x
-        </button>
-      </div>
     </>
   )
 }

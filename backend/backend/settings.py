@@ -128,6 +128,9 @@ AUTH_USER_MODEL = 'users.CustomUser'
 # The interval at which the client will receive updates (in seconds)
 UPDATE_INTERVAL = DEBUG and 1 or 2
 
+# User turn duration (Synced with frontend in Data.ts)
+USER_TURN_DURATION = 70
+
 # REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ("rest_framework.permissions.IsAuthenticated",),

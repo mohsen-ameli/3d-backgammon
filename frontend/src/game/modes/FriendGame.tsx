@@ -14,7 +14,7 @@ type DataType = {
 }
 
 const FriendGame = () => {
-  const { setInGame, gameMode } = useContext(GameContext)
+  const { setInGame, gameMode, resetOrbit } = useContext(GameContext)
 
   const navigate = useNavigate()
   const { gameId } = useParams()
@@ -34,6 +34,7 @@ const FriendGame = () => {
     } else {
       setInGame(true)
       gameMode.current = `game_${gameId}`
+      resetOrbit?.current()
     }
   }
 

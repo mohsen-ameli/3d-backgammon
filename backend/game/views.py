@@ -1,9 +1,10 @@
-import random
+import random, time
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from .models import Game, InGameMessages
 from users.models import CustomUser
@@ -36,7 +37,17 @@ def handle_match_request(request: Request):
             newGame.white = friend
         else:
             newGame.white = request.user
-            newGame.black = friend 
+            newGame.black = friend
+
+        newGame.turn = "black" if random.random() > 0.5 else "white"
+
+        # Setting the allowed time for user to make move. In frontend, we will subtract the current time from this time
+        # and if it's less than 70 seconds, then user can still move, otherwise, we will resign the user with this id
+        if newGame.turn == "black":
+            newGame.player_timer = { "id": newGame.black.id, "time": round(time.time() * 1000) + settings.USER_TURN_DURATION * 1000 }
+        else:
+            newGame.player_timer = { "id": newGame.white.id, "time": round(time.time() * 1000) + settings.USER_TURN_DURATION * 1000 }
+
         newGame.save()
 
         request.user.games.add(newGame)

@@ -64,11 +64,12 @@ class Game(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     start_time = models.DateTimeField(auto_now_add=True)
-    turn = models.CharField(max_length=5, choices=choices, blank=True, null=True, default="white" if random.random() > 0.5 else "black")
+    turn = models.CharField(max_length=5, choices=choices, blank=True, null=True)
     finished = models.BooleanField(default=False)
     board = models.JSONField(default=SingletonJSONFieldDefault, blank=True, null=True)
     dice = models.JSONField(default=DiceDefault, blank=True, null=True)
-    dicePhysics = models.JSONField(default=dict, blank=True, null=True)
+    dice_physics = models.JSONField(default=dict, blank=True, null=True)
+    player_timer = models.JSONField(default=dict, blank=True, null=True)
     # I chose the winner to be a string, so that if the user deletes their account, 
     # in their friend's games their name doesn't appear as null
     winner = models.CharField(max_length=50, blank=True, null=True)

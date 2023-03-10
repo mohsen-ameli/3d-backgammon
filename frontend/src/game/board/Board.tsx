@@ -1,4 +1,3 @@
-import { useFrame } from "@react-three/fiber"
 import { CuboidCollider, RigidBody } from "@react-three/rapier"
 import { useContext, useRef } from "react"
 import { Mesh } from "three"
@@ -8,30 +7,16 @@ import { GameContext } from "../context/GameContext"
  * Primary board mesh.
  */
 const Board = () => {
-  const { nodes, materials, gameMode } = useContext(GameContext)
+  const { nodes, materials } = useContext(GameContext)
 
   const board = useRef<Mesh>(null!)
   const boardHinge = useRef<Mesh>(null!)
-
-  // A little animation, so the user doesn't get bored
-  useFrame((clock, delta) => {
-    const speed = delta / 12
-
-    if (!gameMode.current) {
-      board.current.rotation.y += speed
-      boardHinge.current.rotation.y += speed
-    } else {
-      board.current.rotation.y = 0
-      boardHinge.current.rotation.y = 0
-    }
-  })
 
   return (
     <group>
       {/* Board Hinge */}
       <mesh
         ref={boardHinge}
-        rotation-x={!gameMode.current ? -Math.PI / 6 : 0}
         geometry={nodes.Hinge.geometry}
         material={materials.Hinge}
         receiveShadow
@@ -58,7 +43,6 @@ const Board = () => {
 
         <mesh
           ref={board}
-          rotation-x={!gameMode.current ? -Math.PI / 6 : 0}
           geometry={nodes.Board.geometry}
           material={materials.BoardWood2}
           receiveShadow

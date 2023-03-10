@@ -1,7 +1,6 @@
-import { Canvas } from "@react-three/fiber"
-import { Suspense, useState } from "react"
+import { Canvas, useFrame } from "@react-three/fiber"
+import { Suspense, useRef, useState } from "react"
 import useLoadingScreen from "../components/hooks/useLoadingScreen"
-import { DEFAULT_CAMERA_POSITION } from "./data/Data"
 
 import { useContext } from "react"
 import { Debug, Physics } from "@react-three/rapier"
@@ -16,6 +15,8 @@ import Stage from "./Stage"
 import { GameContext } from "./context/GameContext"
 import useStatus from "../components/hooks/useStatus"
 import { Perf } from "r3f-perf"
+import { Vector3 } from "three"
+import { DEFAULT_CAMERA_POSITION } from "./data/Data"
 
 const Experience = () => {
   // Getting the user status. (Game requests and game request rejections)
@@ -36,7 +37,7 @@ const Experience = () => {
         ],
         fov: 45,
         near: 0.2,
-        far: 10,
+        far: 20,
       }}
       shadows
       style={{ zIndex: zIndex }}
@@ -53,6 +54,24 @@ const Game = () => {
 
   // View port
   useViewPort()
+
+  const vec = useRef(new Vector3())
+
+  // A little animation, so the user doesn't get bored
+  // prettier-ignore
+  useFrame(( state, delta) => {
+    if (inGame) return
+    
+    const elapsedTime = state.clock.getElapsedTime()
+    const camera = state.camera
+
+    vec.current.x = Math.cos(-elapsedTime * 0.2 * 0.4) * 8
+    vec.current.z = Math.sin(-elapsedTime * 0.2 * 0.4) * 8
+    vec.current.y = Math.sin(elapsedTime * 0.5 * 0.4) * 4
+
+    camera.position.lerp(vec.current, 0.01)
+    camera.updateProjectionMatrix()
+  })
 
   return (
     <>

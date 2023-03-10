@@ -26,9 +26,10 @@ import gltfModel from "../../assets/models/models.glb"
 export const GameContext = createContext({} as types.GameContextType)
 
 const GameContextProvider = ({ children }: Children) => {
+  // Auth context
   const { user } = useContext(AuthContext)
 
-  // Load the models
+  // Loading the models
   const { nodes, materials } = useGLTF(gltfModel) as GLTFResult
 
   /**
@@ -46,17 +47,6 @@ const GameContextProvider = ({ children }: Children) => {
 
   // Throws the dice onto the board. Defined in Dices
   const throwDice = useRef(() => null)
-
-  // User is resigning.. what a loser
-  const resign = () => {
-    const msg = "Confirm resignation?"
-    const context = JSON.stringify({
-      resign: true,
-      winner: players.current.enemy.id,
-      resigner: players.current.me.id,
-    })
-    notification(msg, "resign", undefined, undefined, () => ws?.send(context))
-  }
 
   /**
    * Game refs
@@ -92,6 +82,9 @@ const GameContextProvider = ({ children }: Children) => {
   // The new position of the checker (in checkers used for calculating the moved variable)
   const newCheckerPosition = useRef<number | undefined>()
 
+  // Timer used to keep track of both user's time remaining
+  const timer = useRef<types.TimerType>()
+
   /**
    * States
    */
@@ -114,22 +107,37 @@ const GameContextProvider = ({ children }: Children) => {
   // Audio to play when users switch
   const [audio] = useState(() => new Audio(userSwitchAudio))
 
+  // User is resigning.. what a loser
+  const resign = (winnerId: number, loserId: number, send: boolean = false) => {
+    const context = JSON.stringify({
+      resign: true,
+      winner: winnerId,
+      resigner: loserId,
+    })
+
+    if (send) {
+      ws?.send(context)
+      return
+    }
+
+    const msg = "Confirm resignation?"
+    notification(msg, "resign", undefined, undefined, () => ws?.send(context))
+  }
+
   // Plays the audio switching users
   const playAudio = () => audio.play().catch(() => {})
 
   // User is connecting to the game initially
   const onOpen = () => ws?.send(JSON.stringify({ initial: true }))
 
-  // Backend has sent updates
+  // Backend has sent game updates
   const onMessage = useCallback((e: MessageEvent) => {
     const data: types.GameDataTypes = JSON.parse(e.data)
-
-    // console.log(data)
 
     // If there are too many sessions active
     if (data.too_many_users) {
       const errorMsg = "Please continue this game on your other active session!"
-      notification(errorMsg, "error")
+      // notification(errorMsg, "error")
       return
     }
 
@@ -182,6 +190,7 @@ const GameContextProvider = ({ children }: Children) => {
     userChecker.current = data.turn!
     checkers.current = data.board!
     dice.current = data.dice!
+    timer.current = data.player_timer
 
     // Settings user turn
     let turn = false
@@ -301,6 +310,7 @@ const GameContextProvider = ({ children }: Children) => {
     checkers,
     checkerPicked,
     newCheckerPosition,
+    timer,
 
     // States
     myTurn,
