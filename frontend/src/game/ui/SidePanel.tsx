@@ -27,7 +27,7 @@ type SideProps = {
  * Each player has a side, with their profile picture, name, their checker color,
  * and a timer for them to see how much time they have left to make a move.
  */
-const Side = (props: SideProps) => {
+const SidePanel = (props: SideProps) => {
   const { img, player, sideType, user } = props
 
   const {
@@ -184,4 +184,4 @@ const Side = (props: SideProps) => {
   )
 }
 
-export default Side
+export default SidePanel

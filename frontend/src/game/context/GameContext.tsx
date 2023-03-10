@@ -226,12 +226,12 @@ const GameContextProvider = ({ children }: Children) => {
 
       players.current.me.id = user.user_id
       players.current.me.name = user.username
-      players.current.me.image = getServerUrl() + (myColor === "white" ? data.white_image! : data.black_image!) //prettier-ignore
+      players.current.me.image = (myColor === "white" ? data.white_image! : data.black_image!) //prettier-ignore
       players.current.me.color = myColor
 
       players.current.enemy.id = myColor === "white" ? data.black! : data.white!
       players.current.enemy.name = myColor === "white" ? data.black_name! : data.white_name! //prettier-ignore
-      players.current.enemy.image = getServerUrl() + (myColor === "white" ? data.black_image! : data.white_image!) //prettier-ignore
+      players.current.enemy.image = (myColor === "white" ? data.black_image! : data.white_image!) //prettier-ignore
       players.current.enemy.color = switchPlayers(myColor)
 
       return

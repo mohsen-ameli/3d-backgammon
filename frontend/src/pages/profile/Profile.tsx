@@ -3,31 +3,20 @@ import Header from "../../components/ui/Header"
 import useFetch from "../../components/hooks/useFetch"
 import Loading from "../../components/ui/Loading"
 import { useEffect, useState } from "react"
-import getServerUrl from "../../components/utils/getServerUrl"
-
-type Data = {
-  data: {
-    username: string
-    image: string
-    games_won: number
-    games_lost: number
-    total_games: number
-    date_joined: number
-  }
-  loading: boolean
-  error: string
-}
+import { PofileData } from "../../components/Profile.type"
 
 /**
  * User's profile
  */
 const Profile = () => {
-  const { data, loading, error }: Data = useFetch("/api/get-user-profile/")
+  const { data, loading, error }: PofileData = useFetch(
+    "/api/get-user-profile/"
+  )
 
   const [img, setImg] = useState<string>()
 
   useEffect(() => {
-    if (data) setImg(getServerUrl() + data.image)
+    if (data) setImg(data.image)
   }, [data])
 
   if (loading) return <Loading />

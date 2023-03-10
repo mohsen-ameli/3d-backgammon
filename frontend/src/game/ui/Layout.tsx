@@ -1,14 +1,18 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { AuthContext } from "../../context/AuthContext"
 import { GameContext } from "../context/GameContext"
 import ChatButton from "./ChatButton"
 import LayoutBtn from "./LayoutBtn"
 import WinnerOverlay from "./WinnerOverlay"
-import getImageUrl from "../../components/utils/getImageUrl"
-import Side from "./Side"
+import SidePanel from "./SidePanel"
 import Dialog from "./Dialog"
+import useFetch from "../../components/hooks/useFetch"
+import { PofileData } from "../../components/Profile.type"
 
+/**
+ * The main layout of the game. Includes buttons and side panels for each user.
+ */
 const Layout = () => {
   const { inGame } = useContext(GameContext)
 
@@ -27,10 +31,15 @@ const MainLayout = () => {
   const { user } = useContext(AuthContext)
   const { gameMode, players } = useContext(GameContext)
 
+  // Getting user image
+  const { data }: PofileData = useFetch("/api/get-user-profile/")
+  const [img, setImg] = useState("")
+  useEffect(() => setImg(data?.image), [data])
+
   if (gameMode.current === "pass-and-play")
     return (
-      <Side
-        img={getImageUrl(user?.username!)}
+      <SidePanel
+        img={img}
         player={players.current.me}
         sideType="me"
         user={user}
@@ -39,12 +48,8 @@ const MainLayout = () => {
 
   return (
     <>
-      <Side
-        img={players.current.me.image}
-        player={players.current.me}
-        sideType="me"
-      />
-      <Side
+      <SidePanel img={img} player={players.current.me} sideType="me" />
+      <SidePanel
         img={players.current.enemy.image}
         player={players.current.enemy}
         sideType="enemy"

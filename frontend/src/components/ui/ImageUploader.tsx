@@ -1,4 +1,6 @@
+import { useEffect } from "react"
 import { useDropzone } from "react-dropzone"
+import notification from "../utils/Notification"
 import Center from "./Center"
 import { ImageType } from "./Image.type"
 
@@ -13,10 +15,16 @@ const ImageUploader = ({ image, setImage }: ImageUploaderProps) => {
     setImage({ file, preview: URL.createObjectURL(file) })
   }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    maxFiles: 1,
-  })
+  const { getRootProps, getInputProps, isDragActive, fileRejections } =
+    useDropzone({
+      onDrop,
+      maxFiles: 1,
+      maxSize: 1000000,
+    })
+
+  useEffect(() => {
+    notification("Image should be less than 10MB.", "error")
+  }, [fileRejections])
 
   return (
     <div
