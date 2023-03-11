@@ -8,7 +8,7 @@ import {
 } from "react"
 import { useGLTF } from "@react-three/drei"
 
-import { Children } from "../../components/children.type"
+import { Children } from "../../components/types/children.type"
 import { DiceMoveType, DicePhysics } from "../types/Dice.type"
 import * as types from "../types/Game.type"
 import { CheckerType } from "../types/Checker.type"
@@ -82,9 +82,6 @@ const GameContextProvider = ({ children }: Children) => {
   // Timer used to keep track of both user's time remaining
   const timer = useRef<types.TimerType>()
 
-  // Settings object
-  const settings = useRef<types.SettingsType>(DEFAULT_SETTINGS)
-
   /**
    * States
    */
@@ -104,8 +101,8 @@ const GameContextProvider = ({ children }: Children) => {
   // The current phase of the game
   const [phase, setPhase] = useState<types.PhaseType>()
 
-  // Environment maps
-  // const [envMap, setEnvMap] = useState<types.EnvMap>("diamondHall")
+  // Settings object
+  const [settings, setSettings] = useState<types.SettingsType>(DEFAULT_SETTINGS)
 
   // Audio to play when users switch
   const [audio] = useState(() => new Audio(userSwitchAudio))
@@ -291,10 +288,7 @@ const GameContextProvider = ({ children }: Children) => {
 
   // Playing sound effect when the user changes
   useEffect(() => {
-    if (
-      settings.current.sound &&
-      (phase === "diceRoll" || phase === "diceRollAgain")
-    )
+    if (settings.sound && (phase === "diceRoll" || phase === "diceRollAgain"))
       playAudio()
   }, [phase, myTurn])
 
@@ -317,7 +311,6 @@ const GameContextProvider = ({ children }: Children) => {
     checkerPicked,
     newCheckerPosition,
     timer,
-    settings,
 
     // States
     myTurn,
@@ -328,6 +321,8 @@ const GameContextProvider = ({ children }: Children) => {
     setShowThrow,
     phase,
     setPhase,
+    settings,
+    setSettings,
 
     // Other
     nodes,

@@ -1,4 +1,4 @@
-import { ImageType } from "../components/ui/Image.type"
+import { ImageType } from "../components/types/Image.type"
 import { ErrorType } from "./Error.type"
 import { TokenType } from "./Token.type"
 import { UserType } from "./User.type"

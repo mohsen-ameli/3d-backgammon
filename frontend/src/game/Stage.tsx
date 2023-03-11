@@ -11,26 +11,18 @@ import { DEFAULT_ENV_MAP_INTENSITY } from "./data/Data"
 import { GameContext } from "./context/GameContext"
 import { useThree } from "@react-three/fiber"
 import { button, useControls } from "leva"
-import { EnvMap } from "./types/Game.type"
 
 /**
  * Staging for our scene
  */
 const Stage = () => {
-  const { materials, inGame } = useContext(GameContext)
+  const { materials, inGame, settings, setSettings } = useContext(GameContext)
 
   const { scene } = useThree()
 
   const directionalLight = useRef<DirectionalLight>(null!)
 
-  const [envMap, setEnvMap] = useState<EnvMap>("diamondHall")
   const [cubeEnvs, setCubeEnvs] = useState<CubeTexture[]>()
-
-  useControls("Environment Maps", {
-    briliantHall: button(() => setEnvMap("briliantHall")),
-    diamondHall: button(() => setEnvMap("diamondHall")),
-    finGarden: button(() => setEnvMap("finGarden")),
-  })
 
   // Loads all of the env maps, and sets the envMap state
   useMemo(() => {
@@ -59,18 +51,16 @@ const Stage = () => {
   useMemo(() => {
     if (!cubeEnvs) return
 
-    const chosen = cubeEnvs.filter(map => map.name === envMap)
+    const chosen = cubeEnvs.filter(map => map.name === settings.envMap)
 
     scene.background = chosen[0]
     scene.environment = chosen[0]
     scene.background.encoding = sRGBEncoding
     scene.environment.encoding = sRGBEncoding
-  }, [envMap, cubeEnvs])
+  }, [settings.envMap, cubeEnvs])
 
   // Setting the environement maps, and the default env map
   useEffect(() => {
-    setEnvMap("diamondHall")
-
     materials.BoardWood2.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY
     materials.ColumnDark.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY
     materials.ColumnWhite.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY

@@ -5,8 +5,13 @@ export type DiceReadyType = {
   dice2: boolean
 }
 
-export type DiceMoveType = { dice1: number; dice2: number; moves: number }
+export type DiceMoveType = {
+  dice1: number
+  dice2: number
+  moves: number
+}
 
+// The physics of a die, that gets thrown
 export type DiePhysics = {
   impulse: {
     x: number
@@ -20,6 +25,7 @@ export type DiePhysics = {
   }
 }
 
+// Physics of both dice
 export type DicePhysics = {
   user: PlayerType
   physics: {

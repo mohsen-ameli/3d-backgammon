@@ -1,15 +1,21 @@
 import { BufferGeometry, Material, Mesh, MeshStandardMaterial } from "three"
 import { CheckerType } from "./Checker.type"
 import { DicePhysics, DiceMoveType } from "./Dice.type"
+import { MaterialType, NodeType } from "./GLTFResult.type"
 
+// The different environment maps we have
+export type EnvMapType = "diamondHall" | "briliantHall" | "finGarden"
+
+// Settings type, used in the settings component
 export type SettingsType = {
   sound: boolean
+  envMap: EnvMapType
 }
 
-export type EnvMap = "diamondHall" | "briliantHall" | "finGarden"
-
+// Possible checker colours
 export type UserCheckerType = "black" | "white"
 
+// Each player has a type
 export type PlayerType = {
   id: number
   name: string
@@ -17,41 +23,18 @@ export type PlayerType = {
   color: UserCheckerType
 }
 
+// Both players
 export type PlayersType = {
   me: PlayerType
   enemy: PlayerType
 }
 
+// The timer of active user.
+// TODO: Perhaps we could merge this with PlayerType
 export type TimerType = { id: number; time: number }
 
-export type GameDataTypes = {
-  too_many_users?: boolean
-  finished?: boolean
-  winner?: PlayerType
-  resigner?: PlayerType
-  message?: string
-  user?: string
-  initial?: boolean
-  black?: number
-  white?: number
-  black_name?: string
-  white_name?: string
-  white_image?: string
-  black_image?: string
-  player_timer?: TimerType
-  turn?: UserCheckerType
-  board?: CheckerType[]
-  dice?: DiceMoveType
-  physics?: DicePhysics
-  initial_physics?: DicePhysics
-}
-
-export type NodeType = Record<
-  string,
-  Mesh<BufferGeometry, Material | Material[]>
->
-export type MaterialType = Record<string, MeshStandardMaterial>
-
+// Different Phases of the game
+// TODO: cleanup the again phases
 export type PhaseType =
   | "checkerMove"
   | "checkerMoveAgain"
@@ -65,6 +48,7 @@ export type PhaseType =
   | "spectating"
   | undefined
 
+// Different game mode types
 export type GameModeType = "pass-and-play" | string | undefined
 
 export type GameContextType = {
@@ -87,7 +71,6 @@ export type GameContextType = {
   checkerPicked: React.MutableRefObject<boolean>
   newCheckerPosition: React.MutableRefObject<number | undefined>
   timer: React.MutableRefObject<TimerType | undefined>
-  settings: React.MutableRefObject<SettingsType>
 
   // States
   myTurn: boolean
@@ -98,8 +81,33 @@ export type GameContextType = {
   setShowThrow: React.Dispatch<React.SetStateAction<boolean | null>>
   phase: PhaseType
   setPhase: React.Dispatch<React.SetStateAction<PhaseType>>
+  settings: SettingsType
+  setSettings: React.Dispatch<React.SetStateAction<SettingsType>>
 
   // Other
   nodes: NodeType
   materials: MaterialType
+}
+
+// The data that comes back from backend, when recieving updates
+export type GameDataTypes = {
+  too_many_users?: boolean
+  finished?: boolean
+  winner?: PlayerType
+  resigner?: PlayerType
+  message?: string
+  user?: string
+  initial?: boolean
+  black?: number
+  white?: number
+  black_name?: string
+  white_name?: string
+  white_image?: string
+  black_image?: string
+  player_timer?: TimerType
+  turn?: UserCheckerType
+  board?: CheckerType[]
+  dice?: DiceMoveType
+  physics?: DicePhysics
+  initial_physics?: DicePhysics
 }

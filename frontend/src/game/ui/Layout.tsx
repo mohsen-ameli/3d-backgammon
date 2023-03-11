@@ -8,7 +8,7 @@ import WinnerOverlay from "./WinnerOverlay"
 import SidePanel from "./SidePanel"
 import Dialog from "./Dialog"
 import useFetch from "../../components/hooks/useFetch"
-import { PofileData } from "../../components/Profile.type"
+import { PofileData } from "../../components/types/Profile.type"
 import Settings from "./Settings"
 
 /**
@@ -126,7 +126,7 @@ const LeftLayout = () => {
 
       {settingsOpen && (
         <Dialog setOpen={setSettingsOpen}>
-          <Settings />
+          <Settings setOpen={setSettingsOpen} />
         </Dialog>
       )}
 

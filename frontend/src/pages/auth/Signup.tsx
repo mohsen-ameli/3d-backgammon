@@ -6,7 +6,7 @@ import FormField from "../../components/ui/FormField"
 import Header from "../../components/ui/Header"
 import { Link } from "react-router-dom"
 import ImageUploader from "../../components/ui/ImageUploader"
-import { ImageType } from "../../components/ui/Image.type"
+import { ImageType } from "../../components/types/Image.type"
 
 const Signup = () => {
   const { signup, errors, setErrors } = useContext(AuthContext)

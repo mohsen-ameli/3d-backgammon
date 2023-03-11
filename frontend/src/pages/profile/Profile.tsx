@@ -3,7 +3,7 @@ import Header from "../../components/ui/Header"
 import useFetch from "../../components/hooks/useFetch"
 import Loading from "../../components/ui/Loading"
 import { useEffect, useState } from "react"
-import { PofileData } from "../../components/Profile.type"
+import { PofileData } from "../../components/types/Profile.type"
 
 /**
  * User's profile

@@ -7,8 +7,8 @@ import { UserType } from "./User.type"
 import { TokenType } from "./Token.type"
 import { ErrorType } from "./Error.type"
 import { AuthContextType } from "./Context.type"
-import { Children } from "../components/children.type"
-import { ImageType } from "../components/ui/Image.type"
+import { Children } from "../components/types/children.type"
+import { ImageType } from "../components/types/Image.type"
 
 export const AuthContext = createContext({} as AuthContextType)
 

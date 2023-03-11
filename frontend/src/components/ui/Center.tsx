@@ -1,4 +1,4 @@
-import { UIProps } from "./UI.type"
+import { UIProps } from "../types/UI.type"
 
 /**
  * Centers the children

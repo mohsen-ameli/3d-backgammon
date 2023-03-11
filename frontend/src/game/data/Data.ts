@@ -9,6 +9,7 @@ export const USER_TURN_DURATION = 70
 // Settings
 export const DEFAULT_SETTINGS: SettingsType = {
   sound: true,
+  envMap: "diamondHall",
 }
 
 // Stage
@@ -96,4 +97,4 @@ const DEFAULT_POS: CheckerType[] = [
   { id: 29, color: "black", col: 5, row: 4, removed: false },
 ]
 
-export const DEFAULT_CHECKER_POSITIONS = DEFAULT_POS
+export const DEFAULT_CHECKER_POSITIONS = extra.LOTS_OF_REMOVABLES

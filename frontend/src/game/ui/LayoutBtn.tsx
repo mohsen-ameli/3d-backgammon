@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes } from "react"
-import { Children } from "../../components/children.type"
+import { Children } from "../../components/types/children.type"
 
 type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & Children
 

@@ -34,7 +34,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
   // When the die collides with someting
   const colissionEnter = () => {
-    if (!DiceOnBoard(rigidBody) || !settings.current.sound) return
+    if (!DiceOnBoard(rigidBody) || !settings.sound) return
 
     audio.currentTime = 0
     audio.volume = Math.random()

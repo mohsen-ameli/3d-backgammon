@@ -6,7 +6,6 @@ import App from "./App"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "./assets/fontawesome/all.min.css"
-import React from "react"
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   // <React.StrictMode>

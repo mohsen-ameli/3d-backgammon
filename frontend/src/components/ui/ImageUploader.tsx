@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useDropzone } from "react-dropzone"
 import notification from "../utils/Notification"
 import Center from "./Center"
-import { ImageType } from "./Image.type"
+import { ImageType } from "../types/Image.type"
 
 type ImageUploaderProps = {
   image: ImageType

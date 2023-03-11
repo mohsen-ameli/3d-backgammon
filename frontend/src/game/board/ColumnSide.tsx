@@ -5,7 +5,8 @@ import { GameContext } from "../context/GameContext"
 import { useMemo } from "react"
 import Endgame from "../utils/Endgame"
 import toCapitalize from "../../components/utils/ToCapitalize"
-import { NodeType, UserCheckerType } from "../types/Game.type"
+import { UserCheckerType } from "../types/Game.type"
+import { NodeType } from "../types/GLTFResult.type"
 
 /**
  * End columns for each user. This component is some what simlar to the

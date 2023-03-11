@@ -1,4 +1,4 @@
-import { Children } from "../../components/children.type"
+import { Children } from "../../components/types/children.type"
 
 type CarouselProps = Children & {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>

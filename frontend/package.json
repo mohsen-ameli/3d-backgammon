@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "start": "vite",
@@ -11,17 +11,14 @@
   },
   "dependencies": {
     "@react-spring/shared": "^9.7.0",
-    "@react-spring/types": "^9.7.0",
     "@react-three/drei": "^9.56.27",
     "@react-three/fiber": "^8.11.5",
     "@react-three/rapier": "^0.12.2",
-    "@types/three": "^0.149.0",
     "animate.css": "^4.1.1",
     "axios": "^1.2.2",
     "gsap": "^3.11.4",
     "jwt-decode": "^3.1.2",
     "leva": "^0.9.34",
-    "maath": "^0.5.2",
     "r3f-perf": "^6.6.3",
     "react": "^18.2.0",
     "react-countdown-circle-timer": "^3.1.0",
@@ -34,6 +31,8 @@
     "three": "^0.148.0"
   },
   "devDependencies": {
+    "@react-spring/types": "^9.7.0",
+    "@types/three": "^0.149.0",
     "@types/node": "^18.14.0",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
