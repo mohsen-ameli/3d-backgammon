@@ -15,7 +15,7 @@ import { CheckerType } from "../types/Checker.type"
 import { GLTFResult } from "../types/GLTFResult.type"
 import getServerUrl from "../../components/utils/getServerUrl"
 import { AuthContext } from "../../context/AuthContext"
-import { DEFAULT_CHECKER_POSITIONS } from "../data/Data"
+import { DEFAULT_CHECKER_POSITIONS, DEFAULT_SETTINGS } from "../data/Data"
 import switchPlayers from "../utils/SwitchPlayers"
 import notification from "../../components/utils/Notification"
 import toCapitalize from "../../components/utils/ToCapitalize"
@@ -41,9 +41,6 @@ const GameContextProvider = ({ children }: Children) => {
 
   // Resets orbit controls. Defined in the Controls component
   const resetOrbit = useRef(() => null)
-
-  // Toggles the zoom on orbit controls. Defined in the Controls component
-  const toggleZoom = useRef(() => null)
 
   // Throws the dice onto the board. Defined in Dices
   const throwDice = useRef(() => null)
@@ -85,6 +82,9 @@ const GameContextProvider = ({ children }: Children) => {
   // Timer used to keep track of both user's time remaining
   const timer = useRef<types.TimerType>()
 
+  // Settings object
+  const settings = useRef<types.SettingsType>(DEFAULT_SETTINGS)
+
   /**
    * States
    */
@@ -103,6 +103,9 @@ const GameContextProvider = ({ children }: Children) => {
 
   // The current phase of the game
   const [phase, setPhase] = useState<types.PhaseType>()
+
+  // Environment maps
+  // const [envMap, setEnvMap] = useState<types.EnvMap>("diamondHall")
 
   // Audio to play when users switch
   const [audio] = useState(() => new Audio(userSwitchAudio))
@@ -288,7 +291,11 @@ const GameContextProvider = ({ children }: Children) => {
 
   // Playing sound effect when the user changes
   useEffect(() => {
-    if (phase === "diceRoll" || phase === "diceRollAgain") playAudio()
+    if (
+      settings.current.sound &&
+      (phase === "diceRoll" || phase === "diceRollAgain")
+    )
+      playAudio()
   }, [phase, myTurn])
 
   // Game state values
@@ -296,7 +303,6 @@ const GameContextProvider = ({ children }: Children) => {
     // Functions
     toggleControls,
     resetOrbit,
-    toggleZoom,
     resign,
     throwDice,
 
@@ -311,6 +317,7 @@ const GameContextProvider = ({ children }: Children) => {
     checkerPicked,
     newCheckerPosition,
     timer,
+    settings,
 
     // States
     myTurn,

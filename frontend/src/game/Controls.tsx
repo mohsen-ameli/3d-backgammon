@@ -10,10 +10,7 @@ import { OrbitControls as OrbitControlType } from "three-stdlib/controls/OrbitCo
 import { GameContext } from "./context/GameContext"
 
 type OrbitType = {
-  orbitEnabled: {
-    enabled: boolean
-    changable: boolean
-  }
+  locked: boolean
 }
 
 /**
@@ -22,7 +19,7 @@ type OrbitType = {
  * the zoom.
  */
 const Controls = () => {
-  const { resetOrbit, toggleControls, toggleZoom } = useContext(GameContext)
+  const { resetOrbit, toggleControls } = useContext(GameContext)
 
   const orbitRef = useRef<OrbitControlType & OrbitType>(null)
 
@@ -30,10 +27,10 @@ const Controls = () => {
     if (!orbitRef.current) return
 
     // Default enabled values
-    orbitRef.current.orbitEnabled = {
-      enabled: true,
-      changable: true,
-    }
+    // orbitRef.current.orbitEnabled = {
+    //   enabled: true,
+    //   changable: true,
+    // }
 
     // Saving the default state of the orbit controls
     orbitRef.current.saveState()
@@ -41,42 +38,41 @@ const Controls = () => {
 
   // Function to toggle orbit controls
   toggleControls.current = useCallback(
-    (ui: boolean = false, drag: boolean = false) => {
+    (from: "layout" | "checkerDisable" | "checkerEnable") => {
       if (!orbitRef.current) return
 
-      const changes = {
-        enabled: !orbitRef.current.orbitEnabled.enabled,
-      } as {
-        enabled: boolean
-        changable: boolean
+      // If the controls are being toggled from the Layout component, then toggle it and set lock to the same value
+      // (lock is used in checkerEnable, to make sure when user releases a checker, and if the controls are locked
+      // we don't accidentally turn the controls back on.)
+      if (from === "layout") {
+        orbitRef.current.enabled = !orbitRef.current.enabled
+        orbitRef.current.locked = !orbitRef.current.enabled
+        return
       }
 
-      // If we're changing the controls from the UI component
-      if (ui) changes.changable = !orbitRef.current.orbitEnabled.changable
-      // If we're changing the controls from the checker component
-      else if (drag) {
-        if (!orbitRef.current.orbitEnabled.enabled) return
-        changes.changable = orbitRef.current.orbitEnabled.changable
+      // If the controls are being toggled from Checkers, and they want it to be disabled
+      if (from === "checkerDisable") {
+        if (orbitRef.current.enabled) {
+          orbitRef.current.enabled = false
+        }
+      } else if (from === "checkerEnable") {
+        // Enable the controls back if and only if it's not locked
+        if (!orbitRef.current.enabled && !orbitRef.current.locked) {
+          orbitRef.current.enabled = true
+        }
       }
-
-      // Just toggling the controls
-      else if (orbitRef.current.orbitEnabled.changable)
-        changes.changable = orbitRef.current.orbitEnabled.changable
-
-      if (!changes) return
-
-      orbitRef.current.orbitEnabled = changes
-      orbitRef.current.enabled = changes["enabled"]
+      return
     },
     []
   )
 
-  // Resets the orbit
+  // Resets the orbit controls position and rotation
   resetOrbit.current = useCallback(() => {
     if (!orbitRef.current) return
 
     const duration = 2
 
+    const originalEnabledValue = orbitRef.current.enabled
     orbitRef.current.enabled = false
 
     // Snapping back to original camera position
@@ -99,16 +95,9 @@ const Controls = () => {
     })
 
     setTimeout(() => {
-      if (orbitRef.current?.orbitEnabled.changable) {
-        orbitRef.current.enabled = true
-      }
+      if (!orbitRef.current) return
+      orbitRef.current.enabled = originalEnabledValue
     }, duration * 1000 + 1000)
-  }, [])
-
-  // Toggles zoom
-  toggleZoom.current = useCallback((newValue: boolean) => {
-    if (!orbitRef.current) return
-    orbitRef.current.enableZoom = newValue
   }, [])
 
   return (

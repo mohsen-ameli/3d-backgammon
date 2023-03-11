@@ -1,9 +1,15 @@
 import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
+import { SettingsType } from "../types/Game.type"
 import * as extra from "./Extra"
 
 // User turn duration (Synced with backend in settings.py)
 export const USER_TURN_DURATION = 70
+
+// Settings
+export const DEFAULT_SETTINGS: SettingsType = {
+  sound: true,
+}
 
 // Stage
 export const DEFAULT_ENV_MAP_INTENSITY = 2

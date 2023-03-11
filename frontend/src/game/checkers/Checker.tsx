@@ -124,7 +124,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       })
       if (thisChecker.col < 0 && i === 0) event.stopPropagation()
 
-      toggleControls.current(false, true)
+      toggleControls.current("checkerDisable")
       checkerPicked.current = true
 
       // Setting the checker's mesh position (not the physics)
@@ -133,7 +133,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       return
     }
 
-    toggleControls.current()
+    toggleControls.current("checkerEnable")
     checkerPicked.current = false
 
     // Number of removed checkers of the current player/user

@@ -24,7 +24,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   const { index, position, setFinishedThrow, setSleeping, showThrowBtn } = props
 
   // Game context
-  const { nodes, materials, dice, myTurn } = useContext(GameContext)
+  const { nodes, materials, dice, myTurn, settings } = useContext(GameContext)
 
   // Rigid body reference of each die
   const rigidBody = (ref as React.MutableRefObject<RigidBodyApi>).current
@@ -34,7 +34,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
   // When the die collides with someting
   const colissionEnter = () => {
-    if (!DiceOnBoard(rigidBody)) return
+    if (!DiceOnBoard(rigidBody) || !settings.current.sound) return
 
     audio.currentTime = 0
     audio.volume = Math.random()

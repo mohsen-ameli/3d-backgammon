@@ -2,6 +2,12 @@ import { BufferGeometry, Material, Mesh, MeshStandardMaterial } from "three"
 import { CheckerType } from "./Checker.type"
 import { DicePhysics, DiceMoveType } from "./Dice.type"
 
+export type SettingsType = {
+  sound: boolean
+}
+
+export type EnvMap = "diamondHall" | "briliantHall" | "finGarden"
+
 export type UserCheckerType = "black" | "white"
 
 export type PlayerType = {
@@ -59,15 +65,14 @@ export type PhaseType =
   | "spectating"
   | undefined
 
-export type ToggleZoomType = (newValue: boolean) => void
-
 export type GameModeType = "pass-and-play" | string | undefined
 
 export type GameContextType = {
   // Functions
-  toggleControls: React.MutableRefObject<(ui?: boolean, drag?: boolean) => void>
+  toggleControls: React.MutableRefObject<
+    (from: "layout" | "checkerDisable" | "checkerEnable") => void
+  >
   resetOrbit: React.MutableRefObject<() => void>
-  toggleZoom: React.MutableRefObject<ToggleZoomType>
   resign: (winnerId: number, loserId: number, send?: boolean) => void
   throwDice: React.MutableRefObject<() => void>
 
@@ -82,6 +87,7 @@ export type GameContextType = {
   checkerPicked: React.MutableRefObject<boolean>
   newCheckerPosition: React.MutableRefObject<number | undefined>
   timer: React.MutableRefObject<TimerType | undefined>
+  settings: React.MutableRefObject<SettingsType>
 
   // States
   myTurn: boolean

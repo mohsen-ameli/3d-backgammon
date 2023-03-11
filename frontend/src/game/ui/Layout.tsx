@@ -9,6 +9,7 @@ import SidePanel from "./SidePanel"
 import Dialog from "./Dialog"
 import useFetch from "../../components/hooks/useFetch"
 import { PofileData } from "../../components/Profile.type"
+import Settings from "./Settings"
 
 /**
  * The main layout of the game. Includes buttons and side panels for each user.
@@ -92,7 +93,7 @@ const LeftLayout = () => {
   const [infoOpen, setInfoOpen] = useState(false)
 
   const switchControls = () => {
-    toggleControls.current(true)
+    toggleControls.current("layout")
     setControlsLock(curr => !curr)
   }
 
@@ -125,7 +126,7 @@ const LeftLayout = () => {
 
       {settingsOpen && (
         <Dialog setOpen={setSettingsOpen}>
-          <h1>Settings</h1>
+          <Settings />
         </Dialog>
       )}
 

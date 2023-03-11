@@ -29,6 +29,7 @@
     "react-dropzone": "^14.2.3",
     "react-loader-spinner": "^5.3.4",
     "react-router-dom": "^6.6.1",
+    "react-switch": "^7.0.0",
     "react-toastify": "^9.1.1",
     "three": "^0.148.0"
   },

@@ -19,11 +19,12 @@ const ImageUploader = ({ image, setImage }: ImageUploaderProps) => {
     useDropzone({
       onDrop,
       maxFiles: 1,
-      maxSize: 1000000,
+      maxSize: 10 * 1000000, // 10 MB
     })
 
   useEffect(() => {
-    notification("Image should be less than 10MB.", "error")
+    if (fileRejections.length > 0)
+      notification("Image should be less than 10MB.", "error")
   }, [fileRejections])
 
   return (
