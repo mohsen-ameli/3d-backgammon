@@ -2,6 +2,7 @@ import { CuboidCollider, RigidBody } from "@react-three/rapier"
 import { useContext, useRef } from "react"
 import { Mesh } from "three"
 import { GameContext } from "../context/GameContext"
+import { GROUND } from "../data/Data"
 
 /**
  * Primary board mesh.
@@ -13,7 +14,7 @@ const Board = () => {
   const boardHinge = useRef<Mesh>(null!)
 
   return (
-    <group>
+    <group position-y={GROUND}>
       {/* Board Hinge */}
       <mesh
         ref={boardHinge}

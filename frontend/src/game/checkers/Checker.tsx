@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react"
 import { CuboidCollider, RigidBody, RigidBodyApi } from "@react-three/rapier"
 import { useThree } from "@react-three/fiber"
 import { useDrag, UserDragConfig } from "@use-gesture/react"
-import { useSpring, animated } from "@react-spring/three"
+import { useSpring, a as a3f } from "@react-spring/three"
 import { GameContext } from "../context/GameContext"
 import getCheckerPos from "../utils/GetCheckerPos"
 import getCheckersOnCol from "../utils/GetCheckersOnCol"
@@ -47,8 +47,8 @@ const Checker = ({ thisChecker }: CheckerProps) => {
   const { updateLiveGame } = useUpdateLiveGame()
 
   // Checkers
-  const { size, viewport } = useThree()
-  const aspect = size.width / viewport.width
+  const { viewport } = useThree()
+  const { factor } = viewport
 
   const checker = useRef<RigidBodyApi>(null)
 
@@ -56,12 +56,12 @@ const Checker = ({ thisChecker }: CheckerProps) => {
   const [pos, setPos] = useState<number[] | Vector3>([0, 0, 0])
 
   // Spring animation for dragging
-  const [spring, set] = useSpring(() => ({
+  const [spring, springApi] = useSpring(() => ({
     rotation: [-3, -4].includes(thisChecker.col)
       ? [Math.PI / 3, 0, 0]
       : [0, 0, 0],
     position: pos,
-    config: { mass: 1, friction: 37, tension: 800 },
+    config: { mass: 1, friction: 28, tension: 400 },
   }))
 
   // When the checker is mounted, set its position
@@ -74,7 +74,9 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     const rotation = [-3, -4].includes(thisChecker.col)
       ? [Math.PI / 3, 0, 0]
       : [0, 0, 0]
-    set({ position, rotation })
+
+    // Setting checker's mesh position
+    springApi.start({ position, rotation })
 
     // Setting the checker's physics position
     checker.current?.setTranslation({
@@ -84,18 +86,18 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     })
   }, [thisChecker.col, thisChecker.row, thisChecker.removed])
 
+  const goToOriginalPos = (currentChecker: CheckerType) => {
+    const oldPosition = getCheckerPos(currentChecker)
+    springApi.start({ position: oldPosition })
+  }
+
   // Some config for the useDrag
   const dragConfig: UserDragConfig = {
     from: () => {
       const from = spring.position.get() as number[]
-      return [from[0] * aspect, from[2] * aspect]
+      return [from[0] * factor, from[2] * factor]
     },
     eventOptions: { capture: false, passive: true },
-  }
-
-  const goToOriginalPos = (currentChecker: CheckerType) => {
-    const oldPosition = getCheckerPos(currentChecker)
-    set({ position: oldPosition })
   }
 
   // When a checker is picked up (dragged) and released
@@ -112,23 +114,25 @@ const Checker = ({ thisChecker }: CheckerProps) => {
 
     // User started dragging the checker
     if (dragging) {
-      // If the user is dragging a checker from the removed column,
-      // stop the other checkers from being dragged (if there are multiple
-      // checkers in the removed column, they get stacked)
-      let i = 0
-      // @ts-ignore
-      // prettier-ignore
-      event.intersections.map((inter) => {
-        if (((inter.object as Mesh).material as MeshStandardMaterial).name.includes("Column"))
-          i++
-      })
-      if (thisChecker.col < 0 && i === 0) event.stopPropagation()
-
       toggleControls.current("checkerDisable")
       checkerPicked.current = true
 
       // Setting the checker's mesh position (not the physics)
-      set({ position: [x / aspect, 0.2, y / aspect] })
+      springApi.start({ position: [x / factor, 0, y / factor] })
+
+      // If the user is dragging a checker from the removed column,
+      // stop the other checkers from being dragged (if there are multiple
+      // checkers in the removed column, they get stacked)
+      let columnContactCounter = false
+      // @ts-ignore
+      // prettier-ignore
+      event.intersections.map((inter) => {
+        if (((inter.object as Mesh).material as MeshStandardMaterial).name.includes("Column")) {
+          columnContactCounter = true
+          return
+        }
+      })
+      if (thisChecker.col < 0 && !columnContactCounter) event.stopPropagation()
 
       return
     }
@@ -208,7 +212,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       }
       setPhase("ended")
       userChecker.current! = possibleWinner
-      set({ position: positions, rotation: [Math.PI / 3, 0, 0] })
+      springApi.start({ position: positions, rotation: [Math.PI / 3, 0, 0] })
       notification(`${toCapitalize(userChecker.current!)} is the winner!`)
 
       return
@@ -263,7 +267,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     rotation: number[] = [0, 0, 0]
   ) => {
     // Setting the checker's mesh position
-    set({ position: newPositions, rotation })
+    springApi.start({ position: newPositions, rotation })
 
     // Setting the checker's physics position
     checker.current?.setTranslation({
@@ -336,7 +340,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       </RigidBody>
 
       {/* @ts-ignore: SpringValue type is a Vector3, but TypeScript won't allow it */}
-      <animated.mesh
+      <a3f.mesh
         {...spring}
         {...bind()}
         name="WhiteChecker"

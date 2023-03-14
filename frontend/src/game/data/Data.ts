@@ -38,14 +38,15 @@ export const CHECKER_H = 0.16
 export const CHECKER_HALF = CHECKER_W / 2
 
 // Board
-export const GROUND = -0.058 // Ground level (y coordinate)
+export const GROUND = -0.2
+export const GROUND_CHECKERS = GROUND + -0.058 // Ground level (y coordinate)
 export const BOARD_W = 1.17148 - CHECKER_HALF
 export const BOARD_H = 0.855
 
 // Default orbit controls
 export const DEFAULT_CAMERA_POSITION = {
   x: 0,
-  y: 2.52,
+  y: 2.32,
   z: 0,
 }
 

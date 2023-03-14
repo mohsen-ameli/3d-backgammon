@@ -11,7 +11,7 @@ import {
   InstancedBufferAttribute,
   Group,
 } from "three"
-import { COLOUMN_HOVER_COLOR } from "../data/Data"
+import { COLOUMN_HOVER_COLOR, GROUND } from "../data/Data"
 import { ThreeEvent } from "@react-three/fiber"
 
 /**
@@ -19,7 +19,7 @@ import { ThreeEvent } from "@react-three/fiber"
  * contains logic for changing the column checkers colour when user hovers over it.
  */
 const Columns = () => {
-  const { nodes, materials, checkerPicked, newCheckerPosition, gameMode } =
+  const { nodes, materials, checkerPicked, newCheckerPosition } =
     useContext(GameContext)
 
   const columns = useRef<Group>(null!)
@@ -88,7 +88,7 @@ const Columns = () => {
   }
 
   return (
-    <group ref={columns}>
+    <group ref={columns} position-y={GROUND}>
       <instancedMesh
         onPointerOver={handleHover}
         onPointerLeave={handleHoverFinished}

@@ -11,17 +11,8 @@ body,
   height: 100%;
   font-family: "Caveat", cursive;
   font-family: "Josefin Sans", sans-serif;
-  user-select: none;
+  touch-action: none;
 }
-
-/* If the user is on mobile, then turn this on somehow */
-/* @media only screen and (max-width: 768px) {
-  html,
-  body,
-  #root {
-    pointer-events: none;
-  }
-} */
 
 canvas {
   width: 100vw;
