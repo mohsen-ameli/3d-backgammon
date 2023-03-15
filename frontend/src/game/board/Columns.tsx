@@ -61,7 +61,7 @@ const Columns = () => {
   // When user hovers over one of the columns
   const handleHover = (e: ThreeEvent<PointerEvent>) => {
     // If they have a checker picked up
-    if (checkerPicked.current) {
+    if (checkerPicked.current.picked) {
       const node = e.object as InstancedMesh
       const id = e.instanceId as number
       const color = new Color(COLOUMN_HOVER_COLOR)

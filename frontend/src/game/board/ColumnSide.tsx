@@ -35,7 +35,7 @@ const ColumnSide = ({ node }: NodeType) => {
 
   // User has hovered over the end column
   const handleHover = () => {
-    if (!checkerPicked.current) return
+    if (!checkerPicked.current.picked) return
     if (!node.name.includes(toCapitalize(userChecker.current!))) return
 
     const end = Endgame(checkers.current, userChecker.current!)

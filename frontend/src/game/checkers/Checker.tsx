@@ -14,10 +14,11 @@ import hasMoves from "../utils/HasMoves"
 import notification from "../../components/utils/Notification"
 import toCapitalize from "../../components/utils/ToCapitalize"
 import { AuthContext } from "../../context/AuthContext"
-import { Mesh, MeshStandardMaterial, Vector3 } from "three"
+import { Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import ValidateMove from "./ValidateMove"
 import useUpdateLiveGame from "../utils/useUpdateLiveGame"
+import sortCheckers from "../utils/sortCheckers"
 
 type CheckerProps = {
   thisChecker: CheckerType
@@ -102,7 +103,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
 
   // When a checker is picked up (dragged) and released
   // This is where the main logic for the game is
-  const bind = useDrag(({ event, offset: [x, y], dragging }) => {
+  const bind = useDrag(({ offset: [x, y], dragging, cancel }) => {
     // Check to see if the user is allowed to move
     if (
       !["checkerMoveAgain", "checkerMove"].includes(phase!) ||
@@ -114,37 +115,27 @@ const Checker = ({ thisChecker }: CheckerProps) => {
 
     // User started dragging the checker
     if (dragging) {
+      // If the user is dragging multiple checkers, then stop the drag
+      if (
+        checkerPicked.current.picked &&
+        checkerPicked.current.id !== thisChecker.id
+      ) {
+        cancel()
+        return
+      } else {
+        checkerPicked.current = { id: thisChecker.id, picked: true }
+      }
+
       toggleControls.current("checkerDisable")
-      checkerPicked.current = true
 
       // Setting the checker's mesh position (not the physics)
       springApi.start({ position: [x / factor, 0, y / factor] })
-
-      // If the user is dragging a checker from the removed column,
-      // stop the other checkers from being dragged (if there are multiple
-      // checkers in the removed column, they get stacked)
-      let columnContactCounter = false
-      // @ts-ignore
-      // prettier-ignore
-      event.intersections.map((inter) => {
-        if (((inter.object as Mesh).material as MeshStandardMaterial).name.includes("Column")) {
-          columnContactCounter = true
-          return
-        }
-      })
-      if (thisChecker.col < 0 && !columnContactCounter) event.stopPropagation()
 
       return
     }
 
     toggleControls.current("checkerEnable")
-    checkerPicked.current = false
-
-    // Number of removed checkers of the current player/user
-    const removedCheckersLen = lenRemovedCheckers(
-      checkers.current,
-      userChecker.current
-    )
+    checkerPicked.current = { id: thisChecker.id, picked: false }
 
     // Current checker instance
     const currentChecker = checkers.current[thisChecker.id]
@@ -169,12 +160,8 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       const end = Endgame(checkers.current, userChecker.current)
       if (!end) return // Not in endgame yet
 
-      const validMove = ValidateMove(
-        checkers.current,
-        thisChecker,
-        dice.current,
-        moved
-      )
+      // Validating the move
+      const validMove = ValidateMove(checkers.current, thisChecker, dice.current, moved) //prettier-ignore
       if (!validMove) {
         goToOriginalPos(currentChecker)
         return
@@ -222,6 +209,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
      * User is trying to move to a column within the board
      */
     const { action, numCheckers, rmChecker } = getCheckersOnCol(checkers.current, to, thisChecker.color) // prettier-ignore
+    const removedCheckersLen = lenRemovedCheckers(checkers.current, userChecker.current) // prettier-ignore
 
     // If user is moving wrongly, move them back to their original position
     if (
@@ -253,14 +241,21 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       removedChecker.col = rmChecker.color === "white" ? -1 : -2
       removedChecker.row = lenRemovedCheckers(checkers.current, rmChecker.color) //prettier-ignore
       removedChecker.removed = true
-    } else currentChecker.row = numCheckers // updating this checker
+    } else {
+      currentChecker.row = numCheckers // updating this checker
+    }
+
+    sortCheckers(checkers.current, from, to)
+
+    // Update states and backend
+    const newPos = getCheckerPos(thisChecker)
+    updateStuff(newPos, moved)
 
     // End of logic... phew!
-    updateStuff(getCheckerPos(thisChecker), moved)
     return
   }, dragConfig)
 
-  // Updating backend
+  // Update states and backend
   const updateStuff = (
     newPositions: number[],
     moved: number,

@@ -51,6 +51,9 @@ export type PhaseType =
 // Different game mode types
 export type GameModeType = "pass-and-play" | string | undefined
 
+// Checker picked type
+export type CheckerPickedType = { id: number; picked: boolean }
+
 export type GameContextType = {
   // Functions
   toggleControls: React.MutableRefObject<
@@ -68,7 +71,7 @@ export type GameContextType = {
   dice: React.MutableRefObject<DiceMoveType>
   dicePhysics: React.MutableRefObject<DicePhysics | undefined>
   checkers: React.MutableRefObject<CheckerType[]>
-  checkerPicked: React.MutableRefObject<boolean>
+  checkerPicked: React.MutableRefObject<CheckerPickedType>
   newCheckerPosition: React.MutableRefObject<number | undefined>
   timer: React.MutableRefObject<TimerType | undefined>
 

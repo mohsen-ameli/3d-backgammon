@@ -74,7 +74,10 @@ const GameContextProvider = ({ children }: Children) => {
   const checkers = useRef<CheckerType[]>(null!)
 
   // If the checker has been picked up or not
-  const checkerPicked = useRef(false)
+  const checkerPicked = useRef<types.CheckerPickedType>({
+    id: 0,
+    picked: false,
+  })
 
   // The new position of the checker (in checkers used for calculating the moved variable)
   const newCheckerPosition = useRef<number | undefined>()

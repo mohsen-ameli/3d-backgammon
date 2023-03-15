@@ -34,7 +34,7 @@ export const DEFAULT_DICE_QUATERNION = new Quaternion(
 // Checkers
 export const TOTAL_CHECKERS = 8
 export const CHECKER_W = 0.184
-export const CHECKER_H = 0.16
+export const CHECKER_H = 0.155
 export const CHECKER_HALF = CHECKER_W / 2
 
 // Board
