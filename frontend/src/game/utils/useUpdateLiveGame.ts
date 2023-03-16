@@ -7,15 +7,15 @@ const useUpdateLiveGame = () => {
   const { dice, userChecker, players, checkers, ws } = useContext(GameContext)
 
   const updateLiveGame = () => {
+    if (!players) return
     let player_timer = null
 
     // Update the game's timer
     if (dice.current.moves === 0) {
       // Use the update method in checker and dices, to send an update to the backend. in the backend make player_timer an optional field
       let id
-      if (userChecker.current === players.current.me.color)
-        id = players.current.me.id
-      else id = players.current.enemy.id
+      if (userChecker.current === players.me.color) id = players.me.id
+      else id = players.enemy.id
 
       player_timer = {
         id,

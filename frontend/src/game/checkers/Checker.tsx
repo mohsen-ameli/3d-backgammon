@@ -18,7 +18,7 @@ import { Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import ValidateMove from "./ValidateMove"
 import useUpdateLiveGame from "../utils/useUpdateLiveGame"
-import sortCheckers from "../utils/sortCheckers"
+import SortCheckers from "../utils/SortCheckers"
 
 type CheckerProps = {
   thisChecker: CheckerType
@@ -245,7 +245,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       currentChecker.row = numCheckers // updating this checker
     }
 
-    sortCheckers(checkers.current, from, to)
+    SortCheckers(checkers.current, from, to)
 
     // Update states and backend
     const newPos = getCheckerPos(thisChecker)

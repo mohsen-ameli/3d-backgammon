@@ -66,7 +66,6 @@ export type GameContextType = {
   // Refs
   gameMode: React.MutableRefObject<GameModeType>
   userChecker: React.MutableRefObject<UserCheckerType | undefined>
-  players: React.MutableRefObject<PlayersType>
   winner: React.MutableRefObject<PlayerType | undefined>
   dice: React.MutableRefObject<DiceMoveType>
   dicePhysics: React.MutableRefObject<DicePhysics | undefined>
@@ -76,6 +75,7 @@ export type GameContextType = {
   timer: React.MutableRefObject<TimerType | undefined>
 
   // States
+  players: PlayersType | undefined
   myTurn: boolean
   ws: WebSocket | undefined
   inGame: boolean

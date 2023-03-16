@@ -13,29 +13,46 @@ import LayoutBtn from "./LayoutBtn"
  */
 const ChatButton = () => {
   const { ws, players } = useContext(GameContext)
-  const [showChat, setShowChat] = useState(false)
 
   const { data } = useFetch("/api/game/get-in-game-messages/")
   const messages: MessgaeType[] = data
+
+  const [showChat, setShowChat] = useState(false)
+  const initialRender = useRef(true)
 
   const toggleChat = () => setShowChat(curr => !curr)
 
   // Sending a message to the other user
   const sendMessage = (message: string) => {
+    if (!players) return
     setShowChat(false)
 
     ws?.send(
       JSON.stringify({
-        user: players.current.me.name,
+        user: players.me.name,
         message,
       })
     )
   }
 
+  // Handling sowing the chat
   const chat = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (showChat) gsap.fromTo(chat.current, { scaleY: 0 }, { scaleY: 1 })
-    else gsap.fromTo(chat.current, { scaleY: 1 }, { scaleY: 0 })
+    if (showChat)
+      gsap.fromTo(
+        chat.current,
+        { scaleY: 0 },
+        { scaleY: 1, opacity: 1, display: "block" }
+      )
+    else if (!initialRender.current)
+      gsap.fromTo(
+        chat.current,
+        { scaleY: 1 },
+        { scaleY: 0, opacity: 0, display: "none" }
+      )
+    else gsap.to(chat.current, { opacity: 0, display: "none" })
+
+    initialRender.current = false
   }, [showChat])
 
   return (

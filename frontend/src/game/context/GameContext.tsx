@@ -55,12 +55,6 @@ const GameContextProvider = ({ children }: Children) => {
   // The current checker color that is being moved
   const userChecker = useRef<types.UserCheckerType>()
 
-  // Current players (Only set in a live game)
-  const players = useRef<types.PlayersType>({
-    me: { id: 0, name: "", image: "", color: "white" },
-    enemy: { id: 0, name: "", image: "", color: "white" },
-  })
-
   // The current checker color that is being moved
   const winner = useRef<types.PlayerType>()
 
@@ -88,6 +82,9 @@ const GameContextProvider = ({ children }: Children) => {
   /**
    * States
    */
+
+  // Current players (Only set in a live game)
+  const [players, setPlayers] = useState<types.PlayersType>()
 
   // Boolean to keep track of if it's the user's turn or not
   const [myTurn, setMyTurn] = useState(true)
@@ -207,7 +204,7 @@ const GameContextProvider = ({ children }: Children) => {
     setMyTurn(turn)
 
     // Setting the phase to initial
-    if (data.initial && players.current && user) {
+    if (data.initial && user) {
       // If user has, for some reason, thrown the dice, then maybe left the page
       // and the dice numbers weren't detected in time, and then they come back
       // then we want to throw the dice for them
@@ -227,15 +224,19 @@ const GameContextProvider = ({ children }: Children) => {
       // Filling the players reference
       const myColor = data.white === user.user_id ? "white" : "black"
 
-      players.current.me.id = user.user_id
-      players.current.me.name = user.username
-      players.current.me.image = (myColor === "white" ? data.white_image! : data.black_image!) //prettier-ignore
-      players.current.me.color = myColor
+      const me = {} as types.PlayerType
+      me.id = user.user_id
+      me.name = user.username
+      me.image = (myColor === "white" ? data.white_image! : data.black_image!) //prettier-ignore
+      me.color = myColor
 
-      players.current.enemy.id = myColor === "white" ? data.black! : data.white!
-      players.current.enemy.name = myColor === "white" ? data.black_name! : data.white_name! //prettier-ignore
-      players.current.enemy.image = (myColor === "white" ? data.black_image! : data.white_image!) //prettier-ignore
-      players.current.enemy.color = switchPlayers(myColor)
+      const enemy = {} as types.PlayerType
+      enemy.id = myColor === "white" ? data.black! : data.white!
+      enemy.name = myColor === "white" ? data.black_name! : data.white_name! //prettier-ignore
+      enemy.image = (myColor === "white" ? data.black_image! : data.white_image!) //prettier-ignore
+      enemy.color = switchPlayers(myColor)
+
+      setPlayers({ me, enemy })
 
       return
     }

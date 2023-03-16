@@ -10,13 +10,13 @@ import {
 import { DEFAULT_ENV_MAP_INTENSITY } from "./data/Data"
 import { GameContext } from "./context/GameContext"
 import { useThree } from "@react-three/fiber"
-import { button, useControls } from "leva"
+// import { button, useControls } from "leva"
 
 /**
  * Staging for our scene
  */
 const Stage = () => {
-  const { materials, inGame, settings, setSettings } = useContext(GameContext)
+  const { materials, inGame, settings } = useContext(GameContext)
 
   const { scene } = useThree()
 
@@ -29,9 +29,6 @@ const Stage = () => {
     const files = ["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]
 
     const manager = new LoadingManager()
-    // manager.onProgress = (url, loaded, total) => console.log(loaded / total)
-    // manager.onLoad = () => console.log("Finished")
-
     const loader = new CubeTextureLoader(manager)
 
     const briliantHall = loader.setPath("/env/cube/briliant_hall/").load(files)

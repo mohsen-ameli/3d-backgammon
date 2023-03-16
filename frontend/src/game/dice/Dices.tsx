@@ -55,6 +55,8 @@ const Dices = () => {
 
   // Function to throw the dice
   throwDiceContext.current = useCallback(() => {
+    if (!players) return
+
     setShowThrowBtn(false)
 
     const physics = throwDice([dice1.current, dice2.current])
@@ -63,8 +65,8 @@ const Dices = () => {
       physics: true,
       user: {
         user: {
-          id: players.current.me.id,
-          name: players.current.me.name,
+          id: players.me.id,
+          name: players.me.name,
           color: userChecker.current,
         },
         physics,
@@ -72,7 +74,7 @@ const Dices = () => {
     }
 
     if (ws && wsGood(ws)) ws.send(JSON.stringify(context))
-  }, [ws])
+  }, [ws, players])
 
   // Saving the show throw button in game context
   useEffect(() => {
@@ -132,7 +134,7 @@ const Dices = () => {
           [dice1.current, dice2.current],
           dicePhysics.current?.physics!
         )
-      }, 1000)
+      }, 2000)
       setShowThrowBtn(false)
       return
     }

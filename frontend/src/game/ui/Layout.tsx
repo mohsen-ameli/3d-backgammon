@@ -37,22 +37,17 @@ const MainLayout = () => {
   const [img, setImg] = useState("")
   useEffect(() => setImg(data?.image), [data])
 
+  if (!players) return <></>
+
   if (gameMode.current === "pass-and-play")
-    return (
-      <SidePanel
-        img={img}
-        player={players.current.me}
-        sideType="me"
-        user={user}
-      />
-    )
+    return <SidePanel img={img} player={players.me} sideType="me" user={user} />
 
   return (
     <>
-      <SidePanel img={img} player={players.current.me} sideType="me" />
+      <SidePanel img={img} player={players.me} sideType="me" />
       <SidePanel
-        img={players.current.enemy.image}
-        player={players.current.enemy}
+        img={players.enemy.image}
+        player={players.enemy}
         sideType="enemy"
       />
     </>
@@ -62,7 +57,7 @@ const MainLayout = () => {
 const RightLayout = () => {
   const { resign, gameMode, players } = useContext(GameContext)
 
-  const resignMe = () => resign(players.current.enemy.id, players.current.me.id)
+  const resignMe = () => players && resign(players.enemy.id, players.me.id)
 
   return (
     <div className="absolute top-0 right-0 flex items-center justify-center gap-x-1 p-1 lg:gap-x-2 lg:p-2">

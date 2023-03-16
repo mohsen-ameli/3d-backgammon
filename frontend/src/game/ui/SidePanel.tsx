@@ -10,12 +10,9 @@ import notification from "../../components/utils/Notification"
 import { USER_TURN_DURATION } from "../data/Data"
 
 type SideProps = {
-  img: string
-  // userChecker: UserCheckerType
-  player: PlayerType
-  // dice: DiceMoveType
+  img: string | undefined
+  player: PlayerType | undefined
   sideType: "enemy" | "me"
-  // gameMode: GameModeType
   timer?: TimerType
 
   // For pass-and-play
@@ -56,21 +53,22 @@ const SidePanel = (props: SideProps) => {
 
   // Auto resign function
   function autoResign(id: number) {
-    if (gameMode.current === "pass-and-play") return
+    if (!players || gameMode.current === "pass-and-play") return
 
     // If I'm losing
-    if (id === players.current.me.id) {
-      resign(players.current.enemy.id, id, true)
-      notification(`${players.current.me.name} has timed out.`, "info")
+    if (id === players.me.id) {
+      resign(players.enemy.id, id, true)
+      notification(`${players.me.name} has timed out.`, "info")
     } else {
-      resign(players.current.me.id, players.current.enemy.id, true)
-      notification(`${players.current.enemy.name} has timed out.`, "info")
+      resign(players.me.id, players.enemy.id, true)
+      notification(`${players.enemy.name} has timed out.`, "info")
     }
   }
 
   // Handling the timer
   useEffect(() => {
     if (
+      !player ||
       !timer.current ||
       !["initial", "diceRoll", "diceRollAgain"].includes(phase!)
     )
@@ -104,6 +102,9 @@ const SidePanel = (props: SideProps) => {
    */
 
   // The counter component. If the gameMode is pass and play, then just show the image
+
+  if (!player) return <></>
+
   const Counter =
     gameMode.current === "pass-and-play" ? (
       <img

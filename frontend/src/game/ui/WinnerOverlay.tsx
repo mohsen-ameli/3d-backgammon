@@ -28,12 +28,11 @@ const WinnerOverlay = () => {
 
   // Checking for winners
   useEffect(() => {
-    if (phase !== "ended") return
+    if (!players || phase !== "ended") return
 
     let winnerName: string
 
-    if (winner.current?.id === players.current.me.id)
-      winnerName = "You are the winner!"
+    if (winner.current?.id === players.me.id) winnerName = "You are the winner!"
     else winnerName = `${winner.current?.name} is the winner!`
 
     setWinnerName(winnerName)
