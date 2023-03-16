@@ -17,8 +17,8 @@ import { AuthContext } from "../../context/AuthContext"
 import { Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import ValidateMove from "./ValidateMove"
-import useUpdateLiveGame from "../utils/useUpdateLiveGame"
 import SortCheckers from "../utils/SortCheckers"
+import useUpdateLiveGame from "../utils/useUpdateLiveGame"
 
 type CheckerProps = {
   thisChecker: CheckerType
