@@ -24,7 +24,12 @@ const DiceMoves = ({ dice }: DiceMovesProps) => {
   }
 
   return (
-    <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-x-2">
+    <div
+      className={
+        "absolute left-1/2 grid -translate-x-1/2 grid-cols-2 items-center gap-x-2 " +
+        (jsx.length > 2 ? "bottom-1" : "bottom-4")
+      }
+    >
       {jsx.map((number, index) => (
         <span key={index}>{number}</span>
       ))}

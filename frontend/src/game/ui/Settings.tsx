@@ -28,6 +28,17 @@ const Settings = ({ setOpen }: settingsType) => {
     setOpen(false)
   }
 
+  const openFullScreen = () => {
+    const elem = document.querySelector("html")!
+    if (document.fullscreenElement) {
+      document.exitFullscreen()
+    } else {
+      elem.requestFullscreen()
+    }
+
+    setOpen(false)
+  }
+
   return (
     <div className="flex h-full w-full flex-col gap-y-4">
       <h1 className="mb-4 text-2xl font-semibold">Settings</h1>
@@ -43,6 +54,8 @@ const Settings = ({ setOpen }: settingsType) => {
           onHandleColor="#22d3ee"
         />
       </div>
+
+      <Button onClick={openFullScreen}>Toggle full-screen</Button>
 
       <div className="flex flex-col gap-y-2">
         <h1>Set Environment to:</h1>

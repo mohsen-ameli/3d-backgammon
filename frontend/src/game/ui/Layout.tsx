@@ -65,7 +65,7 @@ const RightLayout = () => {
   const resignMe = () => resign(players.current.enemy.id, players.current.me.id)
 
   return (
-    <div className="absolute top-0 right-0 flex items-center justify-center gap-x-1 p-1 md:gap-x-2 md:p-2">
+    <div className="absolute top-0 right-0 flex items-center justify-center gap-x-1 p-1 lg:gap-x-2 lg:p-2">
       {gameMode.current !== "pass-and-play" && <ChatButton />}
 
       <div className="z-[10]">
@@ -102,7 +102,7 @@ const LeftLayout = () => {
 
   return (
     <>
-      <div className="absolute top-0 left-0 z-[10] flex items-center justify-center gap-x-1 p-1 md:gap-x-2 md:p-2">
+      <div className="absolute top-0 left-0 z-[10] flex items-center justify-center gap-x-1 p-1 lg:gap-x-2 lg:p-2">
         <LayoutBtn title="Lock Controls" onClick={switchControls}>
           <i
             className={

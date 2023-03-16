@@ -11,15 +11,15 @@ body,
   height: 100%;
   font-family: "Caveat", cursive;
   font-family: "Josefin Sans", sans-serif;
+  user-select: none;
   touch-action: none;
+  overflow: hidden;
+  outline: none;
 }
 
 canvas {
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
+  width: 100% !important;
+  height: 100% !important;
   z-index: -9999;
 }
 

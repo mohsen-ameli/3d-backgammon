@@ -1,4 +1,5 @@
-import { ButtonHTMLAttributes } from "react"
+import { ButtonHTMLAttributes, useState } from "react"
+import buttonClick from "../../assets/sounds/button-click.mp3"
 
 type InputProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   className?: string
@@ -8,12 +9,20 @@ type InputProps = ButtonHTMLAttributes<HTMLButtonElement> & {
  * A button that has a somewhat cool hover effect
  */
 const Button = (props: InputProps) => {
-  const { className, children, ...rest } = props
+  const { className, onClick, children, ...rest } = props
+
+  const [click] = useState(() => new Audio(buttonClick))
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    click.play()
+    onClick?.(e)
+  }
 
   return (
     <button
       type="submit"
       className={`group relative h-10 rounded-lg border-2 border-orange-800 px-4 outline-none ${className}`}
+      onClick={handleClick}
       {...rest}
     >
       <div className="relative z-20">{children}</div>

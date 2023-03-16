@@ -4,7 +4,7 @@ import { UserType } from "../../context/User.type"
 import ThrowButton from "./ThrowButton"
 import DiceMoves from "./DiceMoves"
 import Center from "../../components/ui/Center"
-import { useContext, useEffect, useState } from "react"
+import { memo, useContext, useEffect, useState } from "react"
 import { GameContext } from "../context/GameContext"
 import notification from "../../components/utils/Notification"
 import { USER_TURN_DURATION } from "../data/Data"
@@ -43,7 +43,7 @@ const SidePanel = (props: SideProps) => {
 
   const [duration, setDuration] = useState(USER_TURN_DURATION)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [key, setKey] = useState(Math.random())
+  const [key, setKey] = useState(0)
   const [size, setSize] = useState(() => resize())
 
   // Handling page resize, for the width of the timer ring
@@ -56,6 +56,8 @@ const SidePanel = (props: SideProps) => {
 
   // Auto resign function
   function autoResign(id: number) {
+    if (gameMode.current === "pass-and-play") return
+
     // If I'm losing
     if (id === players.current.me.id) {
       resign(players.current.enemy.id, id, true)
@@ -83,7 +85,7 @@ const SidePanel = (props: SideProps) => {
       setIsPlaying(true)
       return
     } else {
-      setKey(Math.random())
+      setKey(curr => curr + 1)
       setIsPlaying(false)
     }
   }, [phase])
@@ -97,6 +99,10 @@ const SidePanel = (props: SideProps) => {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
+  /**
+   * TODO: Fix the overlay.
+   */
+
   // The counter component. If the gameMode is pass and play, then just show the image
   const Counter =
     gameMode.current === "pass-and-play" ? (
@@ -106,39 +112,41 @@ const SidePanel = (props: SideProps) => {
         className="h-[50px] w-[50px] rounded-full object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]"
       />
     ) : (
-      <CountdownCircleTimer
-        key={key}
-        size={size}
-        strokeWidth={4}
-        isPlaying={isPlaying}
-        duration={duration}
-        colors={["#609633", "#f79501", "#A30000", "#681919"]}
-        colorsTime={[duration, duration / 4, duration / 10, 0]}
-        onComplete={() => autoResign(player.id)}
-      >
-        {({ remainingTime }) => (
-          <div className="relative">
-            {(remainingTime / duration) * 100 <= 25 && (
+      <div className="relative">
+        <CountdownCircleTimer
+          key={key}
+          size={size}
+          strokeWidth={4}
+          isPlaying={isPlaying}
+          duration={duration}
+          colors={["#609633", "#f79501", "#A30000", "#681919"]}
+          colorsTime={[duration, duration / 4, duration / 10, 0]}
+          onComplete={() => autoResign(player.id)}
+        >
+          {({ remainingTime }) =>
+            (remainingTime / duration) * 100 <= 25 && (
               <div className="absolute h-full w-full rounded-full bg-[#6e6e6e99] text-red-500 lg:text-lg lg:font-bold">
                 <Center className="w-full text-center">
                   {remainingTime} sec
                 </Center>
               </div>
-            )}
-            <img
-              src={img}
-              alt={sideType}
-              className="h-[50px] w-[50px] rounded-full bg-[#f79501] object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]"
-            />
-          </div>
-        )}
-      </CountdownCircleTimer>
+            )
+          }
+        </CountdownCircleTimer>
+        <Center className="-z-[1] h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
+          <img
+            src={img}
+            alt={sideType}
+            className="rounded-full object-cover object-center"
+          />
+        </Center>
+      </div>
     )
 
   return (
     <div
       className={
-        "absolute top-1/2 z-[10] m-2 h-fit w-[130px] -translate-y-1/2 rounded-md bg-orange-900 px-2 py-4 lg:w-[180px] " +
+        "absolute top-1/2 z-[10] m-2 h-fit w-[90px] -translate-y-1/2 rounded-md bg-orange-900 px-2 py-4 md:w-[108px] lg:w-[180px] " +
         (sideType === "enemy" ? "left-0" : "right-0")
       }
     >
@@ -151,7 +159,7 @@ const SidePanel = (props: SideProps) => {
 
             <div
               className={
-                "absolute inset-2 h-[20px] w-[20px] rounded-full " +
+                "absolute inset-2 h-[15px] w-[15px] rounded-full lg:h-[20px] lg:w-[20px] " +
                 ((gameMode.current === "pass-and-play" &&
                   userChecker.current === "white") ||
                 (gameMode.current !== "pass-and-play" &&
@@ -184,4 +192,4 @@ const SidePanel = (props: SideProps) => {
   )
 }
 
-export default SidePanel
+export default memo(SidePanel)
