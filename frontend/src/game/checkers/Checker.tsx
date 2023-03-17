@@ -17,7 +17,7 @@ import { AuthContext } from "../../context/AuthContext"
 import { Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import ValidateMove from "./ValidateMove"
-import SortCheckers from "../utils/SortCheckers"
+import CheckersSort from "../utils/CheckersSort"
 import useUpdateLiveGame from "../utils/useUpdateLiveGame"
 
 type CheckerProps = {
@@ -245,7 +245,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       currentChecker.row = numCheckers // updating this checker
     }
 
-    SortCheckers(checkers.current, from, to)
+    CheckersSort(checkers.current, from)
 
     // Update states and backend
     const newPos = getCheckerPos(thisChecker)

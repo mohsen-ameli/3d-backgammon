@@ -271,6 +271,15 @@ const GameContextProvider = ({ children }: Children) => {
       setPhase("initial")
       userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
       checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
+
+      const me = {} as types.PlayerType
+      me.id = user?.user_id!
+      me.name = user?.username!
+      me.image = ""
+      me.color = userChecker.current
+
+      setPlayers({ me, enemy: { id: 0, color: "white", image: "", name: "" } })
+
       return
     }
 

@@ -3,12 +3,10 @@ import { CheckerType } from "../types/Checker.type"
 /**
  * Sorting the checkers on the new row and the old columns of this checker instance
  */
-const SortCheckers = (checkers: CheckerType[], from: number, to: number) => {
+const CheckersSort = (checkers: CheckerType[], from: number) => {
   const checkersOnFromCol = checkers.filter(checker => checker.col === from)
-  const checkersOnToCol = checkers.filter(checker => checker.col === from)
 
   sort(checkersOnFromCol)
-  sort(checkersOnToCol)
 
   function sort(checkersList: CheckerType[]) {
     if (checkersList.length >= 1) {
@@ -21,4 +19,4 @@ const SortCheckers = (checkers: CheckerType[], from: number, to: number) => {
   }
 }
 
-export default SortCheckers
+export default CheckersSort
