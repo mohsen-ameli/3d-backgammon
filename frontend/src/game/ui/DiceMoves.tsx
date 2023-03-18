@@ -26,8 +26,8 @@ const DiceMoves = ({ dice }: DiceMovesProps) => {
   return (
     <div
       className={
-        "absolute left-1/2 grid -translate-x-1/2 grid-cols-2 items-center gap-x-2 " +
-        (jsx.length > 2 ? "bottom-1" : "bottom-4")
+        "absolute left-1/2 top-1/2 grid -translate-x-1/2 grid-cols-2 items-center gap-x-2 " +
+        (jsx.length > 2 ? "mt-2" : "mt-4")
       }
     >
       {jsx.map((number, index) => (

@@ -215,6 +215,7 @@ if not DEBUG:
 # CORS
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
+    'http://192.168.0.173:5173',
     'https://www.3d-backgammon.com',
     'https://3d-backgammon.up.railway.app',
     'https://railway.app',

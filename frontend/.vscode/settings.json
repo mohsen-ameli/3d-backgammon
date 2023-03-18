@@ -38,7 +38,14 @@
     "vercel.json": true,
     "vite.config.ts": true,
     "postcss.config.cjs": true,
-    "package.json": true
+    "**/.vercel": true,
+    ".vercel": true,
+    "**/.vscode": true,
+    ".vscode": true,
+    "**/dist": true,
+    "dist": true,
+    "**/node_modules": true,
+    "node_modules": true
   },
   "explorerExclude.backup": {}
 }

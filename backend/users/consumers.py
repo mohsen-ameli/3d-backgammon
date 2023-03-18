@@ -170,6 +170,11 @@ class StatusConsumer(AsyncWebsocketConsumer):
                 self.user, is_online=data["is_online"], last_login=timezone.now()
             )
 
+        # if "delete_rejected" in data:
+        #     await update_user(self.user, rejected_request=None)
+        #     user = await database_sync_to_async(self.user.first)()
+        #     await database_sync_to_async(user.save)()
+
     async def set_user(self, token):
         '''
             This function sets/saves the user to memory based on the JWT access token given

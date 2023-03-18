@@ -1,11 +1,14 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
+import { AudioLoader, PositionalAudio, AudioListener } from "three"
+import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
+import { useThree } from "@react-three/fiber"
+import DiceCollisonAudio from "../../assets/sounds/NewDice.wav"
 import Dice from "./Dice"
 import { GameContext } from "../context/GameContext"
 import { throwDice, throwDicePhysics } from "../utils/ThrowDice"
 import switchPlayers from "../utils/SwitchPlayers"
 import hasMoves from "../utils/HasMoves"
 import notification from "../../components/utils/Notification"
-import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
 import { DiceReadyType } from "../types/Dice.type"
 import { DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../data/Data"
 import wsGood from "../../components/utils/wsGood"
@@ -34,6 +37,8 @@ const Dices = () => {
   // Update live game hook
   const { updateLiveGame } = useUpdateLiveGame()
 
+  const { camera } = useThree()
+
   // Refs for the two dice
   const dice1 = useRef<RigidBodyApi>(null!)
   const dice2 = useRef<RigidBodyApi>(null!)
@@ -52,6 +57,9 @@ const Dices = () => {
 
   // State to show the "throw dice" button
   const [showThrowBtn, setShowThrowBtn] = useState(false)
+
+  // Colission audio
+  const [audio, setAudio] = useState<PositionalAudio>()
 
   // Function to throw the dice
   throwDiceContext.current = useCallback(() => {
@@ -75,6 +83,23 @@ const Dices = () => {
 
     if (ws && wsGood(ws)) ws.send(JSON.stringify(context))
   }, [ws, players])
+
+  // Loading the collision audio for the dice
+  useEffect(() => {
+    const audioLoader = new AudioLoader()
+    const listener = new AudioListener()
+    camera.add(listener)
+
+    audioLoader.load(DiceCollisonAudio, buffer => {
+      const audio = new PositionalAudio(listener)
+      audio.setBuffer(buffer)
+      setAudio(audio)
+    })
+
+    return () => {
+      camera.remove(listener)
+    }
+  }, [])
 
   // Saving the show throw button in game context
   useEffect(() => {
@@ -186,6 +211,7 @@ const Dices = () => {
         setFinishedThrow={setFinishedThrow}
         setSleeping={setSleeping}
         showThrowBtn={showThrowBtn}
+        audio={audio}
       />
       <Dice
         ref={dice2}
@@ -194,6 +220,7 @@ const Dices = () => {
         setFinishedThrow={setFinishedThrow}
         setSleeping={setSleeping}
         showThrowBtn={showThrowBtn}
+        audio={audio}
       />
     </>
   )

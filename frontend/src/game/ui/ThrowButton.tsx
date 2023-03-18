@@ -24,7 +24,9 @@ const ThrowButton = ({ className }: ThrowButtonProps) => {
         </Button>
       ) : (
         showThrow === false && (
-          <Button className="cursor-default">Loading dice...</Button>
+          <Button className="w-full cursor-default lg:h-10 lg:w-full lg:px-4">
+            Loading dice...
+          </Button>
         )
       )}
     </div>

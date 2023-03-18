@@ -33,6 +33,7 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
     Math.round(Math.sin(x)) === 0 &&
     (Math.abs(Math.PI / 2 - z) < 0.2 || Math.PI / 2 + z < 0.2)
   ) {
+    console.log("2 or 5 coming up: ", `x: ${x}, y: ${y}, z: ${z}`)
     if (
       (Math.abs(Math.PI - x) < 0.2 &&
         roundToTwo(Math.abs(Math.PI / 2 - z)) <= 0.2) ||
@@ -46,10 +47,9 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
     ) {
       return 5
     } else {
-      console.log("Not a 2 and not a 5")
+      console.log("Not a 2 or a 5")
       console.log(`x: ${x}, y: ${y}, z: ${z}`)
       throwDice([dice])
-      return 0
     }
   }
   // Either 3 or 4
@@ -99,6 +99,8 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
   // x: 0.0026408800993509775, y: -1.1397790045308973, z: -1.5686599726719834
   // x: 3.1402575212512303, y: 0.5982204406165584, z: 1.5712851317372114
   // x: -2.9642883553647095, y: 0.8726196882380701, z: 1.572705373788906
+  // Error
+  // x: 0.4016211959205549, y: -1.5672929167887004, z: -1.1693900473058703
 
   // 5:
   // x: 0.0032598488772302685, y: 1.2373032021064525, z: 1.5679826373290204

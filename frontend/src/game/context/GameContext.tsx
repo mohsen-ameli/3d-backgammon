@@ -124,9 +124,6 @@ const GameContextProvider = ({ children }: Children) => {
     notification(msg, "resign", undefined, undefined, () => ws?.send(context))
   }
 
-  // Plays the audio switching users
-  const playAudio = () => audio.play().catch(() => {})
-
   // User is connecting to the game initially
   const onOpen = () => ws?.send(JSON.stringify({ initial: true }))
 
@@ -301,8 +298,9 @@ const GameContextProvider = ({ children }: Children) => {
 
   // Playing sound effect when the user changes
   useEffect(() => {
-    if (settings.sound && (phase === "diceRoll" || phase === "diceRollAgain"))
-      playAudio()
+    if (settings.sound && (phase === "diceRoll" || phase === "diceRollAgain")) {
+      audio.play().catch(() => {})
+    }
   }, [phase, myTurn])
 
   // Game state values

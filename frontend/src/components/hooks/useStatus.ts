@@ -59,9 +59,9 @@ const useStatus = () => {
       // Making sure we show the notifications only once
       showRejNotif.current = false
 
-      // Showing a notification
-      const msg = `${data.rejected_request.username} rejected your match request.`
-      notification(msg, "deleteRejected")
+      // // Showing a notification
+      // const msg = `${data.rejected_request.username} rejected your match request.`
+      // notification(msg, "deleteRejected")
     }
 
     // If there are game requests

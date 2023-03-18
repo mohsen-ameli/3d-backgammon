@@ -1,9 +1,8 @@
 import { RigidBody, RigidBodyApi } from "@react-three/rapier"
-import { forwardRef, useContext, useState } from "react"
+import { forwardRef, useContext } from "react"
 import * as data from "../data/Data"
 import { GameContext } from "../context/GameContext"
-import newDice from "../../assets/sounds/NewDice.wav"
-import { Vector3 } from "three"
+import { PositionalAudio, Vector3 } from "three"
 import { DiceReadyType } from "../types/Dice.type"
 import getDiceNumber from "../utils/GetDiceNumber"
 import IsInitial from "./IsInitial"
@@ -15,13 +14,21 @@ type DiceProps = {
   setFinishedThrow: React.Dispatch<React.SetStateAction<DiceReadyType>>
   setSleeping: React.Dispatch<React.SetStateAction<DiceReadyType>>
   showThrowBtn: boolean
+  audio: PositionalAudio | undefined
 }
 
 /**
  * Individual die
  */
 const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
-  const { index, position, setFinishedThrow, setSleeping, showThrowBtn } = props
+  const {
+    index,
+    position,
+    setFinishedThrow,
+    setSleeping,
+    showThrowBtn,
+    audio,
+  } = props
 
   // Game context
   const { nodes, materials, dice, myTurn, settings } = useContext(GameContext)
@@ -29,20 +36,15 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   // Rigid body reference of each die
   const rigidBody = (ref as React.MutableRefObject<RigidBodyApi>).current
 
-  // Colission audio
-  const [audio] = useState(() => new Audio(newDice))
-
-  // When the die collides with someting
-  const colissionEnter = () => {
-    if (!DiceOnBoard(rigidBody) || !settings.sound) return
-
-    audio.currentTime = 0
-    audio.volume = Math.random()
-    audio.play().catch(() => {})
+  // When the die collides with someting, play a sound
+  const handleColissionEnter = () => {
+    if (!DiceOnBoard(rigidBody) || !settings.sound || !audio) return
+    audio.setVolume(Math.random())
+    audio.play()
   }
 
   // When the die wakes up
-  const onWake = () => {
+  const handleWake = () => {
     // If the user is not playing, meaning other user has thrown their dice, and we're just viewing the animation
     if (!myTurn) return
 
@@ -56,7 +58,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
   // When the die goes to sleep, get the number on the dice, and save it.
   // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
-  const onSleep = () => {
+  const handleSleep = () => {
     // If the dice are not on the board, then return
     if (!DiceOnBoard(rigidBody) || showThrowBtn) {
       setSleeping({ dice1: true, dice2: true })
@@ -88,9 +90,9 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
       restitution={data.DICE_BOUNCINESS}
       friction={data.DICE_FRICTION}
       position={position}
-      onWake={onWake}
-      onSleep={onSleep}
-      onCollisionEnter={colissionEnter}
+      onWake={handleWake}
+      onSleep={handleSleep}
+      onCollisionEnter={handleColissionEnter}
     >
       <mesh
         name="DiceGeo"

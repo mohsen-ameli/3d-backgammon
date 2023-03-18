@@ -17,6 +17,7 @@ export const throwDice = (dice: RigidBodyApi[]) => {
 
   let i = 0
 
+  // Resetting the dice
   resetDice(dice)
 
   for (const die of dice) {
@@ -78,17 +79,17 @@ export const throwDicePhysics = (dice: RigidBodyApi[], physics: Physics) => {
 /**
  * This will reset the dice positions and rotations
  */
-const resetDice = (dice: RigidBodyApi[]): void => {
+const resetDice = (dice: RigidBodyApi[]) => {
   let i = 0
 
   for (const die of dice) {
-    die.resetForces()
-    die.resetTorques()
+    die.resetForces(true)
+    die.resetTorques(true)
 
-    die.setRotation(DEFAULT_DICE_QUATERNION, false)
+    die.setRotation(DEFAULT_DICE_QUATERNION, true)
     die.setTranslation(
       i === 0 ? { ...DICE_1_DEFAULT_POS } : { ...DICE_2_DEFAULT_POS },
-      false
+      true
     )
 
     i++
