@@ -73,7 +73,7 @@ type EyeballProps = {
 const Eyeball = ({ show, toggle }: EyeballProps) => {
   return (
     <div className="absolute right-3 bottom-2 h-[30px] w-[30px] cursor-pointer pt-[6px] text-center text-black duration-100 hover:text-slate-500 hover:ease-in-out">
-      {show ? (
+      {!show ? (
         <i className="fa-regular fa-eye" onClick={toggle}></i>
       ) : (
         <i className="fa-regular fa-eye-slash" onClick={toggle}></i>

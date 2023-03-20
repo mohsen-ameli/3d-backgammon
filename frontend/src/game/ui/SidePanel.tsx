@@ -105,7 +105,7 @@ const Score = ({ color }: ScoreProps) => {
     // phase === "spectate" ||
     // phase === "spectating"
 
-    console.log(phase)
+    // console.log(phase)
 
     if (
       phase === "initial" ||
@@ -114,7 +114,7 @@ const Score = ({ color }: ScoreProps) => {
       phase === "spectate" ||
       phase === "spectating"
     ) {
-      console.log("calculating score")
+      // console.log("calculating score")
       setScore(PipScore(checkers.current, color))
       return
     }

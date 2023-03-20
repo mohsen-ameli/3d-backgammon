@@ -22,15 +22,12 @@ const Controls = () => {
   const { resetOrbit, toggleControls } = useContext(GameContext)
 
   const orbitRef = useRef<OrbitControlType & OrbitType>(null)
+  const resetting = useRef(false)
+  const originalEnabledValue = useRef(false)
+  const toggleAfterAnimation = useRef(false)
 
   useEffect(() => {
     if (!orbitRef.current) return
-
-    // Default enabled values
-    // orbitRef.current.orbitEnabled = {
-    //   enabled: true,
-    //   changable: true,
-    // }
 
     // Saving the default state of the orbit controls
     orbitRef.current.saveState()
@@ -39,7 +36,13 @@ const Controls = () => {
   // Function to toggle orbit controls
   toggleControls.current = useCallback(
     (from: "layout" | "checkerDisable" | "checkerEnable") => {
+      // If we are in the midst of a reset
       if (!orbitRef.current) return
+
+      if (resetting.current) {
+        toggleAfterAnimation.current = !toggleAfterAnimation.current
+        return
+      }
 
       // If the controls are being toggled from the Layout component, then toggle it and set lock to the same value
       // (lock is used in checkerEnable, to make sure when user releases a checker, and if the controls are locked
@@ -67,37 +70,43 @@ const Controls = () => {
   )
 
   // Resets the orbit controls position and rotation
-  resetOrbit.current = useCallback(() => {
+  resetOrbit.current = useCallback(async () => {
     if (!orbitRef.current) return
 
-    const duration = 2
+    const duration = 3
+    const ease = "Expo.easeInOut"
 
-    const originalEnabledValue = orbitRef.current.enabled
+    originalEnabledValue.current = orbitRef.current.enabled
+    resetting.current = true
     orbitRef.current.enabled = false
 
     // Snapping back to original camera position
     gsap.to(orbitRef.current.object.position, {
       ...DEFAULT_CAMERA_POSITION,
       duration,
-      ease: Power4.easeInOut,
+      ease,
     })
 
     gsap.to(orbitRef.current.object.quaternion, {
       ...DEFAULT_ORBIT_QUATERNION,
       duration,
-      ease: Power4.easeInOut,
+      ease,
     })
 
-    gsap.to(orbitRef.current.target, {
+    await gsap.to(orbitRef.current.target, {
       ...DEFAULT_ORBIT_TARGET,
       duration,
-      ease: Power4.easeInOut,
+      ease,
     })
 
-    setTimeout(() => {
-      if (!orbitRef.current) return
-      orbitRef.current.enabled = originalEnabledValue
-    }, duration * 1000 + 1000)
+    resetting.current = false
+    orbitRef.current!.enabled = true
+    if (toggleAfterAnimation.current) {
+      toggleControls.current("layout")
+    } else {
+      orbitRef.current!.enabled = originalEnabledValue.current
+    }
+    toggleAfterAnimation.current = false
   }, [])
 
   return (

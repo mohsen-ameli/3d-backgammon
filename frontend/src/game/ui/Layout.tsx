@@ -10,6 +10,7 @@ import Dialog from "./Dialog"
 import useFetch from "../../components/hooks/useFetch"
 import { PofileData } from "../../components/types/Profile.type"
 import Settings from "./Settings"
+import DiceTraining from "./DiceTraining"
 
 /**
  * The main layout of the game. Includes buttons and side panels for each user.
@@ -21,6 +22,7 @@ const Layout = () => {
 
   return (
     <>
+      {/* <DiceTraining /> */}
       <LeftLayout />
       <RightLayout />
       <MainLayout />

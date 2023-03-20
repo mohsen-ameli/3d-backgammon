@@ -10,7 +10,11 @@ import switchPlayers from "../utils/SwitchPlayers"
 import hasMoves from "../utils/HasMoves"
 import notification from "../../components/utils/Notification"
 import { DiceReadyType } from "../types/Dice.type"
-import { DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../data/Data"
+import {
+  DICE_1_DEFAULT_POS,
+  DICE_2_DEFAULT_POS,
+  TRAINING_DICE_MODE,
+} from "../data/Data"
 import wsGood from "../../components/utils/wsGood"
 import useUpdateLiveGame from "../utils/useUpdateLiveGame"
 
@@ -67,7 +71,10 @@ const Dices = () => {
 
     setShowThrowBtn(false)
 
-    const physics = throwDice([dice1.current, dice2.current])
+    const dice = TRAINING_DICE_MODE
+      ? [dice1.current]
+      : [dice1.current, dice2.current]
+    const physics = throwDice(dice)
 
     const context = {
       physics: true,
