@@ -331,7 +331,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
         type="kinematicPosition"
         position={pos as Vector3}
       >
-        <CuboidCollider args={[0.08, 0.12, 0.08]} position={[0, 0.12, 0]} />
+        <CuboidCollider args={[0.08, 0.015, 0.08]} position={[0, 0.015, 0]} />
       </RigidBody>
 
       {/* @ts-ignore: SpringValue type is a Vector3, but TypeScript won't allow it */}

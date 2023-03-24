@@ -1,3 +1,8 @@
+/**
+ * DEPRICATED: I'm using the GetDiceNumberAI from now on. It's just cooler. But his was cool too, to predict
+ * the dice numbers with pure math
+ */
+
 import { Euler } from "three"
 import { throwDice } from "./ThrowDice"
 import { RigidBodyApi } from "@react-three/rapier"

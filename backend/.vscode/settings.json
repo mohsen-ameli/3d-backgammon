@@ -27,7 +27,7 @@
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
         "runtime.txt": true,
-        "requirements.txt": true,
+        "requirements.txt": false,
         "Procfile": true,
         "dump.rdb": true,
         "db.sqlite3": true,
@@ -36,8 +36,8 @@
         "venv": true,
         "**/.vscode": true,
         ".vscode": true,
-        "**/static": true,
-        "static": true
+        "**/static": false,
+        "static": false
     },
     "explorerExclude.backup": {}
 }

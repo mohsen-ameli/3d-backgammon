@@ -4,7 +4,7 @@ import * as data from "../data/Data"
 import { GameContext } from "../context/GameContext"
 import { PositionalAudio, Vector3 } from "three"
 import { DiceReadyType } from "../types/Dice.type"
-import getDiceNumber from "../utils/GetDiceNumber"
+import useGetDiceNumberAI from "../utils/useGetDiceNumberAI"
 import IsInitial from "./IsInitial"
 import DiceOnBoard from "./DiceOnBoard"
 
@@ -33,8 +33,15 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   // Game context
   const { nodes, materials, dice, myTurn, settings } = useContext(GameContext)
 
+  // Dice number predictor (AI)
+  const predict = useGetDiceNumberAI()
+
   // Rigid body reference of each die
   const rigidBody = (ref as React.MutableRefObject<RigidBodyApi>).current
+
+  // const euler = new Euler()
+  // euler.setFromQuaternion(rigidBody.rotation())
+  // console.log("index: ", index, euler)
 
   // When the die collides with someting, play a sound
   const handleColissionEnter = () => {
@@ -58,7 +65,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
   // When the die goes to sleep, get the number on the dice, and save it.
   // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
-  const handleSleep = () => {
+  const handleSleep = async () => {
     // If the dice are not on the board, then return
     if (!DiceOnBoard(rigidBody) || showThrowBtn) {
       setSleeping({ dice1: true, dice2: true })
@@ -70,7 +77,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
     // Getting the die number and saving it to the dice ref
     if (!IsInitial(rigidBody.rotation())) {
-      const number = getDiceNumber(rigidBody)
+      const number = await predict(rigidBody)
       if (index === 0) dice.current.dice1 = number
       else dice.current.dice2 = number
     }

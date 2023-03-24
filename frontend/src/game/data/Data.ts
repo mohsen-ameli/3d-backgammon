@@ -4,7 +4,8 @@ import { SettingsType } from "../types/Game.type"
 import * as extra from "./Extra"
 
 // If we are in training dice mode
-export const TRAINING_DICE_MODE = false
+export const TRAINING_DICE_MODE =
+  process.env.NODE_ENV === "development" ? false : false
 
 // User turn duration (Synced with backend in settings.py)
 export const USER_TURN_DURATION = 70

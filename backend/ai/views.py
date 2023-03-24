@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
 from django.conf import settings
+from .torch_utils import get_prediction
 
 '''
     This function will allow the frontend to retriece and change the 
@@ -29,3 +30,13 @@ def handle_dice_ai(request: Request):
             f.truncate()
         return Response()
 
+
+'''
+    This function will use the NN to predict the number on the dice.
+'''
+@api_view(['POST'])
+@permission_classes([])
+def get_dice_prediction(request: Request):
+    x, y, z = request.data.values()
+    prediction = get_prediction(x, y, z)
+    return Response({ "prediction": prediction })
