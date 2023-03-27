@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from "@react-three/fiber"
-import { Suspense, useRef, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import useLoadingScreen from "../components/hooks/useLoadingScreen"
 
 import { useContext } from "react"
@@ -50,7 +50,7 @@ const Experience = () => {
 }
 
 const Game = () => {
-  const { inGame } = useContext(GameContext)
+  const { inGame, settings } = useContext(GameContext)
 
   // View port
   useViewPort()
@@ -58,10 +58,9 @@ const Game = () => {
   const vec = useRef(new Vector3())
 
   // A little animation, so the user doesn't get bored
-  // prettier-ignore
-  useFrame(( state, delta) => {
+  useFrame((state, delta) => {
     if (inGame) return
-    
+
     const elapsedTime = state.clock.getElapsedTime()
     const camera = state.camera
 
@@ -75,8 +74,7 @@ const Game = () => {
 
   return (
     <>
-      {/* Performance monitor */}
-      {/* <Perf position="bottom-right" /> */}
+      {settings.perf && <Perf position="bottom-right" />}
 
       <Stage />
 
@@ -85,7 +83,7 @@ const Game = () => {
       <Columns />
 
       <Physics>
-        {/* <Debug /> */}
+        {settings.debug && <Debug />}
 
         <Board />
 

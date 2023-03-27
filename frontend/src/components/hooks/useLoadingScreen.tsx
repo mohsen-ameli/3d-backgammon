@@ -18,7 +18,7 @@ const useLoadingScreen = (setZIndex: Dispatch<SetStateAction<number>>) => {
   return (
     <Html
       center
-      className="absolute inset-0 flex h-screen w-screen flex-col items-center justify-center bg-gray-500"
+      className="absolute inset-0 z-[100] flex h-screen w-screen flex-col items-center justify-center bg-gray-500"
     >
       <div className="w-[300px] p-2">
         <h1 className="my-8 text-center text-2xl">Loading your experience!</h1>

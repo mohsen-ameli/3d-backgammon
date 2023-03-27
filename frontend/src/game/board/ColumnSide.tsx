@@ -1,5 +1,5 @@
 import { useContext, useRef } from "react"
-import { COLOUMN_HOVER_COLOR } from "../data/Data"
+import { COLUMN_HOVER_COLOR } from "../data/Data"
 import { MeshStandardMaterial } from "three"
 import { GameContext } from "../context/GameContext"
 import { useMemo } from "react"
@@ -9,7 +9,7 @@ import { UserCheckerType } from "../types/Game.type"
 import { NodeType } from "../types/GLTFResult.type"
 
 /**
- * End columns for each user. This component is some what simlar to the
+ * End columns for each user. This component is some what similar to the
  * Columns component.
  */
 const ColumnSide = ({ node }: NodeType) => {
@@ -35,13 +35,13 @@ const ColumnSide = ({ node }: NodeType) => {
 
   // User has hovered over the end column
   const handleHover = () => {
-    if (!checkerPicked.current.picked) return
+    if (!checkerPicked.current) return
     if (!node.name.includes(toCapitalize(userChecker.current!))) return
 
     const end = Endgame(checkers.current, userChecker.current!)
     if (!end) return
 
-    material.color.set(COLOUMN_HOVER_COLOR)
+    material.color.set(COLUMN_HOVER_COLOR)
     newCheckerPosition.current = node.name === "WhiteHouse" ? -3 : -4
   }
 

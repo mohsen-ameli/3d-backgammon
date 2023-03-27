@@ -9,11 +9,12 @@ type InputProps = ButtonHTMLAttributes<HTMLButtonElement> & {
  * A button that has a somewhat cool hover effect
  */
 const Button = (props: InputProps) => {
-  const { className, onClick, children, ...rest } = props
+  const { className, onClick, children, disabled, ...rest } = props
 
   const [click] = useState(() => new Audio(buttonClick))
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (disabled) return
     click.play()
     onClick?.(e)
   }
@@ -21,12 +22,16 @@ const Button = (props: InputProps) => {
   return (
     <button
       type="submit"
-      className={`group relative h-10 rounded-lg border-2 border-orange-800 px-4 outline-none ${className}`}
+      className={`group relative h-10 rounded-lg border-2 border-orange-800 px-4 outline-none
+      ${disabled && "cursor-not-allowed"} ${className}`}
       onClick={handleClick}
       {...rest}
     >
       <div className="relative z-20">{children}</div>
-      <div className="absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 opacity-0 transition duration-200 group-hover:opacity-100"></div>
+      <div
+        className={`absolute inset-0 z-10 rounded-md opacity-0 transition duration-200 group-hover:opacity-100
+      ${disabled ? "" : "bg-gradient-to-b from-red-500 to-orange-500"}`}
+      ></div>
     </button>
   )
 }

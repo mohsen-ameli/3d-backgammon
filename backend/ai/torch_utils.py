@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from django.conf import settings
 
 class Net(nn.Module):
     def __init__(self):
@@ -28,15 +29,10 @@ def normalize(x: float, y: float, z: float):
 
 
 def get_prediction(x: float, y: float, z: float) -> float:
-    # Loading the NN
-    net = Net()
-    net.load_state_dict(torch.load("static/dice_ai.pth"))
-    net.eval()
-
     # Transforming the x, y, z to a tensor
     tensor = torch.Tensor(normalize(x, y, z)).view(-1, 3)
 
-    out = net(tensor)
+    out = settings.NET(tensor)
     out = torch.exp(out)
     out = int(torch.argmax(out)) + 1
     

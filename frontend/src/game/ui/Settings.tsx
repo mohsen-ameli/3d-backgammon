@@ -11,10 +11,36 @@ type settingsType = {
 const Settings = ({ setOpen }: settingsType) => {
   const { settings, setSettings } = useContext(GameContext)
 
+  // Sound
   const [sound, setSound] = useState(settings.sound)
-  const handleChange = (checked: boolean) => {
+  // Debug
+  const [debug, setDebug] = useState(settings.debug)
+  // Performance
+  const [perf, setPerf] = useState(settings.perf)
+
+  const toggleSound = (checked: boolean) => {
     setSound(checked)
     settings.sound = checked
+  }
+
+  const toggleDebug = (checked: boolean) => {
+    setDebug(checked)
+    setSettings(curr => {
+      return {
+        ...curr,
+        debug: checked,
+      }
+    })
+  }
+
+  const togglePerf = (checked: boolean) => {
+    setPerf(checked)
+    setSettings(curr => {
+      return {
+        ...curr,
+        perf: checked,
+      }
+    })
   }
 
   const setEnv = (envMap: EnvMapType) => {
@@ -45,8 +71,34 @@ const Settings = ({ setOpen }: settingsType) => {
       <div className="flex items-center justify-between gap-x-32">
         Toggle sound
         <ReactSwitch
-          onChange={handleChange}
+          onChange={toggleSound}
           checked={sound}
+          className="react-switch"
+          checkedIcon={false}
+          uncheckedIcon={false}
+          onColor="#0e7490"
+          onHandleColor="#22d3ee"
+        />
+      </div>
+
+      <div className="flex items-center justify-between gap-x-32">
+        Toggle debug
+        <ReactSwitch
+          onChange={toggleDebug}
+          checked={debug}
+          className="react-switch"
+          checkedIcon={false}
+          uncheckedIcon={false}
+          onColor="#0e7490"
+          onHandleColor="#22d3ee"
+        />
+      </div>
+
+      <div className="flex items-center justify-between gap-x-32">
+        Toggle performance monitor
+        <ReactSwitch
+          onChange={togglePerf}
+          checked={perf}
           className="react-switch"
           checkedIcon={false}
           uncheckedIcon={false}
@@ -57,11 +109,12 @@ const Settings = ({ setOpen }: settingsType) => {
 
       <Button onClick={openFullScreen}>Toggle full-screen</Button>
 
+      {/* prettier-ignore */}
       <div className="flex flex-col gap-y-2">
-        <h1>Set Environment to:</h1>
-        <Button onClick={() => setEnv("diamondHall")}>Diamond Hall</Button>
-        <Button onClick={() => setEnv("briliantHall")}>Briliant Hall</Button>
-        <Button onClick={() => setEnv("finGarden")}>Fin Garden</Button>
+        <h1>Set background to:</h1>
+        <Button onClick={() => setEnv("diamondHall")}>Diamond Hall {settings.envMap === "diamondHall" && <i className="absolute top-1 text-green-400 right-0 fa-solid fa-check fa-beat-fade"></i>}</Button>
+        <Button onClick={() => setEnv("brilliantHall")}>Brilliant Hall {settings.envMap === "brilliantHall" && <i className="absolute top-1 text-green-400 right-0 fa-solid fa-check fa-beat-fade"></i>}</Button>
+        <Button onClick={() => setEnv("finGarden")}>Fin Garden {settings.envMap === "finGarden" && <i className="absolute top-1 text-green-400 right-0 fa-solid fa-check fa-beat-fade"></i>}</Button>
       </div>
     </div>
   )

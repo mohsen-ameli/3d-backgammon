@@ -1,5 +1,5 @@
 /**
- * DEPRICATED: I'm using the GetDiceNumberAI from now on. It's just cooler. But his was cool too, to predict
+ * DEPRECATED: I'm using the GetDiceNumberAI from now on. It's just cooler. But his was cool too, to predict
  * the dice numbers with pure math
  */
 
@@ -13,7 +13,7 @@ const roundToTwo = (num: number) => {
 }
 
 /**
- * This method is a hot mess. But it works! I had to do a lot of pattern recognision
+ * This method is a hot mess. But it works! I had to do a lot of pattern recognition
  * and a lot of math to get this to work. Probably the hardest function to build in this entire project.
  * This will get the current number on the dice that's pointing up, using the dice's rotation.
  * @returns The number on the dice that's pointing up

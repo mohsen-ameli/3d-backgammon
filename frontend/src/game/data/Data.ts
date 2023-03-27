@@ -12,6 +12,8 @@ export const USER_TURN_DURATION = 70
 
 // Settings
 export const DEFAULT_SETTINGS: SettingsType = {
+  perf: false,
+  debug: false,
   sound: true,
   envMap: "diamondHall",
 }
@@ -20,14 +22,14 @@ export const DEFAULT_SETTINGS: SettingsType = {
 export const DEFAULT_ENV_MAP_INTENSITY = 2
 
 // Columns
-export const COLOUMN_HOVER_COLOR = "red"
+export const COLUMN_HOVER_COLOR = "red"
 
 // Dice
 export const DICE_MASS = 0.2
 export const DICE_BOUNCINESS = 0.9
 export const DICE_FRICTION = 0.4
-export const DICE_1_DEFAULT_POS = new Vector3(0, 1, 2)
-export const DICE_2_DEFAULT_POS = new Vector3(0.1, 1, 2)
+export const DICE_1_DEFAULT_POS = new Vector3(0, 0.55, 2)
+export const DICE_2_DEFAULT_POS = new Vector3(0.1, 0.55, 2)
 export const DEFAULT_DICE_QUATERNION = new Quaternion(
   0.00048353226156905293,
   0.005327336024492979,

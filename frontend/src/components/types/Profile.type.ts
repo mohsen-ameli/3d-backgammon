@@ -1,4 +1,4 @@
-export type PofileData = {
+export type ProfileData = {
   data: {
     username: string
     image: string

@@ -1,13 +1,14 @@
-import { BufferGeometry, Material, Mesh, MeshStandardMaterial } from "three"
 import { CheckerType } from "./Checker.type"
 import { DicePhysics, DiceMoveType } from "./Dice.type"
 import { MaterialType, NodeType } from "./GLTFResult.type"
 
 // The different environment maps we have
-export type EnvMapType = "diamondHall" | "briliantHall" | "finGarden"
+export type EnvMapType = "diamondHall" | "brilliantHall" | "finGarden"
 
 // Settings type, used in the settings component
 export type SettingsType = {
+  perf: boolean
+  debug: boolean
   sound: boolean
   envMap: EnvMapType
 }
@@ -52,7 +53,7 @@ export type PhaseType =
 export type GameModeType = "pass-and-play" | string | undefined
 
 // Checker picked type
-export type CheckerPickedType = { id: number; picked: boolean }
+export type CheckerPickedType = CheckerType | null
 
 export type GameContextType = {
   // Functions
@@ -92,7 +93,7 @@ export type GameContextType = {
   materials: MaterialType
 }
 
-// The data that comes back from backend, when recieving updates
+// The data that comes back from backend, when receiving updates
 export type GameDataTypes = {
   too_many_users?: boolean
   finished?: boolean

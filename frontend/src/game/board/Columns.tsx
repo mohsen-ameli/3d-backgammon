@@ -8,25 +8,58 @@ import {
   Euler,
   Color,
   InstancedMesh,
-  InstancedBufferAttribute,
-  Group,
 } from "three"
-import { COLOUMN_HOVER_COLOR, GROUND } from "../data/Data"
+import { COLUMN_HOVER_COLOR, GROUND } from "../data/Data"
+import useGetCheckersOnCol from "../utils/useGetCheckersOnCol"
 import { ThreeEvent } from "@react-three/fiber"
+import { CheckerType } from "../types/Checker.type"
 
 /**
  * The 24 columns on the board, where checkers get dropped in. This component
  * contains logic for changing the column checkers colour when user hovers over it.
  */
 const Columns = () => {
-  const { nodes, materials, checkerPicked, newCheckerPosition } =
+  const { nodes, materials, checkerPicked, newCheckerPosition, dice } =
     useContext(GameContext)
 
-  const columns = useRef<Group>(null!)
+  // Utility
+  const { getCheckersOnCol } = useGetCheckersOnCol()
 
+  // Ref to the actual columns
   const columnsRef = useRef<InstancedMesh | null>(null)
+  // Ref to the invisible column overlays for a better dragging experience.
+  const columnsHoverRef = useRef<InstancedMesh | null>(null)
+  // The color that the column will be changed to when it's hovered
+  const colorWhenHovered = useRef(new Color(COLUMN_HOVER_COLOR))
 
   const count = 24
+
+  // Saving the default positions of the column overlays
+  useLayoutEffect(() => {
+    if (!columnsHoverRef.current) return
+
+    const quaternion = new Quaternion()
+    const scale = new Vector3(1, 1, 1)
+
+    for (let i = 0; i < count; i++) {
+      const matrix = new Matrix4()
+      const position = nodes?.[`col_${i + 1}`].position.clone()
+
+      if (i >= 12) {
+        const rotated = new Euler(0, Math.PI, 0)
+        position.z -= 0.325
+        matrix.compose(position, quaternion.setFromEuler(rotated), scale)
+      } else {
+        position.z += 0.325
+        matrix.compose(position, quaternion, scale)
+      }
+
+      columnsHoverRef.current.setMatrixAt(i, matrix)
+    }
+
+    // Updating the instance matrix
+    columnsHoverRef.current.instanceMatrix.needsUpdate = true
+  }, [])
 
   // Saving the default positions of the columns.
   useLayoutEffect(() => {
@@ -58,48 +91,99 @@ const Columns = () => {
     columnsRef.current.instanceMatrix.needsUpdate = true
   }, [])
 
+  // Checks to see if a hover over a column is valid
+  // prettier-ignore
+  const getValidHover = (checker: CheckerType, colId: number) => {
+    // If user is hovering over the column of the current checker
+    if (checker.col === colId) return false
+
+    if (checker.color === "black") {
+      const { action } = getCheckersOnCol(colId, "black")
+
+      if (checker.removed) {
+        const valid = [dice.current.dice1, dice.current.dice2].includes(24 - colId)
+        return valid && action !== "invalid"
+      } else if (checker.col - dice.current.dice1 === colId || checker.col - dice.current.dice2 === colId) {
+        if (action === "invalid") return false
+        return true
+      }
+    } else {
+      const { action } = getCheckersOnCol(colId, "white")
+
+      if (checker.removed) {
+        const valid = [dice.current.dice1, dice.current.dice2].includes(colId + 1)
+        return valid && action !== "invalid"
+      } else if (checker.col + dice.current.dice1 === colId || checker.col + dice.current.dice2 === colId) {
+        if (action === "invalid") return false
+        return true
+      }
+    }
+    return false
+  }
+
   // When user hovers over one of the columns
   const handleHover = (e: ThreeEvent<PointerEvent>) => {
-    // If they have a checker picked up
-    if (checkerPicked.current.picked) {
-      const node = e.object as InstancedMesh
-      const id = e.instanceId as number
-      const color = new Color(COLOUMN_HOVER_COLOR)
+    if (!checkerPicked.current) return
 
-      node.setColorAt(id, color)
-      ;(node.instanceColor as InstancedBufferAttribute).needsUpdate = true
-      newCheckerPosition.current = id
+    const id = e.instanceId as number
+    const validHover = getValidHover(checkerPicked.current, id)
+    if (!validHover || !columnsRef.current) {
+      newCheckerPosition.current = undefined
+      return
     }
+
+    // Saving the state
+    newCheckerPosition.current = id
+
+    // Setting the color of the hovered column to red
+    columnsRef.current.setColorAt(id, colorWhenHovered.current)
+    columnsRef.current.instanceColor!.needsUpdate = true
   }
 
   // User has released their pointer, on one of the columns
   const handleHoverFinished = (e: ThreeEvent<PointerEvent>) => {
-    const node = e.object as InstancedMesh
     const id = e.instanceId as number
+    if (!columnsRef.current) return
 
     if (id! % 2 === 0) {
-      node.setColorAt(id, materials.ColumnDark.color)
+      columnsRef.current.setColorAt(id, materials.ColumnDark.color)
     } else {
-      node.setColorAt(id, materials.ColumnWhite.color)
+      columnsRef.current.setColorAt(id, materials.ColumnWhite.color)
     }
 
-    ;(node.instanceColor as InstancedBufferAttribute).needsUpdate = true
+    // Updating the node
+    columnsRef.current.instanceColor!.needsUpdate = true
+
+    // Saving the state
+    if (checkerPicked.current) return
     newCheckerPosition.current = undefined
   }
 
   return (
-    <group ref={columns} position-y={GROUND}>
+    <group position-y={GROUND}>
+      {/* Columns */}
       <instancedMesh
-        onPointerOver={handleHover}
-        onPointerLeave={handleHoverFinished}
         ref={columnsRef}
-        args={[nodes["col_1"].geometry, undefined, count]}
+        args={[nodes?.col_1.geometry, undefined, count]}
       >
         <meshStandardMaterial name="Column" />
       </instancedMesh>
 
-      <ColumnSide node={nodes["WhiteHouse"]} />
-      <ColumnSide node={nodes["BlackHouse"]} />
+      {/* Column overlays */}
+      <instancedMesh
+        onPointerOver={handleHover}
+        onPointerLeave={handleHoverFinished}
+        args={[undefined, undefined, count]}
+        ref={columnsHoverRef}
+        position-y={0.025}
+      >
+        <boxGeometry args={[0.2, 0.05, 0.8]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </instancedMesh>
+
+      {/* Side columns */}
+      <ColumnSide node={nodes.WhiteHouse} />
+      <ColumnSide node={nodes.BlackHouse} />
     </group>
   )
 }

@@ -3,13 +3,13 @@ import Header from "../../components/ui/Header"
 import useFetch from "../../components/hooks/useFetch"
 import Loading from "../../components/ui/Loading"
 import { useEffect, useState } from "react"
-import { PofileData } from "../../components/types/Profile.type"
+import { ProfileData } from "../../components/types/Profile.type"
 
 /**
  * User's profile
  */
 const Profile = () => {
-  const { data, loading, error }: PofileData = useFetch(
+  const { data, loading, error }: ProfileData = useFetch(
     "/api/get-user-profile/"
   )
 
@@ -41,7 +41,7 @@ const Profile = () => {
     Content = <Loading basic />
   } else if (error) {
     Content = (
-      <div>Error happend when getting your information! Check back later!</div>
+      <div>Error happened when getting your information! Check back later!</div>
     )
   } else {
     Content = (

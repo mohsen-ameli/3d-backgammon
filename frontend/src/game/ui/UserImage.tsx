@@ -1,14 +1,13 @@
 import { useContext, useEffect, useState } from "react"
 import { CountdownCircleTimer } from "react-countdown-circle-timer"
 import Center from "../../components/ui/Center"
-import notification from "../../components/utils/Notification"
 import { GameContext } from "../context/GameContext"
 import { USER_TURN_DURATION } from "../data/Data"
 import { PlayerType } from "../types/Game.type"
 
 type UserImageType = {
   img: string | undefined
-  player: PlayerType
+  player?: PlayerType
 }
 
 /**
@@ -31,17 +30,17 @@ const UserImage = ({ img, player }: UserImageType) => {
   }
 
   // Auto resign function
-  function autoResign(id: number) {
-    if (!players || gameMode.current === "pass-and-play") return
+  function autoResign(id?: number) {
+    if (!id || !players || gameMode.current === "pass-and-play") return
 
     // If I'm losing
-    if (id === players.me.id) {
-      resign(players.enemy.id, id, true)
-      notification(`${players.me.name} has timed out.`, "info")
-    } else {
-      resign(players.me.id, players.enemy.id, true)
-      notification(`${players.enemy.name} has timed out.`, "info")
-    }
+    // if (id === players.me.id) {
+    //   resign(players.enemy.id, id, true)
+    //   notification(`${players.me.name} has timed out.`, "info")
+    // } else {
+    //   resign(players.me.id, players.enemy.id, true)
+    //   notification(`${players.enemy.name} has timed out.`, "info")
+    // }
   }
 
   // Handling resize
@@ -103,14 +102,16 @@ const UserImage = ({ img, player }: UserImageType) => {
         duration={duration}
         colors={["#609633", "#f79501", "#A30000", "#681919"]}
         colorsTime={[duration, duration / 4, duration / 10, 0]}
-        onComplete={() => autoResign(player.id)}
+        onComplete={() => autoResign(player?.id)}
       >
         {({ remainingTime }) =>
           (remainingTime / duration) * 100 <= 25 && (
-            <div className="absolute h-full w-full rounded-full bg-[#6e6e6e99] text-red-500 lg:text-lg lg:font-bold">
-              <Center className="w-full text-center">
-                {remainingTime} sec
-              </Center>
+            <div className="absolute z-10 h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
+              <div className="h-full w-full rounded-full bg-[#6e6e6e99] text-red-500 lg:text-lg lg:font-bold">
+                <Center className="w-full text-center">
+                  {remainingTime} sec
+                </Center>
+              </div>
             </div>
           )
         }

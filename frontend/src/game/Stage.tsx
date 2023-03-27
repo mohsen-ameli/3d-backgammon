@@ -31,15 +31,15 @@ const Stage = () => {
     const manager = new LoadingManager()
     const loader = new CubeTextureLoader(manager)
 
-    const briliantHall = loader.setPath("/env/cube/briliant_hall/").load(files)
+    const brilliantHall = loader.setPath("/env/cube/briliant_hall/").load(files)
     const diamondHall = loader.setPath("/env/cube/diamond_hall/").load(files)
     const finGarden = loader.setPath("/env/cube/fin_garden/").load(files)
 
-    briliantHall.name = "briliantHall"
+    brilliantHall.name = "brilliantHall"
     diamondHall.name = "diamondHall"
     finGarden.name = "finGarden"
 
-    const cubeTextures = [briliantHall, diamondHall, finGarden]
+    const cubeTextures = [brilliantHall, diamondHall, finGarden]
 
     setCubeEnvs(cubeTextures)
   }, [])

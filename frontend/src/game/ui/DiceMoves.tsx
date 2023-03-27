@@ -24,14 +24,11 @@ const DiceMoves = ({ dice }: DiceMovesProps) => {
   }
 
   return (
-    <div
-      className={
-        "absolute left-1/2 grid -translate-x-1/2 grid-cols-2 items-center gap-x-2 " +
-        (jsx.length > 2 ? "bottom-2" : "bottom-4")
-      }
-    >
+    <div className="flex h-full w-full flex-wrap items-center justify-center gap-2 text-[18pt] lg:flex-grow lg:text-[22pt] ">
       {jsx.map((number, index) => (
-        <span key={index}>{number}</span>
+        <span key={index} className="flex">
+          {number}
+        </span>
       ))}
     </div>
   )
@@ -39,17 +36,17 @@ const DiceMoves = ({ dice }: DiceMovesProps) => {
 
 const getMoves = (num: number) => {
   if (num === 1) {
-    return <i className="fa-solid fa-dice-one text-[18pt]"></i>
+    return <i className="fa-solid fa-dice-one"></i>
   } else if (num === 2) {
-    return <i className="fa-solid fa-dice-two text-[18pt]"></i>
+    return <i className="fa-solid fa-dice-two"></i>
   } else if (num === 3) {
-    return <i className="fa-solid fa-dice-three text-[18pt]"></i>
+    return <i className="fa-solid fa-dice-three"></i>
   } else if (num === 4) {
-    return <i className="fa-solid fa-dice-four text-[18pt]"></i>
+    return <i className="fa-solid fa-dice-four"></i>
   } else if (num === 5) {
-    return <i className="fa-solid fa-dice-five text-[18pt]"></i>
+    return <i className="fa-solid fa-dice-five"></i>
   } else if (num === 6) {
-    return <i className="fa-solid fa-dice-six text-[18pt]"></i>
+    return <i className="fa-solid fa-dice-six"></i>
   }
 }
 

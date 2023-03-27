@@ -43,8 +43,8 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   // euler.setFromQuaternion(rigidBody.rotation())
   // console.log("index: ", index, euler)
 
-  // When the die collides with someting, play a sound
-  const handleColissionEnter = () => {
+  // When the die collides with something, play a sound
+  const handleCollisionEnter = () => {
     if (!DiceOnBoard(rigidBody) || !settings.sound || !audio) return
     audio.setVolume(Math.random())
     audio.play()
@@ -64,7 +64,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   }
 
   // When the die goes to sleep, get the number on the dice, and save it.
-  // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the gettting the dice number process.
+  // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the getting the dice number process.
   const handleSleep = async () => {
     // If the dice are not on the board, then return
     if (!DiceOnBoard(rigidBody) || showThrowBtn) {
@@ -99,7 +99,7 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
       position={position}
       onWake={handleWake}
       onSleep={handleSleep}
-      onCollisionEnter={handleColissionEnter}
+      onCollisionEnter={handleCollisionEnter}
     >
       <mesh
         name="DiceGeo"

@@ -22,7 +22,7 @@ import toCapitalize from "../../components/utils/ToCapitalize"
 import userSwitchAudio from "../../assets/sounds/user-switch.mp3"
 import gltfModel from "../../assets/models/models.glb"
 
-// The grandious game state. This is where the magic is held in place.
+// The grandiose game state. This is where the magic is held in place.
 export const GameContext = createContext({} as types.GameContextType)
 
 const GameContextProvider = ({ children }: Children) => {
@@ -68,10 +68,7 @@ const GameContextProvider = ({ children }: Children) => {
   const checkers = useRef<CheckerType[]>(null!)
 
   // If the checker has been picked up or not
-  const checkerPicked = useRef<types.CheckerPickedType>({
-    id: 0,
-    picked: false,
-  })
+  const checkerPicked = useRef<types.CheckerPickedType>(null)
 
   // The new position of the checker (in checkers used for calculating the moved variable)
   const newCheckerPosition = useRef<number | undefined>()
@@ -242,7 +239,7 @@ const GameContextProvider = ({ children }: Children) => {
     if (dice.current.moves !== 0) {
       // Complicated state changes. Essentially making sure that
       // whether the user is spectating or playing, they get the
-      // neweset updates from the backend. (aka, making sure
+      // newest updates from the backend. (aka, making sure
       // all the checker positions are updated)
 
       if (!turn)

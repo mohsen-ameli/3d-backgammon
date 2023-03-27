@@ -5,7 +5,7 @@ import { useDrag, UserDragConfig } from "@use-gesture/react"
 import { useSpring, a as a3f } from "@react-spring/three"
 import { GameContext } from "../context/GameContext"
 import getCheckerPos from "../utils/GetCheckerPos"
-import getCheckersOnCol from "../utils/GetCheckersOnCol"
+import useGetCheckersOnCol from "../utils/useGetCheckersOnCol"
 import lenRemovedCheckers from "../utils/LenRemovedCheckers"
 import switchPlayers from "../utils/SwitchPlayers"
 import Endgame from "../utils/Endgame"
@@ -44,8 +44,9 @@ const Checker = ({ thisChecker }: CheckerProps) => {
   } = useContext(GameContext)
   const { user } = useContext(AuthContext)
 
-  // Update live game hook
+  // Utilities
   const { updateLiveGame } = useUpdateLiveGame()
+  const { getCheckersOnCol } = useGetCheckersOnCol()
 
   // Checkers
   const { viewport } = useThree()
@@ -116,14 +117,12 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     // User started dragging the checker
     if (dragging) {
       // If the user is dragging multiple checkers, then stop the drag
-      if (
-        checkerPicked.current.picked &&
-        checkerPicked.current.id !== thisChecker.id
-      ) {
+      // prettier-ignore
+      if (checkerPicked.current && checkerPicked.current.id !== thisChecker.id) {
         cancel()
         return
       } else {
-        checkerPicked.current = { id: thisChecker.id, picked: true }
+        checkerPicked.current = thisChecker
       }
 
       toggleControls.current("checkerDisable")
@@ -135,7 +134,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     }
 
     toggleControls.current("checkerEnable")
-    checkerPicked.current = { id: thisChecker.id, picked: false }
+    checkerPicked.current = null
 
     // Current checker instance
     const currentChecker = checkers.current[thisChecker.id]
@@ -154,7 +153,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     else moved = thisChecker.color === "white" ? to - from : from - to
 
     /**
-     * User is tring to bear off their checker
+     * User is trying to bear off their checker
      */
     if ([-3, -4].includes(to)) {
       const end = Endgame(checkers.current, userChecker.current)
@@ -208,7 +207,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     /**
      * User is trying to move to a column within the board
      */
-    const { action, numCheckers, rmChecker } = getCheckersOnCol(checkers.current, to, thisChecker.color) // prettier-ignore
+    const { action, numCheckers, rmChecker } = getCheckersOnCol(to, thisChecker.color) // prettier-ignore
     const removedCheckersLen = lenRemovedCheckers(checkers.current, userChecker.current) // prettier-ignore
 
     // If user is moving wrongly, move them back to their original position
@@ -302,10 +301,10 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       userChecker.current = switchPlayers(userChecker.current!)
       !ws && setPhase("diceRoll")
     } else {
-      // Making sure there's a rerender everytime the user moves
+      // Making sure there's a rerender every time the user moves
       // We have to make sure that user is not playing a live game
       // since in a live game, this exact same code gets run (check
-      // useEffect with ws deppendency in Game)
+      // useEffect with ws dependency in Game)
       !ws &&
         setPhase(curr =>
           curr === "checkerMove" ? "checkerMoveAgain" : "checkerMove"

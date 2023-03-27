@@ -8,7 +8,7 @@ import WinnerOverlay from "./WinnerOverlay"
 import SidePanel from "./SidePanel"
 import Dialog from "./Dialog"
 import useFetch from "../../components/hooks/useFetch"
-import { PofileData } from "../../components/types/Profile.type"
+import { ProfileData } from "../../components/types/Profile.type"
 import Settings from "./Settings"
 import DiceTraining from "./DiceTraining"
 import { TRAINING_DICE_MODE } from "../data/Data"
@@ -36,7 +36,7 @@ const MainLayout = () => {
   const { gameMode, players } = useContext(GameContext)
 
   // Getting user image
-  const { data }: PofileData = useFetch("/api/get-user-profile/")
+  const { data }: ProfileData = useFetch("/api/get-user-profile/")
   const [img, setImg] = useState("")
   useEffect(() => setImg(data?.image), [data])
 
@@ -63,22 +63,20 @@ const RightLayout = () => {
   const resignMe = () => players && resign(players.enemy.id, players.me.id)
 
   return (
-    <div className="absolute top-0 right-8 flex items-center justify-center gap-x-1 p-1 lg:right-0 lg:gap-x-2 lg:p-2">
+    <div className="absolute top-0 right-8 z-[17] flex items-center justify-center gap-x-1 p-1 lg:right-0 lg:gap-x-2 lg:p-2">
       {gameMode.current !== "pass-and-play" && <ChatButton />}
 
-      <div className="z-[10]">
-        {gameMode.current === "pass-and-play" ? (
-          <Link to="/">
-            <LayoutBtn title="Exit">
-              <i className="fa-solid fa-arrow-right-from-bracket"></i>
-            </LayoutBtn>
-          </Link>
-        ) : (
-          <LayoutBtn title="Resign" onClick={resignMe}>
-            <i className="fa-regular fa-flag -rotate-[20deg]"></i>
+      {gameMode.current === "pass-and-play" ? (
+        <Link to="/">
+          <LayoutBtn title="Exit">
+            <i className="fa-solid fa-arrow-right-from-bracket"></i>
           </LayoutBtn>
-        )}
-      </div>
+        </Link>
+      ) : (
+        <LayoutBtn title="Resign" onClick={resignMe}>
+          <i className="fa-regular fa-flag -rotate-[20deg]"></i>
+        </LayoutBtn>
+      )}
     </div>
   )
 }
@@ -100,7 +98,7 @@ const LeftLayout = () => {
 
   return (
     <>
-      <div className="absolute top-0 left-8 z-[10] grid grid-cols-2 gap-1 p-1 lg:left-0 lg:grid-cols-4 lg:gap-2 lg:p-2">
+      <div className="absolute top-0 left-8 z-[17] grid grid-cols-2 gap-1 p-1 lg:left-0 lg:grid-cols-4 lg:gap-2 lg:p-2">
         <LayoutBtn title="Lock Controls" onClick={switchControls}>
           <i
             className={
