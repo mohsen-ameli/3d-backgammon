@@ -1,6 +1,6 @@
 import { useContext } from "react"
-import Checker from "./Checker"
 import { GameContext } from "../context/GameContext"
+import Checker from "./Checker"
 import Testing from "./Testing"
 
 /**

@@ -1,22 +1,22 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react"
-import { AudioLoader, PositionalAudio, AudioListener } from "three"
-import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
 import { useThree } from "@react-three/fiber"
-import DiceCollisonAudio from "../../assets/sounds/NewDice.wav"
-import Dice from "./Dice"
-import { GameContext } from "../context/GameContext"
-import { throwDice, throwDicePhysics } from "../utils/ThrowDice"
-import switchPlayers from "../utils/SwitchPlayers"
-import hasMoves from "../utils/HasMoves"
+import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
+import { useCallback, useContext, useEffect, useRef, useState } from "react"
+import { AudioListener, AudioLoader, PositionalAudio } from "three"
+import DiceCollisionAudio from "../../assets/sounds/NewDice.wav"
 import notification from "../../components/utils/Notification"
-import { DiceReadyType } from "../types/Dice.type"
+import wsGood from "../../components/utils/wsGood"
+import { GameContext } from "../context/GameContext"
 import {
   DICE_1_DEFAULT_POS,
   DICE_2_DEFAULT_POS,
   TRAINING_DICE_MODE,
 } from "../data/Data"
-import wsGood from "../../components/utils/wsGood"
+import { DiceReadyType } from "../types/Dice.type"
+import hasMoves from "../utils/HasMoves"
+import switchPlayers from "../utils/SwitchPlayers"
+import { throwDice, throwDicePhysics } from "../utils/ThrowDice"
 import useUpdateLiveGame from "../utils/useUpdateLiveGame"
+import Dice from "./Dice"
 
 /**
  * This is the container for the two dice.
@@ -97,7 +97,7 @@ const Dices = () => {
     const listener = new AudioListener()
     camera.add(listener)
 
-    audioLoader.load(DiceCollisonAudio, buffer => {
+    audioLoader.load(DiceCollisionAudio, buffer => {
       const audio = new PositionalAudio(listener)
       audio.setBuffer(buffer)
       setAudio(audio)

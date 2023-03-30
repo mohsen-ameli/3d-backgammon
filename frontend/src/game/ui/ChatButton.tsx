@@ -2,7 +2,7 @@ import gsap from "gsap"
 import { useContext, useEffect, useRef, useState } from "react"
 import useFetch from "../../components/hooks/useFetch"
 import { GameContext } from "../context/GameContext"
-import { MessgaeType } from "../types/Message.type"
+import { MessageType } from "../types/Message.type"
 import LayoutBtn from "./LayoutBtn"
 
 /**
@@ -15,7 +15,7 @@ const ChatButton = () => {
   const { ws, players } = useContext(GameContext)
 
   const { data } = useFetch("/api/game/get-in-game-messages/")
-  const messages: MessgaeType[] = data
+  const messages: MessageType[] = data
 
   const [showChat, setShowChat] = useState(false)
   const initialRender = useRef(true)

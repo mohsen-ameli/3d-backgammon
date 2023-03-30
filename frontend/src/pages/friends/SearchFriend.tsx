@@ -1,13 +1,13 @@
-import Container from "../../components/ui/Container"
-import Input from "../../components/ui/Input"
-import React, { useEffect, useState } from "react"
-import Button, { ButtonLoading } from "../../components/ui/Button"
-import useAxios from "../../components/hooks/useAxios"
-import Header from "../../components/ui/Header"
-import getServerUrl from "../../components/utils/getServerUrl"
 import { AxiosError } from "axios"
-import { FriendType } from "./Friend.type"
+import React, { useEffect, useState } from "react"
+import useAxios from "../../components/hooks/useAxios"
+import Button, { ButtonLoading } from "../../components/ui/Button"
+import Container from "../../components/ui/Container"
+import Header from "../../components/ui/Header"
+import Input from "../../components/ui/Input"
+import getServerUrl from "../../components/utils/getServerUrl"
 import wsGood from "../../components/utils/wsGood"
+import { FriendType } from "./Friend.type"
 
 const SearchFriend = () => {
   const [ws] = useState(
@@ -50,7 +50,7 @@ const SearchFriend = () => {
   }
 
   // Send friend request
-  const sendFriendReequest = async (id: number) => {
+  const sendFriendRequest = async (id: number) => {
     try {
       await axiosInstance.put("/api/handle-friends/", {
         id,
@@ -83,7 +83,7 @@ const SearchFriend = () => {
             >
               <p>{friend.username}</p>
               <AddButton
-                sendFriendReequest={sendFriendReequest}
+                sendFriendRequest={sendFriendRequest}
                 friend={friend}
                 error={error}
               />
@@ -108,16 +108,16 @@ const ErrorMsg = () => {
 }
 
 type AddButtonType = {
-  sendFriendReequest: (id: number) => void
+  sendFriendRequest: (id: number) => void
   friend: FriendType
   error: string | boolean | null | undefined
 }
 
-const AddButton = ({ sendFriendReequest, friend, error }: AddButtonType) => {
+const AddButton = ({ sendFriendRequest, friend, error }: AddButtonType) => {
   const [clicked, setClicked] = useState(false)
 
   const handleClick = () => {
-    sendFriendReequest(friend.id)
+    sendFriendRequest(friend.id)
     setClicked(true)
   }
 

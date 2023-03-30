@@ -1,9 +1,9 @@
+import { useEffect, useState } from "react"
+import useFetch from "../../components/hooks/useFetch"
+import { ProfileData } from "../../components/types/Profile.type"
 import Container from "../../components/ui/Container"
 import Header from "../../components/ui/Header"
-import useFetch from "../../components/hooks/useFetch"
 import Loading from "../../components/ui/Loading"
-import { useEffect, useState } from "react"
-import { ProfileData } from "../../components/types/Profile.type"
 
 /**
  * User's profile

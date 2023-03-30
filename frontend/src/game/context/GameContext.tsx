@@ -1,3 +1,4 @@
+import { useGLTF } from "@react-three/drei"
 import {
   createContext,
   useCallback,
@@ -6,21 +7,20 @@ import {
   useRef,
   useState,
 } from "react"
-import { useGLTF } from "@react-three/drei"
 
+import gltfModel from "../../assets/models/models.glb"
+import userSwitchAudio from "../../assets/sounds/user-switch.mp3"
 import { Children } from "../../components/types/children.type"
-import { DiceMoveType, DicePhysics } from "../types/Dice.type"
-import * as types from "../types/Game.type"
-import { CheckerType } from "../types/Checker.type"
-import { GLTFResult } from "../types/GLTFResult.type"
+import notification from "../../components/utils/Notification"
+import toCapitalize from "../../components/utils/ToCapitalize"
 import getServerUrl from "../../components/utils/getServerUrl"
 import { AuthContext } from "../../context/AuthContext"
 import { DEFAULT_CHECKER_POSITIONS, DEFAULT_SETTINGS } from "../data/Data"
+import { CheckerType } from "../types/Checker.type"
+import { DiceMoveType, DicePhysics } from "../types/Dice.type"
+import { GLTFResult } from "../types/GLTFResult.type"
+import * as types from "../types/Game.type"
 import switchPlayers from "../utils/SwitchPlayers"
-import notification from "../../components/utils/Notification"
-import toCapitalize from "../../components/utils/ToCapitalize"
-import userSwitchAudio from "../../assets/sounds/user-switch.mp3"
-import gltfModel from "../../assets/models/models.glb"
 
 // The grandiose game state. This is where the magic is held in place.
 export const GameContext = createContext({} as types.GameContextType)

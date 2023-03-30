@@ -1,5 +1,5 @@
 import { CheckerType } from "./Checker.type"
-import { DicePhysics, DiceMoveType } from "./Dice.type"
+import { DiceMoveType, DicePhysics } from "./Dice.type"
 import { MaterialType, NodeType } from "./GLTFResult.type"
 
 // The different environment maps we have

@@ -9,13 +9,13 @@ type PositionsType = {
 
 /**
  * This function will get the position (x,y,z) of the checker on the board based on the given column and row
- * @returns An array of x, y, and z coordinates. The y (or the elavation) is the ground level
+ * @returns An array of x, y, and z coordinates. The y (or the elevation) is the ground level
  */
 const getCheckerPos = (checker: CheckerType): number[] => {
-  // x is left and right on the board, y is elavation, and z is the forward and backwards of each checker.
+  // x is left and right on the board, y is elevation, and z is the forward and backwards of each checker.
   const position: PositionsType = { x: 0, y: 0, z: 0 }
 
-  // Default elavation
+  // Default elevation
   position.y = data.GROUND_CHECKERS
 
   // Checker is removed
@@ -30,14 +30,14 @@ const getCheckerPos = (checker: CheckerType): number[] => {
   /**
    * End columns
    */
-  // White endhouse
+  // White end-house
   if (checker.col === -3) {
     position.x = data.BOARD_W + (data.CHECKER_W * 5.6) / 4
     position.y += 0.15
     position.z = 0.25 + 0.04 * checker.row
     return [position.x, position.y, position.z]
   }
-  // Black endhouse
+  // Black end-house
   else if (checker.col === -4) {
     position.x = data.BOARD_W + (data.CHECKER_W * 5.6) / 4
     position.y += 0.15
@@ -46,7 +46,7 @@ const getCheckerPos = (checker: CheckerType): number[] => {
   }
 
   /**
-   * Quandrants
+   * Quadrants
    */
   // Q1 (top right)
   if (checker.col <= 5) {
@@ -74,7 +74,7 @@ const getCheckerPos = (checker: CheckerType): number[] => {
     return [position.x, position.y, position.z]
   }
 
-  // Elavating and reordering the checker if the number of checker on the current column exceeds 5
+  // Elevating and reordering the checker if the number of checker on the current column exceeds 5
   const newRow = Math.abs(5 - checker.row)
   position.y += 0.03
 

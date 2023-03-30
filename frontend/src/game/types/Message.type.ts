@@ -1,5 +1,5 @@
 // A message type
-export type MessgaeType = {
+export type MessageType = {
   id: number
   message: string
 }

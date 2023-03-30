@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react"
-import { AuthContext } from "../../context/AuthContext"
+import { Link } from "react-router-dom"
+import { ImageType } from "../../components/types/Image.type"
 import Button, { ButtonLoading } from "../../components/ui/Button"
 import Container from "../../components/ui/Container"
 import FormField from "../../components/ui/FormField"
 import Header from "../../components/ui/Header"
-import { Link } from "react-router-dom"
 import ImageUploader from "../../components/ui/ImageUploader"
-import { ImageType } from "../../components/types/Image.type"
+import { AuthContext } from "../../context/AuthContext"
 
 const Signup = () => {
   const { signup, errors, setErrors } = useContext(AuthContext)
@@ -24,7 +24,7 @@ const Signup = () => {
     setBtnClicked(false)
   }, [errors])
 
-  // Handling user submition
+  // Handling user submission
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
 

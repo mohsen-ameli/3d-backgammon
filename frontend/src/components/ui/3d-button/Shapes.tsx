@@ -1,10 +1,9 @@
-import { motion } from "framer-motion-3d"
+import { Canvas, PerspectiveCameraProps, useThree } from "@react-three/fiber"
 import { MotionConfig, MotionValue } from "framer-motion"
-import { useRef, useLayoutEffect } from "react"
+import { motion } from "framer-motion-3d"
+import { useLayoutEffect, useRef } from "react"
 import { transition } from "./settings"
-import { Canvas, useThree } from "@react-three/fiber"
 import { useSmoothTransform } from "./useSmoothTransform"
-import { PerspectiveCamera } from "three"
 
 type ShapesType = {
   isHover: boolean
@@ -166,19 +165,20 @@ function Camera({ mouseX, mouseY, ...props }: CameraTypes) {
   const camera = useThree(({ camera }) => camera)
   const size = useThree(({ size }) => size)
   const scene = useThree(({ scene }) => scene)
-  const cameraRef = useRef<PerspectiveCamera>(null!)
+  const cameraRef = useRef<PerspectiveCameraProps>(null)
 
   useLayoutEffect(() => {
     const { current: cam } = cameraRef
     if (cam) {
       cam.aspect = size.width / size.height
-      cam.updateProjectionMatrix()
+      cam.updateProjectionMatrix?.()
     }
   }, [size, props])
 
   useLayoutEffect(() => {
     if (cameraRef.current) {
       const oldCam = camera
+      // @ts-ignore
       set(() => ({ camera: cameraRef.current }))
       return () => set(() => ({ camera: oldCam }))
     }

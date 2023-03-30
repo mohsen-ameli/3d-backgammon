@@ -3,12 +3,12 @@
  * https://codesandbox.io/s/framer-motion-3d-shapes-button-ke8wx?from-embed
  */
 
-import "./styles.css"
+import { MotionConfig, motion, useMotionValue } from "framer-motion"
 import { ButtonHTMLAttributes, Suspense, useState } from "react"
-import { motion, MotionConfig, useMotionValue } from "framer-motion"
+import useMeasure from "react-use-measure"
 import { Shapes } from "./Shapes"
 import { transition } from "./settings"
-import useMeasure from "react-use-measure"
+import "./styles.css"
 
 type Button3dProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   text: string

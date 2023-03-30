@@ -1,5 +1,5 @@
-import { UserCheckerType } from "../types/Game.type"
 import { CheckerType } from "../types/Checker.type"
+import { UserCheckerType } from "../types/Game.type"
 
 /**
  * @returns the length of removed checkers of a given color

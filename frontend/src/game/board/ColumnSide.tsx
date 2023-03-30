@@ -1,12 +1,11 @@
-import { useContext, useRef } from "react"
-import { COLUMN_HOVER_COLOR } from "../data/Data"
+import { useContext, useMemo, useRef } from "react"
 import { MeshStandardMaterial } from "three"
-import { GameContext } from "../context/GameContext"
-import { useMemo } from "react"
-import Endgame from "../utils/Endgame"
 import toCapitalize from "../../components/utils/ToCapitalize"
-import { UserCheckerType } from "../types/Game.type"
+import { GameContext } from "../context/GameContext"
+import { COLUMN_HOVER_COLOR } from "../data/Data"
 import { NodeType } from "../types/GLTFResult.type"
+import { UserCheckerType } from "../types/Game.type"
+import Endgame from "../utils/Endgame"
 
 /**
  * End columns for each user. This component is some what similar to the

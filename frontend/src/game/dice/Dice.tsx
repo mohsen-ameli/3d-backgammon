@@ -1,12 +1,12 @@
 import { RigidBody, RigidBodyApi } from "@react-three/rapier"
 import { forwardRef, useContext } from "react"
-import * as data from "../data/Data"
-import { GameContext } from "../context/GameContext"
 import { PositionalAudio, Vector3 } from "three"
+import { GameContext } from "../context/GameContext"
+import * as data from "../data/Data"
 import { DiceReadyType } from "../types/Dice.type"
 import useGetDiceNumberAI from "../utils/useGetDiceNumberAI"
-import IsInitial from "./IsInitial"
 import DiceOnBoard from "./DiceOnBoard"
+import IsInitial from "./IsInitial"
 
 type DiceProps = {
   index: 0 | 1

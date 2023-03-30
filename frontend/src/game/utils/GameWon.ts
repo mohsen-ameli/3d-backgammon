@@ -1,5 +1,5 @@
-import { UserCheckerType } from "../types/Game.type"
 import { CheckerType } from "../types/Checker.type"
+import { UserCheckerType } from "../types/Game.type"
 
 /**
  * Checks to see if user has won the game

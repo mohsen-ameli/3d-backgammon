@@ -1,5 +1,5 @@
 import { Html, useProgress } from "@react-three/drei"
-import { useEffect, SetStateAction, Dispatch } from "react"
+import { Dispatch, SetStateAction, useEffect } from "react"
 
 /**
  * Used for loading the experience of the user

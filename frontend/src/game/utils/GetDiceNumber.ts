@@ -3,10 +3,10 @@
  * the dice numbers with pure math
  */
 
-import { Euler } from "three"
-import { throwDice } from "./ThrowDice"
 import { RigidBodyApi } from "@react-three/rapier"
+import { Euler } from "three"
 import { TRAINING_DICE_MODE } from "../data/Data"
+import { throwDice } from "./ThrowDice"
 
 const roundToTwo = (num: number) => {
   return Number(num.toFixed(2))

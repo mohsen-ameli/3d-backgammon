@@ -1,9 +1,7 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import Button from "../../components/ui/Button"
 import Center from "../../components/ui/Center"
-import Container from "../../components/ui/Container"
-import toCapitalize from "../../components/utils/ToCapitalize"
 import { GameContext } from "../context/GameContext"
 import { DEFAULT_CHECKER_POSITIONS } from "../data/Data"
 

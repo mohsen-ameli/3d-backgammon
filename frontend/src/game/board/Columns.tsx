@@ -1,18 +1,18 @@
+import { ThreeEvent } from "@react-three/fiber"
 import { useContext, useLayoutEffect, useRef } from "react"
-import ColumnSide from "./ColumnSide"
-import { GameContext } from "../context/GameContext"
 import {
+  Color,
+  Euler,
+  InstancedMesh,
+  Matrix4,
   Quaternion,
   Vector3,
-  Matrix4,
-  Euler,
-  Color,
-  InstancedMesh,
 } from "three"
+import { GameContext } from "../context/GameContext"
 import { COLUMN_HOVER_COLOR, GROUND } from "../data/Data"
-import useGetCheckersOnCol from "../utils/useGetCheckersOnCol"
-import { ThreeEvent } from "@react-three/fiber"
 import { CheckerType } from "../types/Checker.type"
+import useGetCheckersOnCol from "../utils/useGetCheckersOnCol"
+import ColumnSide from "./ColumnSide"
 
 /**
  * The 24 columns on the board, where checkers get dropped in. This component

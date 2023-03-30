@@ -6,7 +6,7 @@ import { DiceMoveType } from "../types/Dice.type"
  * is valid or not. This function gets called whenever the user is in an endgame.
  * If they have rolled a double 6, as an example, and only have a few checkers, right
  * next to their end column, then that's a valid move they can make. This is an example
- * of a case in which this function is usefull for.
+ * of a case in which this function is useful for.
  */
 const ValidateMove = (
   checkers: CheckerType[],

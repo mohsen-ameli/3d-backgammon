@@ -47,5 +47,9 @@
     "**/node_modules": true,
     "node_modules": true
   },
-  "explorerExclude.backup": {}
+  "explorerExclude.backup": {},
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  }
 }

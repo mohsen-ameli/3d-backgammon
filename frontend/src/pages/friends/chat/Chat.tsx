@@ -1,15 +1,15 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { useLocation, useNavigate, Navigate } from "react-router-dom"
+import { Navigate, useLocation, useNavigate } from "react-router-dom"
 import Button from "../../../components/ui/Button"
 import Container from "../../../components/ui/Container"
-import Input from "../../../components/ui/Input"
 import Header from "../../../components/ui/Header"
-import { AuthContext } from "../../../context/AuthContext"
+import Input from "../../../components/ui/Input"
 import Loading from "../../../components/ui/Loading"
 import getServerUrl from "../../../components/utils/getServerUrl"
+import wsGood from "../../../components/utils/wsGood"
+import { AuthContext } from "../../../context/AuthContext"
 import MessageBox from "./MessageBox"
 import Status from "./Status"
-import wsGood from "../../../components/utils/wsGood"
 
 type MessageType = {
   timestamp: number
@@ -18,7 +18,7 @@ type MessageType = {
 }[]
 
 /**
- * This chat componenet is used to display the chat between the user and a friend.
+ * This chat component is used to display the chat between the user and a friend.
  * It uses the state passed down to it from FriendDetails component.
  */
 const Chat = () => {
@@ -26,7 +26,7 @@ const Chat = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // User has tried to enter the chat room manually. that's a nono
+  // User has tried to enter the chat room manually. that's a no no
   if (!location.state) {
     return <Navigate to="/friends" replace />
   }
@@ -40,7 +40,7 @@ const Chat = () => {
   // Create WebSocket connection.
   const [ws] = useState(() => new WebSocket(`${getServerUrl(false)}/ws/chat/${location.state.uuid}/`)) // prettier-ignore
 
-  // When oppening the connection initialy, send a command to fetch all messages
+  // When opening the connection initials, send a command to fetch all messages
   const onOpen = () => {
     ws.send(JSON.stringify({ command: "fetch_messages" }))
     setLoading(false)
@@ -102,7 +102,7 @@ const Chat = () => {
         <Status />
       </Header>
 
-      {/* Actuall chat messgaes */}
+      {/* Actual chat messages */}
       {loading ? (
         <Loading />
       ) : (

@@ -1,9 +1,9 @@
 import axios from "axios"
-import jwt_decode, { JwtDecodeOptions, JwtHeader, JwtPayload } from "jwt-decode"
-import { AuthContext } from "../../context/AuthContext"
+import jwt_decode, { JwtPayload } from "jwt-decode"
 import { useContext } from "react"
-import useGetFreshTokens from "./useGetFreshTokens"
+import { AuthContext } from "../../context/AuthContext"
 import getServerUrl from "../utils/getServerUrl"
+import useGetFreshTokens from "./useGetFreshTokens"
 
 /**
  * Hook used for all types of fetch requests. (Usually not GET, because useFetch handles that)

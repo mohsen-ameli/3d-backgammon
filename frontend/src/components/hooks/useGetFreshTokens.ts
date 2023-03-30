@@ -1,9 +1,9 @@
-import jwt_decode, { JwtPayload } from "jwt-decode"
 import axios from "axios"
+import jwt_decode, { JwtPayload } from "jwt-decode"
 import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
-import getServerUrl from "../utils/getServerUrl"
 import { TokenType } from "../../context/Token.type"
+import getServerUrl from "../utils/getServerUrl"
 
 /**
  * This hook will check if the access token is expired. If it is, it will use the refresh token to get a new access token.

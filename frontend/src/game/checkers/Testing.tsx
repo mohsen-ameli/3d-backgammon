@@ -1,11 +1,11 @@
-import { useContext, useRef, useState } from "react"
+import { a as a3f, useSpring } from "@react-spring/three"
+import { useThree } from "@react-three/fiber"
 import { CuboidCollider, RigidBody, RigidBodyApi } from "@react-three/rapier"
 import { useDrag } from "@use-gesture/react"
-import { useSpring, a as a3f } from "@react-spring/three"
-import { GameContext } from "../context/GameContext"
+import { useContext, useRef, useState } from "react"
 import { Vector3 } from "three"
+import { GameContext } from "../context/GameContext"
 import { GROUND_CHECKERS, TRAINING_DICE_MODE } from "../data/Data"
-import { useThree } from "@react-three/fiber"
 
 const Testing = () => {
   if (!TRAINING_DICE_MODE) return <></>

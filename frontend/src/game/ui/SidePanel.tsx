@@ -1,10 +1,10 @@
-import { PlayerType, TimerType, UserCheckerType } from "../types/Game.type"
-import { UserType } from "../../context/User.type"
-import ThrowButton from "./ThrowButton"
-import DiceMoves from "./DiceMoves"
 import { memo, useContext, useMemo, useState } from "react"
+import { UserType } from "../../context/User.type"
 import { GameContext } from "../context/GameContext"
+import { PlayerType, TimerType, UserCheckerType } from "../types/Game.type"
 import PipScore from "../utils/PipScore"
+import DiceMoves from "./DiceMoves"
+import ThrowButton from "./ThrowButton"
 import UserImage from "./UserImage"
 
 type SideProps = {
@@ -42,9 +42,7 @@ const SidePanel = (props: SideProps) => {
       }
     >
       <div className="flex h-full flex-col justify-center">
-        <div
-          className="relative m-2 max-h-[200px] w-[90px] rounded-lg bg-[rgba(142,132,186,0.43)] p-3 text-black md:w-[108px] lg:max-h-[300px] lg:w-[180px] "
-        >
+        <div className="relative m-2 max-h-[200px] w-[90px] rounded-lg bg-[rgba(142,132,186,0.43)] p-3 text-black md:w-[108px] lg:max-h-[300px] lg:w-[180px] ">
           <div className="flex flex-col items-center justify-center">
             {/* Image */}
             <UserImage img={img} player={player} />
