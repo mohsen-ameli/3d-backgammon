@@ -23,6 +23,16 @@ canvas {
   z-index: -9999;
 }
 
+#container {
+  z-index: 10;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: clamp(20%, 400px, 80%);
+  height: min(100dvh, 400px);
+}
+
 .custom-scroll-bar {
   overflow-y: auto;
 }

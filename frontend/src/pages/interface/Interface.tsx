@@ -1,7 +1,6 @@
 import { useContext } from "react"
 import { Link } from "react-router-dom"
-import Button from "../../components/ui/Button"
-import Container from "../../components/ui/Container"
+import Button3d from "../../components/ui/3d-button/Button3d"
 import { AuthContext } from "../../context/AuthContext"
 
 /**
@@ -11,43 +10,40 @@ const Interface = () => {
   const { user, logout } = useContext(AuthContext)
 
   return (
-    <Container className="z-10 justify-between">
-      <div className="flex w-full items-center justify-evenly gap-x-8">
+    <div className="absolute -bottom-[25%] z-[10] h-[55%] w-full rounded-t-[50%] bg-[#ffffffac]">
+      <div className="relative flex items-center justify-evenly gap-x-12">
         {user ? (
           <>
-            <Button onClick={logout}>Log Out</Button>
+            <Button3d
+              text="Logout"
+              className="absolute bottom-0"
+              onClick={logout}
+            />
             <Link to="/profile">
-              <Button>Profile</Button>
+              <Button3d text="Profile" className="absolute bottom-14" />
             </Link>
             <Link to="/friends">
-              <Button>Friends</Button>
+              <Button3d text="Friends" className="absolute bottom-14" />
             </Link>
           </>
         ) : (
           <>
             <Link to="/login">
-              <Button>Login</Button>
+              <Button3d text="Log In" className="absolute bottom-10" />
             </Link>
             <Link to="/signup">
-              <Button>Sign Up</Button>
+              <Button3d text="Sign Up" className="absolute bottom-20" />
             </Link>
           </>
         )}
-      </div>
-
-      <h1 className="text-center text-2xl font-bold">
-        Welcome to 3D Backgammon
-      </h1>
-
-      <div className="flex justify-center gap-x-8">
-        {/* <Link to="/game/play-random">
-          <Button>Play With a Random</Button>
-        </Link> */}
         <Link to="/game/pass-and-play">
-          <Button>Pass & Play</Button>
+          <Button3d
+            text="Single Player"
+            className={`absolute ${user ? "bottom-0" : "bottom-10"}`}
+          />
         </Link>
       </div>
-    </Container>
+    </div>
   )
 }
 

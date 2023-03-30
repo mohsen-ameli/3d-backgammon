@@ -47,7 +47,7 @@ const Login = () => {
   //   })
   // }, [])
 
-  // Handling user submition
+  // Handling user submission
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
 
@@ -73,7 +73,7 @@ const Login = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="flex h-full w-full flex-col gap-y-3"
+        className="flex h-full w-full flex-col justify-around"
         autoComplete="on"
       >
         <FormField label="Username" name="username" placeholder="Username" />

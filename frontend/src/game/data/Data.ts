@@ -51,9 +51,9 @@ export const BOARD_H = 0.855
 
 // Default orbit controls
 export const DEFAULT_CAMERA_POSITION = {
-  x: 0,
-  y: 2.32,
-  z: 0,
+  x: 6,
+  y: 1.32,
+  z: -7,
 }
 
 export const DEFAULT_ORBIT_TARGET = {
@@ -104,4 +104,4 @@ const DEFAULT_POS: CheckerType[] = [
   { id: 29, color: "black", col: 5, row: 4, removed: false },
 ]
 
-export const DEFAULT_CHECKER_POSITIONS = DEFAULT_POS
+export const DEFAULT_CHECKER_POSITIONS = extra.BLACK_ALMOST_WON

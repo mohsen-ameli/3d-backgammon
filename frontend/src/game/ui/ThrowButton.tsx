@@ -13,11 +13,11 @@ const ThrowButton = ({ className }: ThrowButtonProps) => {
   const { throwDice, showThrow, dice } = useContext(GameContext)
 
   return (
-    <div className={"w-full text-sm text-white lg:text-lg " + className}>
+    <div className={"w-full text-sm text-black lg:text-lg " + className}>
       {showThrow ? (
         <Button
           title="Throw Dice"
-          className="w-full px-0"
+          className="inset-0 w-full animate-pulse px-0"
           onClick={() => throwDice.current()}
         >
           Throw <i className="fa-solid fa-dice"></i>

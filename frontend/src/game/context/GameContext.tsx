@@ -146,8 +146,6 @@ const GameContextProvider = ({ children }: Children) => {
             `${toCapitalize(data.resigner?.name!)} has resigned the game.`
           )
         }, 500)
-      } else {
-        notification(`${toCapitalize(data.winner?.name!)} is the winner!`)
       }
 
       // TODO: Maybe add some confetti?
@@ -165,7 +163,7 @@ const GameContextProvider = ({ children }: Children) => {
     // If there is a chat message
     if (data.message) {
       const msg = `${data.user} said ${data.message}`
-      notification(msg, "messsage")
+      notification(msg, "message")
       return
     }
 

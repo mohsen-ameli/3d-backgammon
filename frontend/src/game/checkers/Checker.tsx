@@ -41,6 +41,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     phase,
     setPhase,
     toggleControls,
+    setInGame,
   } = useContext(GameContext)
   const { user } = useContext(AuthContext)
 
@@ -199,7 +200,8 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       setPhase("ended")
       userChecker.current! = possibleWinner
       springApi.start({ position: positions, rotation: [Math.PI / 3, 0, 0] })
-      notification(`${toCapitalize(userChecker.current!)} is the winner!`)
+      // notification(`${toCapitalize(userChecker.current!)} is the winner!`)
+      setInGame(false)
 
       return
     }

@@ -50,7 +50,7 @@ const Profile = () => {
           <img
             src={img}
             alt="Profile Pic"
-            className="h-[50px] w-[50px] rounded-full object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]"
+            className="h-[80px] w-[80px] rounded-full object-cover object-center xl:h-[100px] xl:w-[100px]"
           />
           <h1 className="text-lg">{data.username}</h1>
           <p className="text-center text-lg">

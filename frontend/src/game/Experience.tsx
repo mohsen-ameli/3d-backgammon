@@ -68,8 +68,8 @@ const Game = () => {
     vec.current.z = Math.sin(-elapsedTime * 0.2 * 0.4) * 8
     vec.current.y = Math.sin(elapsedTime * 0.5 * 0.4) * 4
 
-    camera.position.lerp(vec.current, 0.01)
-    camera.updateProjectionMatrix()
+    // camera.position.lerp(vec.current, 0.01)
+    // camera.updateProjectionMatrix()
   })
 
   return (

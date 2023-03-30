@@ -13,7 +13,7 @@ const notification = (
     | "error"
     | "match"
     | "deleteRejected"
-    | "messsage"
+    | "message"
     | "resign"
     | "default" = "default",
   reject?: () => void,
@@ -70,7 +70,7 @@ const notification = (
         hideProgressBar: true,
       })
       break
-    case "messsage": {
+    case "message": {
       const transition = cssTransition({
         enter: "animate__animated animate__tada",
         exit: "animate__animated animate__lightSpeedOutLeft",
