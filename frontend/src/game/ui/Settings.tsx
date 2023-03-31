@@ -68,7 +68,7 @@ const Settings = ({ setOpen }: settingsType) => {
   return (
     <div className="flex h-full w-full flex-col gap-y-4">
       <h1 className="mb-4 text-2xl font-semibold">Settings</h1>
-      <div className="flex items-center justify-between gap-x-32">
+      <div className="flex items-center justify-between gap-x-8">
         Toggle sound
         <ReactSwitch
           onChange={toggleSound}
@@ -81,7 +81,7 @@ const Settings = ({ setOpen }: settingsType) => {
         />
       </div>
 
-      <div className="flex items-center justify-between gap-x-32">
+      <div className="flex items-center justify-between gap-x-8">
         Toggle debug
         <ReactSwitch
           onChange={toggleDebug}
@@ -94,7 +94,7 @@ const Settings = ({ setOpen }: settingsType) => {
         />
       </div>
 
-      <div className="flex items-center justify-between gap-x-32">
+      <div className="flex items-center justify-between gap-x-8">
         Toggle performance monitor
         <ReactSwitch
           onChange={togglePerf}

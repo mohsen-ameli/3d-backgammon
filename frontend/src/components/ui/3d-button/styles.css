@@ -16,7 +16,6 @@
   padding: 25px;
   font-size: 48px;
   font-weight: 600;
-  line-height: 48px;
   letter-spacing: -1px;
   position: relative;
   text-align: center;
@@ -24,7 +23,7 @@
   align-items: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   #btn-3d {
     width: 100px;
     height: 100px;
@@ -95,7 +94,7 @@
   width: 100%;
   transform: translateZ(0);
   font-weight: 400;
-  font-size: clamp(0.1rem, 5vw, 2rem);
+  font-size: clamp(0.1rem, 5vw, 1.5rem);
   z-index: 15;
   position: absolute;
   top: 50%;

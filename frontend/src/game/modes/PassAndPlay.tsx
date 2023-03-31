@@ -8,14 +8,18 @@ const PassAndPlay = () => {
   const { setInGame, gameMode, dice, resetOrbit } = useContext(GameContext)
 
   useEffect(() => {
+    resetOrbit.current("board")
+  }, [resetOrbit.current])
+
+  useEffect(() => {
     setInGame(true)
     gameMode.current = "pass-and-play"
     dice.current = { dice1: 0, dice2: 0, moves: 0 }
-    resetOrbit.current()
 
     return () => {
       setInGame(false)
       gameMode.current = undefined
+      resetOrbit.current("env")
     }
   }, [])
 

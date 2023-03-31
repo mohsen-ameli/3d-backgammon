@@ -1,7 +1,9 @@
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
+import useAxios from "../../components/hooks/useAxios"
 import Button from "../../components/ui/Button"
 import Center from "../../components/ui/Center"
+import notification from "../../components/utils/Notification"
 import { GameContext } from "../context/GameContext"
 import { DEFAULT_CHECKER_POSITIONS } from "../data/Data"
 
@@ -20,20 +22,37 @@ const WinnerOverlay = () => {
     players,
     dice,
     resetOrbit,
+    inGame,
   } = useContext(GameContext)
+
+  const axiosInstance = useAxios()
 
   const navigate = useNavigate()
 
   // Function to request a rematch
-  const playAgain = () => {
+  const playAgain = async () => {
     if (gameMode.current === "pass-and-play") {
       setInGame(true)
       setPhase("initial")
       userChecker.current = "white"
       gameMode.current = "pass-and-play"
       dice.current = { dice1: 0, dice2: 0, moves: 0 }
-      resetOrbit.current()
+      resetOrbit.current("env")
       checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
+    } else {
+      // if (!friend.is_online) return
+
+      const res = await axiosInstance.put("/api/game/handle-match-request/", {
+        action: "send",
+        friend_id: players?.enemy.id,
+      })
+      if (!res.data.success) notification("Your friend is not online!", "error")
+
+      // Showing a rejection notification after 10 seconds
+      setTimeout(() => {
+        const msg = `${players?.enemy.name} rejected your match request.`
+        notification(msg, "deleteRejected")
+      }, 10000)
     }
   }
 
@@ -63,7 +82,7 @@ const WinnerOverlay = () => {
 
     TopSection = (
       <Top
-        score={userChecker.current === "black" ? "1 - 0" : "0 - 1"}
+        score={userChecker.current === "black" ? ["1", "0"] : ["0", "1"]}
         left={left}
         right={right}
       />
@@ -86,7 +105,9 @@ const WinnerOverlay = () => {
 
     TopSection = (
       <Top
-        score={winner.current?.id === players?.enemy.id ? "1 - 0" : "0 - 1"}
+        score={
+          winner.current?.id === players?.enemy.id ? ["1", "0"] : ["0", "1"]
+        }
         left={getLeftRight("left")}
         right={getLeftRight("right")}
       />
@@ -107,7 +128,7 @@ const WinnerOverlay = () => {
 }
 
 type TopProps = {
-  score: string
+  score: [string, string]
   left: JSX.Element
   right: JSX.Element
 }
@@ -121,7 +142,9 @@ const Top = ({ score, left, right }: TopProps) => {
       {/* Vs */}
       <div className="flex flex-col items-center text-xl">
         <h1>vs</h1>
-        <h1>{score}</h1>
+        <h1>
+          {score[0]} <i className="fa-solid fa-minus"></i> {score[1]}
+        </h1>
       </div>
 
       {/* White */}

@@ -42,7 +42,7 @@ const SidePanel = (props: SideProps) => {
       }
     >
       <div className="flex h-full flex-col justify-center">
-        <div className="relative m-2 max-h-[200px] w-[90px] rounded-lg bg-[rgba(142,132,186,0.43)] p-3 text-black md:w-[108px] lg:max-h-[300px] lg:w-[180px] ">
+        <div className="relative m-2 max-h-[200px] w-[90px] rounded-lg bg-[#8e84bab3] p-3 text-black md:w-[108px] lg:max-h-[300px] lg:w-[180px] ">
           <div className="flex flex-col items-center justify-center">
             {/* Image */}
             <UserImage img={img} player={player} />
@@ -86,7 +86,7 @@ const BottomPart = ({ sideType, player }: BottomPartProps) => {
   // Showing the throw dice, and dice moves dynamically based on gameMode
   if (gameMode.current === "pass-and-play") {
     return (
-      <div className="absolute bottom-auto left-0 mt-4 w-[90px] rounded-lg bg-[#e0d5d552] p-2 text-black md:w-[108px] lg:w-[180px]">
+      <div className="absolute bottom-auto left-0 mt-4 w-[90px] rounded-lg bg-[#8e84bab3] p-2 text-white md:w-[108px] lg:w-[180px]">
         <ThrowButton />
         {!showThrow && <DiceMoves dice={dice.current} />}
       </div>
@@ -96,7 +96,7 @@ const BottomPart = ({ sideType, player }: BottomPartProps) => {
     (dice.current.moves !== 0 || sideType === "me")
   ) {
     return (
-      <div className="absolute bottom-auto left-0 mt-4 w-[90px] rounded-lg bg-[#e0d5d552] p-2 text-black md:w-[108px] lg:w-[180px] ">
+      <div className="absolute bottom-auto left-0 mt-4 w-[90px] rounded-lg bg-[#8e84bab3] p-2 text-white md:w-[108px] lg:w-[180px] ">
         {sideType === "me" && <ThrowButton />}
         <DiceMoves dice={dice.current} />
       </div>

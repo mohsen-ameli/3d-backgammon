@@ -1,7 +1,6 @@
 import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import { SettingsType } from "../types/Game.type"
-import * as extra from "./Extra"
 
 // If we are in training dice mode
 export const TRAINING_DICE_MODE =
@@ -49,20 +48,17 @@ export const GROUND_CHECKERS = GROUND + -0.058 // Ground level (y coordinate)
 export const BOARD_W = 1.17148 - CHECKER_HALF
 export const BOARD_H = 0.855
 
-// Default orbit controls
-export const DEFAULT_CAMERA_POSITION = {
-  x: 6,
-  y: 1.32,
-  z: -7,
+// Camera
+export const ORIGINAL_CAMERA_POSITION = { x: 6, y: 1.32, z: -7 }
+export const ORIGINAL_CAMERA_QUATERNION = {
+  x: -0.02464842552311772,
+  y: 0.9355151553202544,
+  z: 0.06663103892908007,
+  w: 0.3460695796174276,
 }
-
-export const DEFAULT_ORBIT_TARGET = {
-  x: 0,
-  y: 0,
-  z: 0,
-}
-
-export const DEFAULT_ORBIT_QUATERNION = {
+export const DEFAULT_CAMERA_POSITION = { x: 0, y: 2.5, z: 0 }
+export const DEFAULT_CAMERA_TARGET = { x: 0, y: 0, z: 0 }
+export const DEFAULT_CAMERA_QUATERNION = {
   x: -0.7071064276330685,
   y: 0,
   z: 0,
@@ -104,4 +100,4 @@ const DEFAULT_POS: CheckerType[] = [
   { id: 29, color: "black", col: 5, row: 4, removed: false },
 ]
 
-export const DEFAULT_CHECKER_POSITIONS = extra.BLACK_ALMOST_WON
+export const DEFAULT_CHECKER_POSITIONS = DEFAULT_POS

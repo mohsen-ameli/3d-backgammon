@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import useAxios from "../../components/hooks/useAxios"
 import notification from "../../components/utils/Notification"
 import { FriendType } from "./Friend.type"
@@ -17,6 +17,7 @@ type FriendDetailsProps = {
 const FriendDetails = ({ friend, setLoading }: FriendDetailsProps) => {
   const navigate = useNavigate()
   const axiosInstance = useAxios()
+  const location = useLocation()
 
   // Going to the chat room between the two users
   const goToChat = async (friend: FriendType) => {
@@ -49,6 +50,13 @@ const FriendDetails = ({ friend, setLoading }: FriendDetailsProps) => {
       friend_id: friend.id,
     })
     if (!res.data.success) notification("Your friend is not online!", "error")
+
+    // Showing a rejection notification after 10 seconds
+    setTimeout(() => {
+      if (window.location.pathname.includes("game")) return
+      const msg = `${friend.username} rejected your match request.`
+      notification(msg, "deleteRejected")
+    }, 10000)
   }
 
   return (

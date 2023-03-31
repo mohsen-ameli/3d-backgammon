@@ -60,7 +60,7 @@ export type GameContextType = {
   toggleControls: React.MutableRefObject<
     (from: "layout" | "checkerDisable" | "checkerEnable") => void
   >
-  resetOrbit: React.MutableRefObject<() => void>
+  resetOrbit: React.MutableRefObject<(focus: "board" | "env") => void>
   resign: (winnerId: number, loserId: number, send?: boolean) => void
   throwDice: React.MutableRefObject<() => void>
 

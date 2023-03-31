@@ -1,13 +1,15 @@
-import gsap, { Power4 } from "gsap"
-import { useCallback, useContext, useEffect, useRef } from "react"
 import { OrbitControls } from "@react-three/drei"
-import {
-  DEFAULT_CAMERA_POSITION,
-  DEFAULT_ORBIT_QUATERNION,
-  DEFAULT_ORBIT_TARGET,
-} from "./data/Data"
+import gsap from "gsap"
+import { useCallback, useContext, useEffect, useRef } from "react"
 import { OrbitControls as OrbitControlType } from "three-stdlib/controls/OrbitControls"
 import { GameContext } from "./context/GameContext"
+import {
+  DEFAULT_CAMERA_POSITION,
+  DEFAULT_CAMERA_QUATERNION,
+  DEFAULT_CAMERA_TARGET,
+  ORIGINAL_CAMERA_POSITION,
+  ORIGINAL_CAMERA_QUATERNION,
+} from "./data/Data"
 
 type OrbitType = {
   locked: boolean
@@ -15,7 +17,7 @@ type OrbitType = {
 
 /**
  * Orbit controls. This component contains functions to reset the orbit controls
- * position to its original position, toggle the orcbit controls, and toggle
+ * position to its original position, toggle the orbit controls, and toggle
  * the zoom.
  */
 const Controls = () => {
@@ -70,7 +72,7 @@ const Controls = () => {
   )
 
   // Resets the orbit controls position and rotation
-  resetOrbit.current = useCallback(async () => {
+  resetOrbit.current = useCallback(async (focus: "board" | "env") => {
     if (!orbitRef.current) return
 
     const duration = 3
@@ -82,19 +84,23 @@ const Controls = () => {
 
     // Snapping back to original camera position
     gsap.to(orbitRef.current.object.position, {
-      ...DEFAULT_CAMERA_POSITION,
+      ...(focus === "board"
+        ? DEFAULT_CAMERA_POSITION
+        : ORIGINAL_CAMERA_POSITION),
       duration,
       ease,
     })
 
     gsap.to(orbitRef.current.object.quaternion, {
-      ...DEFAULT_ORBIT_QUATERNION,
+      ...(focus === "board"
+        ? DEFAULT_CAMERA_QUATERNION
+        : ORIGINAL_CAMERA_QUATERNION),
       duration,
       ease,
     })
 
     await gsap.to(orbitRef.current.target, {
-      ...DEFAULT_ORBIT_TARGET,
+      ...DEFAULT_CAMERA_TARGET,
       duration,
       ease,
     })

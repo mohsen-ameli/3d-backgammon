@@ -14,7 +14,7 @@ type DataType = {
 }
 
 const FriendGame = () => {
-  const { setInGame, gameMode, resetOrbit } = useContext(GameContext)
+  const { inGame, setInGame, gameMode, resetOrbit } = useContext(GameContext)
 
   const navigate = useNavigate()
   const { gameId } = useParams()
@@ -34,9 +34,12 @@ const FriendGame = () => {
     } else {
       setInGame(true)
       gameMode.current = `game_${gameId}`
-      resetOrbit?.current()
     }
   }
+
+  useEffect(() => {
+    resetOrbit.current(inGame ? "board" : "env")
+  }, [resetOrbit.current, inGame])
 
   useEffect(() => {
     validateGame()
@@ -44,6 +47,7 @@ const FriendGame = () => {
     return () => {
       setInGame(false)
       gameMode.current = undefined
+      resetOrbit.current("env")
     }
   }, [data])
 

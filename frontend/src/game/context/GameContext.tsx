@@ -168,8 +168,8 @@ const GameContextProvider = ({ children }: Children) => {
     }
 
     // If there are dice physics info
-    // There are two ways to this. Either the user who is spectating is getting the other user's dice phycis info,
-    // or it's the current user, who's getting it. If it's the current user, then return immidietly,
+    // There are two ways to this. Either the user who is spectating is getting the other user's dice physic info,
+    // or it's the current user, who's getting it. If it's the current user, then return immediately,
     if (data.physics) {
       if (user?.user_id === data.physics.user.id) return
 

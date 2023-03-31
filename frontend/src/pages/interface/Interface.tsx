@@ -16,7 +16,7 @@ const Interface = () => {
           <>
             <Button3d
               text="Logout"
-              className="absolute bottom-0"
+              className="absolute bottom-3"
               onClick={logout}
             />
             <Link to="/profile">
@@ -39,7 +39,7 @@ const Interface = () => {
         <Link to="/game/pass-and-play">
           <Button3d
             text="Single Player"
-            className={`absolute ${user ? "bottom-0" : "bottom-10"}`}
+            className={`absolute ${user ? "bottom-3" : "bottom-10"}`}
           />
         </Link>
       </div>

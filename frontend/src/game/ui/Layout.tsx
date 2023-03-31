@@ -107,7 +107,10 @@ const LeftLayout = () => {
           />
         </LayoutBtn>
 
-        <LayoutBtn title="Reset Controls" onClick={() => resetOrbit.current()}>
+        <LayoutBtn
+          title="Reset Controls"
+          onClick={() => resetOrbit.current("board")}
+        >
           <i className="fa-solid fa-rotate-left" />
         </LayoutBtn>
 
