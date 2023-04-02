@@ -106,7 +106,11 @@ const Controls = () => {
     })
 
     resetting.current = false
-    orbitRef.current!.enabled = true
+
+    // Sometimes orbitRef is null for some weird reason
+    if (!orbitRef.current) return
+
+    orbitRef.current.enabled = true
     if (toggleAfterAnimation.current) {
       toggleControls.current("layout")
     } else {

@@ -22,7 +22,6 @@ const WinnerOverlay = () => {
     players,
     dice,
     resetOrbit,
-    inGame,
   } = useContext(GameContext)
 
   const axiosInstance = useAxios()
@@ -37,11 +36,9 @@ const WinnerOverlay = () => {
       userChecker.current = "white"
       gameMode.current = "pass-and-play"
       dice.current = { dice1: 0, dice2: 0, moves: 0 }
-      resetOrbit.current("env")
+      resetOrbit.current("board")
       checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
     } else {
-      // if (!friend.is_online) return
-
       const res = await axiosInstance.put("/api/game/handle-match-request/", {
         action: "send",
         friend_id: players?.enemy.id,
@@ -135,9 +132,14 @@ type TopProps = {
 
 const Top = ({ score, left, right }: TopProps) => {
   return (
-    <div className="mb-4 flex items-center justify-between gap-x-4 p-4">
+    <div className="flex items-center justify-between gap-x-4 p-4">
       {/* Black */}
-      <div className="flex flex-col items-center gap-y-2">{left}</div>
+      <div className="flex flex-col items-center gap-y-2">
+        {score[0] === "1" && (
+          <i className="fa-solid fa-trophy absolute top-3 text-[#ffbb00]"></i>
+        )}
+        {left}
+      </div>
 
       {/* Vs */}
       <div className="flex flex-col items-center text-xl">
@@ -148,7 +150,12 @@ const Top = ({ score, left, right }: TopProps) => {
       </div>
 
       {/* White */}
-      <div className="flex flex-col items-center gap-y-2">{right}</div>
+      <div className="flex flex-col items-center gap-y-2">
+        {score[1] === "1" && (
+          <i className="fa-solid fa-trophy absolute top-3 text-[#ffbb00]"></i>
+        )}
+        {right}
+      </div>
     </div>
   )
 }

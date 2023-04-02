@@ -1,12 +1,11 @@
 import { Canvas } from "@react-three/fiber"
-import { Suspense, useRef, useState } from "react"
+import { Suspense, useState } from "react"
 
 import { Debug, Physics } from "@react-three/rapier"
 import { useContext } from "react"
 
 import { AnimatePresence } from "framer-motion"
 import { Perf } from "r3f-perf"
-import { Vector3 } from "three"
 import useStatus from "../components/hooks/useStatus"
 import Loader from "../components/ui/Loader"
 import Controls from "./Controls"
@@ -63,7 +62,7 @@ const Game = () => {
   // View port
   useViewPort()
 
-  const vec = useRef(new Vector3())
+  // const vec = useRef(new Vector3())
 
   // A little animation, so the user doesn't get bored
   // useFrame((state, delta) => {

@@ -14,7 +14,8 @@ type UserImageType = {
  * This is the user's image on the side panels
  */
 const UserImage = ({ img, player }: UserImageType) => {
-  const { gameMode, phase, players, resign, timer } = useContext(GameContext)
+  const { gameMode, phase, players, resign, timer, userChecker } =
+    useContext(GameContext)
 
   const [size, setSize] = useState(() => resize())
   const [duration, setDuration] = useState(USER_TURN_DURATION)
@@ -94,33 +95,41 @@ const UserImage = ({ img, player }: UserImageType) => {
 
   return (
     <div className="relative">
-      <CountdownCircleTimer
-        key={key}
-        size={size}
-        strokeWidth={4}
-        isPlaying={isPlaying}
-        duration={duration}
-        colors={["#609633", "#f79501", "#A30000", "#681919"]}
-        colorsTime={[duration, duration / 4, duration / 10, 0]}
-        onComplete={() => autoResign(player?.id)}
-      >
-        {({ remainingTime }) =>
-          (remainingTime / duration) * 100 <= 25 && (
-            <div className="absolute z-10 h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
-              <div className="h-full w-full rounded-full bg-[#6e6e6e99] text-red-500 lg:text-lg lg:font-bold">
-                <Center className="w-full text-center">
-                  {remainingTime} sec
-                </Center>
+      {/* Timer */}
+      {userChecker.current === player?.color ? (
+        <CountdownCircleTimer
+          key={key}
+          size={size}
+          strokeWidth={4}
+          isPlaying={isPlaying}
+          duration={duration}
+          colors={["#609633", "#f79501", "#A30000", "#681919"]}
+          colorsTime={[duration, duration / 4, duration / 10, 0]}
+          onComplete={() => autoResign(player?.id)}
+        >
+          {({ remainingTime }) =>
+            (remainingTime / duration) * 100 <= 25 && (
+              <div className="absolute z-10 h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
+                <div className="h-full w-full rounded-full bg-[#6e6e6e99] text-red-500 lg:text-lg lg:font-bold">
+                  <Center className="w-full text-center">
+                    {remainingTime} sec
+                  </Center>
+                </div>
               </div>
-            </div>
-          )
-        }
-      </CountdownCircleTimer>
+            )
+          }
+        </CountdownCircleTimer>
+      ) : (
+        // Placeholder
+        <div className="h-[60px] w-[60px] lg:h-[90px] lg:w-[90px] xl:h-[110px] xl:w-[110px]"></div>
+      )}
+
+      {/* Profile Pic */}
       <Center className="h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
         <img
           src={img}
           alt="img"
-          className="h-[50px] w-[50px] rounded-full object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]"
+          className="h-full w-full rounded-full object-cover object-center"
         />
       </Center>
     </div>

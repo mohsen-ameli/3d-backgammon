@@ -11,6 +11,7 @@ import {
 import { GameContext } from "../context/GameContext"
 import { COLUMN_HOVER_COLOR, GROUND } from "../data/Data"
 import { CheckerType } from "../types/Checker.type"
+import lenRemovedCheckers from "../utils/LenRemovedCheckers"
 import useGetCheckersOnCol from "../utils/useGetCheckersOnCol"
 import ColumnSide from "./ColumnSide"
 
@@ -19,8 +20,14 @@ import ColumnSide from "./ColumnSide"
  * contains logic for changing the column checkers colour when user hovers over it.
  */
 const Columns = () => {
-  const { nodes, materials, checkerPicked, newCheckerPosition, dice } =
-    useContext(GameContext)
+  const {
+    nodes,
+    materials,
+    checkerPicked,
+    newCheckerPosition,
+    dice,
+    checkers,
+  } = useContext(GameContext)
 
   // Utility
   const { getCheckersOnCol } = useGetCheckersOnCol()
@@ -103,7 +110,13 @@ const Columns = () => {
       if (checker.removed) {
         const valid = [dice.current.dice1, dice.current.dice2].includes(24 - colId)
         return valid && action !== "invalid"
-      } else if (checker.col - dice.current.dice1 === colId || checker.col - dice.current.dice2 === colId) {
+      }
+      
+      // If user has removed checkers and is moving a different checker
+      const lenRmCheckers = lenRemovedCheckers(checkers.current, checker.color)
+      if (lenRmCheckers != 0) return false
+      
+      if (checker.col - dice.current.dice1 === colId || checker.col - dice.current.dice2 === colId) {
         if (action === "invalid") return false
         return true
       }
@@ -113,7 +126,13 @@ const Columns = () => {
       if (checker.removed) {
         const valid = [dice.current.dice1, dice.current.dice2].includes(colId + 1)
         return valid && action !== "invalid"
-      } else if (checker.col + dice.current.dice1 === colId || checker.col + dice.current.dice2 === colId) {
+      }
+      
+      // If user has removed checkers and is moving a different checker
+      const lenRmCheckers = lenRemovedCheckers(checkers.current, checker.color)
+      if (lenRmCheckers != 0) return false
+      
+      if (checker.col + dice.current.dice1 === colId || checker.col + dice.current.dice2 === colId) {
         if (action === "invalid") return false
         return true
       }

@@ -39,7 +39,7 @@ const AuthContextProvider = ({ children }: Children) => {
   // Connection for changing the status of the user (backend)
   const [ws, setWs] = useState<WebSocket>()
 
-  // Setting the websocket connection, if ther's a user and a valid token
+  // Setting the websocket connection, if there's a user and a valid token
   useEffect(() => {
     if (user && tokens)
       setWs(() => new WebSocket(`${getServerUrl(false)}/ws/status/${tokens.refresh}/`)) // prettier-ignore

@@ -37,7 +37,7 @@ const SidePanel = (props: SideProps) => {
   return (
     <div
       className={
-        "absolute top-1/2 z-[15] h-full -translate-y-1/2 " +
+        "absolute top-1/2 z-[15] mx-4 h-full -translate-y-1/2 lg:mx-0 " +
         (sideType === "enemy" ? "left-0" : "right-0")
       }
     >
@@ -68,6 +68,7 @@ const SidePanel = (props: SideProps) => {
               />
             </div>
           </div>
+
           <BottomPart sideType={sideType} player={player} />
         </div>
       </div>
@@ -80,23 +81,29 @@ type BottomPartProps = {
   player: PlayerType | undefined
 }
 
+/**
+ * The part that includes the throw dice and dice numbers.
+ */
+
 const BottomPart = ({ sideType, player }: BottomPartProps) => {
   const { gameMode, dice, userChecker, showThrow } = useContext(GameContext)
 
   // Showing the throw dice, and dice moves dynamically based on gameMode
   if (gameMode.current === "pass-and-play") {
     return (
-      <div className="absolute bottom-auto left-0 mt-4 w-[90px] rounded-lg bg-[#8e84bab3] p-2 text-white md:w-[108px] lg:w-[180px]">
+      <div className="absolute bottom-auto left-0 mt-4 w-full rounded-lg bg-[#8e84bab3] p-2 text-white">
         <ThrowButton />
         {!showThrow && <DiceMoves dice={dice.current} />}
       </div>
     )
-  } else if (
+  }
+
+  if (
     userChecker.current === player?.color &&
     (dice.current.moves !== 0 || sideType === "me")
   ) {
     return (
-      <div className="absolute bottom-auto left-0 mt-4 w-[90px] rounded-lg bg-[#8e84bab3] p-2 text-white md:w-[108px] lg:w-[180px] ">
+      <div className="absolute bottom-auto left-0 mt-4 w-full rounded-lg bg-[#8e84bab3] p-2 text-white">
         {sideType === "me" && <ThrowButton />}
         <DiceMoves dice={dice.current} />
       </div>
@@ -106,6 +113,9 @@ const BottomPart = ({ sideType, player }: BottomPartProps) => {
 
 type ScoreProps = { color: UserCheckerType | undefined }
 
+/**
+ * The pip score
+ */
 const Score = ({ color }: ScoreProps) => {
   const { phase, checkers } = useContext(GameContext)
   const [score, setScore] = useState(0)

@@ -62,7 +62,7 @@ const Dices = () => {
   // State to show the "throw dice" button
   const [showThrowBtn, setShowThrowBtn] = useState(false)
 
-  // Colission audio
+  // Collision audio
   const [audio, setAudio] = useState<PositionalAudio>()
 
   // Function to throw the dice
@@ -162,9 +162,11 @@ const Dices = () => {
     // User already has dice physics, and it's their turn, and they don't have the numbers on the dice saved
     if (phase === "diceRollPhysics") {
       setTimeout(() => {
+        if (!dicePhysics.current) return
+
         throwDicePhysics(
           [dice1.current, dice2.current],
-          dicePhysics.current?.physics!
+          dicePhysics.current.physics
         )
       }, 2000)
       setShowThrowBtn(false)

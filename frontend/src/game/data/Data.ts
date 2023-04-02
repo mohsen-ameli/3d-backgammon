@@ -1,6 +1,7 @@
 import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import { SettingsType } from "../types/Game.type"
+import { WHITE_ALMOST_WON } from "./Extra"
 
 // If we are in training dice mode
 export const TRAINING_DICE_MODE =
@@ -100,4 +101,5 @@ const DEFAULT_POS: CheckerType[] = [
   { id: 29, color: "black", col: 5, row: 4, removed: false },
 ]
 
-export const DEFAULT_CHECKER_POSITIONS = DEFAULT_POS
+export const DEFAULT_CHECKER_POSITIONS =
+  process.env.NODE_ENV === "development" ? WHITE_ALMOST_WON : DEFAULT_POS

@@ -1,12 +1,5 @@
 import { useGLTF } from "@react-three/drei"
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react"
+import { createContext, useContext, useEffect, useRef, useState } from "react"
 
 import gltfModel from "../../assets/models/models.glb"
 import userSwitchAudio from "../../assets/sounds/user-switch.mp3"
@@ -27,7 +20,7 @@ export const GameContext = createContext({} as types.GameContextType)
 
 const GameContextProvider = ({ children }: Children) => {
   // Auth context
-  const { user } = useContext(AuthContext)
+  const { user, tokens } = useContext(AuthContext)
 
   // Loading the models
   const { nodes, materials } = useGLTF(gltfModel) as GLTFResult
@@ -125,15 +118,15 @@ const GameContextProvider = ({ children }: Children) => {
   const onOpen = () => ws?.send(JSON.stringify({ initial: true }))
 
   // Backend has sent game updates
-  const onMessage = useCallback((e: MessageEvent) => {
+  const onMessage = (e: MessageEvent) => {
     const data: types.GameDataTypes = JSON.parse(e.data)
 
     // If there are too many sessions active
-    if (data.too_many_users) {
-      const errorMsg = "Please continue this game on your other active session!"
-      // notification(errorMsg, "error")
-      return
-    }
+    // if (data.too_many_users) {
+    // const errorMsg = "Please continue this game on your other active session!"
+    // notification(errorMsg, "error")
+    // return
+    // }
 
     // If game has ended
     if (data.finished) {
@@ -196,14 +189,14 @@ const GameContextProvider = ({ children }: Children) => {
     setMyTurn(turn)
 
     // Setting the phase to initial
-    if (data.initial && user) {
+    if (data.initial) {
       // If user has, for some reason, thrown the dice, then maybe left the page
       // and the dice numbers weren't detected in time, and then they come back
       // then we want to throw the dice for them
       if (
         data.initial_physics &&
         Object.keys(data.initial_physics).length !== 0 &&
-        data.initial_physics.user.id === user.user_id &&
+        data.initial_physics.user.id === user?.user_id! &&
         turn &&
         dice.current.moves === 0
       ) {
@@ -214,11 +207,11 @@ const GameContextProvider = ({ children }: Children) => {
       }
 
       // Filling the players reference
-      const myColor = data.white === user.user_id ? "white" : "black"
+      const myColor = data.white === user?.user_id! ? "white" : "black"
 
       const me = {} as types.PlayerType
-      me.id = user.user_id
-      me.name = user.username
+      me.id = user?.user_id!
+      me.name = user?.username!
       me.image = (myColor === "white" ? data.white_image! : data.black_image!) //prettier-ignore
       me.color = myColor
 
@@ -252,7 +245,7 @@ const GameContextProvider = ({ children }: Children) => {
 
     // Making sure there is a rerender in the checkers component so that both user's boards get updated
     setPhase(curr => (curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"))
-  }, [])
+  }
 
   // User has entered the game
   useEffect(() => {

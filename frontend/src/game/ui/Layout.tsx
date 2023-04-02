@@ -40,17 +40,17 @@ const MainLayout = () => {
   const [img, setImg] = useState("")
   useEffect(() => setImg(data?.image), [data])
 
-  if (!players) return <></>
-
   if (gameMode.current === "pass-and-play")
-    return <SidePanel img={img} player={players.me} sideType="me" user={user} />
+    return (
+      <SidePanel img={img} player={players?.me} sideType="me" user={user} />
+    )
 
   return (
     <>
-      <SidePanel img={img} player={players.me} sideType="me" />
+      <SidePanel img={img} player={players?.me} sideType="me" />
       <SidePanel
-        img={players.enemy.image}
-        player={players.enemy}
+        img={players?.enemy.image}
+        player={players?.enemy}
         sideType="enemy"
       />
     </>

@@ -24,9 +24,15 @@ const DiceMoves = ({ dice }: DiceMovesProps) => {
   }
 
   return (
-    <div className="flex h-full w-full flex-wrap items-center justify-center gap-2 text-[18pt] lg:flex-grow lg:text-[22pt] ">
+    <div
+      className={`mx-auto grid h-full ${
+        jsx.length > 2
+          ? "w-[50px] grid-cols-2 lg:w-full lg:grid-cols-4"
+          : "w-[50px] grid-cols-2 lg:w-[50%]"
+      } gap-2 text-[18pt] lg:text-[22pt]`}
+    >
       {jsx.map((number, index) => (
-        <span key={index} className="flex">
+        <span key={index} className="flex justify-center">
           {number}
         </span>
       ))}
