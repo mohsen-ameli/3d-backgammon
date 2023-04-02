@@ -104,7 +104,7 @@ const Chat = () => {
 
       {/* Actual chat messages */}
       {loading ? (
-        <Loading />
+        <Loading basic />
       ) : (
         // Messages
         <div className="custom-scroll-bar mb-14" ref={chatContainer}>

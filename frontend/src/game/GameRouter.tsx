@@ -1,4 +1,7 @@
+import { AnimatePresence } from "framer-motion"
+import { Suspense, useState } from "react"
 import { Route, Routes } from "react-router-dom"
+import Loader from "../components/ui/Loader"
 import PrivateRoute from "../components/utils/PrivateRoute"
 import Experience from "./Experience"
 import GameContextProvider from "./context/GameContext"
@@ -7,25 +10,40 @@ import PassAndPlay from "./modes/PassAndPlay"
 import PlayRandom from "./modes/PlayRandom"
 import Layout from "./ui/Layout"
 
+/**
+ * The router that contains the game context, experience, layout, and the game routes.
+ */
 const GameRouter = () => {
-  return (
-    <GameContextProvider>
-      <Experience />
-      <Layout />
+  const [started, setStarted] = useState(false)
+  const toggleStarted = () => setStarted(true)
 
-      <Routes>
-        <Route
-          path="/game/:gameId"
-          element={
-            <PrivateRoute>
-              <FriendGame />
-            </PrivateRoute>
-          }
-        />
-        <Route path="/game/play-random" element={<PlayRandom />} />
-        <Route path="/game/pass-and-play" element={<PassAndPlay />} />
-      </Routes>
-    </GameContextProvider>
+  return (
+    <>
+      <Suspense fallback={null}>
+        <GameContextProvider>
+          <Experience />
+          <Layout />
+
+          <Routes>
+            <Route
+              path="/game/:gameId"
+              element={
+                <PrivateRoute>
+                  <FriendGame />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/game/play-random" element={<PlayRandom />} />
+            <Route path="/game/pass-and-play" element={<PassAndPlay />} />
+          </Routes>
+        </GameContextProvider>
+      </Suspense>
+
+      {/* Loading screen */}
+      <AnimatePresence mode="wait">
+        {!started && <Loader toggleStarted={toggleStarted} />}
+      </AnimatePresence>
+    </>
   )
 }
 export default GameRouter

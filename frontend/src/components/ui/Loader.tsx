@@ -14,8 +14,6 @@ type LoaderProps = {
 const Loader = ({ toggleStarted }: LoaderProps) => {
   const { progress } = useProgress()
 
-  // const bar = ((loaded / total) * 100).toFixed(1)
-
   return (
     <motion.div
       className={`absolute inset-0 z-[30] flex h-screen w-screen flex-col items-center justify-center bg-gray-800 text-white`}
@@ -29,12 +27,12 @@ const Loader = ({ toggleStarted }: LoaderProps) => {
             <h1 className="my-8 text-center text-2xl">
               Loading your experience!
             </h1>
-            <div className="w-full rounded-md bg-gray-200">
+            <div className="w-full rounded-md bg-gray-300">
               <div
-                className="rounded-md bg-orange-800 p-2 text-center text-xs font-medium"
+                className="rounded-md bg-orange-800 p-2 text-center text-xs font-medium text-black"
                 style={{ width: `${progress}%` }}
               >
-                {progress}%
+                {Math.ceil(progress)}%
               </div>
             </div>
           </div>

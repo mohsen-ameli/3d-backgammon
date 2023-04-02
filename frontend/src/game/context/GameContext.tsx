@@ -20,7 +20,7 @@ export const GameContext = createContext({} as types.GameContextType)
 
 const GameContextProvider = ({ children }: Children) => {
   // Auth context
-  const { user, tokens } = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
 
   // Loading the models
   const { nodes, materials } = useGLTF(gltfModel) as GLTFResult
