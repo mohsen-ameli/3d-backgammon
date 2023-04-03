@@ -13,7 +13,6 @@ import Checkers from "./checkers/Checkers"
 import { GameContext } from "./context/GameContext"
 import { ORIGINAL_CAMERA_POSITION } from "./data/Data"
 import Dices from "./dice/Dices"
-import useViewPort from "./utils/useViewPort"
 
 const Experience = () => {
   // Getting the user status. (Game requests and game request rejections)
@@ -40,9 +39,6 @@ const Experience = () => {
 
 const Game = () => {
   const { inGame, settings } = useContext(GameContext)
-
-  // View port
-  useViewPort()
 
   // A little animation, so the user doesn't get bored
   // const vec = useRef(new Vector3())
