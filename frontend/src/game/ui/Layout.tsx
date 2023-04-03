@@ -6,9 +6,9 @@ import { AuthContext } from "../../context/AuthContext"
 import { GameContext } from "../context/GameContext"
 import { TRAINING_DICE_MODE } from "../data/Data"
 import ChatButton from "./ChatButton"
-import Dialog from "./Dialog"
 import DiceTraining from "./DiceTraining"
 import LayoutBtn from "./LayoutBtn"
+import Modal from "./Modal"
 import Settings from "./Settings"
 import SidePanel from "./SidePanel"
 import WinnerOverlay from "./WinnerOverlay"
@@ -123,40 +123,42 @@ const LeftLayout = () => {
         </LayoutBtn>
       </div>
 
-      {settingsOpen && (
-        <Dialog setOpen={setSettingsOpen}>
-          <Settings setOpen={setSettingsOpen} />
-        </Dialog>
-      )}
+      <Modal setOpen={setSettingsOpen} open={settingsOpen}>
+        <Settings setOpen={setSettingsOpen} />
+      </Modal>
 
-      {infoOpen && (
-        <Dialog setOpen={setInfoOpen}>
-          <h1 className="mb-2 text-xl font-bold">How to play the game:</h1>
-          <ul className="ml-8 list-disc leading-7">
-            <li>
-              Check to see what checker color you are playing as. You can see
-              this on the top left corner of your profile picture.
-            </li>
-            <li>
-              If it's your turn, throw the dice, and if not, wait your turn.
-            </li>
-            <li>
-              You want to move all of your checkers to you home. If you are
-              playing as white, you home will be the 6 bottom right columns, and
-              if you're playing as black the top right 6, is your home.
-            </li>
-            <li>
-              You want to move generally like a{" "}
-              <i className="fa-solid fa-u rotate-90"></i> shape.
-            </li>
-            <li>
-              The objective of the game is to move all of your checkers to your
-              home, and then bear them off. The first player who bears all of
-              their checkers off, will be the winner!
-            </li>
-          </ul>
-        </Dialog>
-      )}
+      <Modal setOpen={setInfoOpen} open={infoOpen}>
+        <Info />
+      </Modal>
+    </>
+  )
+}
+
+const Info = () => {
+  return (
+    <>
+      <h1 className="mb-2 text-xl font-bold">How to play the game:</h1>
+      <ul className="ml-8 list-disc leading-7">
+        <li>
+          Check to see what checker color you are playing as. You can see this
+          on the top left corner of your profile picture.
+        </li>
+        <li>If it's your turn, throw the dice, and if not, wait your turn.</li>
+        <li>
+          You want to move all of your checkers to you home. If you are playing
+          as white, you home will be the 6 bottom right columns, and if you're
+          playing as black the top right 6, is your home.
+        </li>
+        <li>
+          You want to move generally like a{" "}
+          <i className="fa-solid fa-u rotate-90"></i> shape.
+        </li>
+        <li>
+          The objective of the game is to move all of your checkers to your
+          home, and then bear them off. The first player who bears all of their
+          checkers off, will be the winner!
+        </li>
+      </ul>
     </>
   )
 }

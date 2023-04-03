@@ -1,13 +1,14 @@
 import { a as a3f, useSpring } from "@react-spring/three"
+import { Html } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
 import { CuboidCollider, RigidBody, RigidBodyApi } from "@react-three/rapier"
 import { UserDragConfig, useDrag } from "@use-gesture/react"
 import { useContext, useEffect, useRef, useState } from "react"
 import { Vector3 } from "three"
-import notification from "../../components/utils/Notification"
 import { AuthContext } from "../../context/AuthContext"
 import { GameContext } from "../context/GameContext"
 import { CheckerType } from "../types/Checker.type"
+import Modal from "../ui/Modal"
 import CheckersSort from "../utils/CheckersSort"
 import Endgame from "../utils/Endgame"
 import GameWon from "../utils/GameWon"
@@ -53,6 +54,9 @@ const Checker = ({ thisChecker }: CheckerProps) => {
   const { factor } = viewport
 
   const checker = useRef<RigidBodyApi>(null)
+
+  // Showing the invalid move panel
+  const [show, setShow] = useState(false)
 
   // Checker's position
   const [pos, setPos] = useState<number[] | Vector3>([0, 0, 0])
@@ -199,7 +203,6 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       setPhase("ended")
       userChecker.current! = possibleWinner
       springApi.start({ position: positions, rotation: [Math.PI / 3, 0, 0] })
-      // notification(`${toCapitalize(userChecker.current!)} is the winner!`)
       setInGame(false)
 
       return
@@ -293,7 +296,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       else updateLiveGame()
 
       // Show a message that the user has no valid moves
-      notification("You don't have a move!", "error")
+      setShow(true)
       return
     }
 
@@ -326,6 +329,12 @@ const Checker = ({ thisChecker }: CheckerProps) => {
 
   return (
     <>
+      <Html>
+        <Modal setOpen={setShow} open={show}>
+          You don't have a move!
+        </Modal>
+      </Html>
+
       <RigidBody
         ref={checker}
         type="kinematicPosition"

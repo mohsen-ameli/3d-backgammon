@@ -4,6 +4,7 @@ import Center from "../../components/ui/Center"
 import { GameContext } from "../context/GameContext"
 import { USER_TURN_DURATION } from "../data/Data"
 import { PlayerType } from "../types/Game.type"
+import Messages from "./Messages"
 
 type UserImageType = {
   img: string | undefined
@@ -95,6 +96,9 @@ const UserImage = ({ img, player }: UserImageType) => {
 
   return (
     <div className="relative">
+      {/* In game messages */}
+      <Messages player={player} />
+
       {/* Timer */}
       {userChecker.current === player?.color ? (
         <CountdownCircleTimer

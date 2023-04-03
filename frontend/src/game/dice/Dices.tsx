@@ -1,9 +1,9 @@
+import { Html } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
 import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import { AudioListener, AudioLoader, PositionalAudio } from "three"
 import DiceCollisionAudio from "../../assets/sounds/NewDice.wav"
-import notification from "../../components/utils/Notification"
 import wsGood from "../../components/utils/wsGood"
 import { GameContext } from "../context/GameContext"
 import {
@@ -12,6 +12,7 @@ import {
   TRAINING_DICE_MODE,
 } from "../data/Data"
 import { DiceReadyType } from "../types/Dice.type"
+import Modal from "../ui/Modal"
 import hasMoves from "../utils/HasMoves"
 import switchPlayers from "../utils/SwitchPlayers"
 import { throwDice, throwDicePhysics } from "../utils/ThrowDice"
@@ -46,6 +47,9 @@ const Dices = () => {
   // Refs for the two dice
   const dice1 = useRef<RigidBodyApi>(null!)
   const dice2 = useRef<RigidBodyApi>(null!)
+
+  // Showing the invalid move panel
+  const [show, setShow] = useState(false)
 
   // To keep track of the dices finished throwing state
   const [finishedThrow, setFinishedThrow] = useState<DiceReadyType>({
@@ -139,7 +143,7 @@ const Dices = () => {
       }
 
       // Show a message that the user has no valid moves
-      notification("You don't have a move!", "error")
+      setShow(true)
       return
     }
 
@@ -210,6 +214,12 @@ const Dices = () => {
 
   return (
     <>
+      <Html>
+        <Modal setOpen={setShow} open={show}>
+          You don't have a move!
+        </Modal>
+      </Html>
+
       {/* Dice Holder */}
       <CuboidCollider args={[0.5, 0.1, 0.5]} position={[0, 0.4, 2]} />
 

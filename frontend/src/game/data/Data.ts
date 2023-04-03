@@ -1,7 +1,7 @@
 import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import { SettingsType } from "../types/Game.type"
-import { WHITE_ALMOST_WON } from "./Extra"
+import { WHITE_HOUSE_FULL } from "./Extra"
 
 // If we are in training dice mode
 export const TRAINING_DICE_MODE =
@@ -9,6 +9,9 @@ export const TRAINING_DICE_MODE =
 
 // User turn duration (Synced with backend in settings.py)
 export const USER_TURN_DURATION = 70
+
+// Message cool-down for in game messages (in milliseconds)
+export const MESSAGE_COOLDOWN = 5000
 
 // Settings
 export const DEFAULT_SETTINGS: SettingsType = {
@@ -102,4 +105,4 @@ const DEFAULT_POS: CheckerType[] = [
 ]
 
 export const DEFAULT_CHECKER_POSITIONS =
-  process.env.NODE_ENV === "development" ? WHITE_ALMOST_WON : DEFAULT_POS
+  process.env.NODE_ENV === "development" ? WHITE_HOUSE_FULL : DEFAULT_POS

@@ -83,7 +83,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             will be a "winner" key in data, and so on.
         '''
 
-        # Data recieved
+        # Data received
         data = json.loads(text_data)
 
         # User has connected to the game
@@ -121,7 +121,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             context = {
                 "type": "send_message",
                 "message": data["message"],
-                "user": data["user"]
+                "user_id": data["user_id"]
             }
             await self.channel_layer.group_send(self.room_group_name, context)
         elif "resign" in data:
@@ -157,12 +157,12 @@ class GameConsumer(AsyncWebsocketConsumer):
             Used to send in game messages between users.
         '''
 
-        messsage = event["message"]
-        user = event["user"]
+        message = event["message"]
+        user_id = event["user_id"]
         
         await self.send(text_data=json.dumps({
-            "message": messsage,
-            "user": user
+            "message": message,
+            "user_id": user_id
         }))
 
     async def resigned_game(self, event):

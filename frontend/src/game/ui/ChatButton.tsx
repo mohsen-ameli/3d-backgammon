@@ -29,7 +29,7 @@ const ChatButton = () => {
 
     ws?.send(
       JSON.stringify({
-        user: players.me.name,
+        user_id: players.me.id,
         message,
       })
     )

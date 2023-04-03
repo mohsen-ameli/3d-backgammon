@@ -94,6 +94,9 @@ const GameContextProvider = ({ children }: Children) => {
   // Settings object
   const [settings, setSettings] = useState<types.SettingsType>(DEFAULT_SETTINGS)
 
+  // In game messages
+  const [messages, setMessages] = useState<types.MessageType>(null)
+
   // Audio to play when users switch
   const [audio] = useState(() => new Audio(userSwitchAudio))
 
@@ -155,8 +158,7 @@ const GameContextProvider = ({ children }: Children) => {
 
     // If there is a chat message
     if (data.message) {
-      const msg = `${data.user} said ${data.message}`
-      notification(msg, "message")
+      setMessages({ userId: data.user_id!, message: data.message })
       return
     }
 
@@ -314,6 +316,7 @@ const GameContextProvider = ({ children }: Children) => {
     // States
     myTurn,
     ws,
+    messages,
     inGame,
     setInGame,
     showThrow,

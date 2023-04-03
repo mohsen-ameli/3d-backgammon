@@ -13,7 +13,7 @@ export type SettingsType = {
   envMap: EnvMapType
 }
 
-// Possible checker colours
+// Possible checker colors
 export type UserCheckerType = "black" | "white"
 
 // Each player has a type
@@ -29,6 +29,9 @@ export type PlayersType = {
   me: PlayerType
   enemy: PlayerType
 }
+
+// Message type for in game messages
+export type MessageType = { userId: number; message: string } | null
 
 // The timer of active user.
 // TODO: Perhaps we could merge this with PlayerType
@@ -79,6 +82,7 @@ export type GameContextType = {
   players: PlayersType | undefined
   myTurn: boolean
   ws: WebSocket | undefined
+  messages: MessageType | null
   inGame: boolean
   setInGame: React.Dispatch<React.SetStateAction<boolean>>
   showThrow: boolean | null
@@ -100,7 +104,7 @@ export type GameDataTypes = {
   winner?: PlayerType
   resigner?: PlayerType
   message?: string
-  user?: string
+  user_id?: number
   initial?: boolean
   black?: number
   white?: number
