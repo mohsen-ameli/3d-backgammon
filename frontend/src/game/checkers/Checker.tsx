@@ -80,8 +80,10 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     config: { mass: 1, friction: 28, tension: 400 },
   }))
 
-  // When the checker is mounted, set its position
   useEffect(() => {
+    // If we are not done loading, meaning the camera is still coming on top of the board, then return
+    if (!initial.doneLoading) return
+
     // New position for the checker
     const position = getCheckerPos(thisChecker)
     setPos(position)
@@ -91,22 +93,35 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       ? [Math.PI / 3, 0, 0]
       : [0, 0, 0]
 
-    if (initial.doneLoading) {
-      setTimeout(() => {
-        springApi.start({ position, rotation })
-      }, 150 * (thisChecker.id + 1))
-    } else if (!initial.initialLoad) {
-      // Setting checker's mesh position
+    setTimeout(() => {
       springApi.start({ position, rotation })
+    }, 150 * (thisChecker.id + 1))
+  }, [initial])
 
-      // Setting the checker's physics position
-      checker.current?.setTranslation({
-        x: position[0],
-        y: position[1],
-        z: position[2],
-      })
-    }
-  }, [thisChecker.col, thisChecker.row, thisChecker.removed, initial])
+  // When the checker is mounted, set its position
+  useEffect(() => {
+    // If the checkers have just been loaded, return so that the entering animation can be played.
+    if (initial.initialLoad) return
+
+    // New position for the checker
+    const position = getCheckerPos(thisChecker)
+    setPos(position)
+
+    // Setting the checker's mesh position (not the physics)
+    const rotation = [-3, -4].includes(thisChecker.col)
+      ? [Math.PI / 3, 0, 0]
+      : [0, 0, 0]
+
+    // Setting checker's mesh position
+    springApi.start({ position, rotation })
+
+    // Setting the checker's physics position
+    checker.current?.setTranslation({
+      x: position[0],
+      y: position[1],
+      z: position[2],
+    })
+  }, [thisChecker.col, thisChecker.row, thisChecker.removed])
 
   const goToOriginalPos = (currentChecker: CheckerType) => {
     const oldPosition = getCheckerPos(currentChecker)
@@ -147,9 +162,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
 
       toggleControls.current("checkerDisable")
 
-      // Setting the checker's mesh position (not the physics)
       springApi.start({ position: [x / factor, 0, y / factor] })
-
       return
     }
 

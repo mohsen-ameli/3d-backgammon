@@ -1,8 +1,6 @@
 import { useGLTF } from "@react-three/drei"
 import { createContext, useContext, useEffect, useRef, useState } from "react"
 
-import gltfModel from "../../assets/models/models.glb"
-import userSwitchAudio from "../../assets/sounds/user-switch.mp3"
 import { Children } from "../../components/types/children.type"
 import notification from "../../components/utils/Notification"
 import toCapitalize from "../../components/utils/ToCapitalize"
@@ -14,6 +12,8 @@ import { DiceMoveType, DicePhysics } from "../types/Dice.type"
 import { GLTFResult } from "../types/GLTFResult.type"
 import * as types from "../types/Game.type"
 import switchPlayers from "../utils/SwitchPlayers"
+import gltfModel from "/models/models.glb"
+import userSwitchAudio from "/sounds/user-switch.mp3"
 
 // The grandiose game state. This is where the magic is held in place.
 export const GameContext = createContext({} as types.GameContextType)

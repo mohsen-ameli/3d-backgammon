@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, useState } from "react"
-import buttonClick from "../../assets/sounds/button-click.mp3"
+import buttonClick from "/sounds/button-click.mp3"
 
 type InputProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   className?: string

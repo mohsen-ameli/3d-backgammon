@@ -3,7 +3,6 @@ import { useThree } from "@react-three/fiber"
 import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import { AudioListener, AudioLoader, PositionalAudio } from "three"
-import DiceCollisionAudio from "../../assets/sounds/NewDice.wav"
 import wsGood from "../../components/utils/wsGood"
 import { GameContext } from "../context/GameContext"
 import {
@@ -18,6 +17,7 @@ import switchPlayers from "../utils/SwitchPlayers"
 import { throwDice, throwDicePhysics } from "../utils/ThrowDice"
 import useUpdateLiveGame from "../utils/useUpdateLiveGame"
 import Dice from "./Dice"
+import DiceCollisionAudio from "/sounds/NewDice.wav"
 
 /**
  * This is the container for the two dice.
