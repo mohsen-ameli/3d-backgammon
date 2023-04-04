@@ -73,6 +73,12 @@ const GameContextProvider = ({ children }: Children) => {
    * States
    */
 
+  // If the game has started, and user is looking at the board
+  const [initial, setInitial] = useState({
+    doneLoading: false,
+    initialLoad: true,
+  })
+
   // Current players (Only set in a live game)
   const [players, setPlayers] = useState<types.PlayersType>()
 
@@ -314,6 +320,8 @@ const GameContextProvider = ({ children }: Children) => {
     timer,
 
     // States
+    setInitial,
+    initial,
     myTurn,
     ws,
     messages,

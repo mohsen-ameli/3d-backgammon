@@ -7,6 +7,7 @@ import { useContext, useEffect, useRef, useState } from "react"
 import { Vector3 } from "three"
 import { AuthContext } from "../../context/AuthContext"
 import { GameContext } from "../context/GameContext"
+import { BOARD_W, CHECKER_W, GROUND_CHECKERS } from "../data/Data"
 import { CheckerType } from "../types/Checker.type"
 import Modal from "../ui/Modal"
 import CheckersSort from "../utils/CheckersSort"
@@ -42,6 +43,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     setPhase,
     toggleControls,
     setInGame,
+    initial,
   } = useContext(GameContext)
   const { user } = useContext(AuthContext)
 
@@ -53,19 +55,27 @@ const Checker = ({ thisChecker }: CheckerProps) => {
   const { viewport } = useThree()
   const { factor } = viewport
 
+  // This checker's rigid body instance
   const checker = useRef<RigidBodyApi>(null)
 
   // Showing the invalid move panel
   const [show, setShow] = useState(false)
 
   // Checker's position
-  const [pos, setPos] = useState<number[] | Vector3>([0, 0, 0])
+  const [pos, setPos] = useState<number[] | Vector3>([
+    -(BOARD_W + (CHECKER_W * 5.6) / 4) - 0.01,
+    GROUND_CHECKERS + 0.15,
+    thisChecker.color === "white"
+      ? 0.22 + 0.04 * (thisChecker.id + 1)
+      : 0.38 - 0.04 * (thisChecker.id + 1),
+  ])
 
   // Spring animation for dragging
   const [spring, springApi] = useSpring(() => ({
-    rotation: [-3, -4].includes(thisChecker.col)
-      ? [Math.PI / 3, 0, 0]
-      : [0, 0, 0],
+    rotation:
+      [-3, -4].includes(thisChecker.col) || !initial.doneLoading
+        ? [Math.PI / 3, 0, 0]
+        : [0, 0, 0],
     position: pos,
     config: { mass: 1, friction: 28, tension: 400 },
   }))
@@ -81,16 +91,22 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       ? [Math.PI / 3, 0, 0]
       : [0, 0, 0]
 
-    // Setting checker's mesh position
-    springApi.start({ position, rotation })
+    if (initial.doneLoading) {
+      setTimeout(() => {
+        springApi.start({ position, rotation })
+      }, 150 * (thisChecker.id + 1))
+    } else if (!initial.initialLoad) {
+      // Setting checker's mesh position
+      springApi.start({ position, rotation })
 
-    // Setting the checker's physics position
-    checker.current?.setTranslation({
-      x: position[0],
-      y: position[1],
-      z: position[2],
-    })
-  }, [thisChecker.col, thisChecker.row, thisChecker.removed])
+      // Setting the checker's physics position
+      checker.current?.setTranslation({
+        x: position[0],
+        y: position[1],
+        z: position[2],
+      })
+    }
+  }, [thisChecker.col, thisChecker.row, thisChecker.removed, initial])
 
   const goToOriginalPos = (currentChecker: CheckerType) => {
     const oldPosition = getCheckerPos(currentChecker)

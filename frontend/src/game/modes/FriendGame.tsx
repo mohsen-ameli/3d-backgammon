@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import useFetch from "../../components/hooks/useFetch"
 import notification from "../../components/utils/Notification"
 import { GameContext } from "../context/GameContext"
+import { ExperienceProps } from "../types/Game.type"
 
 /**
  * A game between two friends.
@@ -13,7 +14,7 @@ type DataType = {
   finished: boolean
 }
 
-const FriendGame = () => {
+const FriendGame = ({ started }: ExperienceProps) => {
   const { inGame, setInGame, gameMode, resetOrbit } = useContext(GameContext)
 
   const navigate = useNavigate()
@@ -38,8 +39,9 @@ const FriendGame = () => {
   }
 
   useEffect(() => {
-    resetOrbit.current(inGame ? "board" : "env")
-  }, [resetOrbit.current, inGame])
+    if (!started) return
+    resetOrbit.current(inGame ? "board" : "env", true)
+  }, [resetOrbit.current, inGame, started])
 
   useEffect(() => {
     validateGame()

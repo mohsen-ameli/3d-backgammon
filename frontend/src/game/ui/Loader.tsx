@@ -1,7 +1,7 @@
 import { useProgress } from "@react-three/drei"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
-import Button from "./Button"
+import Button from "../../components/ui/Button"
 
 /**
  * Used for loading the experience of the user

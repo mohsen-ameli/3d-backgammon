@@ -1,15 +1,17 @@
 import { useContext, useEffect } from "react"
 import { GameContext } from "../context/GameContext"
+import { ExperienceProps } from "../types/Game.type"
 
 /**
  * Pass and play game mode. User is playing with themselves (perhaps with someone else irl)
  */
-const PassAndPlay = () => {
+const PassAndPlay = ({ started }: ExperienceProps) => {
   const { setInGame, gameMode, dice, resetOrbit } = useContext(GameContext)
 
   useEffect(() => {
-    resetOrbit.current("board")
-  }, [resetOrbit.current])
+    if (!started) return
+    resetOrbit.current("board", true)
+  }, [resetOrbit.current, started])
 
   useEffect(() => {
     setInGame(true)

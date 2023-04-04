@@ -36,7 +36,7 @@ const WinnerOverlay = () => {
       userChecker.current = "white"
       gameMode.current = "pass-and-play"
       dice.current = { dice1: 0, dice2: 0, moves: 0 }
-      resetOrbit.current("board")
+      resetOrbit.current("board", true)
       checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
     } else {
       const res = await axiosInstance.put("/api/game/handle-match-request/", {

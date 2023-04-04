@@ -21,7 +21,7 @@ type OrbitType = {
  * the zoom.
  */
 const Controls = () => {
-  const { resetOrbit, toggleControls } = useContext(GameContext)
+  const { resetOrbit, toggleControls, setInitial } = useContext(GameContext)
 
   const orbitRef = useRef<OrbitControlType & OrbitType>(null)
   const resetting = useRef(false)
@@ -72,52 +72,59 @@ const Controls = () => {
   )
 
   // Resets the orbit controls position and rotation
-  resetOrbit.current = useCallback(async (focus: "board" | "env") => {
-    if (!orbitRef.current) return
+  resetOrbit.current = useCallback(
+    async (focus: "board" | "env", isInitial: boolean = false) => {
+      if (!orbitRef.current) return
 
-    const duration = 3
-    const ease = "Expo.easeInOut"
+      const duration = 3
+      const ease = "Expo.easeInOut"
 
-    originalEnabledValue.current = orbitRef.current.enabled
-    resetting.current = true
-    orbitRef.current.enabled = false
+      originalEnabledValue.current = orbitRef.current.enabled
+      resetting.current = true
+      orbitRef.current.enabled = false
 
-    // Snapping back to original camera position
-    gsap.to(orbitRef.current.object.position, {
-      ...(focus === "board"
-        ? DEFAULT_CAMERA_POSITION
-        : ORIGINAL_CAMERA_POSITION),
-      duration,
-      ease,
-    })
+      // Snapping back to original camera position
+      gsap.to(orbitRef.current.object.position, {
+        ...(focus === "board"
+          ? DEFAULT_CAMERA_POSITION
+          : ORIGINAL_CAMERA_POSITION),
+        duration,
+        ease,
+      })
 
-    gsap.to(orbitRef.current.object.quaternion, {
-      ...(focus === "board"
-        ? DEFAULT_CAMERA_QUATERNION
-        : ORIGINAL_CAMERA_QUATERNION),
-      duration,
-      ease,
-    })
+      gsap.to(orbitRef.current.object.quaternion, {
+        ...(focus === "board"
+          ? DEFAULT_CAMERA_QUATERNION
+          : ORIGINAL_CAMERA_QUATERNION),
+        duration,
+        ease,
+      })
 
-    await gsap.to(orbitRef.current.target, {
-      ...DEFAULT_CAMERA_TARGET,
-      duration,
-      ease,
-    })
+      await gsap.to(orbitRef.current.target, {
+        ...DEFAULT_CAMERA_TARGET,
+        duration,
+        ease,
+      })
 
-    resetting.current = false
+      if (isInitial) {
+        setInitial({ doneLoading: true, initialLoad: false })
+      }
 
-    // Sometimes orbitRef is null for some weird reason
-    if (!orbitRef.current) return
+      resetting.current = false
 
-    orbitRef.current.enabled = true
-    if (toggleAfterAnimation.current) {
-      toggleControls.current("layout")
-    } else {
-      orbitRef.current!.enabled = originalEnabledValue.current
-    }
-    toggleAfterAnimation.current = false
-  }, [])
+      // Sometimes orbitRef is null for some weird reason
+      if (!orbitRef.current) return
+
+      orbitRef.current.enabled = true
+      if (toggleAfterAnimation.current) {
+        toggleControls.current("layout")
+      } else {
+        orbitRef.current!.enabled = originalEnabledValue.current
+      }
+      toggleAfterAnimation.current = false
+    },
+    []
+  )
 
   return (
     <OrbitControls

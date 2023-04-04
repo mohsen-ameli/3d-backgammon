@@ -104,6 +104,7 @@ const Dices = () => {
     audioLoader.load(DiceCollisionAudio, buffer => {
       const audio = new PositionalAudio(listener)
       audio.setBuffer(buffer)
+      audio.setRefDistance(30)
       setAudio(audio)
     })
 

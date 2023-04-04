@@ -2,6 +2,10 @@ import { CheckerType } from "./Checker.type"
 import { DiceMoveType, DicePhysics } from "./Dice.type"
 import { MaterialType, NodeType } from "./GLTFResult.type"
 
+export type ExperienceProps = {
+  started: boolean
+}
+
 // The different environment maps we have
 export type EnvMapType = "diamondHall" | "brilliantHall" | "finGarden"
 
@@ -58,12 +62,20 @@ export type GameModeType = "pass-and-play" | string | undefined
 // Checker picked type
 export type CheckerPickedType = CheckerType | null
 
+// Initial type
+export type InitialType = {
+  doneLoading: boolean
+  initialLoad: boolean
+}
+
 export type GameContextType = {
   // Functions
   toggleControls: React.MutableRefObject<
     (from: "layout" | "checkerDisable" | "checkerEnable") => void
   >
-  resetOrbit: React.MutableRefObject<(focus: "board" | "env") => void>
+  resetOrbit: React.MutableRefObject<
+    (focus: "board" | "env", isInitial?: boolean) => void
+  >
   resign: (winnerId: number, loserId: number, send?: boolean) => void
   throwDice: React.MutableRefObject<() => void>
 
@@ -79,6 +91,8 @@ export type GameContextType = {
   timer: React.MutableRefObject<TimerType | undefined>
 
   // States
+  setInitial: React.Dispatch<React.SetStateAction<InitialType>>
+  initial: InitialType
   players: PlayersType | undefined
   myTurn: boolean
   ws: WebSocket | undefined
