@@ -98,7 +98,7 @@ const Chat = () => {
 
   return (
     <Container>
-      <Header to="/" title={location.state.friend}>
+      <Header to="/friends" title={location.state.friend}>
         <Status />
       </Header>
 

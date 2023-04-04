@@ -4,22 +4,27 @@
  */
 
 import { MotionConfig, motion, useMotionValue } from "framer-motion"
-import { ButtonHTMLAttributes, Suspense, useState } from "react"
+import { Suspense, useState } from "react"
 import useMeasure from "react-use-measure"
-import { Shapes } from "./Shapes"
+import * as types from "./3d-button.types"
+import Shapes from "./Shapes"
 import { transition } from "./settings"
 import "./styles.css"
+import buttonClick from "/sounds/button-click.mp3"
 
-type Button3dProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  text: string
-}
-
-export default function Button3d({ text, ...props }: Button3dProps) {
+const Button3d = ({ text, ...props }: types.Button3dProps) => {
   const [ref, bounds] = useMeasure({ scroll: false })
   const [isHover, setIsHover] = useState(false)
   const [isPress, setIsPress] = useState(false)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
+
+  const [click] = useState(() => new Audio(buttonClick))
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    click.play()
+    props.onClick?.(e)
+  }
 
   const resetMousePosition = () => {
     mouseX.set(0)
@@ -30,7 +35,7 @@ export default function Button3d({ text, ...props }: Button3dProps) {
     <MotionConfig transition={transition}>
       <motion.button
         className={props.className}
-        onClick={props.onClick}
+        onClick={handleClick}
         id="btn-3d"
         ref={ref}
         initial={false}
@@ -87,3 +92,5 @@ export default function Button3d({ text, ...props }: Button3dProps) {
     </MotionConfig>
   )
 }
+
+export default Button3d

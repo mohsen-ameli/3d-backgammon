@@ -101,18 +101,20 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
       onSleep={handleSleep}
       onCollisionEnter={handleCollisionEnter}
     >
-      <mesh
-        name="DiceGeo"
-        geometry={nodes.DiceGeo.geometry}
-        material={materials.DiceWhite}
-        castShadow
-      />
-      <mesh
-        name="DiceGeo_1"
-        geometry={nodes.DiceGeo_1.geometry}
-        material={materials.DiceDark}
-        castShadow
-      />
+      <group scale={1.25}>
+        <mesh
+          name="DiceGeo"
+          geometry={nodes.DiceGeo.geometry}
+          material={materials.DiceWhite}
+          castShadow
+        />
+        <mesh
+          name="DiceGeo_1"
+          geometry={nodes.DiceGeo_1.geometry}
+          material={materials.DiceDark}
+          castShadow
+        />
+      </group>
     </RigidBody>
   )
 })

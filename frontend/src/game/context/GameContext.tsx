@@ -12,7 +12,7 @@ import { DiceMoveType, DicePhysics } from "../types/Dice.type"
 import { GLTFResult } from "../types/GLTFResult.type"
 import * as types from "../types/Game.type"
 import switchPlayers from "../utils/SwitchPlayers"
-import gltfModel from "/models/models.glb"
+import gltfModel from "/models/main.glb"
 import userSwitchAudio from "/sounds/user-switch.mp3"
 
 // The grandiose game state. This is where the magic is held in place.
@@ -342,6 +342,6 @@ const GameContextProvider = ({ children }: Children) => {
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>
 }
 
-useGLTF.preload(gltfModel)
+useGLTF.preload("/models/main.glb")
 
 export default GameContextProvider

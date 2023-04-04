@@ -64,7 +64,7 @@ const SearchFriend = () => {
 
   return (
     <Container>
-      <Header to="/friends" title="Search For a New Friend" />
+      <Header to="/friends" title="Add a New Friend" />
 
       <Input
         className="mb-4"

@@ -1,7 +1,7 @@
 #btn-3d {
-  --purple: #db07d1;
-  --pink: #f2056f;
-  --blue: #61dafb;
+  --purple: #fbc0618f;
+  --pink: #eca93c;
+  --blue: #8b3bc4cf;
 
   appearance: none;
   border: none;
@@ -12,6 +12,7 @@
   width: 150px;
   height: 150px;
   outline: none;
+  user-select: none;
   margin: 0;
   padding: 25px;
   font-size: 48px;
