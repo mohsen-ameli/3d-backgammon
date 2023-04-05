@@ -54,15 +54,14 @@ const Interface = () => {
 const Extra = () => {
   return (
     <div className="absolute bottom-5 z-[10] flex w-full items-center justify-center gap-x-2 text-sm text-black lg:text-lg">
-      <Link to="/credits" className="underline">
+      <Link
+        to="/credits"
+        className="text-orange-900 underline duration-150 ease-in-out hover:text-black"
+      >
         Credits
       </Link>
       <i className="fa-solid fa-circle text-[5pt] lg:text-[8pt]"></i>
-      <HyperLink
-        className="text-[#000]"
-        to="https://www.mohsenameli.com/"
-        text="About Me"
-      />
+      <HyperLink to="https://www.mohsenameli.com/" text="About Me" />
     </div>
   )
 }

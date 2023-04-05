@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import useFetch from "../../components/hooks/useFetch"
 import { ProfileData } from "../../components/types/Profile.type"
-import { AuthContext } from "../../context/AuthContext"
 import { GameContext } from "../context/GameContext"
 import { TRAINING_DICE_MODE } from "../data/Data"
 import ChatButton from "./ChatButton"
@@ -24,15 +23,14 @@ const Layout = () => {
   return (
     <>
       {TRAINING_DICE_MODE && <DiceTraining />}
-      <LeftLayout />
-      <RightLayout />
+      <TopLeftLayout />
+      <TopRightLayout />
       <MainLayout />
     </>
   )
 }
 
 const MainLayout = () => {
-  const { user } = useContext(AuthContext)
   const { gameMode, players } = useContext(GameContext)
 
   // Getting user image
@@ -40,24 +38,28 @@ const MainLayout = () => {
   const [img, setImg] = useState("")
   useEffect(() => setImg(data?.image), [data])
 
-  if (gameMode.current === "pass-and-play")
+  // prettier-ignore
+  if (gameMode.current === "pass-and-play") {
     return (
-      <SidePanel img={img} player={players?.me} sideType="me" user={user} />
+      <>
+        <SidePanel img="" player={players?.me} sideType="me" />
+        <SidePanel img="" player={players?.enemy} sideType="enemy" />
+      </>
     )
-
-  return (
-    <>
-      <SidePanel img={img} player={players?.me} sideType="me" />
-      <SidePanel
-        img={players?.enemy.image}
-        player={players?.enemy}
-        sideType="enemy"
-      />
-    </>
-  )
+  } else {
+    return (
+      <>
+        <SidePanel img={img} player={players?.me} sideType="me" />
+        <SidePanel img={players?.enemy.image} player={players?.enemy} sideType="enemy" />
+      </>
+    )
+  }
 }
 
-const RightLayout = () => {
+/**
+ * Set of button on the top right corner
+ */
+const TopRightLayout = () => {
   const { resign, gameMode, players } = useContext(GameContext)
 
   const resignMe = () => players && resign(players.enemy.id, players.me.id)
@@ -81,7 +83,10 @@ const RightLayout = () => {
   )
 }
 
-const LeftLayout = () => {
+/**
+ * Set of button on the top left corner
+ */
+const TopLeftLayout = () => {
   const { resetOrbit, toggleControls } = useContext(GameContext)
 
   const [controlsLock, setControlsLock] = useState(true)

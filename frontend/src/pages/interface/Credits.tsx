@@ -43,6 +43,10 @@ const Credits = () => {
         <p>
           Sound Effect by <HyperLink to="https://pixabay.com/users/soundsforyou-4861230/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=127856" text="SoundsForYou" /> from <HyperLink to="https://pixabay.com/sound-effects//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=127856" text="Pixabay" />
         </p>
+
+        <p>
+          Random name generator by <HyperLink to="https://names.drycodes.com/" text="drycodes" />
+        </p>
       </div>
     </Container>
   )

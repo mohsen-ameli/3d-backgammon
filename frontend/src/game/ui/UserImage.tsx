@@ -77,22 +77,17 @@ const UserImage = ({ img, player }: UserImageType) => {
     }
   }, [phase])
 
-  if (img === undefined || img === "")
+  if (img === undefined || img === "") {
     return (
       <div className="m-4">
-        <i className="fa-solid fa-user text-[40px] lg:text-[50px]"></i>
+        <i
+          className={`fa-solid fa-user text-[40px] lg:text-[50px] ${
+            player?.color === "white" ? "text-slate-200" : "text-slate-900"
+          }`}
+        ></i>
       </div>
-      // h-[50px] w-[50px] rounded-full object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]
     )
-
-  if (gameMode.current === "pass-and-play")
-    return (
-      <img
-        src={img}
-        alt="img"
-        className="h-[50px] w-[50px] rounded-full object-cover object-center lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]"
-      />
-    )
+  }
 
   return (
     <div className="relative">

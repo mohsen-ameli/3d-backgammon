@@ -14,7 +14,7 @@ const HyperLink = ({ to, text, ...props }: HyperLinkProps) => {
   return (
     <button
       {...props}
-      className={`text-orange-800 underline duration-150 ease-in-out hover:text-black ${props.className}`}
+      className={`text-orange-900 underline duration-150 ease-in-out hover:text-black ${props.className}`}
       onClick={openNewTab}
     >
       {text}

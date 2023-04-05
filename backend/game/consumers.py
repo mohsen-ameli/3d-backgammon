@@ -59,8 +59,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         # Adding one to the users connected to this game
         GameConsumer.users[GameConsumer.users_count] = {"user": GameConsumer.users_count}
         GameConsumer.users_count += 1
-
-        # print(GameConsumer.users)
         
         await self.accept()
 

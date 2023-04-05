@@ -91,19 +91,23 @@ export type GameContextType = {
   timer: React.MutableRefObject<TimerType | undefined>
 
   // States
-  setInitial: React.Dispatch<React.SetStateAction<InitialType>>
+  myTurn: boolean
+  messages: MessageType | null
+  ws: WebSocket | undefined
   initial: InitialType
   players: PlayersType | undefined
-  myTurn: boolean
-  ws: WebSocket | undefined
-  messages: MessageType | null
   inGame: boolean
-  setInGame: React.Dispatch<React.SetStateAction<boolean>>
   showThrow: boolean | null
-  setShowThrow: React.Dispatch<React.SetStateAction<boolean | null>>
   phase: PhaseType
-  setPhase: React.Dispatch<React.SetStateAction<PhaseType>>
   settings: SettingsType
+
+  // SetStates
+  setWs: React.Dispatch<React.SetStateAction<WebSocket | undefined>>
+  setInitial: React.Dispatch<React.SetStateAction<InitialType>>
+  setPlayers: React.Dispatch<React.SetStateAction<PlayersType | undefined>>
+  setInGame: React.Dispatch<React.SetStateAction<boolean>>
+  setShowThrow: React.Dispatch<React.SetStateAction<boolean | null>>
+  setPhase: React.Dispatch<React.SetStateAction<PhaseType>>
   setSettings: React.Dispatch<React.SetStateAction<SettingsType>>
 
   // Other

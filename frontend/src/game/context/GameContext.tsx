@@ -4,9 +4,8 @@ import { createContext, useContext, useEffect, useRef, useState } from "react"
 import { Children } from "../../components/types/children.type"
 import notification from "../../components/utils/Notification"
 import toCapitalize from "../../components/utils/ToCapitalize"
-import getServerUrl from "../../components/utils/getServerUrl"
 import { AuthContext } from "../../context/AuthContext"
-import { DEFAULT_CHECKER_POSITIONS, DEFAULT_SETTINGS } from "../data/Data"
+import { DEFAULT_SETTINGS } from "../data/Data"
 import { CheckerType } from "../types/Checker.type"
 import { DiceMoveType, DicePhysics } from "../types/Dice.type"
 import { GLTFResult } from "../types/GLTFResult.type"
@@ -255,33 +254,6 @@ const GameContextProvider = ({ children }: Children) => {
     setPhase(curr => (curr === "diceRollAgain" ? "diceRoll" : "diceRollAgain"))
   }
 
-  // User has entered the game
-  useEffect(() => {
-    if (!inGame) return
-
-    // GameMode is pass and play
-    if (gameMode.current === "pass-and-play") {
-      setPhase("initial")
-      userChecker.current = Math.random() - 0.5 < 0 ? "white" : "black"
-      checkers.current = JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS))
-
-      const me = {} as types.PlayerType
-      me.id = user?.user_id!
-      me.name = user?.username!
-      me.image = ""
-      me.color = userChecker.current
-
-      setPlayers({ me, enemy: { id: 0, color: "white", image: "", name: "" } })
-
-      return
-    }
-
-    // User is playing a live game
-    const gameId = gameMode.current?.split("_")[1]
-    const url = `${getServerUrl(false)}/ws/game/${gameId}/`
-    setWs(() => new WebSocket(url))
-  }, [inGame])
-
   // Connecting to the backend (live game)
   useEffect(() => {
     if (!ws) return
@@ -310,7 +282,6 @@ const GameContextProvider = ({ children }: Children) => {
     // Refs
     gameMode,
     userChecker,
-    players,
     winner,
     dice,
     dicePhysics,
@@ -320,18 +291,23 @@ const GameContextProvider = ({ children }: Children) => {
     timer,
 
     // States
-    setInitial,
-    initial,
     myTurn,
-    ws,
     messages,
+    ws,
+    initial,
+    players,
     inGame,
-    setInGame,
     showThrow,
-    setShowThrow,
     phase,
-    setPhase,
     settings,
+
+    // SetStates
+    setWs,
+    setInitial,
+    setPlayers,
+    setInGame,
+    setShowThrow,
+    setPhase,
     setSettings,
 
     // Other
