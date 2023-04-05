@@ -13,7 +13,7 @@
     ".prettierrc": true,
     "file.d.ts": true,
     "package-lock.json": true,
-    "README": true,
+    "README": false,
     "tsconfig.json": true,
     "tsconfig.node.json": true,
     "vercel.json": true,

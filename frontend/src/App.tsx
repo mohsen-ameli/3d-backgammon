@@ -11,6 +11,7 @@ import Profile from "./pages/profile/Profile"
 
 import PrivateRoute from "./components/utils/PrivateRoute"
 import GameRouter from "./game/GameRouter"
+import Credits from "./pages/interface/Credits"
 
 /**
  * Main application
@@ -27,6 +28,7 @@ const App = () => {
 
         {/* Public routes */}
         <Route path="/" element={<Interface />} />
+        <Route path="/credits" element={<Credits />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 

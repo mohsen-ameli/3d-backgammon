@@ -92,7 +92,7 @@ const Loader = ({ toggleStarted }: LoaderProps) => {
           )
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-4">
-            <h1 className="text-3xl">Welcome to 3d-Backgammon!</h1>
+            <h1 className="text-3xl">Welcome to 3D-Backgammon!</h1>
             <Button className="px-16" onClick={toggleStarted}>
               Start The Experience
             </Button>
