@@ -1,24 +1,17 @@
-import { CheckerType } from "./Checker.type"
+import { CheckerPickedType, CheckerType, UserCheckerType } from "./Checker.type"
 import { DiceMoveType, DicePhysics } from "./Dice.type"
 import { MaterialType, NodeType } from "./GLTFResult.type"
+import { SettingsType } from "./Settings.type"
 
 export type ExperienceProps = {
   started: boolean
 }
 
-// The different environment maps we have
-export type EnvMapType = "diamondHall" | "brilliantHall" | "finGarden"
-
-// Settings type, used in the settings component
-export type SettingsType = {
-  perf: boolean
-  debug: boolean
-  sound: boolean
-  envMap: EnvMapType
+// Initial type
+export type InitialType = {
+  doneLoading: boolean
+  initialLoad: boolean
 }
-
-// Possible checker colors
-export type UserCheckerType = "black" | "white"
 
 // Each player has a type
 export type PlayerType = {
@@ -57,17 +50,9 @@ export type PhaseType =
   | undefined
 
 // Different game mode types
-export type GameModeType = "pass-and-play" | string | undefined
+export type GameModeType = "pass-and-play" | `friend-game-${string}` | undefined
 
-// Checker picked type
-export type CheckerPickedType = CheckerType | null
-
-// Initial type
-export type InitialType = {
-  doneLoading: boolean
-  initialLoad: boolean
-}
-
+// The main game states
 export type GameContextType = {
   // Functions
   toggleControls: React.MutableRefObject<

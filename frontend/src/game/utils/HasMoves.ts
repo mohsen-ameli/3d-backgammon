@@ -1,6 +1,5 @@
-import { CheckerType } from "../types/Checker.type"
+import { CheckerType, UserCheckerType } from "../types/Checker.type"
 import { DiceMoveType } from "../types/Dice.type"
-import { UserCheckerType } from "../types/Game.type"
 import Endgame from "./Endgame"
 import lenRemovedCheckers from "./LenRemovedCheckers"
 import switchPlayers from "./SwitchPlayers"

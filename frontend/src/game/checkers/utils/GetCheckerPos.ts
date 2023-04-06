@@ -1,5 +1,5 @@
-import * as data from "../data/Data"
-import { CheckerType } from "../types/Checker.type"
+import * as data from "../../data/Data"
+import { CheckerType } from "../../types/Checker.type"
 
 type PositionsType = {
   x: number

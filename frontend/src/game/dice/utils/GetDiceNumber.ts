@@ -5,7 +5,7 @@
 
 import { RigidBodyApi } from "@react-three/rapier"
 import { Euler } from "three"
-import { TRAINING_DICE_MODE } from "../data/Data"
+import { TRAINING_DICE_MODE } from "../../data/Data"
 import { throwDice } from "./ThrowDice"
 
 const roundToTwo = (num: number) => {

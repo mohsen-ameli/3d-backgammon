@@ -10,20 +10,22 @@ import { GameContext } from "../context/GameContext"
 import { BOARD_W, CHECKER_W, GROUND_CHECKERS } from "../data/Data"
 import { CheckerType } from "../types/Checker.type"
 import Modal from "../ui/Modal"
-import CheckersSort from "../utils/CheckersSort"
 import Endgame from "../utils/Endgame"
-import GameWon from "../utils/GameWon"
-import getCheckerPos from "../utils/GetCheckerPos"
 import hasMoves from "../utils/HasMoves"
 import lenRemovedCheckers from "../utils/LenRemovedCheckers"
 import switchPlayers from "../utils/SwitchPlayers"
 import useGetCheckersOnCol from "../utils/useGetCheckersOnCol"
 import useUpdateLiveGame from "../utils/useUpdateLiveGame"
-import ValidateMove from "./ValidateMove"
+import CheckersSort from "./utils/CheckersSort"
+import GameWon from "./utils/GameWon"
+import getCheckerPos from "./utils/GetCheckerPos"
+import ValidateMove from "./utils/ValidateMove"
 
 type CheckerProps = {
   thisChecker: CheckerType
 }
+
+type PosType = [number, number, number] | Vector3 | number[]
 
 /**
  * A single checker. This is where the magic takes place.
@@ -62,7 +64,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
   const [show, setShow] = useState(false)
 
   // Checker's position
-  const [pos, setPos] = useState<number[] | Vector3>([
+  const [pos, setPos] = useState<PosType>([
     -(BOARD_W + (CHECKER_W * 5.6) / 4) - 0.01,
     GROUND_CHECKERS + 0.15,
     thisChecker.color === "white"
@@ -80,6 +82,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
     config: { mass: 1, friction: 28, tension: 400 },
   }))
 
+  // Showing an animation when the checkers first load in
   useEffect(() => {
     // If we are not done loading, meaning the camera is still coming on top of the board, then return
     if (!initial.doneLoading) return
@@ -93,9 +96,23 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       ? [Math.PI / 3, 0, 0]
       : [0, 0, 0]
 
-    setTimeout(() => {
+    const animate = async () => {
+      const x = thisChecker.id + 1
+
+      await new Promise(resolve => setTimeout(resolve, 200 * x))
+
+      springApi.start({
+        // @ts-ignore
+        position: [pos[0], 0.05, pos[2]],
+        rotation: [0, 0, 0],
+      })
+
+      await new Promise(resolve => setTimeout(resolve, 10 * x))
+
       springApi.start({ position, rotation })
-    }, 150 * (thisChecker.id + 1))
+    }
+
+    animate()
   }, [initial])
 
   // When the checker is mounted, set its position

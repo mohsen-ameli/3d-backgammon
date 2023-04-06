@@ -1,8 +1,9 @@
 import { memo, useContext, useEffect, useState } from "react"
 import { GameContext } from "../context/GameContext"
-import { PlayerType, TimerType, UserCheckerType } from "../types/Game.type"
-import PipScore from "../utils/PipScore"
+import { UserCheckerType } from "../types/Checker.type"
+import { PlayerType, TimerType } from "../types/Game.type"
 import DiceMoves from "./DiceMoves"
+import PipScore from "./PipScore"
 import ThrowButton from "./ThrowButton"
 import UserImage from "./UserImage"
 

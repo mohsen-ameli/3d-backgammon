@@ -50,13 +50,16 @@ const PassAndPlay = ({ started }: ExperienceProps) => {
     setPlayers({ me, enemy })
     setPhase("initial")
     setInGame(true)
+  }, [data])
 
+  // Resetting states when user leaves the game.
+  useEffect(() => {
     return () => {
       setInGame(false)
       gameMode.current = undefined
       resetOrbit.current("env")
     }
-  }, [data])
+  }, [])
 
   // Resetting the orbit controls to lock onto the board
   useEffect(() => {

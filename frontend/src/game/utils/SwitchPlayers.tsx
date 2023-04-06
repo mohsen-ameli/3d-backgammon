@@ -1,4 +1,4 @@
-import { UserCheckerType } from "../types/Game.type"
+import { UserCheckerType } from "../types/Checker.type"
 
 /**
  * Literally does what it says

@@ -5,14 +5,14 @@ import { useContext } from "react"
 
 import { Perf } from "r3f-perf"
 import useStatus from "../components/hooks/useStatus"
-import Controls from "./Controls"
-import Stage from "./Stage"
 import Board from "./board/Board"
 import Columns from "./board/Columns"
 import Checkers from "./checkers/Checkers"
 import { GameContext } from "./context/GameContext"
 import { ORIGINAL_CAMERA_POSITION } from "./data/Data"
 import Dices from "./dice/Dices"
+import Controls from "./other/Controls"
+import Stage from "./other/Stage"
 
 const Experience = () => {
   // Getting the user status. (Game requests and game request rejections)

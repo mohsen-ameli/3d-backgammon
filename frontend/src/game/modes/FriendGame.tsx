@@ -37,7 +37,7 @@ const FriendGame = ({ started }: ExperienceProps) => {
       notification("This game is finished :(", "error")
     } else {
       setInGame(true)
-      gameMode.current = `game_${gameId}`
+      gameMode.current = `friend-game-${gameId}`
       return true
     }
     return false
@@ -46,17 +46,20 @@ const FriendGame = ({ started }: ExperienceProps) => {
   // Validating game, and starting the game websocket
   useEffect(() => {
     if (isValidateGame()) {
-      const gameId = gameMode.current?.split("_")[1]
+      const gameId = gameMode.current?.split("-")[2]
       const url = `${getServerUrl(false)}/ws/game/${gameId}/`
       setWs(() => new WebSocket(url))
     }
+  }, [data])
 
+  // Resetting states when user leaves the game.
+  useEffect(() => {
     return () => {
       setInGame(false)
       gameMode.current = undefined
       resetOrbit.current("env")
     }
-  }, [data])
+  }, [])
 
   // Resetting the orbit controls to lock onto the board
   useEffect(() => {

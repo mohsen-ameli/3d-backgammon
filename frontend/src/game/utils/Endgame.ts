@@ -1,5 +1,4 @@
-import { CheckerType } from "../types/Checker.type"
-import { UserCheckerType } from "../types/Game.type"
+import { CheckerType, UserCheckerType } from "../types/Checker.type"
 
 /**
  * This method will return true if the game is in endgame for the color of the checkers provided.

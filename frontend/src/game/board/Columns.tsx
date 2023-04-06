@@ -10,27 +10,18 @@ import {
 } from "three"
 import { GameContext } from "../context/GameContext"
 import { COLUMN_HOVER_COLOR, GROUND } from "../data/Data"
-import { CheckerType } from "../types/Checker.type"
-import lenRemovedCheckers from "../utils/LenRemovedCheckers"
-import useGetCheckersOnCol from "../utils/useGetCheckersOnCol"
 import ColumnSide from "./ColumnSide"
+import useGetValidHover from "./getValidHover"
 
 /**
  * The 24 columns on the board, where checkers get dropped in. This component
  * contains logic for changing the column checkers colour when user hovers over it.
  */
 const Columns = () => {
-  const {
-    nodes,
-    materials,
-    checkerPicked,
-    newCheckerPosition,
-    dice,
-    checkers,
-  } = useContext(GameContext)
+  const { nodes, materials, checkerPicked, newCheckerPosition } = useContext(GameContext) // prettier-ignore
 
   // Utility
-  const { getCheckersOnCol } = useGetCheckersOnCol()
+  const { getValidHover } = useGetValidHover()
 
   // Ref to the actual columns
   const columnsRef = useRef<InstancedMesh | null>(null)
@@ -97,48 +88,6 @@ const Columns = () => {
     columnsRef.current.instanceColor!.needsUpdate = true
     columnsRef.current.instanceMatrix.needsUpdate = true
   }, [])
-
-  // Checks to see if a hover over a column is valid
-  // prettier-ignore
-  const getValidHover = (checker: CheckerType, colId: number) => {
-    // If user is hovering over the column of the current checker
-    if (checker.col === colId) return false
-
-    if (checker.color === "black") {
-      const { action } = getCheckersOnCol(colId, "black")
-
-      if (checker.removed) {
-        const valid = [dice.current.dice1, dice.current.dice2].includes(24 - colId)
-        return valid && action !== "invalid"
-      }
-      
-      // If user has removed checkers and is moving a different checker
-      const lenRmCheckers = lenRemovedCheckers(checkers.current, checker.color)
-      if (lenRmCheckers != 0) return false
-      
-      if (checker.col - dice.current.dice1 === colId || checker.col - dice.current.dice2 === colId) {
-        if (action === "invalid") return false
-        return true
-      }
-    } else {
-      const { action } = getCheckersOnCol(colId, "white")
-
-      if (checker.removed) {
-        const valid = [dice.current.dice1, dice.current.dice2].includes(colId + 1)
-        return valid && action !== "invalid"
-      }
-      
-      // If user has removed checkers and is moving a different checker
-      const lenRmCheckers = lenRemovedCheckers(checkers.current, checker.color)
-      if (lenRmCheckers != 0) return false
-      
-      if (checker.col + dice.current.dice1 === colId || checker.col + dice.current.dice2 === colId) {
-        if (action === "invalid") return false
-        return true
-      }
-    }
-    return false
-  }
 
   // When user hovers over one of the columns
   const handleHover = (e: ThreeEvent<PointerEvent>) => {

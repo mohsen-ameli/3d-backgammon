@@ -6,10 +6,15 @@ import notification from "../../components/utils/Notification"
 import toCapitalize from "../../components/utils/ToCapitalize"
 import { AuthContext } from "../../context/AuthContext"
 import { DEFAULT_SETTINGS } from "../data/Data"
-import { CheckerType } from "../types/Checker.type"
+import {
+  CheckerPickedType,
+  CheckerType,
+  UserCheckerType,
+} from "../types/Checker.type"
 import { DiceMoveType, DicePhysics } from "../types/Dice.type"
 import { GLTFResult } from "../types/GLTFResult.type"
 import * as types from "../types/Game.type"
+import { SettingsType } from "../types/Settings.type"
 import switchPlayers from "../utils/SwitchPlayers"
 import gltfModel from "/models/main.glb"
 import userSwitchAudio from "/sounds/user-switch.mp3"
@@ -45,7 +50,7 @@ const GameContextProvider = ({ children }: Children) => {
   const gameMode = useRef<types.GameModeType>()
 
   // The current checker color that is being moved
-  const userChecker = useRef<types.UserCheckerType>()
+  const userChecker = useRef<UserCheckerType>()
 
   // The current checker color that is being moved
   const winner = useRef<types.PlayerType>()
@@ -60,7 +65,7 @@ const GameContextProvider = ({ children }: Children) => {
   const checkers = useRef<CheckerType[]>(null!)
 
   // If the checker has been picked up or not
-  const checkerPicked = useRef<types.CheckerPickedType>(null)
+  const checkerPicked = useRef<CheckerPickedType>(null)
 
   // The new position of the checker (in checkers used for calculating the moved variable)
   const newCheckerPosition = useRef<number | undefined>()
@@ -97,7 +102,7 @@ const GameContextProvider = ({ children }: Children) => {
   const [phase, setPhase] = useState<types.PhaseType>()
 
   // Settings object
-  const [settings, setSettings] = useState<types.SettingsType>(DEFAULT_SETTINGS)
+  const [settings, setSettings] = useState<SettingsType>(DEFAULT_SETTINGS)
 
   // In game messages
   const [messages, setMessages] = useState<types.MessageType>(null)

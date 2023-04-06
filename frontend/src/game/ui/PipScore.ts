@@ -1,5 +1,4 @@
-import { CheckerType } from "../types/Checker.type"
-import { UserCheckerType } from "../types/Game.type"
+import { CheckerType, UserCheckerType } from "../types/Checker.type"
 
 type PipType = { col: number; num: number }
 

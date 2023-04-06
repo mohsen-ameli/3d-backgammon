@@ -1,6 +1,6 @@
 import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
-import { SettingsType } from "../types/Game.type"
+import { SettingsType } from "../types/Settings.type"
 import { WHITE_HOUSE_FULL } from "./Extra"
 
 // If we are in training dice mode

@@ -1,10 +1,11 @@
 import { useContext, useMemo, useRef } from "react"
 import { MeshStandardMaterial } from "three"
 import toCapitalize from "../../components/utils/ToCapitalize"
+import ValidateMove from "../checkers/utils/ValidateMove"
 import { GameContext } from "../context/GameContext"
 import { COLUMN_HOVER_COLOR } from "../data/Data"
+import { UserCheckerType } from "../types/Checker.type"
 import { NodeType } from "../types/GLTFResult.type"
-import { UserCheckerType } from "../types/Game.type"
 import Endgame from "../utils/Endgame"
 
 /**
@@ -18,6 +19,7 @@ const ColumnSide = ({ node }: NodeType) => {
     newCheckerPosition,
     checkers,
     userChecker,
+    dice,
   } = useContext(GameContext)
 
   const blackOrWhite = useRef<UserCheckerType>()
@@ -40,8 +42,25 @@ const ColumnSide = ({ node }: NodeType) => {
     const end = Endgame(checkers.current, userChecker.current!)
     if (!end) return
 
+    const id = node.name === "WhiteHouse" ? -3 : -4
+    let moved = 0
+
+    if (id === -3) moved = 24 - checkerPicked.current.col
+    else if (id === -4) moved = checkerPicked.current.col + 1
+
+    const validHover = ValidateMove(
+      checkers.current,
+      checkerPicked.current,
+      dice.current,
+      moved
+    )
+    if (!validHover) {
+      newCheckerPosition.current = undefined
+      return
+    }
+
     material.color.set(COLUMN_HOVER_COLOR)
-    newCheckerPosition.current = node.name === "WhiteHouse" ? -3 : -4
+    newCheckerPosition.current = id
   }
 
   // User has finished hovering over the end column

@@ -1,4 +1,4 @@
-import { CheckerType } from "../types/Checker.type"
+import { CheckerType } from "../../types/Checker.type"
 
 /**
  * Sorting the checkers on the new row and the old columns of this checker instance

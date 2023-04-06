@@ -14,9 +14,9 @@ import { DiceReadyType } from "../types/Dice.type"
 import Modal from "../ui/Modal"
 import hasMoves from "../utils/HasMoves"
 import switchPlayers from "../utils/SwitchPlayers"
-import { throwDice, throwDicePhysics } from "../utils/ThrowDice"
 import useUpdateLiveGame from "../utils/useUpdateLiveGame"
 import Dice from "./Dice"
+import { throwDice, throwDicePhysics } from "./utils/ThrowDice"
 import DiceCollisionAudio from "/sounds/NewDice.wav"
 
 /**

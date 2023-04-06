@@ -1,5 +1,6 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { ContactShadows } from "@react-three/drei"
+import { useThree } from "@react-three/fiber"
+import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import {
   CubeTexture,
   CubeTextureLoader,
@@ -7,10 +8,8 @@ import {
   LoadingManager,
   sRGBEncoding,
 } from "three"
-import { DEFAULT_ENV_MAP_INTENSITY } from "./data/Data"
-import { GameContext } from "./context/GameContext"
-import { useThree } from "@react-three/fiber"
-// import { button, useControls } from "leva"
+import { GameContext } from "../context/GameContext"
+import { DEFAULT_ENV_MAP_INTENSITY } from "../data/Data"
 
 /**
  * Staging for our scene
@@ -31,7 +30,9 @@ const Stage = () => {
     const manager = new LoadingManager()
     const loader = new CubeTextureLoader(manager)
 
-    const brilliantHall = loader.setPath("/env/cube/briliant_hall/").load(files)
+    const brilliantHall = loader
+      .setPath("/env/cube/brilliant_hall/")
+      .load(files)
     const diamondHall = loader.setPath("/env/cube/diamond_hall/").load(files)
     const finGarden = loader.setPath("/env/cube/fin_garden/").load(files)
 
@@ -56,7 +57,7 @@ const Stage = () => {
     scene.environment.encoding = sRGBEncoding
   }, [settings.envMap, cubeEnvs])
 
-  // Setting the environement maps, and the default env map
+  // Setting the environnement maps, and the default env map
   useEffect(() => {
     materials.BoardWood2.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY
     materials.ColumnDark.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY

@@ -1,7 +1,7 @@
 import { RigidBodyApi } from "@react-three/rapier"
 import axios from "axios"
 import { Euler } from "three"
-import getServerUrl from "../../components/utils/getServerUrl"
+import getServerUrl from "../../../components/utils/getServerUrl"
 
 /**
  * This component returns a function that takes in a rigid body die instance,

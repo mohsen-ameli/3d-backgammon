@@ -1,7 +1,6 @@
 import { useContext } from "react"
 import { GameContext } from "../context/GameContext"
-import { CheckerType } from "../types/Checker.type"
-import { UserCheckerType } from "../types/Game.type"
+import { CheckerType, UserCheckerType } from "../types/Checker.type"
 
 type ReturnType = {
   action: "valid" | "invalid" | "remove"

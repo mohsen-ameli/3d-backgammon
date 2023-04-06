@@ -1,5 +1,5 @@
-import { CheckerType } from "../types/Checker.type"
-import { DiceMoveType } from "../types/Dice.type"
+import { CheckerType } from "../../types/Checker.type"
+import { DiceMoveType } from "../../types/Dice.type"
 
 /**
  * Utility used in checkers to determine whether the move done by the user

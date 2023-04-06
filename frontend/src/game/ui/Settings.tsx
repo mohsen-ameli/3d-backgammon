@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import ReactSwitch from "react-switch"
 import Button from "../../components/ui/Button"
 import { GameContext } from "../context/GameContext"
-import { EnvMapType } from "../types/Game.type"
+import { EnvMapType } from "../types/Settings.type"
 
 type settingsType = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>

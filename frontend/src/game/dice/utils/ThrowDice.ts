@@ -3,8 +3,8 @@ import {
   DEFAULT_DICE_QUATERNION,
   DICE_1_DEFAULT_POS,
   DICE_2_DEFAULT_POS,
-} from "../data/Data"
-import { DiePhysics } from "../types/Dice.type"
+} from "../../data/Data"
+import { DiePhysics } from "../../types/Dice.type"
 
 /**
  * This will throw the dice into the board, and return the physics values

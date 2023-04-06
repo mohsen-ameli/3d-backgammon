@@ -4,9 +4,9 @@ import { PositionalAudio, Vector3 } from "three"
 import { GameContext } from "../context/GameContext"
 import * as data from "../data/Data"
 import { DiceReadyType } from "../types/Dice.type"
-import useGetDiceNumberAI from "../utils/useGetDiceNumberAI"
-import DiceOnBoard from "./DiceOnBoard"
-import IsInitial from "./IsInitial"
+import DiceOnBoard from "./utils/DiceOnBoard"
+import IsInitial from "./utils/IsInitial"
+import useGetDiceNumberAI from "./utils/useGetDiceNumberAI"
 
 type DiceProps = {
   index: 0 | 1

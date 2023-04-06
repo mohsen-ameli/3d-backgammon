@@ -2,14 +2,14 @@ import { OrbitControls } from "@react-three/drei"
 import gsap from "gsap"
 import { useCallback, useContext, useEffect, useRef } from "react"
 import { OrbitControls as OrbitControlType } from "three-stdlib/controls/OrbitControls"
-import { GameContext } from "./context/GameContext"
+import { GameContext } from "../context/GameContext"
 import {
   DEFAULT_CAMERA_POSITION,
   DEFAULT_CAMERA_QUATERNION,
   DEFAULT_CAMERA_TARGET,
   ORIGINAL_CAMERA_POSITION,
   ORIGINAL_CAMERA_QUATERNION,
-} from "./data/Data"
+} from "../data/Data"
 
 type OrbitType = {
   locked: boolean
@@ -23,19 +23,19 @@ type OrbitType = {
 const Controls = () => {
   const { resetOrbit, toggleControls, setInitial } = useContext(GameContext)
 
+  // Reference to the orbit controls
   const orbitRef = useRef<OrbitControlType & OrbitType>(null)
+  // If we are in a resetting animation phase
   const resetting = useRef(false)
+  // Temporary reference for the "orbit controls enabled" state
   const originalEnabledValue = useRef(false)
+  // Whether or not we need to toggle the orbit controls, after the animation's over
   const toggleAfterAnimation = useRef(false)
 
-  useEffect(() => {
-    if (!orbitRef.current) return
-
-    // Saving the default state of the orbit controls
-    orbitRef.current.saveState()
-  }, [])
-
-  // Function to toggle orbit controls
+  /**
+   * Function to toggle orbit controls
+   * @param from: Which component are we calling this function from
+   */
   toggleControls.current = useCallback(
     (from: "layout" | "checkerDisable" | "checkerEnable") => {
       // If we are in the midst of a reset
@@ -71,10 +71,14 @@ const Controls = () => {
     []
   )
 
-  // Resets the orbit controls position and rotation
+  /**
+   * Function to reset orbit controls
+   * @param focus: Focus on the board, or focus on the environment.
+   * @param isInitial: Boolean to see if we have just entered the game.
+   */
   resetOrbit.current = useCallback(
     async (focus: "board" | "env", isInitial: boolean = false) => {
-      if (!orbitRef.current) return
+      if (!orbitRef.current || resetting.current) return
 
       const duration = 3
       const ease = "Expo.easeInOut"
@@ -110,8 +114,6 @@ const Controls = () => {
         setInitial({ doneLoading: true, initialLoad: false })
       }
 
-      resetting.current = false
-
       // Sometimes orbitRef is null for some weird reason
       if (!orbitRef.current) return
 
@@ -119,12 +121,20 @@ const Controls = () => {
       if (toggleAfterAnimation.current) {
         toggleControls.current("layout")
       } else {
-        orbitRef.current!.enabled = originalEnabledValue.current
+        orbitRef.current.enabled = originalEnabledValue.current
       }
+
+      resetting.current = false
       toggleAfterAnimation.current = false
     },
     []
   )
+
+  // Saving the default state of the orbit controls
+  useEffect(() => {
+    if (!orbitRef.current) return
+    orbitRef.current.saveState()
+  }, [])
 
   return (
     <OrbitControls
