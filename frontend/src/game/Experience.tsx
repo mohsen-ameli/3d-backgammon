@@ -31,6 +31,7 @@ const Experience = () => {
         far: 20,
       }}
       shadows
+      dpr={Math.min(3, window.devicePixelRatio)}
     >
       <Game />
     </Canvas>

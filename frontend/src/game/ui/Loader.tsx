@@ -106,18 +106,7 @@ const Loader = ({ toggleStarted }: LoaderProps) => {
 const Rotate = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-8">
-      <motion.i
-        initial={{ rotateZ: 0 }}
-        animate={{ rotateZ: 90 }}
-        transition={{
-          repeat: Infinity,
-          duration: 2,
-          repeatType: "reverse",
-          type: "spring",
-          bounce: 0.6,
-        }}
-        className="fa-solid fa-mobile-screen text-[80pt]"
-      ></motion.i>
+      <div className="fa-solid fa-mobile-screen rotate-anim infinite text-[80pt]" />
       <h1 className="text-2xl">Please rotate your device</h1>
     </div>
   )

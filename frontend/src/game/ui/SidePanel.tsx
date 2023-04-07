@@ -30,14 +30,16 @@ const SidePanel = (props: SideProps) => {
       }
     >
       <div className="flex h-full flex-col justify-center">
-        <div className="relative m-2 max-h-[200px] w-[90px] rounded-lg bg-[#8e84bab3] p-3 text-black md:w-[108px] lg:max-h-[300px] lg:w-[180px] ">
+        <div className="relative mx-4 max-h-[200px] w-[90px] rounded-lg bg-[#8e84bab3] p-1 text-black md:w-[108px] lg:max-h-[300px] lg:w-[180px] lg:p-3 ">
           <div className="flex flex-col items-center justify-center">
             {/* Image */}
             <UserImage img={img} player={player} />
 
             <div className="mt-2 flex flex-col items-center justify-center text-xs lg:text-lg">
               {/* Username */}
-              <h1>{(player?.name || player?.name !== "") && player?.name}</h1>
+              <h1 className="w-full break-all">
+                {(player?.name || player?.name !== "") && player?.name}
+              </h1>
 
               {/* User checker color */}
               <div

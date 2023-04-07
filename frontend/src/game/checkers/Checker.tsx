@@ -390,20 +390,32 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       </RigidBody>
 
       {/* @ts-ignore: SpringValue type is a Vector3, but TypeScript won't allow it */}
-      <a3f.mesh
+      <a3f.group
         {...spring}
-        {...bind()}
-        name="WhiteChecker"
-        castShadow
-        geometry={nodes.WhiteChecker.geometry}
-        material={
-          thisChecker.color === "white"
-            ? materials.WhiteCheckerMat
-            : materials.DarkCheckerMat
-        }
-        onPointerEnter={() => (document.body.style.cursor = "grab")}
-        onPointerLeave={() => (document.body.style.cursor = "default")}
-      />
+        onPointerOver={e => {
+          e.stopPropagation()
+          document.body.style.cursor = "grab"
+        }}
+        onPointerOut={() => (document.body.style.cursor = "default")}
+      >
+        {/* Invisible box surrounding the checkers so the user can easily drag each checker */}
+        {/* @ts-ignore: SpringValue type is a Vector3, but TypeScript won't allow it */}
+        <a3f.mesh {...bind()}>
+          <boxGeometry args={[0.3, 0.06, 0.3]} />
+          <meshNormalMaterial visible={false} />
+        </a3f.mesh>
+
+        <a3f.mesh
+          name="WhiteChecker"
+          castShadow
+          geometry={nodes.WhiteChecker.geometry}
+          material={
+            thisChecker.color === "white"
+              ? materials.WhiteCheckerMat
+              : materials.DarkCheckerMat
+          }
+        />
+      </a3f.group>
     </>
   )
 }

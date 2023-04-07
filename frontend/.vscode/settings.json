@@ -9,7 +9,7 @@
     "**/Thumbs.db": true,
     "**/*.git": true,
     ".env": true,
-    ".gitignore": true,
+    ".gitignore": false,
     ".prettierrc": true,
     "file.d.ts": true,
     "package-lock.json": true,
