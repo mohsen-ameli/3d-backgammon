@@ -110,6 +110,12 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       await new Promise(resolve => setTimeout(resolve, 10 * x))
 
       springApi.start({ position, rotation })
+
+      checker.current?.setTranslation({
+        x: position[0],
+        y: position[1],
+        z: position[2],
+      })
     }
 
     animate()
@@ -230,6 +236,8 @@ const Checker = ({ thisChecker }: CheckerProps) => {
       currentChecker.col = to
       currentChecker.row = checkersOnEndCol.length
       currentChecker.removed = false
+
+      CheckersSort(checkers.current, from)
 
       // Checking if user has won
       const possibleWinner = userChecker.current!

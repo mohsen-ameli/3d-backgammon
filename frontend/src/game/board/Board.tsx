@@ -27,19 +27,19 @@ const Board = () => {
         {/* Surface */}
         <CuboidCollider args={[1.175, 0.1, 0.935]} position={[0, -0.15, 0]} />
 
-        {/* Center */}
-        <CuboidCollider args={[0.07, 0.115, 1]} position={[0, 0, 0]} />
+        {/* Center wall */}
+        <CuboidCollider args={[0.07, 0.5, 1]} position={[0, 0.06, 0]} />
 
-        {/* Left */}
+        {/* x- wall */}
         <CuboidCollider args={[0.07, 0.5, 1]} position={[-1.245, 0.06, 0]} />
 
-        {/* Right */}
+        {/* x+ wall */}
         <CuboidCollider args={[0.07, 0.5, 1]} position={[1.245, 0.06, 0]} />
 
-        {/* Top */}
+        {/* z+ wall */}
         <CuboidCollider args={[1.175, 0.5, 0.07]} position={[0, 0.06, -1]} />
 
-        {/* Bottom */}
+        {/* z- wall */}
         <CuboidCollider args={[1.175, 0.5, 0.07]} position={[0, 0.06, 1]} />
 
         <mesh

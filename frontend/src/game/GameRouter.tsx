@@ -29,7 +29,7 @@ const GameRouter = () => {
               path="/game/:gameId"
               element={
                 <PrivateRoute>
-                  <FriendGame started={started} />
+                  <FriendGame />
                 </PrivateRoute>
               }
             />

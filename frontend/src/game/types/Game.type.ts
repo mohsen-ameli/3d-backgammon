@@ -52,15 +52,20 @@ export type PhaseType =
 // Different game mode types
 export type GameModeType = "pass-and-play" | `friend-game_${string}` | undefined
 
+// Function types
+export type ToggleControlsType = (
+  from: "layout" | "checkerDisable" | "checkerEnable"
+) => void
+export type ResetOrbitType = (
+  focus: "board" | "env",
+  isInitial?: boolean
+) => void
+
 // The main game states
 export type GameContextType = {
   // Functions
-  toggleControls: React.MutableRefObject<
-    (from: "layout" | "checkerDisable" | "checkerEnable") => void
-  >
-  resetOrbit: React.MutableRefObject<
-    (focus: "board" | "env", isInitial?: boolean) => void
-  >
+  toggleControls: React.MutableRefObject<ToggleControlsType>
+  resetOrbit: React.MutableRefObject<ResetOrbitType>
   resign: (winnerId: number, loserId: number, send?: boolean) => void
   throwDice: React.MutableRefObject<() => void>
 

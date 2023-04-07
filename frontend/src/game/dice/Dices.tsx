@@ -70,7 +70,7 @@ const Dices = () => {
   const [audio, setAudio] = useState<PositionalAudio>()
 
   // Function to throw the dice
-  throwDiceContext.current = useCallback(() => {
+  throwDiceContext.current = useCallback(async () => {
     if (!players) return
 
     setShowThrowBtn(false)
@@ -78,7 +78,7 @@ const Dices = () => {
     const dice = TRAINING_DICE_MODE
       ? [dice1.current]
       : [dice1.current, dice2.current]
-    const physics = throwDice(dice)
+    const physics = await throwDice(dice, userChecker.current!)
 
     const context = {
       physics: true,
@@ -164,9 +164,11 @@ const Dices = () => {
 
   // Game logic: Handling the phase changes
   useEffect(() => {
+    let timeout: NodeJS.Timeout
+
     // User already has dice physics, and it's their turn, and they don't have the numbers on the dice saved
     if (phase === "diceRollPhysics") {
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         if (!dicePhysics.current) return
 
         throwDicePhysics(
@@ -210,6 +212,10 @@ const Dices = () => {
     if (phase === "diceRoll" || phase === "diceRollAgain") {
       setShowThrowBtn(true)
       return
+    }
+
+    return () => {
+      clearTimeout(timeout)
     }
   }, [phase])
 

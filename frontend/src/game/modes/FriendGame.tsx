@@ -4,7 +4,6 @@ import useFetch from "../../components/hooks/useFetch"
 import notification from "../../components/utils/Notification"
 import getServerUrl from "../../components/utils/getServerUrl"
 import { GameContext } from "../context/GameContext"
-import { ExperienceProps } from "../types/Game.type"
 
 type DataType = {
   valid: boolean
@@ -14,9 +13,8 @@ type DataType = {
 /**
  * A game between two friends.
  */
-const FriendGame = ({ started }: ExperienceProps) => {
-  const { inGame, setInGame, gameMode, resetOrbit, setWs } =
-    useContext(GameContext)
+const FriendGame = () => {
+  const { setInGame, gameMode, resetOrbit, setWs } = useContext(GameContext)
 
   const navigate = useNavigate()
   const { gameId } = useParams()
@@ -60,12 +58,6 @@ const FriendGame = ({ started }: ExperienceProps) => {
       resetOrbit.current("env")
     }
   }, [])
-
-  // Resetting the orbit controls to lock onto the board
-  useEffect(() => {
-    if (!started) return
-    resetOrbit.current(inGame ? "board" : "env", true)
-  }, [resetOrbit.current, inGame, started])
 
   return <></>
 }

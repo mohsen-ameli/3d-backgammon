@@ -4,12 +4,18 @@ import {
   DICE_1_DEFAULT_POS,
   DICE_2_DEFAULT_POS,
 } from "../../data/Data"
+import { UserCheckerType } from "../../types/Checker.type"
 import { DiePhysics } from "../../types/Dice.type"
+
+const DICE_SLEEP_ON_RESET = 1000 / 3 // 1000 ms / 3 -> 0.333 seconds
 
 /**
  * This will throw the dice into the board, and return the physics values
  */
-export const throwDice = (dice: RigidBodyApi[]) => {
+export const throwDice = async (
+  dice: RigidBodyApi[],
+  turn: UserCheckerType
+) => {
   const physicsValues = {
     die1: {} as DiePhysics,
     die2: {} as DiePhysics,
@@ -18,11 +24,14 @@ export const throwDice = (dice: RigidBodyApi[]) => {
   let i = 0
 
   // Resetting the dice
-  resetDice(dice)
+  await resetDice(dice)
 
   for (const die of dice) {
+    const x =
+      turn === "white" ? 0.1 + Math.random() * 0.5 : -0.1 - Math.random() * 0.5
+
     const impulse = {
-      x: Math.random() * 0.5,
+      x,
       y: 1,
       z: -1,
     }
@@ -57,10 +66,13 @@ type Physics = {
 /**
  * Throwing the dice, with given physics values (impulse and torque)
  */
-export const throwDicePhysics = (dice: RigidBodyApi[], physics: Physics) => {
+export const throwDicePhysics = async (
+  dice: RigidBodyApi[],
+  physics: Physics
+) => {
   let i = 0
 
-  resetDice(dice)
+  await resetDice(dice)
 
   for (const die of dice) {
     die.applyImpulse(
@@ -79,7 +91,7 @@ export const throwDicePhysics = (dice: RigidBodyApi[], physics: Physics) => {
 /**
  * This will reset the dice positions and rotations
  */
-const resetDice = (dice: RigidBodyApi[]) => {
+const resetDice = async (dice: RigidBodyApi[]) => {
   let i = 0
 
   for (const die of dice) {
@@ -94,4 +106,6 @@ const resetDice = (dice: RigidBodyApi[]) => {
 
     i++
   }
+
+  await new Promise(res => setTimeout(res, DICE_SLEEP_ON_RESET))
 }

@@ -1,6 +1,7 @@
 import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import { SettingsType } from "../types/Settings.type"
+import { STACKED_REMOVABLES } from "./Extra"
 
 // If we are in training dice mode
 export const TRAINING_DICE_MODE =
@@ -104,4 +105,4 @@ const DEFAULT_POS: CheckerType[] = [
 ]
 
 export const DEFAULT_CHECKER_POSITIONS =
-  process.env.NODE_ENV === "development" ? DEFAULT_POS : DEFAULT_POS
+  process.env.NODE_ENV === "development" ? STACKED_REMOVABLES : DEFAULT_POS

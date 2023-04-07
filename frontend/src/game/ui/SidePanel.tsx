@@ -81,10 +81,13 @@ const BottomSection = ({ sideType, player }: BottomSectionProps) => {
   ) {
     return (
       <div className="absolute bottom-auto left-0 mt-4 w-full rounded-lg bg-[#8e84bab3] p-2 text-white">
+        {/* Showing the throw button if it's my turn */}
         {(sideType === "me" || gameMode.current === "pass-and-play") && (
           <ThrowButton />
         )}
-        <DiceMoves dice={dice.current} />
+
+        {/* Showing the dice moves if I've already thrown the dice */}
+        {dice.current.moves > 0 && <DiceMoves dice={dice.current} />}
       </div>
     )
   } else return <></>

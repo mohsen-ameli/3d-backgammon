@@ -34,10 +34,10 @@ const GameContextProvider = ({ children }: Children) => {
    */
 
   // Toggles orbit controls. Defined in the Controls component
-  const toggleControls = useRef(() => null)
+  const toggleControls = useRef<types.ToggleControlsType>(() => null)
 
   // Resets orbit controls. Defined in the Controls component
-  const resetOrbit = useRef(() => null)
+  const resetOrbit = useRef<types.ResetOrbitType>(() => null)
 
   // Throws the dice onto the board. Defined in Dices
   const throwDice = useRef(() => null)
@@ -159,6 +159,7 @@ const GameContextProvider = ({ children }: Children) => {
       // Cleaning
       dice.current = { dice1: 0, dice2: 0, moves: 0 }
       userChecker.current = undefined
+      resetOrbit.current("env")
       setPhase("ended")
       setWs(undefined)
       setInGame(false)
@@ -233,6 +234,7 @@ const GameContextProvider = ({ children }: Children) => {
       enemy.image = (myColor === "white" ? data.black_image! : data.white_image!) //prettier-ignore
       enemy.color = switchPlayers(myColor)
 
+      resetOrbit.current("board", true)
       setPlayers({ me, enemy })
 
       return
