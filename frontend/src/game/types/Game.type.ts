@@ -50,7 +50,7 @@ export type PhaseType =
   | undefined
 
 // Different game mode types
-export type GameModeType = "pass-and-play" | `friend-game-${string}` | undefined
+export type GameModeType = "pass-and-play" | `friend-game_${string}` | undefined
 
 // The main game states
 export type GameContextType = {
