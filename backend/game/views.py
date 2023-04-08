@@ -64,7 +64,6 @@ def handle_match_request(request: Request):
     # User has rejected a match request
     elif action == "reject":
         request.user.game_requests.remove(friend)
-        friend.rejected_request = request.user
         friend.save()
 
     return Response({"success": True})

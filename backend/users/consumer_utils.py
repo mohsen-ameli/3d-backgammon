@@ -57,13 +57,7 @@ def get_updates(id: int, updates_on: str) -> dict:
 
     # Default status for all pages in the front end
     dict_to_return['game_requests'] = []
-    dict_to_return['rejected_request'] = None
     dict_to_return['live_game'] = str(user.live_game.id) if user.live_game else None
-
-    # If user's friend rejected the current user's game request
-    rejected = user.rejected_request
-    if rejected:
-        dict_to_return['rejected_request'] = {"id": rejected.id, "username": rejected.username}
 
     # All of user's game requests
     for req in user.game_requests.all():
@@ -85,11 +79,10 @@ def update_user(user: CustomUser, **kwargs):
 @database_sync_to_async
 def reset_match_requests(user: CustomUser):
     '''
-        Reseting all of user's game requests (When they leave the applicaiton)
+        Resting all of user's game requests (When they leave the application)
     '''
 
     user.first().game_requests.clear()
-    user.update(rejected_request=None)
 
 
 @database_sync_to_async
