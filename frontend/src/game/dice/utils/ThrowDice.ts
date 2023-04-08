@@ -31,15 +31,15 @@ export const throwDice = async (
       turn === "white" ? 0.1 + Math.random() * 0.5 : -0.1 - Math.random() * 0.5
 
     const impulse = {
-      x,
-      y: 1,
-      z: -1,
+      x: x * 6,
+      y: 1 * 6,
+      z: -1 * 6,
     }
 
     const torque = {
-      x: Math.random() / 200 - 0.005,
-      y: Math.random() / 200 - 0.005,
-      z: Math.random() / 200 - 0.005,
+      x: Math.random() / 20 - 0.005,
+      y: Math.random() / 20 - 0.005,
+      z: Math.random() / 20 - 0.005,
     }
 
     die.applyImpulse(impulse, true)

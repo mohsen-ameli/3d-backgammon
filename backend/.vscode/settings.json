@@ -1,24 +1,5 @@
 {
-    "workbench.colorCustomizations": {
-        "activityBar.activeBackground": "#b82c00",
-        "activityBar.background": "#b82c00",
-        "activityBar.foreground": "#e7e7e7",
-        "activityBar.inactiveForeground": "#e7e7e799",
-        "activityBarBadge.background": "#00bf2e",
-        "activityBarBadge.foreground": "#e7e7e7",
-        "commandCenter.border": "#e7e7e799",
-        "sash.hoverBorder": "#b82c00",
-        "statusBar.background": "#852000",
-        "statusBar.foreground": "#e7e7e7",
-        "statusBarItem.hoverBackground": "#b82c00",
-        "statusBarItem.remoteBackground": "#852000",
-        "statusBarItem.remoteForeground": "#e7e7e7",
-        "titleBar.activeBackground": "#852000",
-        "titleBar.activeForeground": "#e7e7e7",
-        "titleBar.inactiveBackground": "#85200099",
-        "titleBar.inactiveForeground": "#e7e7e799"
-    },
-    "peacock.remoteColor": "#852000",
+    "peacock.remoteColor": "#ff3d00",
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
@@ -39,5 +20,24 @@
         "**/static": false,
         "static": false
     },
-    "explorerExclude.backup": {}
+    "explorerExclude.backup": {},
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#ff6433",
+        "activityBar.background": "#ff6433",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#00ff3d",
+        "activityBarBadge.foreground": "#15202b",
+        "commandCenter.border": "#e7e7e799",
+        "sash.hoverBorder": "#ff6433",
+        "statusBar.background": "#ff3d00",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#ff6433",
+        "statusBarItem.remoteBackground": "#ff3d00",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#ff3d00",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#ff3d0099",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    }
 }

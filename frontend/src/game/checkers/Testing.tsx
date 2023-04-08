@@ -18,7 +18,11 @@ const Testing = () => {
   const { viewport } = useThree()
   const { factor } = viewport
 
-  const [pos, setPos] = useState<number[] | Vector3>([0, 0, 0])
+  const [pos, setPos] = useState<number[] | Vector3>([
+    Math.random() * 0.5 - 0.5,
+    0.5,
+    0,
+  ])
 
   const [spring, springApi] = useSpring(() => ({
     position: pos,
@@ -43,7 +47,11 @@ const Testing = () => {
 
   return (
     <>
-      <RigidBody ref={checker} type="fixed" position={pos as Vector3}>
+      <RigidBody
+        ref={checker}
+        type="kinematicPosition"
+        position={pos as Vector3}
+      >
         <CuboidCollider args={[0.08, 0.015, 0.08]} position={[0, 0.015, 0]} />
       </RigidBody>
 

@@ -6,21 +6,24 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.files.base import ContentFile
 from randimage import get_random_image
-import matplotlib as plt
+from matplotlib.image import imsave
+import numpy as np
 
 from game.models import Game
 
+
+'''
+    The abstract custom user
+'''
 class CustomUser(AbstractUser):
     image = models.ImageField(upload_to="profile_pics/", null=True, blank=True)
     games_won = models.IntegerField(default=0)
     games_lost = models.IntegerField(default=0)
     total_games = models.IntegerField(default=0)
     is_online = models.BooleanField(default=False, blank=True)
-
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     friend_requests = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='+')
     game_requests = models.ManyToManyField('self', symmetrical=False, blank=True)
-    rejected_request = models.OneToOneField('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="rejected")
     live_game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True, blank=True, related_name="+")
     games = models.ManyToManyField(Game, symmetrical=False, blank=True)
 
@@ -40,13 +43,20 @@ class CustomUser(AbstractUser):
         return f"user: {self.username}, pk: {self.pk}"
 
 
-def update_profile_picture(user: CustomUser, image_array):
+'''
+    Function used to generate a picture given an image array
+'''
+def update_profile_picture(user: CustomUser, image_array: np.array):
     buf = io.BytesIO()
-    plt.image.imsave(buf, image_array, format="PNG")
+    imsave(buf, image_array, format="PNG")
     image_file = ContentFile(buf.getvalue())
     user.image.save(f'{user.username}.jpg', image_file, save=True)
 
 
+'''
+    Signal to create a profile picture (A random one if user didn't upload one)
+    as soon as a user is signed up.
+'''
 @receiver(post_save, sender=CustomUser)
 def create_profile_picture(sender, instance: CustomUser, created: bool, **kwargs):
     if instance.image == None or instance.image == "":
@@ -54,6 +64,9 @@ def create_profile_picture(sender, instance: CustomUser, created: bool, **kwargs
         update_profile_picture(instance, image_array)
 
 
+'''
+    A chat model, used for chats between users.
+'''
 class Chat(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True, editable=False)
     users = models.ManyToManyField('CustomUser', related_name='chats')
@@ -69,6 +82,9 @@ class Chat(models.Model):
             super().save(*args, **kwargs)
 
 
+'''
+    Model for a single chat message.
+'''
 class Message(models.Model):
     text = models.CharField(max_length=250)
     sender = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='sent_messages')

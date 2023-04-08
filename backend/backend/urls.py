@@ -5,11 +5,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('', api_overview),
     path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
     path('api/game/', include('game.urls')),
-    path('api/ai/', include('ai.urls')),
-    path('', api_overview),
+    
+    # path('api/ai/', include('ai.urls')),
     # path("/api-auth/", include("rest_framework.urls")),
 ]
 

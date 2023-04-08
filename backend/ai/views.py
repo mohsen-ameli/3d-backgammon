@@ -1,13 +1,11 @@
 import json
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
-from django.conf import settings
 from .torch_utils import get_prediction
 
 '''
-    This function will allow the frontend to retriece and change the 
+    This function will allow the frontend to retrieve and change the 
     training data for the dice rotation model. 
 '''
 @api_view(['GET', 'POST'])

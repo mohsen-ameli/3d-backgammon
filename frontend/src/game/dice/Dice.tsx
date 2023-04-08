@@ -1,12 +1,11 @@
 import { RigidBody, RigidBodyApi } from "@react-three/rapier"
-import { forwardRef, useContext } from "react"
-import { PositionalAudio, Vector3 } from "three"
+import { forwardRef, useContext, useRef } from "react"
+import { Group, PositionalAudio, Raycaster, Vector3 } from "three"
 import { GameContext } from "../context/GameContext"
 import * as data from "../data/Data"
 import { DiceReadyType } from "../types/Dice.type"
 import DiceOnBoard from "./utils/DiceOnBoard"
 import IsInitial from "./utils/IsInitial"
-import useGetDiceNumberAI from "./utils/useGetDiceNumberAI"
 
 type DiceProps = {
   index: 0 | 1
@@ -16,6 +15,9 @@ type DiceProps = {
   showThrowBtn: boolean
   audio: PositionalAudio | undefined
 }
+
+// Direction vector for the raycaster
+const directionVector = new Vector3(0, -1, 0)
 
 /**
  * Individual die
@@ -33,15 +35,16 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
   // Game context
   const { nodes, materials, dice, myTurn, settings } = useContext(GameContext)
 
-  // Dice number predictor (AI)
-  const predict = useGetDiceNumberAI()
-
   // Rigid body reference of each die
   const rigidBody = (ref as React.MutableRefObject<RigidBodyApi>).current
 
-  // const euler = new Euler()
-  // euler.setFromQuaternion(rigidBody.rotation())
-  // console.log("index: ", index, euler)
+  const groupRef = useRef<Group>(null)
+  const diceRef1 = useRef<Group>(null)
+  const diceRef2 = useRef<Group>(null)
+  const diceRef3 = useRef<Group>(null)
+  const diceRef4 = useRef<Group>(null)
+  const diceRef5 = useRef<Group>(null)
+  const diceRef6 = useRef<Group>(null)
 
   // When the die collides with something, play a sound
   const handleCollisionEnter = () => {
@@ -77,7 +80,30 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
 
     // Getting the die number and saving it to the dice ref
     if (!IsInitial(rigidBody.rotation())) {
-      const number = await predict(rigidBody)
+      if (
+        !diceRef1.current ||
+        !diceRef2.current ||
+        !diceRef3.current ||
+        !diceRef4.current ||
+        !diceRef5.current ||
+        !diceRef6.current
+      )
+        return
+
+      const ray = new Raycaster()
+      const diePos = rigidBody.translation()
+      const posVec = new Vector3(diePos.x, diePos.y + 10, diePos.z)
+
+      ray.set(posVec, directionVector)
+      const intersections = ray.intersectObjects([
+        diceRef1.current,
+        diceRef2.current,
+        diceRef3.current,
+        diceRef4.current,
+        diceRef5.current,
+        diceRef6.current,
+      ])
+      const number = Number(intersections[0].object.name)
       if (index === 0) dice.current.dice1 = number
       else dice.current.dice2 = number
     }
@@ -101,19 +127,79 @@ const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
       onSleep={handleSleep}
       onCollisionEnter={handleCollisionEnter}
     >
-      <group scale={1.25}>
-        <mesh
-          name="DiceGeo"
-          geometry={nodes.DiceGeo.geometry}
-          material={materials.DiceWhite}
-          castShadow
-        />
-        <mesh
-          name="DiceGeo_1"
-          geometry={nodes.DiceGeo_1.geometry}
-          material={materials.DiceDark}
-          castShadow
-        />
+      <group scale={1.25} ref={groupRef} name="dice1">
+        <group ref={diceRef1}>
+          <mesh
+            name="1"
+            geometry={nodes.DiceGeo002.geometry}
+            material={materials.DiceWhite}
+          />
+          <mesh
+            name="1"
+            geometry={nodes.DiceGeo002_1.geometry}
+            material={materials.DiceDark}
+          />
+        </group>
+        <group ref={diceRef2}>
+          <mesh
+            name="2"
+            geometry={nodes.DiceGeo007.geometry}
+            material={materials.DiceWhite}
+          />
+          <mesh
+            name="2"
+            geometry={nodes.DiceGeo007_1.geometry}
+            material={materials.DiceDark}
+          />
+        </group>
+        <group ref={diceRef3}>
+          <mesh
+            name="3"
+            geometry={nodes.DiceGeo005.geometry}
+            material={materials.DiceWhite}
+          />
+          <mesh
+            name="3"
+            geometry={nodes.DiceGeo005_1.geometry}
+            material={materials.DiceDark}
+          />
+        </group>
+        <group ref={diceRef4}>
+          <mesh
+            name="4"
+            geometry={nodes.DiceGeo003.geometry}
+            material={materials.DiceWhite}
+          />
+          <mesh
+            name="4"
+            geometry={nodes.DiceGeo003_1.geometry}
+            material={materials.DiceDark}
+          />
+        </group>
+        <group ref={diceRef5}>
+          <mesh
+            name="5"
+            geometry={nodes.DiceGeo004.geometry}
+            material={materials.DiceWhite}
+          />
+          <mesh
+            name="5"
+            geometry={nodes.DiceGeo004_1.geometry}
+            material={materials.DiceDark}
+          />
+        </group>
+        <group ref={diceRef6}>
+          <mesh
+            name="6"
+            geometry={nodes.DiceGeo008.geometry}
+            material={materials.DiceWhite}
+          />
+          <mesh
+            name="6"
+            geometry={nodes.DiceGeo008_1.geometry}
+            material={materials.DiceDark}
+          />
+        </group>
       </group>
     </RigidBody>
   )

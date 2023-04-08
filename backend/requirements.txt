@@ -15,5 +15,5 @@ django-storages==1.13.2
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 boto3==1.26.88
-torch==2.0.0
 requests==2.28.2
+# torch==2.0.0

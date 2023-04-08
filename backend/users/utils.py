@@ -12,7 +12,7 @@ def remove_friend(user, friend):
 
 def new_friend_request(user, friend):
     '''
-        Sending a new freind request
+        Sending a new friend request
     '''
     if friend.friend_requests.filter(id=user.id).exists():
         raise ValidationError("Friend request already sent")

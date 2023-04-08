@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-from ai.torch_utils import Net
-import torch
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,7 +29,7 @@ INSTALLED_APPS = [
     # apps
     'game',
     'users',
-    'ai',
+    # 'ai',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -234,6 +232,6 @@ CSRF_TRUSTED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 # Loading the Neural Network for the dice AI
-NET = Net()
-NET.load_state_dict(torch.load("static/dice_ai.pth"))
-NET.eval()
+# NET = Net()
+# NET.load_state_dict(torch.load("static/dice_ai.pth"))
+# NET.eval()

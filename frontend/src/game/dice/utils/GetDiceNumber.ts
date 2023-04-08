@@ -6,7 +6,6 @@
 import { RigidBodyApi } from "@react-three/rapier"
 import { Euler } from "three"
 import { TRAINING_DICE_MODE } from "../../data/Data"
-import { throwDice } from "./ThrowDice"
 
 const roundToTwo = (num: number) => {
   return Number(num.toFixed(2))
@@ -59,7 +58,7 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
     } else {
       console.log("Not a 2 or a 5")
       console.log(`{"x": ${x}, "y": ${y}, "z": ${z}}`)
-      throwDice([dice])
+      // throwDice([dice])
     }
   }
   // Either 3 or 4
@@ -76,7 +75,7 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
   // Don't know what the number is (Dice is on a slant angle)
   console.log("Don't know what the dice number is!")
   console.log(`{"x": ${x}, "y": ${y}, "z": ${z}}`)
-  throwDice([dice])
+  // throwDice([dice])
   return 0
 
   // Some dice examples of the rotation of the dice, when it's sleeping

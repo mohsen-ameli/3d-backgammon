@@ -20,7 +20,6 @@ class CustomUserAdmin(UserAdmin):
                     'friends',
                     'friend_requests',
                     'game_requests',
-                    'rejected_request',
                     'live_game',
                     'games'
                 )
