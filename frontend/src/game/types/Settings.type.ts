@@ -6,5 +6,6 @@ export type SettingsType = {
   perf: boolean
   debug: boolean
   sound: boolean
+  music: boolean
   envMap: EnvMapType
 }

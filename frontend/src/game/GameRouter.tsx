@@ -21,7 +21,7 @@ const GameRouter = () => {
     <>
       <Suspense fallback={null}>
         <GameContextProvider>
-          <Experience />
+          <Experience started={started} />
           <Layout />
 
           <Routes>

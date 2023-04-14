@@ -29,7 +29,7 @@ const Credits = () => {
         </p>
 
         <p>
-          <HyperLink to="https://polyhaven.com/a/bell_park_pier" text="The bell park pier" /> from polyhaven by <HyperLink to="https://gregzaal.com/" text="Greg Zaal" />
+          Random name generator by <HyperLink to="https://names.drycodes.com/" text="drycodes" />
         </p>
 
         <p>
@@ -45,7 +45,43 @@ const Credits = () => {
         </p>
 
         <p>
-          Random name generator by <HyperLink to="https://names.drycodes.com/" text="drycodes" />
+          Music by <HyperLink to="https://pixabay.com/users/itswatr-12344345/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=10149" text="ItsWatR" /> from <HyperLink to="https://pixabay.com/music//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=10149" text="Pixabay" />
+        </p>
+        
+        <p>
+          Music by <HyperLink to="https://pixabay.com/users/the_mountain-3616498/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=141480" text="The_Mountain" /> from <HyperLink to="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=141480" text="Pixabay" />
+        </p>
+        
+        <p>
+          Music by <HyperLink to="https://pixabay.com/users/pianoamor-28628048/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=142625" text="PianoAmor" /> from <HyperLink to="https://pixabay.com/music//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=142625" text="Pixabay" />
+        </p>
+        
+        <p>
+          Music by <HyperLink to="https://pixabay.com/users/music_unlimited-27600023/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=136122" text="Music_Unlimited" /> from <HyperLink to="https://pixabay.com/music//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=136122" text="Pixabay" />
+        </p>
+        
+        <p>
+          Music by <HyperLink to="https://pixabay.com/users/music_unlimited-27600023/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=142882" text="Music_Unlimited" /> from <HyperLink to="https://pixabay.com/music//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=142882" text="Pixabay" />
+        </p>
+        
+        <p>
+          Music by <HyperLink to="https://pixabay.com/users/yourtunes-13513207/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=136514" text="yourtunes" /> from <HyperLink to="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=136514" text="Pixabay" />
+        </p>
+        
+        <p>
+          Music by <HyperLink to="https://pixabay.com/users/lexin_music-28841948/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=124112" text="Lexin_Music" /> from <HyperLink to="https://pixabay.com/music//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=124112" text="Pixabay" />
+        </p>
+        
+        <p>
+          Music by <HyperLink to="https://pixabay.com/users/music_unlimited-27600023/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=139780" text="Music_Unlimited" /> from <HyperLink to="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=139780" text="Pixabay" />
+        </p>
+        
+        <p>
+          Music by <HyperLink to="https://pixabay.com/users/evgeny_bardyuzha-25235210/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=123276" text="Evgeny_Bardyuzha" /> from <HyperLink to="https://pixabay.com/music//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=123276" text="Pixabay" />
+        </p>
+        
+        <p>
+          Music by <HyperLink to="https://pixabay.com/users/qubesounds-24397640/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=117997" text="QubeSounds" /> from <HyperLink to="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=117997" text="Pixabay" />
         </p>
       </div>
     </Container>

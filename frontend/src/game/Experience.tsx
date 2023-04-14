@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber"
 import { Debug, Physics } from "@react-three/rapier"
 import { useContext } from "react"
 
-import { Perf } from "r3f-perf"
+import { Stats } from "@react-three/drei"
 import useStatus from "../components/hooks/useStatus"
 import Board from "./board/Board"
 import Columns from "./board/Columns"
@@ -13,10 +13,14 @@ import { ORIGINAL_CAMERA_POSITION } from "./data/Data"
 import Dices from "./dice/Dices"
 import Controls from "./other/Controls"
 import Stage from "./other/Stage"
+import { ExperienceProps } from "./types/Game.type"
+import useMusic from "./utils/useMusic"
 
-const Experience = () => {
+const Experience = ({ started }: ExperienceProps) => {
   // Getting the user status. (Game requests and game request rejections)
   useStatus()
+  // Playing some fire songs
+  useMusic(started)
 
   return (
     <Canvas
@@ -56,7 +60,7 @@ const Game = () => {
 
   return (
     <>
-      {settings.perf && <Perf position="bottom-right" />}
+      {settings.perf && <Stats className="custom-stats" />}
 
       <Stage />
 

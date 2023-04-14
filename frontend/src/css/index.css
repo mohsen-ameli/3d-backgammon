@@ -65,3 +65,11 @@ canvas {
     transform: rotate(-90deg);
   }
 }
+
+/* Stats */
+.custom-stats {
+  top: auto !important;
+  bottom: 0 !important;
+  width: 80px;
+  height: 48px;
+}

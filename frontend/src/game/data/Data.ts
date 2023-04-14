@@ -18,6 +18,7 @@ export const DEFAULT_SETTINGS: SettingsType = {
   perf: false,
   debug: false,
   sound: true,
+  music: true,
   envMap: "diamondHall",
 }
 

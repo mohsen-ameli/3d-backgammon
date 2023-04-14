@@ -12,7 +12,7 @@ const Interface = () => {
 
   return (
     <>
-      <div className="absolute -bottom-[25%] z-[10] h-[55%] w-full rounded-t-[50%] bg-[#ffffffac]">
+      <div className="absolute -bottom-[35%] z-[10] h-[65%] w-full rounded-t-[50%] bg-[#ffffffac]">
         <div className="relative flex items-center justify-evenly gap-x-12">
           {user ? (
             <>

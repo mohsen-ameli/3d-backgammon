@@ -83,7 +83,7 @@ const Button3d = ({ text, ...props }: types.Button3dProps) => {
           </div>
         </motion.div>
         <motion.h1
-          variants={{ hover: { scale: 0.85 }, press: { scale: 1.1 } }}
+          variants={{ hover: { scale: 1.5 }, press: { scale: 1.1 } }}
           className="label"
         >
           {text}
