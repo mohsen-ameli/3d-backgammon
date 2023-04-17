@@ -29,7 +29,7 @@ const Settings = ({ setOpen }: SettingsProps) => {
   }
 
   return (
-    <div className="relative flex min-h-[200px] w-[300px] flex-col gap-y-4 pt-12 lg:min-h-[300px]">
+    <div className="relative flex min-h-[200px] w-[350px] flex-col gap-y-4 pt-12 lg:min-h-[300px]">
       <div className="absolute -top-4 -left-4 w-full">
         <ul className="flex items-center justify-around text-xl font-semibold">
           <li

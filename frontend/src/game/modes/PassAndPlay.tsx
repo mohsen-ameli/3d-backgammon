@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react"
 import useFetch from "../../components/hooks/useFetch"
 import { GameContext } from "../context/GameContext"
 import { DEFAULT_CHECKER_POSITIONS } from "../data/Data"
-import { ExperienceProps, PlayerType } from "../types/Game.type"
+import { PlayerType } from "../types/Game.type"
 import switchPlayers from "../utils/SwitchPlayers"
 
 type DataType = {
@@ -12,7 +12,7 @@ type DataType = {
 /**
  * Pass and play game mode. User is playing with themselves (perhaps with someone else irl)
  */
-const PassAndPlay = ({ started }: ExperienceProps) => {
+const PassAndPlay = () => {
   const {
     setInGame,
     gameMode,
@@ -22,6 +22,7 @@ const PassAndPlay = ({ started }: ExperienceProps) => {
     checkers,
     setPhase,
     setPlayers,
+    started,
   } = useContext(GameContext)
 
   const { data }: DataType = useFetch("/api/game/get-random-name/")

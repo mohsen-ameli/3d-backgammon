@@ -49,13 +49,13 @@ const Stage = () => {
   useMemo(() => {
     if (!cubeEnvs) return
 
-    const chosen = cubeEnvs.filter(map => map.name === settings.envMap)
+    const chosen = cubeEnvs.filter(map => map.name === settings?.envMap)
 
     scene.background = chosen[0]
     scene.environment = chosen[0]
     scene.background.encoding = sRGBEncoding
     scene.environment.encoding = sRGBEncoding
-  }, [settings.envMap, cubeEnvs])
+  }, [settings?.envMap, cubeEnvs])
 
   // Setting the environnement maps, and the default env map
   useEffect(() => {

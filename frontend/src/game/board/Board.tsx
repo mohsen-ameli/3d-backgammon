@@ -19,7 +19,7 @@ const Board = () => {
       <mesh
         ref={boardHinge}
         geometry={nodes?.Hinge.geometry}
-        material={materials.Hinge}
+        material={materials?.Hinge}
         receiveShadow
       />
 
@@ -45,7 +45,7 @@ const Board = () => {
         <mesh
           ref={board}
           geometry={nodes?.Board.geometry}
-          material={materials.BoardWood2}
+          material={materials?.BoardWood2}
           receiveShadow
         />
       </RigidBody>

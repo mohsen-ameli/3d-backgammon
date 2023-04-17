@@ -83,6 +83,18 @@ const Credits = () => {
         <p>
           Music by <HyperLink to="https://pixabay.com/users/qubesounds-24397640/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=117997" text="QubeSounds" /> from <HyperLink to="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=117997" text="Pixabay" />
         </p>
+
+        <p>
+          Pinch Zoom In by Birckhead Creative from <HyperLink to="https://thenounproject.com/browse/icons/term/pinch-zoom-in/" text="Noun Project" />
+        </p>
+
+        <p>
+          tap by Birckhead Creative from <HyperLink to="https://thenounproject.com/browse/icons/term/tap/" text="Noun Project" />
+        </p>
+
+        <p>
+          Two Finger Tap by Birckhead Creative from <HyperLink to="https://thenounproject.com/browse/icons/term/two-finger-tap/" text="Noun Project" />
+        </p>
       </div>
     </Container>
   )

@@ -80,7 +80,7 @@ const Columns = () => {
       columnsRef.current.setMatrixAt(i, matrix)
       columnsRef.current.setColorAt(
         i,
-        i % 2 === 0 ? materials.ColumnDark.color : materials.ColumnWhite.color
+        i % 2 === 0 ? materials?.ColumnDark.color : materials?.ColumnWhite.color
       )
     }
 
@@ -114,9 +114,9 @@ const Columns = () => {
     if (!columnsRef.current) return
 
     if (id! % 2 === 0) {
-      columnsRef.current.setColorAt(id, materials.ColumnDark.color)
+      columnsRef.current.setColorAt(id, materials?.ColumnDark.color)
     } else {
-      columnsRef.current.setColorAt(id, materials.ColumnWhite.color)
+      columnsRef.current.setColorAt(id, materials?.ColumnWhite.color)
     }
 
     // Updating the node
@@ -145,13 +145,13 @@ const Columns = () => {
         ref={columnsHoverRef}
         position-y={0.025}
       >
-        <boxGeometry args={[0.2, 0.05, 0.8]} />
+        <boxGeometry args={[0.2, 0.05, 1]} />
         <meshBasicMaterial transparent opacity={0} />
       </instancedMesh>
 
       {/* Side columns */}
-      <ColumnSide node={nodes.WhiteHouse} />
-      <ColumnSide node={nodes.BlackHouse} />
+      <ColumnSide node={nodes?.WhiteHouse} />
+      <ColumnSide node={nodes?.BlackHouse} />
     </group>
   )
 }

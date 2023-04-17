@@ -16,13 +16,18 @@ import { GLTFResult } from "../types/GLTFResult.type"
 import * as types from "../types/Game.type"
 import { SettingsType } from "../types/Settings.type"
 import switchPlayers from "../utils/SwitchPlayers"
+import useMusic from "../utils/useMusic"
 import gltfModel from "/models/main.glb"
 import userSwitchAudio from "/sounds/user-switch.mp3"
+
+export type GameContextProps = Children & {
+  started: boolean
+}
 
 // The grandiose game state. This is where the magic is held in place.
 export const GameContext = createContext({} as types.GameContextType)
 
-const GameContextProvider = ({ children }: Children) => {
+const GameContextProvider = ({ children, started }: GameContextProps) => {
   // Auth context
   const { user } = useContext(AuthContext)
 
@@ -109,6 +114,9 @@ const GameContextProvider = ({ children }: Children) => {
 
   // Audio to play when users switch
   const [audio] = useState(() => new Audio(userSwitchAudio))
+
+  // Playing some fire songs
+  const { songs, setVolume, selectedSongs, setSelectedSongs } = useMusic(started, settings) // prettier-ignore
 
   // User is resigning.. what a loser
   const resign = (winnerId: number, loserId: number, send: boolean = false) => {
@@ -298,6 +306,7 @@ const GameContextProvider = ({ children }: Children) => {
     timer,
 
     // States
+    started,
     myTurn,
     messages,
     ws,
@@ -320,6 +329,12 @@ const GameContextProvider = ({ children }: Children) => {
     // Other
     nodes,
     materials,
+
+    // Music
+    songs,
+    setVolume,
+    selectedSongs,
+    setSelectedSongs,
   }
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>

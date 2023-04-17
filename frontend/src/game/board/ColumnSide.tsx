@@ -27,7 +27,7 @@ const ColumnSide = ({ node }: NodeType) => {
   // Setting the material for the column
   const material = useMemo(() => {
     const mat = new MeshStandardMaterial()
-    mat.copy(materials.BoardWood2)
+    mat.copy(materials?.BoardWood2)
 
     blackOrWhite.current = node.name === "WhiteHouse" ? "white" : "black"
 
@@ -65,7 +65,7 @@ const ColumnSide = ({ node }: NodeType) => {
 
   // User has finished hovering over the end column
   const handleHoverFinished = () => {
-    material.color.set(materials.BoardWood2.color)
+    material.color.set(materials?.BoardWood2.color)
     newCheckerPosition.current = undefined
   }
 

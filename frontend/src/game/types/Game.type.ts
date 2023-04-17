@@ -2,10 +2,7 @@ import { CheckerPickedType, CheckerType, UserCheckerType } from "./Checker.type"
 import { DiceMoveType, DicePhysics } from "./Dice.type"
 import { MaterialType, NodeType } from "./GLTFResult.type"
 import { SettingsType } from "./Settings.type"
-
-export type ExperienceProps = {
-  started: boolean
-}
+import { SongType } from "./Song.type"
 
 // Initial type
 export type InitialType = {
@@ -81,6 +78,7 @@ export type GameContextType = {
   timer: React.MutableRefObject<TimerType | undefined>
 
   // States
+  started: boolean
   myTurn: boolean
   messages: MessageType | null
   ws: WebSocket | undefined
@@ -103,6 +101,15 @@ export type GameContextType = {
   // Other
   nodes: NodeType
   materials: MaterialType
+
+  // Music
+  songs: {
+    name: string
+    song: HTMLAudioElement
+  }[]
+  setVolume: (volume: number) => void
+  selectedSongs: SongType[]
+  setSelectedSongs: React.Dispatch<React.SetStateAction<SongType[]>>
 }
 
 // The data that comes back from backend, when receiving updates

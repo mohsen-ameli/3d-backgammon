@@ -20,24 +20,15 @@ const GameRouter = () => {
   return (
     <>
       <Suspense fallback={null}>
-        <GameContextProvider>
-          <Experience started={started} />
+        <GameContextProvider started={started}>
+          <Experience />
           <Layout />
 
           <Routes>
-            <Route
-              path="/game/:gameId"
-              element={
-                <PrivateRoute>
-                  <FriendGame />
-                </PrivateRoute>
-              }
-            />
+            {/* prettier-ignore */}
+            <Route path="/game/:gameId" element={<PrivateRoute><FriendGame /></PrivateRoute>} />
             <Route path="/game/play-random" element={<PlayRandom />} />
-            <Route
-              path="/game/pass-and-play"
-              element={<PassAndPlay started={started} />}
-            />
+            <Route path="/game/pass-and-play" element={<PassAndPlay />} />
           </Routes>
         </GameContextProvider>
       </Suspense>

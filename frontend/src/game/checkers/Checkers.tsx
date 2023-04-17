@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { memo, useContext } from "react"
 import { GameContext } from "../context/GameContext"
 import Checker from "./Checker"
 
@@ -21,4 +21,4 @@ const Checkers = () => {
   return <></>
 }
 
-export default Checkers
+export default memo(Checkers)

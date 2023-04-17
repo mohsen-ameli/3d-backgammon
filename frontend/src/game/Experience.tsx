@@ -13,14 +13,10 @@ import { ORIGINAL_CAMERA_POSITION } from "./data/Data"
 import Dices from "./dice/Dices"
 import Controls from "./other/Controls"
 import Stage from "./other/Stage"
-import { ExperienceProps } from "./types/Game.type"
-import useMusic from "./utils/useMusic"
 
-const Experience = ({ started }: ExperienceProps) => {
+const Experience = () => {
   // Getting the user status. (Game requests and game request rejections)
   useStatus()
-  // Playing some fire songs
-  useMusic(started)
 
   return (
     <Canvas
@@ -60,7 +56,7 @@ const Game = () => {
 
   return (
     <>
-      {settings.perf && <Stats className="custom-stats" />}
+      {settings?.perf && <Stats className="custom-stats" />}
 
       <Stage />
 
@@ -69,7 +65,7 @@ const Game = () => {
       <Columns />
 
       <Physics>
-        {settings.debug && <Debug />}
+        {settings?.debug && <Debug />}
 
         <Board />
 
