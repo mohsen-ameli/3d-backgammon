@@ -107,7 +107,7 @@ export type GameContextType = {
     name: string
     song: HTMLAudioElement
   }[]
-  setVolume: (volume: number) => void
+  setVolume: (vol: number) => void
   selectedSongs: SongType[]
   setSelectedSongs: React.Dispatch<React.SetStateAction<SongType[]>>
 }

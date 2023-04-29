@@ -11,7 +11,7 @@ import { useGLTF } from "@react-three/drei"
 import { Canvas, PerspectiveCameraProps, useThree } from "@react-three/fiber"
 import { MotionConfig } from "framer-motion"
 import { motion } from "framer-motion-3d"
-import { useLayoutEffect, useRef } from "react"
+import { useLayoutEffect, useMemo, useRef } from "react"
 import { GLTFResult } from "../../../game/types/GLTFResult.type"
 import * as types from "./3d-button.types"
 import { transition } from "./settings"
@@ -26,6 +26,20 @@ const Shapes = ({ isHover, isPress, mouseX, mouseY }: types.ShapesType) => {
 
   const lightRotateX = useSmoothTransform(mouseY, spring, mouseToLightRotation)
   const lightRotateY = useSmoothTransform(mouseX, spring, mouseToLightRotation)
+
+  // Shuffled meshes
+  const meshes = useMemo(() => {
+    const allMeshes = [
+      { geo: nodes.dice_03_dice_00_0.geometry, mat: materials.dice_00 },
+      { geo: nodes.dice_01_dice_01_0.geometry, mat: materials.dice_01 },
+      { geo: nodes.dice_02_dice_02_0.geometry, mat: materials.dice_02 },
+      { geo: nodes.dice_00_dice_03_0.geometry, mat: materials.dice_03 },
+    ]
+
+    allMeshes.sort(() => Math.random() - 0.5)
+
+    return allMeshes
+  }, [])
 
   return (
     <Canvas
@@ -51,29 +65,25 @@ const Shapes = ({ isHover, isPress, mouseX, mouseY }: types.ShapesType) => {
             hover: { z: isPress ? -0.9 : 0 },
           }}
         >
-          <Dice1 nodes={nodes} materials={materials} />
-          <Dice2 nodes={nodes} materials={materials} />
-          <Dice3 nodes={nodes} materials={materials} />
-          <Dice4 nodes={nodes} materials={materials} />
+          <Dice1 geometry={meshes[0].geo} material={meshes[0].mat} />
+          <Dice2 geometry={meshes[1].geo} material={meshes[1].mat} />
+          <Dice3 geometry={meshes[2].geo} material={meshes[2].mat} />
+          <Dice4 geometry={meshes[3].geo} material={meshes[3].mat} />
         </motion.group>
       </MotionConfig>
     </Canvas>
   )
 }
 
-const Dice1 = ({ nodes, materials }: types.ObjType) => {
+const Dice1 = ({ geometry, material }: types.ObjType) => {
   return (
     <motion.mesh position={[-0.5, -0.5, 0]} variants={{ hover: { z: 2.3 } }}>
-      <mesh
-        geometry={nodes.dice_00_dice_03_0.geometry}
-        material={materials.dice_03}
-        scale={0.2}
-      />
+      <mesh geometry={geometry} material={material} scale={0.2} />
     </motion.mesh>
   )
 }
 
-const Dice2 = ({ nodes, materials }: types.ObjType) => {
+const Dice2 = ({ geometry, material }: types.ObjType) => {
   return (
     <motion.mesh
       position={[-0.8, 0.4, 0]}
@@ -87,16 +97,12 @@ const Dice2 = ({ nodes, materials }: types.ObjType) => {
         },
       }}
     >
-      <mesh
-        geometry={nodes.dice_01_dice_01_0.geometry}
-        material={materials.dice_01}
-        scale={0.2}
-      />
+      <mesh geometry={geometry} material={material} scale={0.2} />
     </motion.mesh>
   )
 }
 
-const Dice3 = ({ nodes, materials }: types.ObjType) => {
+const Dice3 = ({ geometry, material }: types.ObjType) => {
   return (
     <motion.mesh
       position={[0.1, 0.4, 0]}
@@ -109,16 +115,12 @@ const Dice3 = ({ nodes, materials }: types.ObjType) => {
         },
       }}
     >
-      <mesh
-        geometry={nodes.dice_03_dice_00_0.geometry}
-        material={materials.dice_00}
-        scale={0.125}
-      />
+      <mesh geometry={geometry} material={material} scale={0.125} />
     </motion.mesh>
   )
 }
 
-const Dice4 = ({ nodes, materials }: types.ObjType) => {
+const Dice4 = ({ geometry, material }: types.ObjType) => {
   return (
     <motion.mesh
       position={[1.1, 0, 0]}
@@ -132,18 +134,12 @@ const Dice4 = ({ nodes, materials }: types.ObjType) => {
         },
       }}
     >
-      <mesh
-        geometry={nodes.dice_02_dice_02_0.geometry}
-        material={materials.dice_02}
-        scale={0.25}
-      />
+      <mesh geometry={geometry} material={material} scale={0.25} />
     </motion.mesh>
   )
 }
 
 const Lights = () => {
-  // const a = <div className="bg-[#a980c9]"></div>
-
   return (
     <>
       <ambientLight intensity={0.5} />

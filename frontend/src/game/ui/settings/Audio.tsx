@@ -1,16 +1,11 @@
-import { useContext, useState } from "react"
+import { ChangeEvent, useContext, useState } from "react"
 import ReactSwitch from "react-switch"
 import { GameContext } from "../../context/GameContext"
+import { DEFAULT_SETTINGS } from "../../data/Data"
 
 const Audio = () => {
-  const {
-    settings,
-    setSettings,
-    songs,
-    setVolume,
-    selectedSongs,
-    setSelectedSongs,
-  } = useContext(GameContext)
+  const { settings, setSettings, songs, selectedSongs, setSelectedSongs } =
+    useContext(GameContext)
 
   const [sound, setSound] = useState(settings.sound)
   const [music, setMusic] = useState(settings.music)
@@ -61,16 +56,7 @@ const Audio = () => {
       {/* Music volume slider */}
       <div className="mb-2 flex flex-col items-center justify-between gap-y-2">
         <h1>Music volume</h1>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          defaultValue="0.25"
-          step="0.01"
-          className="h-1 w-full select-none focus:cursor-grab active:cursor-grabbing"
-          onChange={e => setVolume(Number(e.target.value))}
-          disabled={!music}
-        />
+        <AudioSlider music={music} />
       </div>
 
       {/* Showing all of the songs as options */}
@@ -106,6 +92,27 @@ const Audio = () => {
         ))}
       </div>
     </>
+  )
+}
+
+const AudioSlider = ({ music }: { music: boolean }) => {
+  const { setVolume } = useContext(GameContext)
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setVolume(Number(e.target.value))
+  }
+
+  return (
+    <input
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      defaultValue={DEFAULT_SETTINGS.defaultVolume}
+      className="h-1 w-full select-none focus:cursor-grab active:cursor-grabbing"
+      onChange={handleChange}
+      disabled={!music}
+    />
   )
 }
 

@@ -1,6 +1,6 @@
 import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
-import { SettingsType } from "../types/Settings.type"
+import { EnvMap, EnvMapType, SettingsType } from "../types/Settings.type"
 
 // If we are in training dice mode
 export const TRAINING_DICE_MODE =
@@ -13,12 +13,23 @@ export const USER_TURN_DURATION = 70
 export const MESSAGE_COOLDOWN = 5000
 
 // Settings
+const getDefaultEnvMap = (): EnvMapType => {
+  const env = localStorage.getItem("settingsEnv")
+
+  if (env !== null && EnvMap.includes(env)) {
+    return env as EnvMapType
+  } else {
+    return "diamondHall"
+  }
+}
+
 export const DEFAULT_SETTINGS: SettingsType = {
   perf: false,
   debug: false,
   sound: true,
   music: true,
-  envMap: "diamondHall",
+  envMap: getDefaultEnvMap(),
+  defaultVolume: 0.25,
 }
 
 // Stage

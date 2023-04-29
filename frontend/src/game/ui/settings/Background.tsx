@@ -14,6 +14,7 @@ const Background = ({ setOpen }: SettingsProps) => {
         envMap,
       }
     })
+    localStorage.setItem("settingsEnv", envMap)
 
     setOpen(false)
   }

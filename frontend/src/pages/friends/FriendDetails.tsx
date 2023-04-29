@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import useAxios from "../../components/hooks/useAxios"
 import notification from "../../components/utils/Notification"
 import { FriendType } from "./Friend.type"
@@ -17,7 +17,6 @@ type FriendDetailsProps = {
 const FriendDetails = ({ friend, setLoading }: FriendDetailsProps) => {
   const navigate = useNavigate()
   const axiosInstance = useAxios()
-  const location = useLocation()
 
   // Going to the chat room between the two users
   const goToChat = async (friend: FriendType) => {

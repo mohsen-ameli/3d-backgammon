@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import { DEFAULT_SETTINGS } from "../data/Data"
 import { SettingsType } from "../types/Settings.type"
 import { SongType } from "../types/Song.type"
 
@@ -7,8 +8,8 @@ import { SongType } from "../types/Song.type"
  */
 const useMusic = (started: boolean, settings: SettingsType) => {
   // All songs
-  const songs = useMemo(() => {
-    return [
+  const songs = useMemo(
+    () => [
       {
         name: "Random",
         song: new Audio(),
@@ -62,14 +63,16 @@ const useMusic = (started: boolean, settings: SettingsType) => {
         ),
       },
       { name: "Water Fluid", song: new Audio("/sounds/music/watr-fluid.mp3") },
-    ]
-  }, [])
+    ],
+    []
+  )
 
   // State to keep track of a song being finished playing.
   const finishedSong = useRef(true)
 
   // The song that is currently playing
   const song = useRef(songs[0])
+  const volume = useRef(DEFAULT_SETTINGS.defaultVolume)
 
   const [selectedSongs, setSelectedSongs] = useState<SongType[]>([song.current])
 
@@ -87,10 +90,11 @@ const useMusic = (started: boolean, settings: SettingsType) => {
   }, [selectedSongs])
 
   // Function to set the volume
-  const setVolume = (volume: number) => {
+  const setVolume = (vol: number) => {
     if (!settings.music) return
 
-    song.current.song.volume = volume
+    song.current.song.volume = vol
+    volume.current = vol
   }
 
   // Function to play a new random song
@@ -116,6 +120,9 @@ const useMusic = (started: boolean, settings: SettingsType) => {
       }
       song.current.song.play()
     }
+
+    setVolume(volume.current)
+
     song.current.song.addEventListener("ended", playNewSong)
   }
 
@@ -127,6 +134,12 @@ const useMusic = (started: boolean, settings: SettingsType) => {
       song.song.removeEventListener("ended", playNewSong)
     }
   }
+
+  useEffect(() => {
+    for (const song of songs) {
+      song.song.volume = DEFAULT_SETTINGS.defaultVolume
+    }
+  }, [])
 
   // Handling music playing
   useEffect(() => {

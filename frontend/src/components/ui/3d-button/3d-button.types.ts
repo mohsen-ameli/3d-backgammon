@@ -1,6 +1,6 @@
 import { MotionValue } from "framer-motion"
 import { ButtonHTMLAttributes } from "react"
-import { BufferGeometry, Material, Mesh, MeshStandardMaterial } from "three"
+import { BufferGeometry, MeshStandardMaterial } from "three"
 
 export type ShapesType = {
   isHover: boolean
@@ -15,8 +15,8 @@ export type CameraTypes = {
 }
 
 export type ObjType = {
-  nodes: Record<string, Mesh<BufferGeometry, Material | Material[]>>
-  materials: Record<string, MeshStandardMaterial>
+  geometry: BufferGeometry
+  material: MeshStandardMaterial
 }
 
 export type Button3dProps = ButtonHTMLAttributes<HTMLButtonElement> & {
