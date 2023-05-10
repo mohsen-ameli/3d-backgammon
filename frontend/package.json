@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@react-spring/shared": "^9.7.0",
+    "@react-spring/web": "^9.7.2",
     "@react-three/drei": "^9.56.27",
     "@react-three/fiber": "^8.11.5",
     "@react-three/rapier": "^0.12.2",

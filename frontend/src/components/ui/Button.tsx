@@ -1,9 +1,7 @@
 import { ButtonHTMLAttributes, useState } from "react"
 import buttonClick from "/sounds/button-click.mp3"
 
-type InputProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  className?: string
-}
+type InputProps = ButtonHTMLAttributes<HTMLButtonElement>
 
 /**
  * A button that has a somewhat cool hover effect
@@ -29,8 +27,10 @@ const Button = (props: InputProps) => {
     >
       <div className="relative z-20">{children}</div>
       <div
-        className={`absolute inset-0 z-10 rounded-md opacity-0 transition duration-200 group-hover:opacity-100
-      ${disabled ? "" : "bg-gradient-to-b from-red-500 to-orange-500"}`}
+        className={`absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 opacity-0 transition duration-200 ${
+          disabled ? "" : "group-hover:opacity-100"
+        }
+      `}
       ></div>
     </button>
   )

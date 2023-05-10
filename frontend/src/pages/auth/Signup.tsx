@@ -95,6 +95,7 @@ const Signup = () => {
           className={
             "mt-3 w-full self-center " + (btnClicked && "cursor-not-allowed")
           }
+          disabled={btnClicked}
         >
           {btnClicked ? <ButtonLoading /> : "Sign Up"}
         </Button>

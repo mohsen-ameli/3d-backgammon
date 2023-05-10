@@ -27,7 +27,8 @@
     "dist": true,
     "**/node_modules": true,
     "node_modules": true,
-    "tailwind.config.cjs": true
+    "tailwind.config.cjs": true,
+    "yarn.lock": true
   },
   "explorerExclude.backup": {},
   "editor.formatOnSave": true,

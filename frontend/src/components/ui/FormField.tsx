@@ -49,12 +49,14 @@ const FormField = (props: FormFieldProps) => {
       >
         {label}
       </label>
-      <Input id={name} {...props} type={type} />
+      <div className="relative flex">
+        <Input className="flex-1" id={name} {...props} type={type} />
 
-      {/* See password */}
-      {(name === "password" || name === "password2") && (
-        <Eyeball show={show} toggle={toggle} />
-      )}
+        {/* See password */}
+        {(name === "password" || name === "password2") && (
+          <Eyeball show={show} toggle={toggle} />
+        )}
+      </div>
 
       {/* Errors */}
       {errors && errors.code === name && (
@@ -71,7 +73,7 @@ type EyeballProps = {
 
 const Eyeball = ({ show, toggle }: EyeballProps) => {
   return (
-    <div className="absolute right-3 bottom-2 h-[30px] w-[30px] cursor-pointer pt-[6px] text-center text-black duration-100 hover:text-slate-500 hover:ease-in-out">
+    <div className="absolute right-2 top-1/2 h-[30px] w-[30px] -translate-y-1/2 cursor-pointer pt-[6px] text-center text-black duration-100 hover:text-slate-500 hover:ease-in-out">
       {!show ? (
         <i className="fa-regular fa-eye" onClick={toggle}></i>
       ) : (
