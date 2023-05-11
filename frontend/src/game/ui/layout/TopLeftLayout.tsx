@@ -1,12 +1,12 @@
 import { useContext, useState } from "react"
-import { GameContext } from "../context/GameContext"
-import LayoutBtn from "./LayoutBtn"
-import Modal from "./Modal"
-import Info from "./info/Info"
-import Settings from "./settings/Settings"
+import Modal from "../../../components/ui/Modal"
+import { GameContext } from "../../context/GameContext"
+import LayoutBtn from "../components/LayoutBtn"
+import Info from "../info/Info"
+import Settings from "../settings/Settings"
 
 /**
- * Set of button on the top left corner
+ * Set of buttons on the top left corner
  */
 const TopLeftLayout = () => {
   const { resetOrbit, toggleControls, inGame } = useContext(GameContext)
@@ -25,7 +25,7 @@ const TopLeftLayout = () => {
 
   return (
     <>
-      <div className="absolute top-0 left-8 z-[17] grid grid-cols-2 gap-1 p-1 lg:left-0 lg:grid-cols-4 lg:gap-2 lg:p-2">
+      <div className="absolute left-8 top-0 z-[17] grid grid-cols-2 gap-1 p-1 lg:left-0 lg:grid-cols-4 lg:gap-2 lg:p-2">
         {inGame && (
           <>
             <LayoutBtn title="Lock Controls" onClick={switchControls}>

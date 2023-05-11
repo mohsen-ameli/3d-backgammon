@@ -56,6 +56,7 @@ class Game(models.Model):
 class InGameMessages(models.Model):
     id = models.IntegerField(primary_key=True)
     message = models.CharField(max_length=200)
+    audio = models.FileField(upload_to="audio/messages", null=True)
     show = models.BooleanField(default=True)
 
     def __str__(self) -> str:

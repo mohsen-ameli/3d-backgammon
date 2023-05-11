@@ -2,10 +2,6 @@ import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import { EnvMap, EnvMapType, SettingsType } from "../types/Settings.type"
 
-// If we are in training dice mode
-export const TRAINING_DICE_MODE =
-  process.env.NODE_ENV === "development" ? false : false
-
 // User turn duration (Synced with backend in settings.py)
 export const USER_TURN_DURATION = 70
 
@@ -117,3 +113,10 @@ const DEFAULT_POS: CheckerType[] = [
 
 export const DEFAULT_CHECKER_POSITIONS =
   process.env.NODE_ENV === "development" ? DEFAULT_POS : DEFAULT_POS
+
+/**
+ * If we are in training dice mode
+ * @deprecated
+ */
+export const TRAINING_DICE_MODE =
+  process.env.NODE_ENV === "development" ? false : false

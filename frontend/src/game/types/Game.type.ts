@@ -1,6 +1,7 @@
 import { CheckerPickedType, CheckerType, UserCheckerType } from "./Checker.type"
 import { DiceMoveType, DicePhysics } from "./Dice.type"
 import { MaterialType, NodeType } from "./GLTFResult.type"
+import { MessageType } from "./Message.type"
 import { SettingsType } from "./Settings.type"
 import { SongType } from "./Song.type"
 
@@ -25,7 +26,7 @@ export type PlayersType = {
 }
 
 // Message type for in game messages
-export type MessageType = { userId: number; message: string } | null
+export type MessagesType = { userId: number; message: MessageType } | null
 
 // The timer of active user.
 // TODO: Perhaps we could merge this with PlayerType
@@ -80,7 +81,7 @@ export type GameContextType = {
   // States
   started: boolean
   myTurn: boolean
-  messages: MessageType | null
+  messages: MessagesType | null
   ws: WebSocket | undefined
   initial: InitialType
   players: PlayersType | undefined
@@ -118,7 +119,7 @@ export type GameDataTypes = {
   finished?: boolean
   winner?: PlayerType
   resigner?: PlayerType
-  message?: string
+  message?: MessageType
   user_id?: number
   initial?: boolean
   black?: number

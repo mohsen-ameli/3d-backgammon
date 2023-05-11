@@ -2,4 +2,6 @@
 export type MessageType = {
   id: number
   message: string
+  audio?: string
+  show: boolean
 }

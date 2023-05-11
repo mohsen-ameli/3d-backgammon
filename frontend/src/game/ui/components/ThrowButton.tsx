@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import { useContext } from "react"
-import Button from "../../components/ui/Button"
-import { GameContext } from "../context/GameContext"
+import Button from "../../../components/ui/Button"
+import { GameContext } from "../../context/GameContext"
 
 type ThrowButtonProps = {
   className?: string

@@ -1,10 +1,15 @@
 import { useContext, useRef, useState } from "react"
-import useAxios from "../../components/hooks/useAxios"
-import Button from "../../components/ui/Button"
-import Input from "../../components/ui/Input"
-import notification from "../../components/utils/Notification"
-import { GameContext } from "../context/GameContext"
+import useAxios from "../../../components/hooks/useAxios"
+import Button from "../../../components/ui/Button"
+import Input from "../../../components/ui/Input"
+import notification from "../../../components/utils/Notification"
+import { GameContext } from "../../context/GameContext"
 
+/**
+ * Deprecated function. Used this for training the AI I built to determine dice
+ * numbers based on the die's rotation.
+ * @deprecated
+ */
 const DiceTraining = () => {
   const { throwDice } = useContext(GameContext)
   // const { run } = useDiceRotationAI()
@@ -53,7 +58,7 @@ const DiceTraining = () => {
   }
 
   return (
-    <div className="absolute top-0 left-1/2 z-10 flex h-[60px] w-fit -translate-x-1/2 gap-4 rounded-md bg-blue-400 p-2">
+    <div className="absolute left-1/2 top-0 z-10 flex h-[60px] w-fit -translate-x-1/2 gap-4 rounded-md bg-blue-400 p-2">
       <Input className="w-[120px]" placeholder="Dice number" ref={inputRef} />
       <Button onClick={() => throwDice.current()}>Throw</Button>
       <Button onClick={save}>Save</Button>

@@ -5,11 +5,11 @@ import { CuboidCollider, RigidBody, RigidBodyApi } from "@react-three/rapier"
 import { UserDragConfig, useDrag } from "@use-gesture/react"
 import { useContext, useEffect, useRef, useState } from "react"
 import { Vector3 } from "three"
+import Modal from "../../components/ui/Modal"
 import { AuthContext } from "../../context/AuthContext"
 import { GameContext } from "../context/GameContext"
 import { BOARD_W, CHECKER_W, GROUND_CHECKERS } from "../data/Data"
 import { CheckerType } from "../types/Checker.type"
-import Modal from "../ui/Modal"
 import Endgame from "../utils/Endgame"
 import hasMoves from "../utils/HasMoves"
 import lenRemovedCheckers from "../utils/LenRemovedCheckers"
@@ -409,7 +409,7 @@ const Checker = ({ thisChecker }: CheckerProps) => {
         {/* Invisible box surrounding the checkers so the user can easily drag each checker */}
         {/* @ts-ignore: SpringValue type is a Vector3, but TypeScript won't allow it */}
         <a3f.mesh {...bind()}>
-          <boxGeometry args={[0.3, 0.06, 0.3]} />
+          <boxGeometry args={[0.3, 0.06, 0.2]} />
           <meshNormalMaterial visible={false} />
         </a3f.mesh>
 

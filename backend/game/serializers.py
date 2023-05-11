@@ -4,4 +4,4 @@ from .models import InGameMessages
 class InGameMessagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = InGameMessages
-        fields = ("id", "message", "show")
+        fields = ("id", "message", "audio", "show")

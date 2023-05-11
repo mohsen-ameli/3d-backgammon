@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, useState } from "react"
-import { Children } from "../../components/types/children.type"
+import { Children } from "../../../components/types/children.type"
 import buttonClick from "/sounds/button-click.mp3"
 
 type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & Children

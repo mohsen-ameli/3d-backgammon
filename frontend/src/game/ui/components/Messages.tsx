@@ -1,26 +1,34 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { useContext, useEffect, useRef, useState } from "react"
-import { GameContext } from "../context/GameContext"
-import { MESSAGE_COOLDOWN } from "../data/Data"
-import { MessageType, PlayerType } from "../types/Game.type"
+import { GameContext } from "../../context/GameContext"
+import { MESSAGE_COOLDOWN } from "../../data/Data"
+import { MessagesType, PlayerType } from "../../types/Game.type"
 
 type MessagesProps = {
   player: PlayerType | undefined
 }
 
 /**
- * The in game messages
+ * The in-game message bubble.
  */
 const Messages = ({ player }: MessagesProps) => {
   const { messages, players } = useContext(GameContext)
 
-  const [msgs, setMsgs] = useState<MessageType>(messages)
+  const [msgs, setMsgs] = useState<MessagesType>(messages)
 
   const timeout = useRef<NodeJS.Timeout>()
 
   // Handling in-game messages
   useEffect(() => {
     if (!messages) return
+
+    // Playing the message audio
+    const audioUrl = messages.message.audio
+    if (audioUrl !== undefined) {
+      const msgAudio = new Audio(audioUrl)
+      msgAudio.play()
+    }
+
     setMsgs(messages)
     clearTimeout(timeout.current)
     timeout.current = setTimeout(() => setMsgs(null), MESSAGE_COOLDOWN)
@@ -50,7 +58,7 @@ const Messages = ({ player }: MessagesProps) => {
                   "rounded-t-xl rounded-br-xl"
             }`}
           >
-            {msgs.message}
+            {msgs.message.message}
           </div>
         </motion.div>
       )}

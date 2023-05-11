@@ -1,6 +1,26 @@
 {
     "peacock.remoteColor": "#ff3d00",
     "files.exclude": {
+        "**/.git": false,
+        "**/.svn": false,
+        "**/.hg": false,
+        "**/CVS": false,
+        "**/.DS_Store": false,
+        "**/Thumbs.db": false,
+        "runtime.txt": false,
+        "requirements.txt": false,
+        "Procfile": false,
+        "dump.rdb": false,
+        "db.sqlite3": false,
+        "**/.gitignore": false,
+        "**/venv": false,
+        "venv": false,
+        "**/.vscode": false,
+        ".vscode": false,
+        "**/static": false,
+        "static": false
+    },
+    "explorerExclude.backup": {
         "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
@@ -20,7 +40,6 @@
         "**/static": false,
         "static": false
     },
-    "explorerExclude.backup": {},
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#ff6433",
         "activityBar.background": "#ff6433",

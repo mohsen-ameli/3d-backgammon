@@ -43,7 +43,7 @@ const Modal = ({ setOpen, open, children }: CarouselProps) => {
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="fixed top-1/2 left-1/2 z-[999] flex h-screen w-screen -translate-y-1/2 -translate-x-1/2 items-center justify-center bg-[#0000005a] text-white"
+          className="fixed left-1/2 top-1/2 z-[999] flex h-screen w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-[#0000005a] text-white"
         >
           <motion.div
             variants={modalVariants}
@@ -54,7 +54,7 @@ const Modal = ({ setOpen, open, children }: CarouselProps) => {
             </div>
 
             <button
-              className="absolute top-2 right-5 text-2xl duration-100 hover:text-slate-400 hover:ease-in-out"
+              className="absolute right-5 top-2 text-2xl duration-100 hover:text-slate-400 hover:ease-in-out"
               onClick={() => setOpen(false)}
             >
               x

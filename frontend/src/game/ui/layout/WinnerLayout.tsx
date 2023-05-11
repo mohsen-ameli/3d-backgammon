@@ -1,16 +1,16 @@
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
-import useAxios from "../../components/hooks/useAxios"
-import Button from "../../components/ui/Button"
-import Center from "../../components/ui/Center"
-import notification from "../../components/utils/Notification"
-import { GameContext } from "../context/GameContext"
-import { DEFAULT_CHECKER_POSITIONS } from "../data/Data"
+import useAxios from "../../../components/hooks/useAxios"
+import Button from "../../../components/ui/Button"
+import Center from "../../../components/ui/Center"
+import notification from "../../../components/utils/Notification"
+import { GameContext } from "../../context/GameContext"
+import { DEFAULT_CHECKER_POSITIONS } from "../../data/Data"
 
 /**
  * An overlay when someone wins a live game.
  */
-const WinnerOverlay = () => {
+const WinnerLayout = () => {
   const {
     winner,
     gameMode,
@@ -160,4 +160,4 @@ const Top = ({ score, left, right }: TopProps) => {
   )
 }
 
-export default WinnerOverlay
+export default WinnerLayout

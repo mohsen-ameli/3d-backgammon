@@ -1,9 +1,9 @@
 import { memo, useContext, useEffect, useState } from "react"
-import { GameContext } from "../context/GameContext"
-import { UserCheckerType } from "../types/Checker.type"
-import { PlayerType, TimerType } from "../types/Game.type"
-import DiceMoves from "./DiceMoves"
-import PipScore from "./PipScore"
+import { GameContext } from "../../context/GameContext"
+import { UserCheckerType } from "../../types/Checker.type"
+import { PlayerType, TimerType } from "../../types/Game.type"
+import DiceMoves from "../utils/DiceMoves"
+import PipScore from "../utils/PipScore"
 import ThrowButton from "./ThrowButton"
 import UserImage from "./UserImage"
 
@@ -44,7 +44,7 @@ const SidePanel = (props: SideProps) => {
               {/* User checker color */}
               <div
                 className={
-                  "mt-2 mb-2 h-[20px] w-[20px] rounded-full lg:h-[30px] lg:w-[30px] " +
+                  "mb-2 mt-2 h-[20px] w-[20px] rounded-full lg:h-[30px] lg:w-[30px] " +
                   (player?.color === "white" ? "bg-slate-200" : "bg-slate-900")
                 }
               />

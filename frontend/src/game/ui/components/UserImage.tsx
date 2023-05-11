@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react"
 import { CountdownCircleTimer } from "react-countdown-circle-timer"
-import Center from "../../components/ui/Center"
-import { GameContext } from "../context/GameContext"
-import { USER_TURN_DURATION } from "../data/Data"
-import { PlayerType } from "../types/Game.type"
+import Center from "../../../components/ui/Center"
+import { GameContext } from "../../context/GameContext"
+import { USER_TURN_DURATION } from "../../data/Data"
+import { PlayerType } from "../../types/Game.type"
 import Messages from "./Messages"
 
 type UserImageType = {

@@ -1,11 +1,11 @@
-import { DiceMoveType } from "../types/Dice.type"
+import { DiceMoveType } from "../../types/Dice.type"
 
 type DiceMovesProps = {
   dice: DiceMoveType
 }
 
 /**
- * Small function used in UI to get the dice icons.
+ * Small function used in the SidePanels to get the dice icons.
  */
 const DiceMoves = ({ dice }: DiceMovesProps) => {
   const jsx = []

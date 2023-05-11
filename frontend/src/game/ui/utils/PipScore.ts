@@ -1,9 +1,10 @@
-import { CheckerType, UserCheckerType } from "../types/Checker.type"
+import { CheckerType, UserCheckerType } from "../../types/Checker.type"
 
 type PipType = { col: number; num: number }
 
 /**
- * Calculates the user score or pip. For reference: https://www.bkgm.com/gloss/lookup.cgi?pip+count
+ * Calculates the user pip (or score).
+ * Reference: https://www.bkgm.com/gloss/lookup.cgi?pip+count
  */
 const PipScore = (checkers: CheckerType[], color: UserCheckerType) => {
   let pip: number = 0

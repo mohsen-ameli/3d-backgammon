@@ -110,7 +110,7 @@ const GameContextProvider = ({ children, started }: GameContextProps) => {
   const [settings, setSettings] = useState<SettingsType>(DEFAULT_SETTINGS)
 
   // In game messages
-  const [messages, setMessages] = useState<types.MessageType>(null)
+  const [messages, setMessages] = useState<types.MessagesType>(null)
 
   // Audio to play when users switch
   const [audio] = useState(() => new Audio(userSwitchAudio))

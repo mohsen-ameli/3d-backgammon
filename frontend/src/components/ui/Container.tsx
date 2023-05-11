@@ -1,5 +1,6 @@
 import { animated, useSpring } from "@react-spring/web"
 import { MouseEvent, useRef } from "react"
+import { isMobile } from "react-device-detect"
 import { UIProps } from "../types/UI.type"
 
 const calc = (x: number, y: number, rect: DOMRect) => [
@@ -50,7 +51,7 @@ const Container = ({ className, children }: UIProps) => {
       ref={cardRef}
       style={{
         // @ts-ignore
-        transform: xys.to(trans),
+        transform: !isMobile && xys.to(trans),
         boxShadow: "0px 0px 10px 1px #853f0d75",
       }}
       id="container"

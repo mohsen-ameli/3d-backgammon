@@ -3,6 +3,7 @@ import { useThree } from "@react-three/fiber"
 import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import { AudioListener, AudioLoader, PositionalAudio } from "three"
+import Modal from "../../components/ui/Modal"
 import wsGood from "../../components/utils/wsGood"
 import { GameContext } from "../context/GameContext"
 import {
@@ -11,7 +12,6 @@ import {
   TRAINING_DICE_MODE,
 } from "../data/Data"
 import { DiceReadyType } from "../types/Dice.type"
-import Modal from "../ui/Modal"
 import hasMoves from "../utils/HasMoves"
 import switchPlayers from "../utils/SwitchPlayers"
 import useUpdateLiveGame from "../utils/useUpdateLiveGame"

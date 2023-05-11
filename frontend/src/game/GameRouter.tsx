@@ -7,8 +7,8 @@ import GameContextProvider from "./context/GameContext"
 import FriendGame from "./modes/FriendGame"
 import PassAndPlay from "./modes/PassAndPlay"
 import PlayRandom from "./modes/PlayRandom"
-import Layout from "./ui/Layout"
-import Loader from "./ui/Loader"
+import Layout from "./ui/layout/Layout"
+import Loader from "./utils/Loader"
 
 /**
  * The router that contains the game context, experience, layout, and the game routes.

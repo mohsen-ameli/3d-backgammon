@@ -4,10 +4,11 @@ import { Euler } from "three"
 import getServerUrl from "../../../components/utils/getServerUrl"
 
 /**
- * This component returns a function that takes in a rigid body die instance,
+ * Deprecated hook. This component returns a function that takes in a rigid body die instance,
  * and converts the die's rotation to euler, and uses it to get a prediction from the
  * AI that's served in the backend. This component is the successor to the old one,
  * which used pure math to do this. This is a total overkill, but IT WORKS.
+ * @deprecated
  */
 const useGetDiceNumberAI = () => {
   const predict = async (die: RigidBodyApi) => {
