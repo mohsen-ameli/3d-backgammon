@@ -5,9 +5,11 @@ from . import views
 urlpatterns = [
     path('token/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    
     path('signup/', views.register_user),
     path('handle-friends/', views.handle_friends),
     path('get-user-profile/', views.get_user_profile),
+    path('search-friend/<str:typed>/', views.search_friend),
     path('get-chat-uuid/<int:friend_id>/', views.get_chat_uuid),
+    path('validate-chat/<str:chat_uuid>/', views.validate_chat),
+    path('validate-user/<str:email>/<str:provider>/', views.validate_provider_user),
 ]

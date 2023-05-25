@@ -39,6 +39,7 @@ def setWinner(game: Game, id: int) -> dict:
 
     return {"id": winner.id, "name": winner.username, "color": color}
 
+
 class GameConsumer(AsyncWebsocketConsumer):
     users_count = 0
     users = {}
@@ -119,7 +120,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             context = {
                 "type": "send_message",
                 "message": data["message"],
-                "user_id": data["user_id"]
+                "id": data["id"]
             }
             await self.channel_layer.group_send(self.room_group_name, context)
         elif "resign" in data:
@@ -156,11 +157,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         '''
 
         message = event["message"]
-        user_id = event["user_id"]
+        id = event["id"]
         
         await self.send(text_data=json.dumps({
             "message": message,
-            "user_id": user_id
+            "id": id
         }))
 
     async def resigned_game(self, event):

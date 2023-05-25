@@ -23,7 +23,7 @@ class ProfileUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "image", "total_games", "games_won", "games_lost", "date_joined")
+        fields = ("total_games", "games_won", "games_lost", "date_joined")
 
     def get_date_joined(self, obj):
         return obj.get_date_joined

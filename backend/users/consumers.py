@@ -1,41 +1,16 @@
-import asyncio
 import json
-import jwt
 
-from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.conf import settings
 from django.utils import timezone
-from jwt.exceptions import ExpiredSignatureError
 
 from .consumer_utils import *
+from .signals import *
 from .models import Chat, CustomUser, Message
 
 '''
-    Searching for friends (/search-friend)
+    Chatting between users
 '''
-
-class SearchFriendConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        await self.accept()
-
-    async def receive(self, text_data):
-        # Getting the user's input
-        self.typed = json.loads(text_data)["typed"]
-
-        results = await search(self.typed)
-
-        await self.send(json.dumps({"results": results}))
-
-    async def disconnect(self, close_code):
-        await self.close(close_code)
-
-
-'''
-    Chatting between users (/chat)
-'''
-
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         chat_id = self.scope["url_route"]["kwargs"]["chat_id"]
@@ -44,9 +19,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.chat = await database_sync_to_async(Chat.objects.get)(uuid=chat_id)
         self.room_group_name = chat_id
 
+        # Adding user to the group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
+        # Accepting connection
         await self.accept()
+
+        # Sending initial data
+        await self.fetch_messages()
 
     async def receive(self, text_data):
         '''
@@ -55,11 +35,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         '''
 
         data = json.loads(text_data)
-
-        # If the client is initially requesting the messages
-        if "command" in data:
-            await self.fetch_messages()
-            return
 
         message = data["message"]
         sender = data["sender"]
@@ -90,7 +65,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             Fetching the messages of the chat from the database
             and sending them to the client
         '''
-
         context = await get_all_chat_msg(self.chat)
         await self.send(text_data=json.dumps(context))
 
@@ -98,7 +72,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         '''
             Used to send a message to the chat, when one of the users sends a message
         '''
-
         message = event["message"]
         sender = event["sender"]
         timestamp = event["timestamp"]
@@ -111,7 +84,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         '''
             Disconnecting a user from the chat consumer
         '''
-
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
 
@@ -120,94 +92,75 @@ class ChatConsumer(AsyncWebsocketConsumer):
     This consumer is persistent throughout the users session, even when
     they're in a game.
 '''
-
 class StatusConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        token = self.scope["url_route"]["kwargs"]["token"]
+        # Get id from url
+        self.id = self.scope["url_route"]["kwargs"]["id"]
 
-        # Getting the user
-        await self.set_user(token)
-        # Updating the user's online status, and last login time
-        await update_user(self.user, is_online=True, last_login=timezone.now())
+        # Adding user to a group
+        await self.channel_layer.group_add(
+            f'user-status-{self.id}', self.channel_name
+        )
 
-        # Starting live updates
-        self.updates_on = "status"
-        # Should the websocket send updates or not
-        self.paused = False
-        # Async function to send updates every x amount of seconds
-        self.thread = asyncio.create_task(self.send_updates())
+        # Updating user's online status and last login time
+        await update_user(self.id, is_online=True, last_login=timezone.now())
 
+        # Accepting the connection
         await self.accept()
 
-    async def receive(self, text_data):
+        await self.send_updates()
+
+    async def send_updates(self, event = {}):
         '''
-            User has done something in the frontend
+            Whenever the user's game requests or live game changes, we
+            send out an update to the user(s).
         '''
-
-        data = json.loads(text_data)
-
-        # Frontend is pausing/resuming the updates (Aka a live game has started)
-        if "paused" in data:
-            await reset_match_requests(self.user)
-
-            self.paused = data["paused"]
-            if not self.paused:
-                self.thread = asyncio.create_task(self.send_updates())
-
-        # Frontend wants updates on new fields of the user
-        if "updates_on" in data:
-            self.updates_on = data["updates_on"]
-
-        # User has logged out and logged in with a different account
-        if "new_refresh" in data:
-            # Updating the user's last login time, and getting the new user if there is one
-            await self.set_user(data["new_refresh"])
-            await update_user(self.user, last_login=timezone.now())
-
-        # Updating the user's online status
-        if "is_online" in data:
-            await update_user(
-                self.user, is_online=data["is_online"], last_login=timezone.now()
-            )
-
-    async def set_user(self, token):
-        '''
-            This function sets/saves the user to memory based on the JWT access token given
-        '''
-
-        try:
-            jwt_token = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
-            self.user_id = jwt_token["user_id"]
-            self.user = await database_sync_to_async(CustomUser.objects.filter)(id=self.user_id)
-        except ExpiredSignatureError:
-            await self.close()
-            return
-
-    async def send_updates(self):
-        '''
-            Asynchronous updates. For example, if one of the users friends send them
-            a game request, and user is in their profile, this becomes essential.
-        '''
-
-        while not self.paused:
-            # Send an update to the client with the current list of friends and friend requests
-            response = await get_updates(self.user_id, self.updates_on)
-            await self.send(text_data=json.dumps(response))
-            await asyncio.sleep(settings.UPDATE_INTERVAL)
+        response = await get_user_game_requests(self.id)
+        await self.send(text_data=json.dumps(response))
 
     async def disconnect(self, close_code):
         '''
             User has disconnected from the website.
         '''
-
         # User has left the lobby, so deleting all match requests
-        await reset_match_requests(self.user)
-        # Updating user's online status
-        await update_user(self.user, is_online=False, last_login=timezone.now())
-        # Canceling the asyncio thread
-        try:
-            self.thread.cancel()
-        except AttributeError:
-            pass
+        await reset_match_requests(self.id)
 
+        # Updating user's online status
+        await update_user(self.id, is_online=False, last_login=timezone.now())
+        
+        # Closing connection
+        await self.close(close_code)
+
+
+'''
+    Gets information about user's friends.
+'''
+class FriendsConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        # Get id from url
+        self.id = self.scope["url_route"]["kwargs"]["id"]
+
+        # Adding user to a group
+        await self.channel_layer.group_add(
+            f'user-{self.id}', self.channel_name
+        )
+
+        # Accepting connection
+        await self.accept()
+        
+        # Sending initial data
+        await self.send_updates()
+
+    async def send_updates(self, event = {}):
+        '''
+            Updates for user's friend list, e.g. friends, friend's online status,
+            number of requests, etc.
+        '''
+        response = await get_updates(self.id)
+        await self.send(text_data=json.dumps(response))
+
+    async def disconnect(self, close_code):
+        '''
+            User has left the friends page.
+        '''
         await self.close(close_code)

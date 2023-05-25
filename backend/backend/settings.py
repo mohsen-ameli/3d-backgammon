@@ -11,7 +11,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = str(os.environ.get("DEBUG")) == "1"
 
-ALLOWED_HOSTS = ["3d-backgammon.up.railway.app", "www.3d-backgammon.up.railway.app", "www.3d-backgammon.com", "3d-backgammon.com", "localhost"]
+ALLOWED_HOSTS = [
+    "3d-backgammon.up.railway.app",
+    "www.3d-backgammon.up.railway.app",
+    "www.3d-backgammon.com",
+    "3d-backgammon.com",
+    "localhost"
+]
 
 INTERNAL_IPS = (
     '127.0.0.1'
@@ -29,7 +35,6 @@ INSTALLED_APPS = [
     # apps
     'game',
     'users',
-    # 'ai',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -134,7 +139,7 @@ USER_TURN_DURATION = 70
 
 # REST Framework
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ("rest_framework.permissions.IsAuthenticated",),
+    # 'DEFAULT_PERMISSION_CLASSES': ("rest_framework.permissions.IsAuthenticated",),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
@@ -142,7 +147,7 @@ REST_FRAMEWORK = {
 
 # SIMPLE JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -159,7 +164,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
+    'USER_ID_CLAIM': 'id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
 
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
@@ -215,7 +220,9 @@ if not DEBUG:
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
     'http://localhost:5173',
+    'http://192.168.0.173:3000',
     'http://192.168.0.173:5173',
     'https://www.3d-backgammon.com',
     'https://3d-backgammon.up.railway.app',

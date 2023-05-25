@@ -11,11 +11,16 @@ import numpy as np
 
 from game.models import Game
 
+PROVIDERS = [
+    ("credentials", "credentials"),
+    ("discord", "discord")
+]
 
 '''
     The abstract custom user
 '''
 class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True, blank=True)
     image = models.ImageField(upload_to="profile_pics/", null=True, blank=True)
     games_won = models.IntegerField(default=0)
     games_lost = models.IntegerField(default=0)
@@ -26,6 +31,7 @@ class CustomUser(AbstractUser):
     game_requests = models.ManyToManyField('self', symmetrical=False, blank=True)
     live_game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True, blank=True, related_name="+")
     games = models.ManyToManyField(Game, symmetrical=False, blank=True)
+    provider = models.CharField(max_length=11, choices=PROVIDERS, default="credentials", blank=True)
 
     @property
     def get_date_joined(self):

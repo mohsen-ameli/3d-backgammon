@@ -1,5 +1,4 @@
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
 
 
 def remove_friend(user, friend):
@@ -15,13 +14,19 @@ def new_friend_request(user, friend):
         Sending a new friend request
     '''
     if friend.friend_requests.filter(id=user.id).exists():
-        raise ValidationError("Friend request already sent")
+        message = "Friend request already sent"
+        error = True
     elif friend == user:
-        raise ValidationError("You can't add yourself")
+        message = "You can't add yourself"
+        error = True
     elif friend.friends.filter(id=user.id).exists():
-        raise ValidationError("You are already friends")
-    friend.friend_requests.add(user)
-    return Response({"message": "Friend added"})
+        message = "You are already friends"
+        error = True
+    else:
+        message = "Friend added"
+        error = False
+        friend.friend_requests.add(user)
+    return Response({"message": message, "error": error})
 
 
 def accept_friend_request(user, friend):

@@ -7,12 +7,11 @@ from .models import CustomUser, Chat
 
 
 # TODO: Probably convert this to a serializer
+'''
+    Takes a chat object in, and return a list filled with the chat messages
+'''
 @database_sync_to_async
 def get_all_chat_msg(chat: Chat) -> list:
-    '''
-        Takes a chat object in, and return a list filled with the chat messages
-    '''
-
     messages = chat.messages.all()
     context = []
 
@@ -27,33 +26,38 @@ def get_all_chat_msg(chat: Chat) -> list:
     return context
 
 
+'''
+    Gets all friends and number of friend requests of a user,
+    and returns it as a dictionary.
+'''
 @database_sync_to_async
-def get_updates(id: int, updates_on: str) -> dict:
-    '''
-        Gets all friends and number of friend requests of a user,
-        and returns it as a dictionary.
-    '''
-
-    if updates_on not in ["status", "friends-list"]:
-        return ValueError("updates_on has is a strict string passed down from the frontend!")
-    
+def get_updates(id: int) -> dict:
     user = CustomUser.objects.get(id=id)
-
-    dict_to_return = {"updates_on": updates_on}
+    dict_to_return = {}
 
     # Front end wants updates on the user's friend list, so we shall provide
-    if updates_on == "friends-list":
-        dict_to_return['num_requests'] = user.friend_requests.count()
-        dict_to_return['friends'] = []
+    dict_to_return['num_requests'] = user.friend_requests.count()
+    dict_to_return['friends'] = []
 
-        friends = user.friends.all().order_by("-is_online")
+    friends = user.friends.all().order_by("-is_online")
 
-        for friend in friends:
-            try:
-                last_login = round(datetime.timestamp(friend.last_login))
-            except TypeError:
-                last_login = None
-            dict_to_return['friends'].append({'id': friend.id, 'username': friend.username, 'is_online': friend.is_online, 'last_login': last_login})
+    for friend in friends:
+        try:
+            last_login = round(datetime.timestamp(friend.last_login))
+        except TypeError:
+            last_login = None
+        dict_to_return['friends'].append({'id': friend.id, 'username': friend.username, 'is_online': friend.is_online, 'last_login': last_login})
+
+    return dict_to_return
+
+
+'''
+    Gets all game requests and any live games of a user.
+'''
+@database_sync_to_async
+def get_user_game_requests(id: int) -> dict:
+    user = CustomUser.objects.get(id=id)
+    dict_to_return = {}
 
     # Default status for all pages in the front end
     dict_to_return['game_requests'] = []
@@ -66,32 +70,25 @@ def get_updates(id: int, updates_on: str) -> dict:
     return dict_to_return
 
 
+'''
+    Method for updating CustomUser's fields
+'''
 @database_sync_to_async
-def update_user(user: CustomUser, **kwargs):
-    '''
-        Method for updating CustomUser's fields
-    '''
+def update_user(id: int, is_online: bool, last_login: datetime):
+    user = CustomUser.objects.get(id=id)
+    user.is_online = is_online
+    user.last_login = last_login
+    user.save()
 
-    for key, value in kwargs.items():
-        user.update(**{key: value})
+    # for key, value in kwargs.items():
+    #     user.update(**{key: value})
+    
 
 
+'''
+    Resting all of user's game requests (When they leave the application)
+'''
 @database_sync_to_async
-def reset_match_requests(user: CustomUser):
-    '''
-        Resting all of user's game requests (When they leave the application)
-    '''
-
-    user.first().game_requests.clear()
-
-
-@database_sync_to_async
-def search(typed: str):
-    '''
-        Querying the database for matching username or email, based on user's input
-    '''
-
-    results = CustomUser.objects.filter(
-        Q(username__iexact=typed) | Q(email__iexact=typed)
-    )
-    return list(results.values('id', 'username'))
+def reset_match_requests(id: int):
+    user = CustomUser.objects.get(id=id)
+    user.game_requests.clear()
