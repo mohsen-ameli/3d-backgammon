@@ -3,26 +3,21 @@ import "animate.css/animate.min.css"
 import "react-toastify/dist/ReactToastify.css"
 import Msg from "./Msg"
 
+type notificationType = "info" | "error" | "delete-rejected" | "message" | "accept-only" | "accept-reject" | "default"
+
 /**
  * Used to send beautiful notifications, throughout the app.
  */
-const notification = (
+export default function notification(
   msg: string,
-  type:
-    | "info"
-    | "error"
-    | "match"
-    | "deleteRejected"
-    | "message"
-    | "resign"
-    | "default" = "default",
-  reject?: () => void,
+  type: notificationType = "default",
+  sticky: boolean = false,
   accept?: () => void,
-  resign?: () => void
-) => {
+  reject?: () => void,
+) {
   const args: ToastOptions<{}> = {
     position: "top-center",
-    autoClose: 4000,
+    autoClose: sticky ? false : 4000,
     hideProgressBar: false,
     closeOnClick: false,
     pauseOnHover: true,
@@ -38,31 +33,19 @@ const notification = (
     case "error":
       toast.error(msg, args)
       break
-    case "match": {
-      toast.info(
-        <Msg
-          msg={msg}
-          green="Accept"
-          red="Reject"
-          accept={accept!}
-          reject={reject!}
-        />,
-        {
-          ...args,
-          autoClose: 10000,
-          closeButton: false,
-          pauseOnHover: false,
-        }
-      )
-      toast.onChange(payload => {
-        if (payload.status === "removed") {
-          reject?.()
-        }
+    case "accept-reject": {
+      toast.info(<Msg msg={msg} green="Accept" red="Reject" accept={accept!} reject={reject!} />, {
+        ...args,
+        autoClose: 10000,
+        closeButton: false,
+        pauseOnHover: false,
       })
-
+      toast.onChange((payload) => {
+        if (payload.status === "removed") reject?.()
+      })
       break
     }
-    case "deleteRejected":
+    case "delete-rejected":
       toast.info(msg, {
         ...args,
         autoClose: 3000,
@@ -87,24 +70,16 @@ const notification = (
         className: "w-fit",
         transition,
       })
-
       break
     }
-    case "resign": {
-      toast.info(
-        <Msg msg={msg} green="Confirm" red="Go back" accept={resign!} />,
-        {
-          ...args,
-          autoClose: 10000,
-          pauseOnHover: false,
-        }
-      )
+    case "accept-only": {
+      const jsx = <Msg msg={msg} green="Confirm" red="Go back" accept={accept!} />
+      toast.info(jsx, { ...args, autoClose: 10000, pauseOnHover: false })
       break
     }
-    default:
+    default: {
       toast(msg, args)
       break
+    }
   }
 }
-
-export default notification

@@ -1,64 +1,55 @@
 import { ContactShadows } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
-import { useContext, useEffect, useMemo, useRef, useState } from "react"
-import {
-  CubeTexture,
-  CubeTextureLoader,
-  DirectionalLight,
-  LoadingManager,
-  sRGBEncoding,
-} from "three"
-import { GameContext } from "../context/GameContext"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { CubeTexture, CubeTextureLoader, DirectionalLight, LoadingManager, SRGBColorSpace } from "three"
+import { useGameStore } from "../store/useGameStore"
 import { DEFAULT_ENV_MAP_INTENSITY } from "../data/Data"
+import { shallow } from "zustand/shallow"
+
+const files = ["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]
+
+const manager = new LoadingManager()
+const loader = new CubeTextureLoader(manager)
 
 /**
  * Staging for our scene
  */
-const Stage = () => {
-  const { materials, inGame, settings } = useContext(GameContext)
+export default function Stage() {
+  const materials = useGameStore.getState().materials
+  const inGame = useGameStore(state => state.inGame)
+  const settings = useGameStore(state => state.settings, shallow)
 
   const { scene } = useThree()
 
   const directionalLight = useRef<DirectionalLight>(null!)
 
-  const [cubeEnvs, setCubeEnvs] = useState<CubeTexture[]>()
+  const [cubeEnvs, setCubeEnvs] = useState<CubeTexture[]>([])
 
-  // Loads all of the env maps, and sets the envMap state
-  useMemo(() => {
-    const files = ["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]
+  // Loads a background texture
+  async function loadBackground(name: "brilliant_hall" | "diamond_hall" | "fin_garden") {
+    // Checking if the background already is loaded
+    if (cubeEnvs.filter(env => env.name === name).length === 1) return
 
-    const manager = new LoadingManager()
-    const loader = new CubeTextureLoader(manager)
+    const texture = await loader.setPath(`/env/cube/${name}/`).loadAsync(files)
+    texture.name = name
 
-    const brilliantHall = loader
-      .setPath("/env/cube/brilliant_hall/")
-      .load(files)
-    const diamondHall = loader.setPath("/env/cube/diamond_hall/").load(files)
-    const finGarden = loader.setPath("/env/cube/fin_garden/").load(files)
+    setCubeEnvs(curr => [...curr, texture])
 
-    brilliantHall.name = "brilliantHall"
-    diamondHall.name = "diamondHall"
-    finGarden.name = "finGarden"
-
-    const cubeTextures = [brilliantHall, diamondHall, finGarden]
-
-    setCubeEnvs(cubeTextures)
-  }, [])
+    scene.background = texture
+    scene.environment = texture
+    scene.background.colorSpace = SRGBColorSpace
+    scene.environment.colorSpace = SRGBColorSpace
+  }
 
   // Sets the background, based on the envMap state
-  useMemo(() => {
-    if (!cubeEnvs) return
-
-    const chosen = cubeEnvs.filter(map => map.name === settings?.envMap)
-
-    scene.background = chosen[0]
-    scene.environment = chosen[0]
-    scene.background.encoding = sRGBEncoding
-    scene.environment.encoding = sRGBEncoding
-  }, [settings?.envMap, cubeEnvs])
+  useMemo(async () => {
+    if (!settings.envMap) return
+    await loadBackground(settings.envMap)
+  }, [settings.envMap])
 
   // Setting the environnement maps, and the default env map
   useEffect(() => {
+    if (!materials) return
     materials.BoardWood2.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY
     materials.ColumnDark.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY
     materials.ColumnWhite.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY
@@ -67,7 +58,7 @@ const Stage = () => {
     materials.DiceWhite.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY
     materials.Hinge.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY
     materials.WhiteCheckerMat.envMapIntensity = DEFAULT_ENV_MAP_INTENSITY
-  }, [])
+  }, [materials])
 
   return (
     <>
@@ -95,8 +86,6 @@ const Stage = () => {
     </>
   )
 }
-
-export default Stage
 
 /**
  * Some controls

@@ -1,4 +1,5 @@
-export type SongType = {
+export type Song = {
   name: string
-  song: HTMLAudioElement
+  src: string
+  song: HTMLAudioElement | null
 }

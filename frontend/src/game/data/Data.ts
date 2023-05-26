@@ -1,6 +1,11 @@
 import { Quaternion, Vector3 } from "three"
 import { CheckerType } from "../types/Checker.type"
 import { EnvMap, EnvMapType, SettingsType } from "../types/Settings.type"
+import { LOTS_OF_REMOVABLES } from "./Extra"
+
+export const ITEMS_TO_LOAD = 21
+
+export const DEFAULT_SONG = { name: "Shuffle", src: "", song: null }
 
 // User turn duration (Synced with backend in settings.py)
 export const USER_TURN_DURATION = 70
@@ -9,13 +14,13 @@ export const USER_TURN_DURATION = 70
 export const MESSAGE_COOLDOWN = 5000
 
 // Settings
-const getDefaultEnvMap = (): EnvMapType => {
-  const env = localStorage.getItem("settingsEnv")
+function getDefaultEnvMap(): EnvMapType {
+  const env = typeof window !== "undefined" && localStorage.getItem("settingsEnv")
 
-  if (env !== null && EnvMap.includes(env)) {
+  if (env && EnvMap.includes(env)) {
     return env as EnvMapType
   } else {
-    return "diamondHall"
+    return "diamond_hall"
   }
 }
 
@@ -25,7 +30,6 @@ export const DEFAULT_SETTINGS: SettingsType = {
   sound: true,
   music: true,
   envMap: getDefaultEnvMap(),
-  defaultVolume: 0.25,
 }
 
 // Stage
@@ -44,7 +48,7 @@ export const DEFAULT_DICE_QUATERNION = new Quaternion(
   0.00048353226156905293,
   0.005327336024492979,
   -0.00011967308091698214,
-  0.9999856352806091
+  0.9999856352806091,
 )
 
 // Checkers
@@ -111,12 +115,10 @@ const DEFAULT_POS: CheckerType[] = [
   { id: 29, color: "black", col: 5, row: 4, removed: false },
 ]
 
-export const DEFAULT_CHECKER_POSITIONS =
-  process.env.NODE_ENV === "development" ? DEFAULT_POS : DEFAULT_POS
+export const DEFAULT_CHECKER_POSITIONS = process.env.NODE_ENV === "development" ? LOTS_OF_REMOVABLES : DEFAULT_POS
 
 /**
  * If we are in training dice mode
  * @deprecated
  */
-export const TRAINING_DICE_MODE =
-  process.env.NODE_ENV === "development" ? false : false
+export const TRAINING_DICE_MODE = process.env.NODE_ENV === "development" ? false : false

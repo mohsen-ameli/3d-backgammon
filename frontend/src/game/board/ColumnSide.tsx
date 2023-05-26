@@ -1,33 +1,26 @@
-import { useContext, useMemo, useRef } from "react"
+import { useMemo, useRef } from "react"
 import { MeshStandardMaterial } from "three"
 import toCapitalize from "../../components/utils/ToCapitalize"
-import ValidateMove from "../checkers/utils/ValidateMove"
-import { GameContext } from "../context/GameContext"
 import { COLUMN_HOVER_COLOR } from "../data/Data"
 import { UserCheckerType } from "../types/Checker.type"
 import { NodeType } from "../types/GLTFResult.type"
 import Endgame from "../utils/Endgame"
+import { useGameStore } from "../store/useGameStore"
+import ValidateMove from "../checkers/utils/ValidateMove"
 
 /**
  * End columns for each user. This component is some what similar to the
  * Columns component.
  */
-const ColumnSide = ({ node }: NodeType) => {
-  const {
-    materials,
-    checkerPicked,
-    newCheckerPosition,
-    checkers,
-    userChecker,
-    dice,
-  } = useContext(GameContext)
+export default function ColumnSide({ node }: NodeType) {
+  const materials = useGameStore.getState().materials
 
   const blackOrWhite = useRef<UserCheckerType>()
 
   // Setting the material for the column
   const material = useMemo(() => {
     const mat = new MeshStandardMaterial()
-    mat.copy(materials?.BoardWood2)
+    mat.copy(materials?.BoardWood2!)
 
     blackOrWhite.current = node.name === "WhiteHouse" ? "white" : "black"
 
@@ -35,38 +28,36 @@ const ColumnSide = ({ node }: NodeType) => {
   }, [])
 
   // User has hovered over the end column
-  const handleHover = () => {
-    if (!checkerPicked.current) return
-    if (!node.name.includes(toCapitalize(userChecker.current!))) return
+  function handleHover() {
+    const checkerPicked = useGameStore.getState().checkerPicked
+    const userChecker = useGameStore.getState().userChecker!
 
-    const end = Endgame(checkers.current, userChecker.current!)
+    if (!checkerPicked) return
+    if (!node.name.includes(toCapitalize(userChecker))) return
+
+    const end = Endgame(userChecker)
     if (!end) return
 
     const id = node.name === "WhiteHouse" ? -3 : -4
     let moved = 0
 
-    if (id === -3) moved = 24 - checkerPicked.current.col
-    else if (id === -4) moved = checkerPicked.current.col + 1
+    if (id === -3) moved = 24 - checkerPicked.col
+    else if (id === -4) moved = checkerPicked.col + 1
 
-    const validHover = ValidateMove(
-      checkers.current,
-      checkerPicked.current,
-      dice.current,
-      moved
-    )
+    const validHover = ValidateMove(checkerPicked, moved)
     if (!validHover) {
-      newCheckerPosition.current = undefined
+      useGameStore.setState({ newCheckerPosition: undefined })
       return
     }
 
     material.color.set(COLUMN_HOVER_COLOR)
-    newCheckerPosition.current = id
+    useGameStore.setState({ newCheckerPosition: id })
   }
 
   // User has finished hovering over the end column
-  const handleHoverFinished = () => {
-    material.color.set(materials?.BoardWood2.color)
-    newCheckerPosition.current = undefined
+  function handleHoverFinished() {
+    material.color.set(materials!.BoardWood2.color)
+    useGameStore.setState({ newCheckerPosition: undefined })
   }
 
   return (
@@ -78,5 +69,3 @@ const ColumnSide = ({ node }: NodeType) => {
     />
   )
 }
-
-export default ColumnSide

@@ -1,29 +1,43 @@
-# Logs
-logs
-*.log
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-# .vscode/*
-# !.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Other
-.vercel
+# local env files
 .env
-3D Backgammon.txt
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+# next-pwa
+/public/workbox-*.js
+/public/sw.js
+
+# prefer yarn than npm
+package-lock.json
+
+report.*.json
+
+# .vscode Debugging
+.vscode/*-debug-profile

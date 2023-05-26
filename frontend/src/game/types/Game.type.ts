@@ -1,9 +1,6 @@
-import { CheckerPickedType, CheckerType, UserCheckerType } from "./Checker.type"
+import { CheckerType, UserCheckerType } from "./Checker.type"
 import { DiceMoveType, DicePhysics } from "./Dice.type"
-import { MaterialType, NodeType } from "./GLTFResult.type"
 import { MessageType } from "./Message.type"
-import { SettingsType } from "./Settings.type"
-import { SongType } from "./Song.type"
 
 // Initial type
 export type InitialType = {
@@ -45,73 +42,13 @@ export type PhaseType =
   | "ended"
   | "spectate"
   | "spectating"
-  | undefined
 
 // Different game mode types
 export type GameModeType = "pass-and-play" | `friend-game_${string}` | undefined
 
 // Function types
-export type ToggleControlsType = (
-  from: "layout" | "checkerDisable" | "checkerEnable"
-) => void
-export type ResetOrbitType = (
-  focus: "board" | "env",
-  isInitial?: boolean
-) => void
-
-// The main game states
-export type GameContextType = {
-  // Functions
-  toggleControls: React.MutableRefObject<ToggleControlsType>
-  resetOrbit: React.MutableRefObject<ResetOrbitType>
-  resign: (winnerId: number, loserId: number, send?: boolean) => void
-  throwDice: React.MutableRefObject<() => void>
-
-  // Refs
-  gameMode: React.MutableRefObject<GameModeType>
-  userChecker: React.MutableRefObject<UserCheckerType | undefined>
-  winner: React.MutableRefObject<PlayerType | undefined>
-  dice: React.MutableRefObject<DiceMoveType>
-  dicePhysics: React.MutableRefObject<DicePhysics | undefined>
-  checkers: React.MutableRefObject<CheckerType[]>
-  checkerPicked: React.MutableRefObject<CheckerPickedType>
-  newCheckerPosition: React.MutableRefObject<number | undefined>
-  timer: React.MutableRefObject<TimerType | undefined>
-
-  // States
-  started: boolean
-  myTurn: boolean
-  messages: MessagesType | null
-  ws: WebSocket | undefined
-  initial: InitialType
-  players: PlayersType | undefined
-  inGame: boolean
-  showThrow: boolean | null
-  phase: PhaseType
-  settings: SettingsType
-
-  // SetStates
-  setWs: React.Dispatch<React.SetStateAction<WebSocket | undefined>>
-  setInitial: React.Dispatch<React.SetStateAction<InitialType>>
-  setPlayers: React.Dispatch<React.SetStateAction<PlayersType | undefined>>
-  setInGame: React.Dispatch<React.SetStateAction<boolean>>
-  setShowThrow: React.Dispatch<React.SetStateAction<boolean | null>>
-  setPhase: React.Dispatch<React.SetStateAction<PhaseType>>
-  setSettings: React.Dispatch<React.SetStateAction<SettingsType>>
-
-  // Other
-  nodes: NodeType
-  materials: MaterialType
-
-  // Music
-  songs: {
-    name: string
-    song: HTMLAudioElement
-  }[]
-  setVolume: (vol: number) => void
-  selectedSongs: SongType[]
-  setSelectedSongs: React.Dispatch<React.SetStateAction<SongType[]>>
-}
+export type ToggleControlsType = (from: "layout" | "checkerDisable" | "checkerEnable") => void
+export type ResetOrbitType = (focus: "board" | "env", isInitial?: boolean) => void
 
 // The data that comes back from backend, when receiving updates
 export type GameDataTypes = {
@@ -120,7 +57,7 @@ export type GameDataTypes = {
   winner?: PlayerType
   resigner?: PlayerType
   message?: MessageType
-  user_id?: number
+  id?: number
   initial?: boolean
   black?: number
   white?: number

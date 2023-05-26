@@ -1,18 +1,15 @@
 import { AnimatePresence, motion } from "framer-motion"
-import { useContext, useEffect, useRef, useState } from "react"
-import { GameContext } from "../../context/GameContext"
+import { useEffect, useRef, useState } from "react"
 import { MESSAGE_COOLDOWN } from "../../data/Data"
 import { MessagesType, PlayerType } from "../../types/Game.type"
-
-type MessagesProps = {
-  player: PlayerType | undefined
-}
+import { useGameStore } from "@/game/store/useGameStore"
+import { shallow } from "zustand/shallow"
 
 /**
  * The in-game message bubble.
  */
-const Messages = ({ player }: MessagesProps) => {
-  const { messages, players } = useContext(GameContext)
+export default function Messages({ player }: { player: PlayerType | undefined }) {
+  const { messages, players } = useGameStore(state => ({ messages: state.messages, players: state.players }), shallow)
 
   const [msgs, setMsgs] = useState<MessagesType>(messages)
 
@@ -65,5 +62,3 @@ const Messages = ({ player }: MessagesProps) => {
     </AnimatePresence>
   )
 }
-
-export default Messages

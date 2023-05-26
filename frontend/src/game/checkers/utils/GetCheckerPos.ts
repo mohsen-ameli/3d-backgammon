@@ -1,5 +1,5 @@
-import * as data from "../../data/Data"
-import { CheckerType } from "../../types/Checker.type"
+import * as data from "@/game/data/Data"
+import { CheckerType } from "@/game/types/Checker.type"
 
 type PositionsType = {
   x: number
@@ -11,7 +11,7 @@ type PositionsType = {
  * This function will get the position (x,y,z) of the checker on the board based on the given column and row
  * @returns An array of x, y, and z coordinates. The y (or the elevation) is the ground level
  */
-const getCheckerPos = (checker: CheckerType): number[] => {
+export default function getCheckerPos(checker: CheckerType): number[] {
   // x is left and right on the board, y is elevation, and z is the forward and backwards of each checker.
   const position: PositionsType = { x: 0, y: 0, z: 0 }
 
@@ -89,5 +89,3 @@ const getCheckerPos = (checker: CheckerType): number[] => {
 
   return [position.x, position.y, position.z]
 }
-
-export default getCheckerPos

@@ -39,34 +39,23 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
     return 6
   }
   // Either 2 or 5
-  else if (
-    Math.round(Math.sin(x)) === 0 &&
-    (Math.abs(Math.PI / 2 - z) < 0.2 || Math.PI / 2 + z < 0.2)
-  ) {
-    console.log("2 or 5 coming up: ", `{"x": ${x}, "y": ${y}, "z": ${z}}`)
+  else if (Math.round(Math.sin(x)) === 0 && (Math.abs(Math.PI / 2 - z) < 0.2 || Math.PI / 2 + z < 0.2)) {
     if (
-      (Math.abs(Math.PI - x) < 0.2 &&
-        roundToTwo(Math.abs(Math.PI / 2 - z)) <= 0.2) ||
+      (Math.abs(Math.PI - x) < 0.2 && roundToTwo(Math.abs(Math.PI / 2 - z)) <= 0.2) ||
       (Math.round(x) === 0 && roundToTwo(Math.abs(Math.PI / 2 + z)) <= 0.2)
     ) {
       return 2
     } else if (
       (Math.round(x) === 0 && roundToTwo(Math.abs(Math.PI / 2 - z)) <= 0.2) ||
-      (Math.abs(Math.PI - x) < 0.2 &&
-        roundToTwo(Math.abs(Math.PI / 2 + z)) <= 0.2)
+      (Math.abs(Math.PI - x) < 0.2 && roundToTwo(Math.abs(Math.PI / 2 + z)) <= 0.2)
     ) {
       return 5
     } else {
-      console.log("Not a 2 or a 5")
-      console.log(`{"x": ${x}, "y": ${y}, "z": ${z}}`)
       // throwDice([dice])
     }
   }
   // Either 3 or 4
-  else if (
-    (Math.abs(Math.PI / 2 - x) < 0.2 || Math.PI / 2 + x < 0.2) &&
-    Math.round(y) === 0
-  ) {
+  else if ((Math.abs(Math.PI / 2 - x) < 0.2 || Math.PI / 2 + x < 0.2) && Math.round(y) === 0) {
     if (Math.abs(-Math.PI / 2 - x) < 0.2 && Math.round(y) === 0) {
       return 3
     }
@@ -74,8 +63,6 @@ const getDiceNumber = (dice: RigidBodyApi): number => {
   }
 
   // Don't know what the number is (Dice is on a slant angle)
-  console.log("Don't know what the dice number is!")
-  console.log(`{"x": ${x}, "y": ${y}, "z": ${z}}`)
   // throwDice([dice])
   return 0
 

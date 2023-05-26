@@ -1,11 +1,14 @@
-import { memo, useContext, useEffect, useState } from "react"
-import { GameContext } from "../../context/GameContext"
+"use client"
+
+import { useEffect, useState } from "react"
 import { UserCheckerType } from "../../types/Checker.type"
 import { PlayerType, TimerType } from "../../types/Game.type"
 import DiceMoves from "../utils/DiceMoves"
 import PipScore from "../utils/PipScore"
 import ThrowButton from "./ThrowButton"
 import UserImage from "./UserImage"
+import { useGameStore } from "@/game/store/useGameStore"
+import { shallow } from "zustand/shallow"
 
 type SideProps = {
   img: string | undefined
@@ -18,15 +21,12 @@ type SideProps = {
  * Each player has a side, with their profile picture, name, their checker color,
  * and a timer for them to see how much time they have left to make a move.
  */
-const SidePanel = (props: SideProps) => {
-  const { img, player, sideType } = props
-
+export default function SidePanel({ img, player, sideType }: SideProps) {
   // The counter component. If the gameMode is pass and play, then just show the image
   return (
     <div
       className={
-        "absolute top-1/2 z-[15] mx-4 h-full -translate-y-1/2 lg:mx-0 " +
-        (sideType === "enemy" ? "left-0" : "right-0")
+        "absolute top-1/2 z-[15] mx-4 h-full -translate-y-1/2 lg:mx-0 " + (sideType === "enemy" ? "left-0" : "right-0")
       }
     >
       <div className="flex h-full flex-col justify-center">
@@ -37,9 +37,7 @@ const SidePanel = (props: SideProps) => {
 
             <div className="mt-2 flex flex-col items-center justify-center text-xs lg:text-lg">
               {/* Username */}
-              <h1 className="w-full break-all">
-                {(player?.name || player?.name !== "") && player?.name}
-              </h1>
+              <h1 className="w-full break-all">{(player?.name || player?.name !== "") && player?.name}</h1>
 
               {/* User checker color */}
               <div
@@ -70,46 +68,37 @@ type BottomSectionProps = {
 /**
  * The part that includes the throw dice and dice numbers.
  */
-const BottomSection = ({ sideType, player }: BottomSectionProps) => {
-  const { dice, userChecker, gameMode } = useContext(GameContext)
+function BottomSection({ sideType, player }: BottomSectionProps) {
+  const userChecker = useGameStore(state => state.userChecker)
+  const gameMode = useGameStore(state => state.gameMode)
+  const dice = useGameStore(state => state.dice, shallow)
 
-  if (
-    userChecker.current === player?.color &&
-    (dice.current.moves !== 0 ||
-      sideType === "me" ||
-      gameMode.current === "pass-and-play")
-  ) {
+  if (userChecker === player?.color && (dice.moves !== 0 || sideType === "me" || gameMode === "pass-and-play")) {
     return (
       <div className="absolute bottom-auto left-0 mt-4 w-full rounded-lg bg-[#8e84bab3] p-2 text-white">
         {/* Showing the throw button if it's my turn */}
-        {(sideType === "me" || gameMode.current === "pass-and-play") && (
-          <ThrowButton />
-        )}
+        {(sideType === "me" || gameMode === "pass-and-play") && <ThrowButton />}
 
         {/* Showing the dice moves if I've already thrown the dice */}
-        {dice.current.moves > 0 && <DiceMoves dice={dice.current} />}
+        {dice.moves > 0 && <DiceMoves />}
       </div>
     )
   } else return <></>
 }
 
-type ScoreProps = { color: UserCheckerType | undefined }
-
 /**
  * The pip score
  */
-const Score = ({ color }: ScoreProps) => {
-  const { phase, checkers } = useContext(GameContext)
+function Score({ color }: { color: UserCheckerType | undefined }) {
+  const phase = useGameStore(state => state.phase)
   const [score, setScore] = useState(0)
 
   useEffect(() => {
     if (!color) return
 
-    const score_ = PipScore(checkers.current, color)
+    const score_ = PipScore(color)
     setScore(score_)
   }, [phase, color])
 
   return <h1>Pip: {score}</h1>
 }
-
-export default memo(SidePanel)

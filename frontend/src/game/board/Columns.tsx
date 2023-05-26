@@ -1,27 +1,21 @@
 import { ThreeEvent } from "@react-three/fiber"
-import { useContext, useLayoutEffect, useRef } from "react"
-import {
-  Color,
-  Euler,
-  InstancedMesh,
-  Matrix4,
-  Quaternion,
-  Vector3,
-} from "three"
-import { GameContext } from "../context/GameContext"
+import { useLayoutEffect, useRef } from "react"
+import { Color, Euler, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three"
 import { COLUMN_HOVER_COLOR, GROUND } from "../data/Data"
 import ColumnSide from "./ColumnSide"
-import useGetValidHover from "./getValidHover"
+import { useGameStore } from "../store/useGameStore"
+import getValidHover from "./getValidHover"
+import { shallow } from "zustand/shallow"
 
 /**
  * The 24 columns on the board, where checkers get dropped in. This component
  * contains logic for changing the column checkers colour when user hovers over it.
  */
-const Columns = () => {
-  const { nodes, materials, checkerPicked, newCheckerPosition } = useContext(GameContext) // prettier-ignore
+export default function Columns() {
+  const nodes = useGameStore.getState().nodes
+  const materials = useGameStore.getState().materials
 
-  // Utility
-  const { getValidHover } = useGetValidHover()
+  // const checkerPicked = useGameStore(state => state.checkerPicked, shallow)
 
   // Ref to the actual columns
   const columnsRef = useRef<InstancedMesh | null>(null)
@@ -34,22 +28,22 @@ const Columns = () => {
 
   // Saving the default positions of the column overlays
   useLayoutEffect(() => {
-    if (!columnsHoverRef.current) return
+    if (!columnsHoverRef.current || !nodes) return
 
     const quaternion = new Quaternion()
     const scale = new Vector3(1, 1, 1)
 
     for (let i = 0; i < count; i++) {
       const matrix = new Matrix4()
-      const position = nodes?.[`col_${i + 1}`].position.clone()
+      const position = nodes[`col_${i + 1}`].position.clone()
 
       if (i >= 12) {
         const rotated = new Euler(0, Math.PI, 0)
-        position.z -= 0.325
-        matrix.compose(position, quaternion.setFromEuler(rotated), scale)
+        position!.z -= 0.325
+        matrix.compose(position!, quaternion.setFromEuler(rotated), scale)
       } else {
-        position.z += 0.325
-        matrix.compose(position, quaternion, scale)
+        position!.z += 0.325
+        matrix.compose(position!, quaternion, scale)
       }
 
       columnsHoverRef.current.setMatrixAt(i, matrix)
@@ -57,51 +51,51 @@ const Columns = () => {
 
     // Updating the instance matrix
     columnsHoverRef.current.instanceMatrix.needsUpdate = true
-  }, [])
+  }, [nodes])
 
   // Saving the default positions of the columns.
   useLayoutEffect(() => {
-    if (!columnsRef.current) return
+    if (!columnsRef.current || !nodes) return
 
     const quaternion = new Quaternion()
     const scale = new Vector3(1, 1, 1)
 
     for (let i = 0; i < count; i++) {
       const matrix = new Matrix4()
-      const position = nodes?.[`col_${i + 1}`].position
+      const position = nodes[`col_${i + 1}`].position
 
       if (i >= 12) {
         const rotated = new Euler(0, Math.PI, 0)
-        matrix.compose(position, quaternion.setFromEuler(rotated), scale)
+        matrix.compose(position!, quaternion.setFromEuler(rotated), scale)
       } else {
-        matrix.compose(position, quaternion, scale)
+        matrix.compose(position!, quaternion, scale)
       }
 
       columnsRef.current.setMatrixAt(i, matrix)
-      columnsRef.current.setColorAt(
-        i,
-        i % 2 === 0 ? materials?.ColumnDark.color : materials?.ColumnWhite.color
-      )
+      columnsRef.current.setColorAt(i, i % 2 === 0 ? materials?.ColumnDark.color! : materials?.ColumnWhite.color!)
     }
 
     // Updating the instance matrix and color
     columnsRef.current.instanceColor!.needsUpdate = true
     columnsRef.current.instanceMatrix.needsUpdate = true
-  }, [])
+  }, [nodes])
 
   // When user hovers over one of the columns
-  const handleHover = (e: ThreeEvent<PointerEvent>) => {
-    if (!checkerPicked.current) return
+  function handleHover(e: ThreeEvent<PointerEvent>) {
+    const checkerPicked = useGameStore.getState().checkerPicked
+
+    if (!checkerPicked) return
 
     const id = e.instanceId as number
-    const validHover = getValidHover(checkerPicked.current, id)
+    const validHover = getValidHover(checkerPicked, id)
+
     if (!validHover || !columnsRef.current) {
-      newCheckerPosition.current = undefined
+      useGameStore.setState({ newCheckerPosition: undefined })
       return
     }
 
     // Saving the state
-    newCheckerPosition.current = id
+    useGameStore.setState({ newCheckerPosition: id })
 
     // Setting the color of the hovered column to red
     columnsRef.current.setColorAt(id, colorWhenHovered.current)
@@ -109,31 +103,33 @@ const Columns = () => {
   }
 
   // User has released their pointer, on one of the columns
-  const handleHoverFinished = (e: ThreeEvent<PointerEvent>) => {
+  function handleHoverFinished(e: ThreeEvent<PointerEvent>) {
+    const checkerPicked = useGameStore.getState().checkerPicked
+
     const id = e.instanceId as number
     if (!columnsRef.current) return
 
     if (id! % 2 === 0) {
-      columnsRef.current.setColorAt(id, materials?.ColumnDark.color)
+      columnsRef.current.setColorAt(id, materials?.ColumnDark.color!)
     } else {
-      columnsRef.current.setColorAt(id, materials?.ColumnWhite.color)
+      columnsRef.current.setColorAt(id, materials?.ColumnWhite.color!)
     }
 
     // Updating the node
     columnsRef.current.instanceColor!.needsUpdate = true
 
     // Saving the state
-    if (checkerPicked.current) return
-    newCheckerPosition.current = undefined
+    if (checkerPicked) return
+
+    useGameStore.setState({ newCheckerPosition: undefined })
   }
+
+  if (!nodes) return <></>
 
   return (
     <group position-y={GROUND}>
       {/* Columns */}
-      <instancedMesh
-        ref={columnsRef}
-        args={[nodes?.col_1.geometry, undefined, count]}
-      >
+      <instancedMesh ref={columnsRef} args={[nodes?.col_1.geometry, undefined, count]}>
         <meshStandardMaterial name="Column" />
       </instancedMesh>
 
@@ -150,10 +146,8 @@ const Columns = () => {
       </instancedMesh>
 
       {/* Side columns */}
-      <ColumnSide node={nodes?.WhiteHouse} />
-      <ColumnSide node={nodes?.BlackHouse} />
+      <ColumnSide node={nodes.WhiteHouse} />
+      <ColumnSide node={nodes.BlackHouse} />
     </group>
   )
 }
-
-export default Columns

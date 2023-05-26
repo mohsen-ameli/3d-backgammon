@@ -1,19 +1,22 @@
+"use client"
+
 import { ButtonHTMLAttributes, useState } from "react"
-import buttonClick from "/sounds/button-click.mp3"
 
 type InputProps = ButtonHTMLAttributes<HTMLButtonElement>
 
 /**
  * A button that has a somewhat cool hover effect
  */
-const Button = (props: InputProps) => {
+const clickAudio = typeof Audio !== "undefined" ? new Audio("/sounds/button-click.mp3") : null
+
+export default function Button(props: InputProps) {
   const { className, onClick, children, disabled, ...rest } = props
 
-  const [click] = useState(() => new Audio(buttonClick))
+  const [click] = useState(() => clickAudio)
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     if (disabled) return
-    click.play()
+    click?.play()
     onClick?.(e)
   }
 
@@ -44,14 +47,7 @@ export const ButtonLoading = () => {
       fill="none"
       viewBox="0 0 24 24"
     >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      ></circle>
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
       <path
         className="opacity-75"
         fill="currentColor"
@@ -60,5 +56,3 @@ export const ButtonLoading = () => {
     </svg>
   )
 }
-
-export default Button

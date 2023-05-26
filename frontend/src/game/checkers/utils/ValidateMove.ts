@@ -1,5 +1,5 @@
-import { CheckerType } from "../../types/Checker.type"
-import { DiceMoveType } from "../../types/Dice.type"
+import { useGameStore } from "@/game/store/useGameStore"
+import { CheckerType } from "@/game/types/Checker.type"
 
 /**
  * Utility used in checkers to determine whether the move done by the user
@@ -8,26 +8,18 @@ import { DiceMoveType } from "../../types/Dice.type"
  * away from the "end column"), then that's a valid move they can make. This is an example
  * of a case in which this function is useful for.
  */
-const ValidateMove = (
-  checkers: CheckerType[],
-  thisChecker: CheckerType,
-  dice: DiceMoveType,
-  moved: number
-): boolean => {
+export default function ValidateMove(thisChecker: CheckerType, moved: number): boolean {
+  const checkers = useGameStore.getState().checkers!
+  const dice = useGameStore.getState().dice
+
   let backRankCheckers
 
   // Getting the number of checkers in the back of the current checker
   if (thisChecker.color === "black") {
-    backRankCheckers = checkers.filter(
-      checker =>
-        checker.col > thisChecker.col && checker.color === thisChecker.color
-    )
+    backRankCheckers = checkers.filter(checker => checker.col > thisChecker.col && checker.color === thisChecker.color)
   } else {
     backRankCheckers = checkers.filter(
-      checker =>
-        checker.col >= 18 &&
-        checker.col < thisChecker.col &&
-        checker.color === thisChecker.color
+      checker => checker.col >= 18 && checker.col < thisChecker.col && checker.color === thisChecker.color,
     )
   }
 
@@ -46,5 +38,3 @@ const ValidateMove = (
 
   return false
 }
-
-export default ValidateMove

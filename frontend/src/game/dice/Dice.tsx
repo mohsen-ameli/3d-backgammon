@@ -1,208 +1,241 @@
-import { RigidBody, RigidBodyApi } from "@react-three/rapier"
-import { forwardRef, useContext, useRef } from "react"
-import { Group, PositionalAudio, Raycaster, Vector3 } from "three"
-import { GameContext } from "../context/GameContext"
-import * as data from "../data/Data"
+import { Html } from "@react-three/drei"
+import { useThree } from "@react-three/fiber"
+import { CuboidCollider, RigidBodyApi } from "@react-three/rapier"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { AudioListener, AudioLoader, PositionalAudio } from "three"
+import wsGood from "../../components/utils/wsGood"
+import { DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../data/Data"
 import { DiceReadyType } from "../types/Dice.type"
-import DiceOnBoard from "./utils/DiceOnBoard"
-import IsInitial from "./utils/IsInitial"
-
-type DiceProps = {
-  index: 0 | 1
-  position: Vector3
-  setFinishedThrow: React.Dispatch<React.SetStateAction<DiceReadyType>>
-  setSleeping: React.Dispatch<React.SetStateAction<DiceReadyType>>
-  showThrowBtn: boolean
-  audio: PositionalAudio | undefined
-}
-
-// Direction vector for the raycaster
-const directionVector = new Vector3(0, -1, 0)
+import hasMoves from "../utils/HasMoves"
+import switchPlayers from "../utils/SwitchPlayers"
+import Die from "./Die"
+import { throwDice, throwDicePhysics } from "./utils/ThrowDice"
+import Modal from "@/components/ui/Modal"
+import { useGameStore } from "../store/useGameStore"
+import updateLiveGame from "../utils/updateLiveGame"
 
 /**
- * Individual die
+ * This is the container for the two dice.
  */
-const Dice = forwardRef<RigidBodyApi, DiceProps>((props, ref) => {
-  const {
-    index,
-    position,
-    setFinishedThrow,
-    setSleeping,
-    showThrowBtn,
-    audio,
-  } = props
+export default function Dice() {
+  const phase = useGameStore(state => state.phase)
 
-  // Game context
-  const { nodes, materials, dice, myTurn, settings } = useContext(GameContext)
+  const { camera } = useThree()
 
-  // Rigid body reference of each die
-  const rigidBody = (ref as React.MutableRefObject<RigidBodyApi>).current
+  // Refs for the two dice
+  const dice1 = useRef<RigidBodyApi>(null!)
+  const dice2 = useRef<RigidBodyApi>(null!)
 
-  const groupRef = useRef<Group>(null)
-  const diceRef1 = useRef<Group>(null)
-  const diceRef2 = useRef<Group>(null)
-  const diceRef3 = useRef<Group>(null)
-  const diceRef4 = useRef<Group>(null)
-  const diceRef5 = useRef<Group>(null)
-  const diceRef6 = useRef<Group>(null)
+  // Showing the invalid move panel
+  const [show, setShow] = useState(false)
 
-  // When the die collides with something, play a sound
-  const handleCollisionEnter = () => {
-    if (!DiceOnBoard(rigidBody) || !settings.sound || !audio) return
-    audio.setVolume(Math.random())
-    audio.play()
-  }
+  // To keep track of the dices finished throwing state
+  const [finishedThrow, setFinishedThrow] = useState<DiceReadyType>({
+    dice1: false,
+    dice2: false,
+  })
 
-  // When the die wakes up
-  const handleWake = () => {
-    // If the user is not playing, meaning other user has thrown their dice, and we're just viewing the animation
-    if (!myTurn) return
+  // To keep track of the dice sleeping state
+  const [sleeping, setSleeping] = useState<DiceReadyType>({
+    dice1: false,
+    dice2: false,
+  })
 
-    setFinishedThrow(current => {
-      const newCurrent = { ...current }
-      if (index === 0) newCurrent.dice1 = false
-      else newCurrent.dice2 = false
-      return newCurrent
+  // State to show the "throw dice" button
+  const [showThrowBtn, setShowThrowBtn] = useState(false)
+
+  // Collision audio
+  const [audio, setAudio] = useState<PositionalAudio>()
+
+  // Function to throw the dice
+  const throwDiceFunc = useCallback(async () => {
+    const players = useGameStore.getState().players!
+    const userChecker = useGameStore.getState().userChecker!
+    const ws = useGameStore.getState().ws
+
+    setShowThrowBtn(false)
+
+    const dice = [dice1.current, dice2.current]
+    const physics = await throwDice(dice, userChecker)
+
+    const context = {
+      physics: true,
+      user: {
+        user: {
+          id: players.me.id,
+          name: players.me.name,
+          color: userChecker,
+        },
+        physics,
+      },
+    }
+
+    if (ws && wsGood(ws)) ws.send(JSON.stringify(context))
+  }, [])
+
+  // Loading the collision audio for the dice
+  useEffect(() => {
+    const audioLoader = new AudioLoader()
+    const listener = new AudioListener()
+    camera.add(listener)
+
+    audioLoader.load("/sounds/NewDice.wav", buffer => {
+      const audio = new PositionalAudio(listener)
+      audio.setBuffer(buffer)
+      audio.setRefDistance(30)
+      setAudio(audio)
     })
-  }
 
-  // When the die goes to sleep, get the number on the dice, and save it.
-  // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the getting the dice number process.
-  const handleSleep = async () => {
-    // If the dice are not on the board, then return
-    if (!DiceOnBoard(rigidBody) || showThrowBtn) {
-      setSleeping({ dice1: true, dice2: true })
+    return () => {
+      camera.remove(listener)
+    }
+  }, [])
+
+  // Saving the show throw button in game context
+  useEffect(() => {
+    if (showThrowBtn && sleeping.dice1 && sleeping.dice2) {
+      useGameStore.setState({ showThrow: true })
+    } else if (showThrowBtn) {
+      useGameStore.setState({ showThrow: false })
+    } else {
+      useGameStore.setState({ showThrow: null })
+    }
+  }, [showThrowBtn, sleeping])
+
+  // Game logic: Handling the dice throws
+  useEffect(() => {
+    // Dices have not finished throwing
+    if (!finishedThrow || !finishedThrow.dice1 || !finishedThrow.dice2) return
+
+    // The game websocket
+    const ws = useGameStore.getState().ws
+
+    // Check if user has any valid moves
+    const moves = hasMoves()
+
+    // User has no moves
+    if (!moves) {
+      useGameStore.setState(state => ({
+        userChecker: switchPlayers(state.userChecker!),
+        dice: { dice1: 0, dice2: 0, moves: 0 },
+      }))
+
+      // Set the phase to diceRoll
+      if (!ws) {
+        useGameStore.setState({ phase: "diceRollAgain" })
+        setShowThrowBtn(true)
+      } else {
+        updateLiveGame()
+      }
+
+      // Show a message that the user has no valid moves
+      setShow(true)
       return
     }
 
-    // If the user is not playing, meaning other user has thrown their dice, and we're just viewing the animation
-    if (!myTurn) return
-
-    // Getting the die number and saving it to the dice ref
-    if (!IsInitial(rigidBody.rotation())) {
-      if (
-        !diceRef1.current ||
-        !diceRef2.current ||
-        !diceRef3.current ||
-        !diceRef4.current ||
-        !diceRef5.current ||
-        !diceRef6.current
-      )
-        return
-
-      const ray = new Raycaster()
-      const diePos = rigidBody.translation()
-      const posVec = new Vector3(diePos.x, diePos.y + 10, diePos.z)
-
-      ray.set(posVec, directionVector)
-      const intersections = ray.intersectObjects([
-        diceRef1.current,
-        diceRef2.current,
-        diceRef3.current,
-        diceRef4.current,
-        diceRef5.current,
-        diceRef6.current,
-      ])
-      const number = Number(intersections[0].object.name)
-      if (index === 0) dice.current.dice1 = number
-      else dice.current.dice2 = number
+    // If the dice numbers match, user can move 4 times, otherwise 2
+    const dice = useGameStore.getState().dice
+    if (dice.moves === 0 && dice.dice1 !== 0 && dice.dice2 !== 0) {
+      useGameStore.setState(curr => ({
+        dice: { ...curr.dice, moves: dice.dice1 === dice.dice2 ? 4 : 2 },
+      }))
     }
 
-    setFinishedThrow(current => {
-      const newCurrent = { ...current }
-      if (index === 0) newCurrent.dice1 = true
-      else newCurrent.dice2 = true
-      return newCurrent
-    })
-  }
+    // Updating the backend
+    ws && updateLiveGame()
+
+    useGameStore.setState({ phase: "checkerMove" })
+  }, [finishedThrow])
+
+  // Game logic: Handling the phase changes
+  useEffect(() => {
+    const dicePhysics = useGameStore.getState().dicePhysics
+    let timeout: NodeJS.Timeout
+
+    // User already has dice physics, and it's their turn, and they don't have the numbers on the dice saved
+    if (phase === "diceRollPhysics") {
+      timeout = setTimeout(() => {
+        if (!dicePhysics) return
+
+        throwDicePhysics([dice1.current, dice2.current], dicePhysics.physics)
+      }, 2000)
+      setShowThrowBtn(false)
+      return
+    }
+
+    // If our dice are being synced with the other user
+    if (phase === "diceSync" && dicePhysics) {
+      throwDicePhysics([dice1.current, dice2.current], dicePhysics.physics)
+      return
+    }
+
+    /**
+     * ORDER IMPORTANT: (1) initial (2) ended (3) diceRoll or diceRollAgain
+     */
+    const myTurn = useGameStore.getState().myTurn
+
+    if (phase === "initial") {
+      const gameMode = useGameStore.getState().gameMode
+
+      if (!myTurn && gameMode !== "pass-and-play") return
+
+      // User has initially connected to the game, with no available/previous dice moves
+      const dice = useGameStore.getState().dice
+      if (dice.moves === 0) setShowThrowBtn(true)
+      // User has leftover moves (from a previous session that's saved on the DB)
+      else setFinishedThrow({ dice1: true, dice2: true })
+      return
+    }
+
+    // If it's not the user's turn or if the game has ended
+    if (phase === "ended" || !myTurn) {
+      setShowThrowBtn(false)
+      return
+    }
+
+    // If user has thrown the dice
+    if (phase === "diceRoll" || phase === "diceRollAgain") {
+      setShowThrowBtn(true)
+      return
+    }
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [phase])
+
+  // Saving the throw dice function
+  useEffect(() => useGameStore.setState({ throwDice: throwDiceFunc }), [])
 
   return (
-    <RigidBody
-      ref={ref}
-      mass={data.DICE_MASS}
-      restitution={data.DICE_BOUNCINESS}
-      friction={data.DICE_FRICTION}
-      position={position}
-      onWake={handleWake}
-      onSleep={handleSleep}
-      onCollisionEnter={handleCollisionEnter}
-    >
-      <group scale={1.25} ref={groupRef} name="dice1">
-        <group ref={diceRef1}>
-          <mesh
-            name="1"
-            geometry={nodes.DiceGeo002.geometry}
-            material={materials.DiceWhite}
-          />
-          <mesh
-            name="1"
-            geometry={nodes.DiceGeo002_1.geometry}
-            material={materials.DiceDark}
-          />
-        </group>
-        <group ref={diceRef2}>
-          <mesh
-            name="2"
-            geometry={nodes.DiceGeo007.geometry}
-            material={materials.DiceWhite}
-          />
-          <mesh
-            name="2"
-            geometry={nodes.DiceGeo007_1.geometry}
-            material={materials.DiceDark}
-          />
-        </group>
-        <group ref={diceRef3}>
-          <mesh
-            name="3"
-            geometry={nodes.DiceGeo005.geometry}
-            material={materials.DiceWhite}
-          />
-          <mesh
-            name="3"
-            geometry={nodes.DiceGeo005_1.geometry}
-            material={materials.DiceDark}
-          />
-        </group>
-        <group ref={diceRef4}>
-          <mesh
-            name="4"
-            geometry={nodes.DiceGeo003.geometry}
-            material={materials.DiceWhite}
-          />
-          <mesh
-            name="4"
-            geometry={nodes.DiceGeo003_1.geometry}
-            material={materials.DiceDark}
-          />
-        </group>
-        <group ref={diceRef5}>
-          <mesh
-            name="5"
-            geometry={nodes.DiceGeo004.geometry}
-            material={materials.DiceWhite}
-          />
-          <mesh
-            name="5"
-            geometry={nodes.DiceGeo004_1.geometry}
-            material={materials.DiceDark}
-          />
-        </group>
-        <group ref={diceRef6}>
-          <mesh
-            name="6"
-            geometry={nodes.DiceGeo008.geometry}
-            material={materials.DiceWhite}
-          />
-          <mesh
-            name="6"
-            geometry={nodes.DiceGeo008_1.geometry}
-            material={materials.DiceDark}
-          />
-        </group>
-      </group>
-    </RigidBody>
-  )
-})
+    <>
+      <Html>
+        <Modal setOpen={setShow} open={show}>
+          You don&apos;t have a move!
+        </Modal>
+      </Html>
 
-export default Dice
+      {/* Dice Holder */}
+      <CuboidCollider args={[0.5, 0.1, 0.5]} position={[0, 0.4, 2]} />
+
+      <Die
+        ref={dice1}
+        index={0}
+        position={DICE_1_DEFAULT_POS}
+        setFinishedThrow={setFinishedThrow}
+        setSleeping={setSleeping}
+        showThrowBtn={showThrowBtn}
+        audio={audio}
+      />
+      <Die
+        ref={dice2}
+        index={1}
+        position={DICE_2_DEFAULT_POS}
+        setFinishedThrow={setFinishedThrow}
+        setSleeping={setSleeping}
+        showThrowBtn={showThrowBtn}
+        audio={audio}
+      />
+    </>
+  )
+}

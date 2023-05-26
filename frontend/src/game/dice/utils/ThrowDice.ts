@@ -1,9 +1,5 @@
 import { RigidBodyApi } from "@react-three/rapier"
-import {
-  DEFAULT_DICE_QUATERNION,
-  DICE_1_DEFAULT_POS,
-  DICE_2_DEFAULT_POS,
-} from "../../data/Data"
+import { DEFAULT_DICE_QUATERNION, DICE_1_DEFAULT_POS, DICE_2_DEFAULT_POS } from "../../data/Data"
 import { UserCheckerType } from "../../types/Checker.type"
 import { DiePhysics } from "../../types/Dice.type"
 
@@ -12,10 +8,7 @@ const DICE_SLEEP_ON_RESET = 1000 / 3 // 1000 ms / 3 -> 0.333 seconds
 /**
  * This will throw the dice into the board, and return the physics values
  */
-export const throwDice = async (
-  dice: RigidBodyApi[],
-  turn: UserCheckerType
-) => {
+export async function throwDice(dice: RigidBodyApi[], turn: UserCheckerType) {
   const physicsValues = {
     die1: {} as DiePhysics,
     die2: {} as DiePhysics,
@@ -27,8 +20,7 @@ export const throwDice = async (
   await resetDice(dice)
 
   for (const die of dice) {
-    const x =
-      turn === "white" ? 0.1 + Math.random() * 0.5 : -0.1 - Math.random() * 0.5
+    const x = turn === "white" ? 0.1 + Math.random() * 0.5 : -0.1 - Math.random() * 0.5
 
     const impulse = {
       x: x * 6,
@@ -66,23 +58,14 @@ type Physics = {
 /**
  * Throwing the dice, with given physics values (impulse and torque)
  */
-export const throwDicePhysics = async (
-  dice: RigidBodyApi[],
-  physics: Physics
-) => {
+export async function throwDicePhysics(dice: RigidBodyApi[], physics: Physics) {
   let i = 0
 
   await resetDice(dice)
 
   for (const die of dice) {
-    die.applyImpulse(
-      i === 0 ? physics.die1.impulse : physics.die2.impulse,
-      true
-    )
-    die.applyTorqueImpulse(
-      i === 0 ? physics.die1.torque : physics.die2.torque,
-      true
-    )
+    die.applyImpulse(i === 0 ? physics.die1.impulse : physics.die2.impulse, true)
+    die.applyTorqueImpulse(i === 0 ? physics.die1.torque : physics.die2.torque, true)
 
     i++
   }
@@ -91,7 +74,7 @@ export const throwDicePhysics = async (
 /**
  * This will reset the dice positions and rotations
  */
-const resetDice = async (dice: RigidBodyApi[]) => {
+async function resetDice(dice: RigidBodyApi[]) {
   let i = 0
 
   for (const die of dice) {
@@ -99,10 +82,7 @@ const resetDice = async (dice: RigidBodyApi[]) => {
     die.resetTorques(true)
 
     die.setRotation(DEFAULT_DICE_QUATERNION, true)
-    die.setTranslation(
-      i === 0 ? { ...DICE_1_DEFAULT_POS } : { ...DICE_2_DEFAULT_POS },
-      true
-    )
+    die.setTranslation(i === 0 ? { ...DICE_1_DEFAULT_POS } : { ...DICE_2_DEFAULT_POS }, true)
 
     i++
   }

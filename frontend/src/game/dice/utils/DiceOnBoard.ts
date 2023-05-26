@@ -5,8 +5,6 @@ import { RigidBodyApi } from "@react-three/rapier"
  * @param dice Rigid body of a single die
  * @returns boolean
  */
-const DiceOnBoard = (dice: RigidBodyApi) => {
+export default function DiceOnBoard(dice: RigidBodyApi) {
   return dice.translation().y < 0.5
 }
-
-export default DiceOnBoard

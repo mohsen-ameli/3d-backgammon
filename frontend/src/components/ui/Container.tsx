@@ -1,16 +1,17 @@
+"use client"
+
+import { UIProps } from "@/types/UI.type"
 import { animated, useSpring } from "@react-spring/web"
 import { MouseEvent, useRef } from "react"
 import { isMobile } from "react-device-detect"
-import { UIProps } from "../types/UI.type"
 
-const calc = (x: number, y: number, rect: DOMRect) => [
-  -(y - rect.top - rect.height / 2) / 70,
-  (x - rect.left - rect.width / 2) / 70,
-  1.01,
-]
+function calc(x: number, y: number, rect: DOMRect) {
+  return [-(y - rect.top - rect.height / 2) / 70, (x - rect.left - rect.width / 2) / 70, 1.01]
+}
 
-const trans = (x: number, y: number, s: number) =>
-  `perspective(600px) rotateX(${x}deg) rotateY(${y}deg) scale(${s})`
+function trans(x: number, y: number, s: number) {
+  return `perspective(600px) rotateX(${x}deg) rotateY(${y}deg) scale(${s})`
+}
 
 const config = {
   mass: 1,
@@ -26,19 +27,18 @@ const config = {
  * @param {*} props -> Any other props to be attached to the button
  * @returns The children
  */
-const Container = ({ className, children }: UIProps) => {
+export default function Container({ className, children }: UIProps) {
   const cardRef = useRef<HTMLDivElement>(null!)
 
   const [{ xys }, api] = useSpring(() => ({ xys: [0, 0, 1], config }), [config])
 
-  const handleMouseLeave = () =>
+  function handleMouseLeave() {
     api.start({
       xys: [0, 0, 1],
     })
+  }
 
-  const handleMouseMove = (
-    e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-  ) => {
+  function handleMouseMove(e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) {
     const rect = cardRef.current.getBoundingClientRect()
     api.start({
       xys: calc(e.clientX, e.clientY, rect),
@@ -47,7 +47,7 @@ const Container = ({ className, children }: UIProps) => {
 
   return (
     <animated.div
-      className={`custom-scroll-bar flex flex-col rounded-md bg-[#cbd5e1c0] p-4 ${className}`}
+      className={`custom-scroll-bar flex flex-col rounded-xl bg-[#cbd5e1c0] p-4 ${className}`}
       ref={cardRef}
       style={{
         // @ts-ignore
@@ -62,5 +62,3 @@ const Container = ({ className, children }: UIProps) => {
     </animated.div>
   )
 }
-
-export default Container

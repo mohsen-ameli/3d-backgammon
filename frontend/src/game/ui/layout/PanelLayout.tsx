@@ -1,21 +1,18 @@
-import { useContext, useEffect, useState } from "react"
-import useFetch from "../../../components/hooks/useFetch"
-import { ProfileData } from "../../../components/types/Profile.type"
-import { GameContext } from "../../context/GameContext"
 import SidePanel from "../components/SidePanel"
+import { useSession } from "next-auth/react"
+import { useGameStore } from "@/game/store/useGameStore"
 
-const PanelLayout = () => {
-  const { gameMode, players, inGame } = useContext(GameContext)
+export default function PanelLayout() {
+  const inGame = useGameStore(state => state.inGame)
+  const players = useGameStore(state => state.players)
+
+  const { data: session } = useSession()
 
   if (!inGame) return <></>
 
-  // Getting user image
-  const { data }: ProfileData = useFetch("/api/get-user-profile/")
-  const [img, setImg] = useState("")
-  useEffect(() => setImg(data?.image), [data])
+  const gameMode = useGameStore.getState().gameMode
 
-  // prettier-ignore
-  if (gameMode.current === "pass-and-play") {
+  if (gameMode === "pass-and-play") {
     return (
       <>
         <SidePanel img="" player={players?.me} sideType="me" />
@@ -25,11 +22,9 @@ const PanelLayout = () => {
   } else {
     return (
       <>
-        <SidePanel img={img} player={players?.me} sideType="me" />
+        <SidePanel img={session?.user.image} player={players?.me} sideType="me" />
         <SidePanel img={players?.enemy.image} player={players?.enemy} sideType="enemy" />
       </>
     )
   }
 }
-
-export default PanelLayout

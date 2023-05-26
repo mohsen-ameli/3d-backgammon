@@ -1,13 +1,15 @@
+"use client"
+
 import { ButtonHTMLAttributes } from "react"
 
 type HyperLinkProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  to: string
+  href: string
   text: string
 }
 
-const HyperLink = ({ to, text, ...props }: HyperLinkProps) => {
-  const openNewTab = () => {
-    const newWindow = window.open(to, "_blank", "noopener,noreferrer")
+export default function HyperLink({ href, text, ...props }: HyperLinkProps) {
+  function openNewTab() {
+    const newWindow = window.open(href, "_blank", "noopener,noreferrer")
     if (newWindow) newWindow.opener = null
   }
 
@@ -21,5 +23,3 @@ const HyperLink = ({ to, text, ...props }: HyperLinkProps) => {
     </button>
   )
 }
-
-export default HyperLink

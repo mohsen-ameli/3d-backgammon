@@ -10,7 +10,7 @@ import getServerUrl from "../../../components/utils/getServerUrl"
  * which used pure math to do this. This is a total overkill, but IT WORKS.
  * @deprecated
  */
-const useGetDiceNumberAI = () => {
+export default function useGetDiceNumberAI() {
   const predict = async (die: RigidBodyApi) => {
     const euler = new Euler()
     euler.setFromQuaternion(die.rotation())
@@ -21,15 +21,10 @@ const useGetDiceNumberAI = () => {
       z: euler.z,
     }
 
-    const res = await axios.post(
-      `${getServerUrl()}/api/ai/dice/predict/`,
-      context
-    )
+    const res = await axios.post(`${getServerUrl()}/api/ai/dice/predict/`, context)
     const prediction: number = res.data.prediction
     return prediction
   }
 
   return predict
 }
-
-export default useGetDiceNumberAI

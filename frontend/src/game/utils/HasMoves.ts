@@ -1,37 +1,34 @@
+import { useGameStore } from "../store/useGameStore"
 import { CheckerType, UserCheckerType } from "../types/Checker.type"
 import { DiceMoveType } from "../types/Dice.type"
 import Endgame from "./Endgame"
 import lenRemovedCheckers from "./LenRemovedCheckers"
 import switchPlayers from "./SwitchPlayers"
 
-/**
- * This method does 3 things:
- * 1 - Check if there are valid moves for the removed checkers (checkRemoved)
- * 2 - Check if user has valid moves in general (checkCheckers):
- *     + If user is in endgame, then check if they have moves
- *     + Otherwise, check if they have any moves
- */
-
 // Opposite color of the checker that is requested to be checked
 let oppositeColor: UserCheckerType
 
-type NotAllowedType = {
-  [key: number]: boolean
-}
-
+type NotAllowedType = { [key: number]: boolean }
 type SpecificDice = { dice1: number; dice2: number }
-
 type Die = "dice1" | "dice2"
 
-const hasMoves = (
-  checkers: CheckerType[],
-  dice: DiceMoveType,
-  color: UserCheckerType
-): boolean => {
+/**
+ * warning: Complex logic ahead, lol
+ * This method does 3 things:
+ * 1 - Check if there are valid moves for the removed checkers (checkRemoved function)
+ * 2 - Check if user has valid moves in general (checkCheckers function):
+ *     + If user is in endgame, then check if they have moves
+ *     + Otherwise, check if they have any moves
+ */
+export default function hasMoves(): boolean {
+  const dice = useGameStore.getState().dice
+  const color = useGameStore.getState().userChecker!
+  const checkers = useGameStore.getState().checkers!
+
   oppositeColor = switchPlayers(color)
 
   // Checking fo any removed checkers
-  const lenRmCheckers = lenRemovedCheckers(checkers, color)
+  const lenRmCheckers = lenRemovedCheckers(color)
 
   if (lenRmCheckers === 0)
     // There are no removed checkers.
@@ -42,11 +39,7 @@ const hasMoves = (
 }
 
 // For checking checkers that are NOT removed
-const checkCheckers = (
-  checkers: CheckerType[],
-  dice: DiceMoveType,
-  color: UserCheckerType
-) => {
+function checkCheckers(checkers: CheckerType[], dice: DiceMoveType, color: UserCheckerType) {
   // Variable to hold list of boolean values.
   const validMoves: boolean[] = []
 
@@ -54,20 +47,14 @@ const checkCheckers = (
   const notAllowed: NotAllowedType = {}
 
   // Whether or not user is in the endgame
-  const end = Endgame(checkers, color)
+  const end = Endgame(color)
 
   // All of the user's checkers that are not removed NOR in the outside columns
   const userCheckers = checkers.filter(
-    checker =>
-      checker.color === color &&
-      checker.removed === false &&
-      checker.col !== -3 &&
-      checker.col !== -4
+    checker => checker.color === color && checker.removed === false && checker.col !== -3 && checker.col !== -4,
   )
 
-  const dice_ = <SpecificDice>(
-    Object.fromEntries(Object.entries(dice).slice(0, 2))
-  )
+  const dice_ = <SpecificDice>Object.fromEntries(Object.entries(dice).slice(0, 2))
 
   let die: Die
 
@@ -83,18 +70,13 @@ const checkCheckers = (
       // Looping through user's checkers
       for (const checker of userCheckers) {
         // The column the checker will be on after the dice roll
-        const colToBeChecked =
-          checker.color === "white"
-            ? checker.col + dieNum
-            : checker.col - dieNum
+        const colToBeChecked = checker.color === "white" ? checker.col + dieNum : checker.col - dieNum
 
         // User has the option to move within the board
         if (colToBeChecked <= 23 && colToBeChecked >= 0) {
           // Checkers on the destination with opposite colors
           const checkerOnIndex = checkers.filter(
-            checker_ =>
-              checker_.col === colToBeChecked &&
-              checker_.color === oppositeColor
+            checker_ => checker_.col === colToBeChecked && checker_.color === oppositeColor,
           )
 
           if (checkerOnIndex.length >= 2) {
@@ -110,15 +92,10 @@ const checkCheckers = (
             let backRankCheckers
             // Getting the number of checkers behind the current checker (inside the loop)
             if (color === "black") {
-              backRankCheckers = checkers.filter(
-                check => check.col > checker.col && check.color === color
-              ).length
+              backRankCheckers = checkers.filter(check => check.col > checker.col && check.color === color).length
             } else {
               backRankCheckers = checkers.filter(
-                check =>
-                  check.col >= 18 &&
-                  check.col < checker.col &&
-                  check.color === color
+                check => check.col >= 18 && check.col < checker.col && check.color === color,
               ).length
             }
 
@@ -151,11 +128,7 @@ const checkCheckers = (
 }
 
 // For checking checkers that ARE removed
-const checkRemoved = (
-  checkers: CheckerType[],
-  dice: DiceMoveType,
-  color: UserCheckerType
-) => {
+function checkRemoved(checkers: CheckerType[], dice: DiceMoveType, color: UserCheckerType) {
   type checkersOnEnemyColsType = { [key: number]: number }
   // This will have the checker column number as key, and number of checkers on that column (of the enemy house columns).
   const checkersOnEnemyCols = {} as checkersOnEnemyColsType
@@ -184,9 +157,7 @@ const checkRemoved = (
     }
   }
 
-  const dice_ = <SpecificDice>(
-    Object.fromEntries(Object.entries(dice).slice(0, 2))
-  )
+  const dice_ = <SpecificDice>Object.fromEntries(Object.entries(dice).slice(0, 2))
 
   let die: Die
 
@@ -203,8 +174,7 @@ const checkRemoved = (
       for (const colNum in checkersOnEnemyCols) {
         if (checkersOnEnemyCols[colNum] >= 2) {
           // Getting the number of the column
-          const compare =
-            color === "white" ? colNum : String(25 - parseInt(colNum))
+          const compare = color === "white" ? colNum : String(25 - parseInt(colNum))
 
           // One of the die allows the user to go to an invalid column
           // So notAllowed will be set to true
@@ -228,5 +198,3 @@ const checkRemoved = (
   // User has at least one valid move
   return true
 }
-
-export default hasMoves

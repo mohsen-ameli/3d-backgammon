@@ -1,4 +1,5 @@
-import { CheckerType, UserCheckerType } from "../../types/Checker.type"
+import { useGameStore } from "@/game/store/useGameStore"
+import { UserCheckerType } from "../../types/Checker.type"
 
 type PipType = { col: number; num: number }
 
@@ -6,7 +7,11 @@ type PipType = { col: number; num: number }
  * Calculates the user pip (or score).
  * Reference: https://www.bkgm.com/gloss/lookup.cgi?pip+count
  */
-const PipScore = (checkers: CheckerType[], color: UserCheckerType) => {
+export default function PipScore(color: UserCheckerType) {
+  const checkers = useGameStore.getState().checkers
+
+  if (!checkers) return 0
+
   let pip: number = 0
   const userCheckers = checkers.filter(checker => checker.color === color)
   const checkerDict: PipType[] = []
@@ -25,5 +30,3 @@ const PipScore = (checkers: CheckerType[], color: UserCheckerType) => {
 
   return pip
 }
-
-export default PipScore

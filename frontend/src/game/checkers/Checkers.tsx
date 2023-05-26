@@ -1,24 +1,20 @@
-import { memo, useContext } from "react"
-import { GameContext } from "../context/GameContext"
 import Checker from "./Checker"
+import { useGameStore } from "../store/useGameStore"
 
 /**
  * Container for all of the checkers
  */
-const Checkers = () => {
-  const { checkers } = useContext(GameContext)
+export default function Checkers() {
+  // const checkers = useGameStore.getState().checkers
+  const checkers = useGameStore(state => state.checkers)
 
-  if (checkers.current)
+  if (checkers) {
     return (
       <>
-        {checkers.current.map(data => (
+        {checkers.map(data => (
           <Checker thisChecker={data} key={data.id} />
         ))}
-        {/* <Testing /> */}
       </>
     )
-
-  return <></>
+  } else return <></>
 }
-
-export default memo(Checkers)

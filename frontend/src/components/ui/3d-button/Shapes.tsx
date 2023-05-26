@@ -8,24 +8,20 @@ No additional changes were made to this model.
 */
 
 import { useGLTF } from "@react-three/drei"
-import { Canvas, PerspectiveCameraProps, useThree } from "@react-three/fiber"
+import { PerspectiveCameraProps, useThree } from "@react-three/fiber"
 import { MotionConfig } from "framer-motion"
 import { motion } from "framer-motion-3d"
 import { useLayoutEffect, useMemo, useRef } from "react"
-import { GLTFResult } from "../../../game/types/GLTFResult.type"
-import * as types from "./3d-button.types"
-import { transition } from "./settings"
+import { mouseToLightRotation, spring, transition } from "./settings"
 import { useSmoothTransform } from "./useSmoothTransform"
+import { CameraTypes, ObjType, ShapesType } from "@/types/3d-button.types"
+import { GLTFResult } from "@/game/types/GLTFResult.type"
 
-const spring = { stiffness: 600, damping: 30 }
-
-const mouseToLightRotation = (v: number) => (-1 * v) / 140
-
-const Shapes = ({ isHover, isPress, mouseX, mouseY }: types.ShapesType) => {
-  const { nodes, materials } = useGLTF("/models/dice_colored.glb") as GLTFResult
-
+export default function Shapes({ isHover, isPress, mouseX, mouseY, text }: ShapesType) {
   const lightRotateX = useSmoothTransform(mouseY, spring, mouseToLightRotation)
   const lightRotateY = useSmoothTransform(mouseX, spring, mouseToLightRotation)
+
+  const { nodes, materials } = useGLTF("/models/dice_colored.glb") as GLTFResult
 
   // Shuffled meshes
   const meshes = useMemo(() => {
@@ -36,17 +32,16 @@ const Shapes = ({ isHover, isPress, mouseX, mouseY }: types.ShapesType) => {
       { geo: nodes.dice_00_dice_03_0.geometry, mat: materials.dice_03 },
     ]
 
-    allMeshes.sort(() => Math.random() - 0.5)
+    // allMeshes.sort(() => Math.random() - 0.5)
 
     return allMeshes
+
+    // eslint-disable-next-line
   }, [])
 
   return (
-    <Canvas
-      shadows
-      className="rounded-full"
-      resize={{ scroll: false, offsetSize: true }}
-    >
+    // <Canvas shadows className="rounded-full" resize={{ scroll: false, offsetSize: true }}>
+    <>
       <Camera mouseX={mouseX} mouseY={mouseY} />
       <MotionConfig transition={transition}>
         <motion.group
@@ -71,11 +66,11 @@ const Shapes = ({ isHover, isPress, mouseX, mouseY }: types.ShapesType) => {
           <Dice4 geometry={meshes[3].geo} material={meshes[3].mat} />
         </motion.group>
       </MotionConfig>
-    </Canvas>
+    </>
   )
 }
 
-const Dice1 = ({ geometry, material }: types.ObjType) => {
+function Dice1({ geometry, material }: ObjType) {
   return (
     <motion.mesh position={[-0.5, -0.5, 0]} variants={{ hover: { z: 2.3 } }}>
       <mesh geometry={geometry} material={material} scale={0.2} />
@@ -83,7 +78,7 @@ const Dice1 = ({ geometry, material }: types.ObjType) => {
   )
 }
 
-const Dice2 = ({ geometry, material }: types.ObjType) => {
+function Dice2({ geometry, material }: ObjType) {
   return (
     <motion.mesh
       position={[-0.8, 0.4, 0]}
@@ -102,7 +97,7 @@ const Dice2 = ({ geometry, material }: types.ObjType) => {
   )
 }
 
-const Dice3 = ({ geometry, material }: types.ObjType) => {
+function Dice3({ geometry, material }: ObjType) {
   return (
     <motion.mesh
       position={[0.1, 0.4, 0]}
@@ -120,7 +115,7 @@ const Dice3 = ({ geometry, material }: types.ObjType) => {
   )
 }
 
-const Dice4 = ({ geometry, material }: types.ObjType) => {
+function Dice4({ geometry, material }: ObjType) {
   return (
     <motion.mesh
       position={[1.1, 0, 0]}
@@ -139,25 +134,13 @@ const Dice4 = ({ geometry, material }: types.ObjType) => {
   )
 }
 
-const Lights = () => {
+function Lights() {
   return (
     <>
       <ambientLight intensity={0.5} />
-      <directionalLight
-        color="#fbbd61"
-        position={[-10, -10, -10]}
-        intensity={0.2}
-      />
-      <directionalLight
-        color="#fbbd61"
-        position={[-10, 0, 15]}
-        intensity={0.8}
-      />
-      <directionalLight
-        color="#fbbd61"
-        position={[-5, 20, 2]}
-        intensity={0.5}
-      />
+      <directionalLight color="#fbbd61" position={[-10, -10, -10]} intensity={0.2} />
+      <directionalLight color="#fbbd61" position={[-10, 0, 15]} intensity={0.8} />
+      <directionalLight color="#fbbd61" position={[-5, 20, 2]} intensity={0.5} />
       <directionalLight color="#5d2289" position={[15, 10, -2]} intensity={2} />
       <directionalLight color="#5d2289" position={[15, 10, 5]} intensity={1} />
       <directionalLight color="#a980c9" position={[5, -10, 5]} intensity={1} />
@@ -166,13 +149,9 @@ const Lights = () => {
 }
 
 // Adapted from https://github.com/pmndrs/drei/blob/master/src/core/PerspectiveCamera.tsx
-const Camera = ({ mouseX, mouseY, ...props }: types.CameraTypes) => {
+function Camera({ mouseX, mouseY, ...props }: CameraTypes) {
   const cameraX = useSmoothTransform(mouseX, spring, (x: number) => x / 350)
-  const cameraY = useSmoothTransform(
-    mouseY,
-    spring,
-    (y: number) => (-1 * y) / 350
-  )
+  const cameraY = useSmoothTransform(mouseY, spring, (y: number) => (-1 * y) / 350)
 
   const set = useThree(({ set }) => set)
   const camera = useThree(({ camera }) => camera)
@@ -198,18 +177,8 @@ const Camera = ({ mouseX, mouseY, ...props }: types.CameraTypes) => {
   }, [camera, cameraRef, set])
 
   useLayoutEffect(() => {
-    return cameraX.onChange(() => camera.lookAt(scene.position))
-  }, [cameraX])
+    return cameraX.on("change", () => camera.lookAt(scene.position))
+  }, [camera, cameraX, scene.position])
 
-  return (
-    <motion.perspectiveCamera
-      ref={cameraRef}
-      fov={90}
-      position={[cameraX, cameraY, 3.8]}
-    />
-  )
+  return <motion.perspectiveCamera ref={cameraRef} fov={90} position={[cameraX, cameraY, 3.8]} />
 }
-
-export default Shapes
-
-useGLTF.preload("/models/dice_colored.glb")

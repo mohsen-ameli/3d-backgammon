@@ -1,27 +1,38 @@
-import { useContext, useState } from "react"
+import { useState } from "react"
 import Modal from "../../../components/ui/Modal"
-import { GameContext } from "../../context/GameContext"
 import LayoutBtn from "../components/LayoutBtn"
 import Info from "../info/Info"
 import Settings from "../settings/Settings"
+import { faGear, faInfo, faLock, faLockOpen, faRotateLeft } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useGameStore } from "@/game/store/useGameStore"
 
 /**
  * Set of buttons on the top left corner
  */
-const TopLeftLayout = () => {
-  const { resetOrbit, toggleControls, inGame } = useContext(GameContext)
+export default function TopLeftLayout() {
+  const inGame = useGameStore(state => state.inGame)
 
   const [controlsLock, setControlsLock] = useState(true)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [infoOpen, setInfoOpen] = useState(false)
 
-  const switchControls = () => {
-    toggleControls.current("layout")
+  function switchControls() {
+    useGameStore.getState().toggleControls?.("layout")
     setControlsLock(curr => !curr)
   }
 
-  const openSettings = () => setSettingsOpen(curr => !curr)
-  const openInfo = () => setInfoOpen(curr => !curr)
+  function openSettings() {
+    setSettingsOpen(curr => !curr)
+  }
+
+  function openInfo() {
+    setInfoOpen(curr => !curr)
+  }
+
+  function handleReset() {
+    useGameStore.getState().resetOrbit?.("board")
+  }
 
   return (
     <>
@@ -29,28 +40,21 @@ const TopLeftLayout = () => {
         {inGame && (
           <>
             <LayoutBtn title="Lock Controls" onClick={switchControls}>
-              <i
-                className={
-                  controlsLock ? "fa-solid fa-lock-open" : "fa-solid fa-lock"
-                }
-              />
+              <FontAwesomeIcon icon={controlsLock ? faLockOpen : faLock} />
             </LayoutBtn>
 
-            <LayoutBtn
-              title="Reset Controls"
-              onClick={() => resetOrbit.current("board")}
-            >
-              <i className="fa-solid fa-rotate-left" />
+            <LayoutBtn title="Reset Controls" onClick={handleReset}>
+              <FontAwesomeIcon icon={faRotateLeft} />
             </LayoutBtn>
           </>
         )}
 
         <LayoutBtn title="Settings" onClick={openSettings}>
-          <i className="fa-solid fa-gear" />
+          <FontAwesomeIcon icon={faGear} />
         </LayoutBtn>
 
         <LayoutBtn title="Info" onClick={openInfo}>
-          <i className="fa-solid fa-info" />
+          <FontAwesomeIcon icon={faInfo} />
         </LayoutBtn>
       </div>
 
@@ -64,5 +68,3 @@ const TopLeftLayout = () => {
     </>
   )
 }
-
-export default TopLeftLayout

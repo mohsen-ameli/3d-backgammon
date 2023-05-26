@@ -1,27 +1,25 @@
 import { CuboidCollider, RigidBody } from "@react-three/rapier"
-import { useContext, useRef } from "react"
+import { useRef } from "react"
 import { Mesh } from "three"
-import { GameContext } from "../context/GameContext"
 import { GROUND } from "../data/Data"
+import { useGameStore } from "../store/useGameStore"
 
 /**
  * Primary board mesh.
  */
-const Board = () => {
-  const { nodes, materials } = useContext(GameContext)
+export default function Board() {
+  const nodes = useGameStore.getState().nodes
+  const materials = useGameStore.getState().materials
 
   const board = useRef<Mesh>(null!)
   const boardHinge = useRef<Mesh>(null!)
 
+  if (!nodes || !materials) return <></>
+
   return (
     <group position-y={GROUND}>
       {/* Board Hinge */}
-      <mesh
-        ref={boardHinge}
-        geometry={nodes?.Hinge.geometry}
-        material={materials?.Hinge}
-        receiveShadow
-      />
+      <mesh ref={boardHinge} geometry={nodes.Hinge.geometry} material={materials.Hinge} receiveShadow />
 
       <RigidBody type="fixed" colliders={false}>
         {/* Surface */}
@@ -42,15 +40,8 @@ const Board = () => {
         {/* z- wall */}
         <CuboidCollider args={[1.175, 0.5, 0.07]} position={[0, 0.06, 1]} />
 
-        <mesh
-          ref={board}
-          geometry={nodes?.Board.geometry}
-          material={materials?.BoardWood2}
-          receiveShadow
-        />
+        <mesh ref={board} geometry={nodes.Board.geometry} material={materials.BoardWood2} receiveShadow />
       </RigidBody>
     </group>
   )
 }
-
-export default Board

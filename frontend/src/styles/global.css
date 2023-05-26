@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  touch-action: none;
+  overflow: hidden;
+  outline: none;
+}
+
+#container {
+  z-index: 10;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: clamp(20%, 400px, 80%);
+  height: min(100dvh, 450px);
+}
+
+/* Custom Scroll Bar */
+.custom-scroll-bar {
+  overflow-y: auto;
+}
+.custom-scroll-bar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scroll-bar::-webkit-scrollbar-track {
+  background: #dacbae;
+  border-radius: 5px;
+}
+.custom-scroll-bar::-webkit-scrollbar-thumb {
+  background: #a26621;
+  border-radius: 5px;
+}
+.custom-scroll-bar::-webkit-scrollbar-thumb:hover {
+  background: #633b0e;
+}
+
+/* Rotate animation for users on phones with portrait mode */
+.rotate-anim {
+  animation: rotate 2s cubic-bezier(0.25, 0.1, 0.25, 1) infinite alternate;
+  transform-origin: center;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(-90deg);
+  }
+}
+
+/* Stats */
+.custom-stats {
+  top: auto !important;
+  bottom: 0 !important;
+  width: 80px;
+  height: 48px;
+}

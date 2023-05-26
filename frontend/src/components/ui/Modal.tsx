@@ -1,5 +1,5 @@
+import { Children } from "@/types/children.type"
 import { AnimatePresence, Variants, motion } from "framer-motion"
-import { Children } from "../../components/types/children.type"
 
 type CarouselProps = Children & {
   open: boolean
@@ -43,13 +43,10 @@ const Modal = ({ setOpen, open, children }: CarouselProps) => {
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="fixed left-1/2 top-1/2 z-[999] flex h-screen w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-[#0000005a] text-white"
+          className="fixed left-1/2 top-1/2 z-[100] flex h-screen w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-[#0000005a] text-white"
         >
-          <motion.div
-            variants={modalVariants}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="custom-scroll-bar max-h-screen min-w-[300px] max-w-[400px] rounded-md border-2 border-orange-700 bg-orange-900 p-8 lg:max-w-[600px]">
+          <motion.div variants={modalVariants} onClick={e => e.stopPropagation()}>
+            <div className="custom-scroll-bar max-h-screen min-w-[400px] overflow-x-hidden rounded-md border-2 border-orange-700 bg-orange-900 p-8 lg:max-w-[600px]">
               {children}
             </div>
 

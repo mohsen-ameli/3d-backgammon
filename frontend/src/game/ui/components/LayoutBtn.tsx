@@ -1,19 +1,22 @@
+"use client"
+
 import { ButtonHTMLAttributes, useState } from "react"
-import { Children } from "../../../components/types/children.type"
-import buttonClick from "/sounds/button-click.mp3"
+import { Children } from "@/types/children.type"
+
+const clickAudio = typeof Audio !== "undefined" ? new Audio("/sounds/button-click.mp3") : null
 
 type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & Children
 
 /**
  * Button component used in the layouts
  */
-const LayoutBtn = (props_: BtnProps) => {
+export default function LayoutBtn(props_: BtnProps) {
   const { children, onClick, ...props } = props_
 
-  const [click] = useState(() => new Audio(buttonClick))
+  const [click] = useState(() => clickAudio)
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    click.play()
+  function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    click?.play()
     onClick?.(e)
   }
 
@@ -27,5 +30,3 @@ const LayoutBtn = (props_: BtnProps) => {
     </button>
   )
 }
-
-export default LayoutBtn

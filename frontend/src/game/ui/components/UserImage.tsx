@@ -1,10 +1,14 @@
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { CountdownCircleTimer } from "react-countdown-circle-timer"
 import Center from "../../../components/ui/Center"
-import { GameContext } from "../../context/GameContext"
 import { USER_TURN_DURATION } from "../../data/Data"
 import { PlayerType } from "../../types/Game.type"
 import Messages from "./Messages"
+import { faUser } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useGameStore } from "@/game/store/useGameStore"
+import Image from "next/image"
+import { shallow } from "zustand/shallow"
 
 type UserImageType = {
   img: string | undefined
@@ -15,8 +19,8 @@ type UserImageType = {
  * This is the user's image on the side panels
  */
 const UserImage = ({ img, player }: UserImageType) => {
-  const { gameMode, phase, players, resign, timer, userChecker } =
-    useContext(GameContext)
+  const phase = useGameStore(state => state.phase)
+  const userChecker = useGameStore(state => state.userChecker)
 
   const [size, setSize] = useState(() => resize())
   const [duration, setDuration] = useState(USER_TURN_DURATION)
@@ -33,7 +37,10 @@ const UserImage = ({ img, player }: UserImageType) => {
 
   // Auto resign function
   function autoResign(id?: number) {
-    if (!id || !players || gameMode.current === "pass-and-play") return
+    const gameMode = useGameStore.getState().gameMode
+    const players = useGameStore.getState().players
+
+    if (!id || !players || gameMode === "pass-and-play") return
 
     // If I'm losing
     // if (id === players.me.id) {
@@ -56,18 +63,15 @@ const UserImage = ({ img, player }: UserImageType) => {
 
   // Handling the timer
   useEffect(() => {
-    if (
-      !player ||
-      !timer.current ||
-      !["initial", "diceRoll", "diceRollAgain"].includes(phase!)
-    )
-      return
+    const timer = useGameStore.getState().timer
+
+    if (!player || !timer || !["initial", "diceRoll", "diceRollAgain"].includes(phase!)) return
 
     // If user has been offline for too long then auto resign them
-    if (Date.now() >= timer.current.time) {
-      autoResign(timer.current.id)
-    } else if (player.id === timer.current.id) {
-      const timeLeft = (timer.current.time - Date.now()) / 1000
+    if (Date.now() >= timer.time) {
+      autoResign(timer.id)
+    } else if (player.id === timer.id) {
+      const timeLeft = (timer.time - Date.now()) / 1000
       setDuration(timeLeft)
       setIsPlaying(true)
       return
@@ -80,11 +84,10 @@ const UserImage = ({ img, player }: UserImageType) => {
   if (img === undefined || img === "") {
     return (
       <div className="m-4">
-        <i
-          className={`fa-solid fa-user text-[40px] lg:text-[50px] ${
-            player?.color === "white" ? "text-slate-200" : "text-slate-900"
-          }`}
-        ></i>
+        <FontAwesomeIcon
+          icon={faUser}
+          className={`text-[40px] lg:text-[50px] ${player?.color === "white" ? "text-slate-200" : "text-slate-900"}`}
+        />
       </div>
     )
   }
@@ -95,7 +98,7 @@ const UserImage = ({ img, player }: UserImageType) => {
       <Messages player={player} />
 
       {/* Timer */}
-      {userChecker.current === player?.color ? (
+      {userChecker === player?.color ? (
         <CountdownCircleTimer
           key={key}
           size={size}
@@ -110,9 +113,7 @@ const UserImage = ({ img, player }: UserImageType) => {
             (remainingTime / duration) * 100 <= 25 && (
               <div className="absolute z-10 h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
                 <div className="h-full w-full rounded-full bg-[#6e6e6e99] text-red-500 lg:text-lg lg:font-bold">
-                  <Center className="w-full text-center">
-                    {remainingTime} sec
-                  </Center>
+                  <Center className="w-full text-center">{remainingTime} sec</Center>
                 </div>
               </div>
             )
@@ -125,7 +126,9 @@ const UserImage = ({ img, player }: UserImageType) => {
 
       {/* Profile Pic */}
       <Center className="h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
-        <img
+        <Image
+          width={150}
+          height={150}
           src={img}
           alt="img"
           className="h-full w-full rounded-full object-cover object-center"

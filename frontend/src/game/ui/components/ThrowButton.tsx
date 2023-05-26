@@ -1,17 +1,20 @@
 import { motion } from "framer-motion"
-import { useContext } from "react"
 import Button from "../../../components/ui/Button"
-import { GameContext } from "../../context/GameContext"
-
-type ThrowButtonProps = {
-  className?: string
-}
+import { faDice } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useGameStore } from "@/game/store/useGameStore"
+import { shallow } from "zustand/shallow"
 
 /**
  * Shows the throw button, if it's supposed to (based on the state).
  */
-const ThrowButton = ({ className }: ThrowButtonProps) => {
-  const { throwDice, showThrow, dice } = useContext(GameContext)
+export default function ThrowButton({ className }: { className?: string }) {
+  const showThrow = useGameStore(state => state.showThrow)
+  const dice = useGameStore(state => state.dice, shallow)
+
+  function handleClick() {
+    useGameStore.getState().throwDice?.()
+  }
 
   return (
     <div className={"w-full text-sm lg:text-lg " + className}>
@@ -27,23 +30,15 @@ const ThrowButton = ({ className }: ThrowButtonProps) => {
             duration: 1,
           }}
         >
-          <Button
-            title="Throw Dice"
-            className="inset-0 w-[90%] px-0 hover:animate-none"
-            onClick={() => throwDice.current()}
-          >
-            Throw <i className="fa-solid fa-dice"></i>
+          <Button title="Throw Dice" className="inset-0 w-[90%] px-0 hover:animate-none" onClick={handleClick}>
+            Throw <FontAwesomeIcon icon={faDice} />
           </Button>
         </motion.div>
       ) : showThrow === false ? (
         <h1 className="cursor-default text-center">Loading dice...</h1>
       ) : (
-        dice.current.moves === 0 && (
-          <h1 className="cursor-default text-center">Throwing dice...</h1>
-        )
+        dice?.moves === 0 && <h1 className="cursor-default text-center">Throwing dice...</h1>
       )}
     </div>
   )
 }
-
-export default ThrowButton

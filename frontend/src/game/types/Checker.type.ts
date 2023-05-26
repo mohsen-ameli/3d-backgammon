@@ -9,6 +9,3 @@ export type CheckerType = {
 
 // Possible checker colors
 export type UserCheckerType = "black" | "white"
-
-// Checker picked type
-export type CheckerPickedType = CheckerType | null

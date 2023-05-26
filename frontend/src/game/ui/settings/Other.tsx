@@ -1,11 +1,12 @@
-import { useContext, useState } from "react"
+import { useState } from "react"
 import ReactSwitch from "react-switch"
 import Button from "../../../components/ui/Button"
-import { GameContext } from "../../context/GameContext"
-import { SettingsProps } from "./LocalSettings.type"
+import { SettingsProps } from "../../types/LocalSettings.type"
+import { useGameStore } from "@/game/store/useGameStore"
+import { shallow } from "zustand/shallow"
 
-const Other = ({ setOpen }: SettingsProps) => {
-  const { settings, setSettings } = useContext(GameContext)
+export default function Other({ setOpen }: SettingsProps) {
+  const settings = useGameStore(state => state.settings, shallow)
 
   // Debug
   const [debug, setDebug] = useState(settings.debug)
@@ -13,29 +14,23 @@ const Other = ({ setOpen }: SettingsProps) => {
   const [perf, setPerf] = useState(settings.perf)
 
   // Toggles debug stuff
-  const toggleDebug = (checked: boolean) => {
+  function toggleDebug(checked: boolean) {
     setDebug(checked)
-    setSettings(curr => {
-      return {
-        ...curr,
-        debug: checked,
-      }
-    })
+    useGameStore.setState(curr => ({
+      settings: { ...curr.settings, debug: checked },
+    }))
   }
 
   // Toggle the performance monitor
-  const togglePerf = (checked: boolean) => {
+  function togglePerf(checked: boolean) {
     setPerf(checked)
-    setSettings(curr => {
-      return {
-        ...curr,
-        perf: checked,
-      }
-    })
+    useGameStore.setState(curr => ({
+      settings: { ...curr.settings, perf: checked },
+    }))
   }
 
   // Opens/closes fullscreen
-  const openFullScreen = () => {
+  function openFullScreen() {
     const elem = document.querySelector("html")!
     if (document.fullscreenElement) {
       document.exitFullscreen()
@@ -50,6 +45,7 @@ const Other = ({ setOpen }: SettingsProps) => {
     <>
       <div className="flex items-center justify-between gap-x-8">
         Toggle debug
+        {/* @ts-ignore */}
         <ReactSwitch
           onChange={toggleDebug}
           checked={debug}
@@ -61,6 +57,7 @@ const Other = ({ setOpen }: SettingsProps) => {
 
       <div className="flex items-center justify-between gap-x-8">
         Toggle performance monitor
+        {/* @ts-ignore */}
         <ReactSwitch
           onChange={togglePerf}
           checked={perf}
@@ -74,5 +71,3 @@ const Other = ({ setOpen }: SettingsProps) => {
     </>
   )
 }
-
-export default Other

@@ -1,32 +1,43 @@
+"use client"
+
 /**
  * taken from:
  * https://codesandbox.io/s/framer-motion-3d-shapes-button-ke8wx?from-embed
  */
 
 import { MotionConfig, motion, useMotionValue } from "framer-motion"
-import { Suspense, useState } from "react"
+import { memo, useState } from "react"
 import useMeasure from "react-use-measure"
-import * as types from "./3d-button.types"
+import * as types from "@/types/3d-button.types"
 import Shapes from "./Shapes"
 import { transition } from "./settings"
-import "./styles.css"
-import buttonClick from "/sounds/button-click.mp3"
+import "@/styles/button3d.css"
+import Loading from "@/next-three/CanvasLoading"
+import dynamic from "next/dynamic"
 
-const Button3d = ({ text, ...props }: types.Button3dProps) => {
+const View = dynamic(() => import("@/next-three/View").then(mod => mod.View), {
+  ssr: false,
+  loading: () => <Loading />,
+})
+
+const clickAudio = typeof Audio !== "undefined" ? new Audio("/sounds/button-click.mp3") : null
+
+export default function Button3d({ text, ...props }: types.Button3dProps) {
   const [ref, bounds] = useMeasure({ scroll: false })
   const [isHover, setIsHover] = useState(false)
   const [isPress, setIsPress] = useState(false)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
-  const [click] = useState(() => new Audio(buttonClick))
+  const [click] = useState(() => clickAudio)
+  const [label] = useState(() => text)
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    click.play()
+  function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    click?.play()
     props.onClick?.(e)
   }
 
-  const resetMousePosition = () => {
+  function resetMousePosition() {
     mouseX.set(0)
     mouseY.set(0)
   }
@@ -34,9 +45,8 @@ const Button3d = ({ text, ...props }: types.Button3dProps) => {
   return (
     <MotionConfig transition={transition}>
       <motion.button
-        className={props.className}
+        className={"btn-3d " + props.className}
         onClick={handleClick}
-        id="btn-3d"
         ref={ref}
         initial={false}
         animate={isHover ? "hover" : "rest"}
@@ -71,26 +81,15 @@ const Button3d = ({ text, ...props }: types.Button3dProps) => {
         >
           <div className="pink blush" />
           <div className="blue blush" />
-          <div className="container">
-            <Suspense fallback={null}>
-              <Shapes
-                isHover={isHover}
-                isPress={isPress}
-                mouseX={mouseX}
-                mouseY={mouseY}
-              />
-            </Suspense>
-          </div>
+          {/* @ts-ignore */}
+          <View className="container z-10 rounded-full">
+            <Shapes text={label} isHover={isHover} isPress={isPress} mouseX={mouseX} mouseY={mouseY} />
+          </View>
         </motion.div>
-        <motion.h1
-          variants={{ hover: { scale: 1.5 }, press: { scale: 1.1 } }}
-          className="label"
-        >
+        <motion.h1 variants={{ hover: { scale: 1.5 }, press: { scale: 1.1 } }} className="label">
           {text}
         </motion.h1>
       </motion.button>
     </MotionConfig>
   )
 }
-
-export default Button3d

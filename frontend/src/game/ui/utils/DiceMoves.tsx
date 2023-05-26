@@ -1,34 +1,53 @@
-import { DiceMoveType } from "../../types/Dice.type"
-
-type DiceMovesProps = {
-  dice: DiceMoveType
-}
+import { faDiceFive, faDiceFour, faDiceOne, faDiceSix, faDiceThree, faDiceTwo } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useGameStore } from "@/game/store/useGameStore"
+import { useEffect, useState } from "react"
+import { shallow } from "zustand/shallow"
 
 /**
  * Small function used in the SidePanels to get the dice icons.
  */
-const DiceMoves = ({ dice }: DiceMovesProps) => {
-  const jsx = []
+export default function DiceMoves() {
+  const [jsx, setJsx] = useState<JSX.Element[]>([])
 
-  if (dice.moves > 2) {
-    for (let i = 0; i < dice.moves; i++) {
-      jsx.push(getMoves(dice.dice1))
+  useEffect(() => {
+    makeJsx()
+
+    const unsub = useGameStore.subscribe(
+      state => state.dice,
+      (dice, prev) => {
+        if (dice.moves !== prev.moves) makeJsx()
+      },
+      { equalityFn: shallow },
+    )
+
+    return () => unsub()
+  }, [])
+
+  function makeJsx() {
+    const dice = useGameStore.getState().dice
+    const arr = []
+
+    if (dice.moves > 2) {
+      for (let i = 0; i < dice.moves; i++) {
+        arr.push(getMoves(dice.dice1))
+      }
+    } else if (dice.moves === 2) {
+      arr.push(getMoves(dice.dice1))
+      arr.push(getMoves(dice.dice2))
+    } else if (dice.dice1 !== 0) {
+      arr.push(getMoves(dice.dice1))
+    } else {
+      arr.push(getMoves(dice.dice2))
     }
-  } else if (dice.moves === 2) {
-    jsx.push(getMoves(dice.dice1))
-    jsx.push(getMoves(dice.dice2))
-  } else if (dice.dice1 !== 0) {
-    jsx.push(getMoves(dice.dice1))
-  } else {
-    jsx.push(getMoves(dice.dice2))
+
+    setJsx(arr)
   }
 
   return (
     <div
       className={`mx-auto grid h-full ${
-        jsx.length > 2
-          ? "w-[50px] grid-cols-2 lg:w-full lg:grid-cols-4"
-          : "w-[50px] grid-cols-2 lg:w-[50%]"
+        jsx.length > 2 ? "w-[50px] grid-cols-2 lg:w-full lg:grid-cols-4" : "w-[50px] grid-cols-2 lg:w-[50%]"
       } gap-2 text-[18pt] lg:text-[22pt]`}
     >
       {jsx.map((number, index) => (
@@ -40,20 +59,20 @@ const DiceMoves = ({ dice }: DiceMovesProps) => {
   )
 }
 
-const getMoves = (num: number) => {
+function getMoves(num: number) {
   if (num === 1) {
-    return <i className="fa-solid fa-dice-one"></i>
+    return <FontAwesomeIcon icon={faDiceOne} />
   } else if (num === 2) {
-    return <i className="fa-solid fa-dice-two"></i>
+    return <FontAwesomeIcon icon={faDiceTwo} />
   } else if (num === 3) {
-    return <i className="fa-solid fa-dice-three"></i>
+    return <FontAwesomeIcon icon={faDiceThree} />
   } else if (num === 4) {
-    return <i className="fa-solid fa-dice-four"></i>
+    return <FontAwesomeIcon icon={faDiceFour} />
   } else if (num === 5) {
-    return <i className="fa-solid fa-dice-five"></i>
+    return <FontAwesomeIcon icon={faDiceFive} />
   } else if (num === 6) {
-    return <i className="fa-solid fa-dice-six"></i>
+    return <FontAwesomeIcon icon={faDiceSix} />
+  } else {
+    return <></>
   }
 }
-
-export default DiceMoves

@@ -1,4 +1,4 @@
-import { forwardRef, InputHTMLAttributes } from "react"
+import { InputHTMLAttributes, forwardRef } from "react"
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   className?: string
@@ -7,17 +7,15 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 /**
  * A custom input
  */
-const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+export default forwardRef<HTMLInputElement, InputProps>(function Input(props, ref) {
   const { className, ...rest } = props
 
   return (
     <input
-      className={`rounded-lg border-2 border-transparent px-2 py-2 outline-none 
-                  duration-200 focus:border-orange-400 focus:ease-in-out ${className}`}
+      className={`rounded-lg border-2 border-transparent p-2 outline-none duration-200 
+                focus:border-orange-400 focus:ease-in-out ${className}`}
       ref={ref}
       {...rest}
     />
   )
 })
-
-export default Input
