@@ -35,10 +35,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Layout>
           <AuthProvider>
             {children}
-            {/* @ts-ignore */}
-            {/* <Experience /> */}
-            {/* @ts-ignore */}
-            {/* <MainLayout3D /> */}
+            <Experience />
+            <MainLayout3D />
             <Loader />
           </AuthProvider>
           <Toastify />

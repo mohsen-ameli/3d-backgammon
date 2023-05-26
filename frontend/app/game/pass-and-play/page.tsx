@@ -29,24 +29,10 @@ export default function PassAndPlayPage() {
 
   const [data, setData] = useState<[string, string] | null>(null)
 
-  // Gets two random names for the users
-  async function getRandomName(session: Session | null) {
-    if (!session) {
-      setData(["Guest", "Guest"])
-      return
-    }
-    const axiosInstance = AxiosInstance(session)
-
-    try {
-      const { data: d }: DataType = await axiosInstance.get("/api/game/get-random-name/")
-      setData(d)
-    } catch (e) {
-      setData(["Guest", "Guest"])
-    }
-  }
-
   // Setting each player's info, game mode, checkers, dice, and phase.
   useEffect(() => {
+    useGameStore.getState().resetOrbit?.("board", true)
+
     const userChecker = Math.random() - 0.5 < 0 ? "white" : "black"
 
     const me: PlayerType = {
@@ -77,12 +63,30 @@ export default function PassAndPlayPage() {
   // Resetting states when user leaves the game.
   useEffect(() => {
     getRandomName(session)
+  }, [session])
 
+  useEffect(() => {
     return () => {
       useGameStore.setState({ inGame: false, gameMode: undefined })
       useGameStore.getState().resetOrbit?.("env")
     }
-  }, [session])
+  }, [])
+
+  // Gets two random names for the users
+  async function getRandomName(session: Session | null) {
+    if (!session) {
+      setData(["Guest", "Guest"])
+      return
+    }
+    const axiosInstance = AxiosInstance(session)
+
+    try {
+      const { data: d }: DataType = await axiosInstance.get("/api/game/get-random-name/")
+      setData(d)
+    } catch (e) {
+      setData(["Guest", "Guest"])
+    }
+  }
 
   return <></>
 }

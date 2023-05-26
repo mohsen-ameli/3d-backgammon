@@ -1297,6 +1297,14 @@
   resolved "https://registry.yarnpkg.com/@react-spring/rafz/-/rafz-9.7.2.tgz#77e7088c215e05cf893851cd87ceb40d89f2a7d7"
   integrity sha512-kDWMYDQto3+flkrX3vy6DU/l9pxQ4TVW91DglQEc11iDc7shF4+WVDRJvOVLX+xoMP7zyag1dMvlIgvQ+dvA/A==
 
+"@react-spring/shared@^9.7.2", "@react-spring/shared@~9.7.2":
+  version "9.7.2"
+  resolved "https://registry.yarnpkg.com/@react-spring/shared/-/shared-9.7.2.tgz#b8485617bdcc9f6348b245922051fb534e07c566"
+  integrity sha512-6U9qkno+9DxlH5nSltnPs+kU6tYKf0bPLURX2te13aGel8YqgcpFYp5Av8DcN2x3sukinAsmzHUS/FRsdZMMBA==
+  dependencies:
+    "@react-spring/rafz" "~9.7.2"
+    "@react-spring/types" "~9.7.2"
+
 "@react-spring/shared@~9.6.1":
   version "9.6.1"
   resolved "https://registry.yarnpkg.com/@react-spring/shared/-/shared-9.6.1.tgz#4e2e4296910656c02bd9fd54c559702bc836ac4e"
@@ -1304,14 +1312,6 @@
   dependencies:
     "@react-spring/rafz" "~9.6.1"
     "@react-spring/types" "~9.6.1"
-
-"@react-spring/shared@~9.7.2":
-  version "9.7.2"
-  resolved "https://registry.yarnpkg.com/@react-spring/shared/-/shared-9.7.2.tgz#b8485617bdcc9f6348b245922051fb534e07c566"
-  integrity sha512-6U9qkno+9DxlH5nSltnPs+kU6tYKf0bPLURX2te13aGel8YqgcpFYp5Av8DcN2x3sukinAsmzHUS/FRsdZMMBA==
-  dependencies:
-    "@react-spring/rafz" "~9.7.2"
-    "@react-spring/types" "~9.7.2"
 
 "@react-spring/three@~9.6.1":
   version "9.6.1"
@@ -1343,10 +1343,10 @@
     "@react-spring/shared" "~9.7.2"
     "@react-spring/types" "~9.7.2"
 
-"@react-three/drei@^9.68.6":
-  version "9.68.6"
-  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-9.68.6.tgz#2e2a8a0f7fd10c1a7168d33a9d72b5605b114f83"
-  integrity sha512-Jkzs18EqywSHK8uqXmukE5z4C+SDfs5zhnnmE2nh5108ncMbTVUDBLPRdQMFkxU2KIoDcQXQR4vab8WQtfHVMg==
+"@react-three/drei@^9.69.2":
+  version "9.69.2"
+  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-9.69.2.tgz#94ccbae3772fddb2a525398dd03c8f91b4805dfc"
+  integrity sha512-9kYEwHr6WyErZnqyXCdg9BJn0V08yJYQQH/Ssum5HlxVQEjCjnUnNIZ7RD1tmY3MqVF2rDGHV79sU4uYLxTLwg==
   dependencies:
     "@babel/runtime" "^7.11.2"
     "@react-spring/three" "~9.6.1"
@@ -1369,7 +1369,7 @@
     utility-types "^3.10.0"
     zustand "^3.5.13"
 
-"@react-three/fiber@^8.13.0":
+"@react-three/fiber@^8.11.5":
   version "8.13.0"
   resolved "https://registry.yarnpkg.com/@react-three/fiber/-/fiber-8.13.0.tgz#c9eabe60f2276a66d7ce9a3b927083894f4202f9"
   integrity sha512-hPFzFNgikEMyEbL+NpSA7q+UWZxInrrkJldWaCR2w34Fwf20x9p68bsyN0/yn9oM2VlWoJcJjR8hw1tN9AxHuA==
@@ -1675,7 +1675,7 @@
   resolved "https://registry.yarnpkg.com/@use-gesture/core/-/core-10.2.27.tgz#0f24b17c036cd828ba07e3451ff45e2df959c6f5"
   integrity sha512-V4XV7hn9GAD2MYu8yBBVi5iuWBsAMfjPRMsEVzoTNGYH72tf0kFP+OKqGKc8YJFQIJx6yj+AOqxmEHOmx2/MEA==
 
-"@use-gesture/react@^10.2.24":
+"@use-gesture/react@^10.2.24", "@use-gesture/react@^10.2.27":
   version "10.2.27"
   resolved "https://registry.yarnpkg.com/@use-gesture/react/-/react-10.2.27.tgz#7fbd50d14449ec5bc49c9b6cfef8a2845f5e0608"
   integrity sha512-7E5vnWCxeslWlxwZ8uKIcnUZVMTRMZ8cvSnLLKF1NkyNb3PnNiAzoXM4G1vTKJKRhgOTeI6wK1YsEpwo9ABV5w==
@@ -2977,18 +2977,18 @@ fraction.js@^4.2.0:
   resolved "https://registry.yarnpkg.com/fraction.js/-/fraction.js-4.2.0.tgz#448e5109a313a3527f5a3ab2119ec4cf0e0e2950"
   integrity sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==
 
-framer-motion-3d@^10.12.10:
-  version "10.12.12"
-  resolved "https://registry.yarnpkg.com/framer-motion-3d/-/framer-motion-3d-10.12.12.tgz#7b7853d18b5b77c26e708bf6afaa8e78eb70d718"
-  integrity sha512-UMUzICcfGin/+nn0tZlGafLcfQB0eHMfiw8i55loVsHC134F74BsRZjk63n7DBnCFCVzHD0ORf6UkA58ocK8Lw==
+framer-motion-3d@^10.12.16:
+  version "10.12.16"
+  resolved "https://registry.yarnpkg.com/framer-motion-3d/-/framer-motion-3d-10.12.16.tgz#c3942aa70c37217f76549093f88892dd9f9c1217"
+  integrity sha512-6oQRVw11OFG1czwFyciLtWNQzEEqzKLVtH92YLQCnyLgC6Y3NiXR4VC6VF5iQPnzb6yvLTAw47SbSzQM3ZQMYQ==
   dependencies:
-    framer-motion "^10.12.12"
+    framer-motion "^10.12.16"
     react-merge-refs "^2.0.1"
 
-framer-motion@^10.12.10, framer-motion@^10.12.12:
-  version "10.12.12"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.12.12.tgz#24c3620520f225e446972c42cad1c94d6ce70bbc"
-  integrity sha512-DDCqp60U6hR7aUrXj/BXc/t0Sd/U4ep6w/NZQkw898K+u7s+Vv/P8yxq4WTNA86kU9QCsqOgn1Qhz2DpYK0Oag==
+framer-motion@^10.12.16:
+  version "10.12.16"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.12.16.tgz#ccba11d216ac370c6bc65fcd9953a61deb54f071"
+  integrity sha512-w/SfWEIWJkYSgRHYBmln7EhcNo31ao8Xexol8lGXf1pR/tlnBtf1HcxoUmEiEh6pacB4/geku5ami53AAQWHMQ==
   dependencies:
     tslib "^2.4.0"
   optionalDependencies:
@@ -3207,7 +3207,7 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
-gsap@^3.11.5:
+gsap@^3.11.4:
   version "3.11.5"
   resolved "https://registry.yarnpkg.com/gsap/-/gsap-3.11.5.tgz#97ef65091f43868be387803f9db277e8cd5bd041"
   integrity sha512-Q89nKCLgoX5xUjznh9LcaIUkz54k1voNucT1Rpf9SJNFIQznBwFqt5qUUQbeVInFyN/n18OUJkpeI6CNEDt74w==

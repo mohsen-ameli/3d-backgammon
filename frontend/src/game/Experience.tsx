@@ -51,6 +51,7 @@ export default function Experience() {
         near: 0.2,
         far: 20,
       }}
+      // className="z-[-10]"
       shadows
       dpr={dpr}
     >

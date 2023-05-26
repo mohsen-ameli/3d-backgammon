@@ -16,22 +16,18 @@
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@react-spring/shared": "^9.7.0",
+    "@react-spring/shared": "^9.7.2",
     "@react-spring/web": "^9.7.2",
-
-    "@react-three/drei": "^9.68.6",
-    
-    "@react-three/fiber": "^8.13.0",
-
+    "@react-three/drei": "^9.69.2",
+    "@react-three/fiber": "^8.11.5",
     "@react-three/rapier": "0.12.2",
+    "@use-gesture/react": "^10.2.27",
     "@vercel/analytics": "^1.0.1",
     "animate.css": "^4.1.1",
-    
     "axios": "^1.4.0",
-    "framer-motion": "^10.10.0",
-    "framer-motion-3d": "^10.10.0",
+    "framer-motion": "^10.12.16",
+    "framer-motion-3d": "^10.12.16",
     "gsap": "^3.11.4",
-
     "jwt-decode": "^3.1.2",
     "next": "^13.4.3",
     "next-auth": "^4.22.1",
@@ -44,9 +40,7 @@
     "react-switch": "7.0.0",
     "react-toastify": "^9.1.2",
     "sharp": "^0.32.1",
-
     "three": "^0.152.2",
-    
     "three-stdlib": "^2.21.8",
     "tunnel-rat": "^0.1.2",
     "zustand": "^4.3.8"

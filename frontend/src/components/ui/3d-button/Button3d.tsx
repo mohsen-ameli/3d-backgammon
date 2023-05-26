@@ -81,10 +81,11 @@ export default function Button3d({ text, ...props }: types.Button3dProps) {
         >
           <div className="pink blush" />
           <div className="blue blush" />
-          {/* @ts-ignore */}
-          <View className="container z-10 rounded-full">
-            <Shapes text={label} isHover={isHover} isPress={isPress} mouseX={mouseX} mouseY={mouseY} />
-          </View>
+          <div className="h-full w-full">
+            <View className="h-full w-full">
+              <Shapes text={label} isHover={isHover} isPress={isPress} mouseX={mouseX} mouseY={mouseY} />
+            </View>
+          </div>
         </motion.div>
         <motion.h1 variants={{ hover: { scale: 1.5 }, press: { scale: 1.1 } }} className="label">
           {text}
