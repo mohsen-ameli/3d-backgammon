@@ -131,6 +131,7 @@ export default function Controls() {
 
   return (
     <OrbitControls
+      // @ts-ignore
       ref={orbitRef}
       makeDefault
       dampingFactor={0.05}
