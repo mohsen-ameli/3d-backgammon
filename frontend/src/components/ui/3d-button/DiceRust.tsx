@@ -13,6 +13,6 @@ title: [Free] Rust dice
 No additional changes were made to this model.
 */
 export default function DiceRust(props: MeshProps) {
-  const { nodes, materials } = useGLTF("/models/rust_dice.glb") as GLTFResult
+  const { nodes, materials } = useGLTF("/models/rust_dice.glb") as unknown as GLTFResult
   return <mesh {...props} geometry={nodes.Object_2.geometry} material={materials.initialShadingGroup} receiveShadow />
 }

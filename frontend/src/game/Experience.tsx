@@ -40,7 +40,7 @@ export default function Experience() {
   useMusic()
 
   // Saving the main model to the game store
-  const { nodes, materials } = useGLTF("/models/main.glb", true) as GLTFResult
+  const { nodes, materials } = useGLTF("/models/main.glb", true) as unknown as GLTFResult
   useEffect(() => useGameStore.setState({ nodes, materials }), [])
 
   return (

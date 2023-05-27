@@ -21,7 +21,7 @@ export default function Shapes({ isHover, isPress, mouseX, mouseY, text }: Shape
   const lightRotateX = useSmoothTransform(mouseY, spring, mouseToLightRotation)
   const lightRotateY = useSmoothTransform(mouseX, spring, mouseToLightRotation)
 
-  const { nodes, materials } = useGLTF("/models/dice_colored.glb") as GLTFResult
+  const { nodes, materials } = useGLTF("/models/dice_colored.glb") as unknown as GLTFResult
 
   // Shuffled meshes
   const meshes = useMemo(() => {
