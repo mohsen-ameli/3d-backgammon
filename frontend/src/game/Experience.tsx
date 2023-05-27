@@ -16,7 +16,6 @@ import Checkers from "./checkers/Checkers"
 import { shallow } from "zustand/shallow"
 import { GLTFResult } from "./types/GLTFResult.type"
 import useStatus from "@/components/hooks/useStatus"
-import Test from "./Test"
 
 const Stage = dynamic(() => import("./other/Stage"), { ssr: false })
 
