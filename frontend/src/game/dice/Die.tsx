@@ -47,6 +47,7 @@ export default forwardRef<RigidBodyApi, DiceProps>(function Die(props, ref) {
 
     if (!DiceOnBoard(rigidBody) || !settings.sound || !audio) return
     audio.setVolume(Math.random())
+    audio.stop()
     audio.play()
   }
 

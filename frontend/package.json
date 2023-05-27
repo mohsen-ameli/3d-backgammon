@@ -18,7 +18,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@react-spring/shared": "^9.7.2",
     "@react-spring/web": "^9.7.2",
-    "@react-three/drei": "^9.69.2",
+    "@react-three/drei": "^9.56.27",
     "@react-three/fiber": "^8.11.5",
     "@react-three/rapier": "0.12.2",
     "@use-gesture/react": "^10.2.27",

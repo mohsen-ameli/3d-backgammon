@@ -4,7 +4,7 @@ import { useThree } from "@react-three/fiber"
 import { CuboidCollider, RigidBody, RigidBodyApi } from "@react-three/rapier"
 import { UserDragConfig, useDrag } from "@use-gesture/react"
 import { useEffect, useRef, useState } from "react"
-import { Vector3 } from "three"
+import { Plane, Vector3 } from "three"
 import { BOARD_W, CHECKER_W, GROUND_CHECKERS } from "../data/Data"
 import { CheckerType } from "../types/Checker.type"
 import Endgame from "../utils/Endgame"
@@ -23,6 +23,9 @@ import updateLiveGame from "../utils/updateLiveGame"
 import SortCheckers from "./utils/SortCheckers"
 
 type PosType = [number, number, number] | Vector3 | number[]
+
+const planeIntersectPoint = new Vector3()
+const floorPlane = new Plane(new Vector3(0, 1, 0), 0)
 
 /**
  * A single checker. This is where the magic takes place.
@@ -132,7 +135,7 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
 
   // When a checker is picked up (dragged) and released
   // This is where the main logic for the game is
-  const bind = useDrag(({ offset: [x, y], dragging, cancel }) => {
+  const bind = useDrag(({ active, event, dragging, cancel }) => {
     const userChecker = useGameStore.getState().userChecker!
     const phase = useGameStore.getState().phase!
     const toggleControls = useGameStore.getState().toggleControls!
@@ -149,6 +152,14 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
     )
       return
 
+    if (active) {
+      // @ts-ignore
+      event.ray.intersectPlane(floorPlane, planeIntersectPoint)
+      setPos([planeIntersectPoint.x, 0, planeIntersectPoint.z])
+    }
+
+    springApi.start({ position: pos })
+
     // User started dragging the checker
     if (dragging) {
       // If the user is dragging multiple checkers, then stop the drag
@@ -160,8 +171,6 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
       }
 
       toggleControls("checkerDisable")
-
-      springApi.start({ position: [x / factor, 0, y / factor] })
       return
     }
 
@@ -208,8 +217,10 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
       thisChecker.row = checkersOnEndCol.length
       thisChecker.removed = false
 
-      // @ts-ignore Updating state
-      useGameStore.setState(curr => ({ checkers: [...curr.checkers, thisChecker] }))
+      // Updating state
+      useGameStore.setState(curr => ({
+        checkers: curr.checkers?.map(checker => (checker.id === thisChecker.id ? { ...thisChecker } : checker)),
+      }))
 
       // Sorting the checkers
       SortCheckers(from)
@@ -370,7 +381,7 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
         </Modal>
       </Html>
 
-      <RigidBody ref={checker} type="kinematicPosition" position={pos as Vector3}>
+      <RigidBody ref={checker} type="kinematicPosition">
         <CuboidCollider args={[0.08, 0.015, 0.08]} position={[0, 0.015, 0]} />
       </RigidBody>
 

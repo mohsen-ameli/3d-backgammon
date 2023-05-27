@@ -2,7 +2,6 @@ import { faDiceFive, faDiceFour, faDiceOne, faDiceSix, faDiceThree, faDiceTwo } 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useGameStore } from "@/game/store/useGameStore"
 import { useEffect, useState } from "react"
-import { shallow } from "zustand/shallow"
 
 /**
  * Small function used in the SidePanels to get the dice icons.
@@ -12,16 +11,8 @@ export default function DiceMoves() {
 
   useEffect(() => {
     makeJsx()
-
-    const unsub = useGameStore.subscribe(
-      state => state.dice,
-      (dice, prev) => {
-        if (dice.moves !== prev.moves) makeJsx()
-      },
-      { equalityFn: shallow },
-    )
-
-    return () => unsub()
+    const unsubscribe = useGameStore.subscribe(state => state.dice?.moves, makeJsx)
+    return () => unsubscribe()
   }, [])
 
   function makeJsx() {

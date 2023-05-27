@@ -11,7 +11,7 @@ export default function updateLiveGame() {
 
   // Update the game's timer
   if (dice.moves === 0) {
-    // Use the update method in checker and dices, to send an update to the backend. in the backend make player_timer an optional field
+    // Use the update method in checker and dice, to send an update to the backend. in the backend make player_timer an optional field
     let id
     if (userChecker === players.me.color) id = players.me.id
     else id = players.enemy.id

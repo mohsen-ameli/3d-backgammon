@@ -1,6 +1,5 @@
 import { useGameStore } from "../store/useGameStore"
-import { CheckerType, UserCheckerType } from "../types/Checker.type"
-import { DiceMoveType } from "../types/Dice.type"
+import { UserCheckerType } from "../types/Checker.type"
 import Endgame from "./Endgame"
 import lenRemovedCheckers from "./LenRemovedCheckers"
 import switchPlayers from "./SwitchPlayers"
@@ -9,7 +8,6 @@ import switchPlayers from "./SwitchPlayers"
 let oppositeColor: UserCheckerType
 
 type NotAllowedType = { [key: number]: boolean }
-type SpecificDice = { dice1: number; dice2: number }
 type Die = "dice1" | "dice2"
 
 /**
@@ -21,25 +19,27 @@ type Die = "dice1" | "dice2"
  *     + Otherwise, check if they have any moves
  */
 export default function hasMoves(): boolean {
-  const dice = useGameStore.getState().dice
   const color = useGameStore.getState().userChecker!
-  const checkers = useGameStore.getState().checkers!
 
   oppositeColor = switchPlayers(color)
 
-  // Checking fo any removed checkers
+  // Checking for any removed checkers
   const lenRmCheckers = lenRemovedCheckers(color)
 
-  if (lenRmCheckers === 0)
+  if (lenRmCheckers === 0) {
     // There are no removed checkers.
-    return checkCheckers(checkers, dice, color)
-
-  // There are removed checkers. Checking if they have any valid moves
-  return checkRemoved(checkers, dice, color)
+    return checkCheckers(color)
+  } else {
+    // There are removed checkers. Checking if they have any valid moves
+    return checkRemoved(color)
+  }
 }
 
 // For checking checkers that are NOT removed
-function checkCheckers(checkers: CheckerType[], dice: DiceMoveType, color: UserCheckerType) {
+function checkCheckers(color: UserCheckerType) {
+  const dice = useGameStore.getState().dice
+  const checkers = useGameStore.getState().checkers!
+
   // Variable to hold list of boolean values.
   const validMoves: boolean[] = []
 
@@ -54,7 +54,7 @@ function checkCheckers(checkers: CheckerType[], dice: DiceMoveType, color: UserC
     checker => checker.color === color && checker.removed === false && checker.col !== -3 && checker.col !== -4,
   )
 
-  const dice_ = <SpecificDice>Object.fromEntries(Object.entries(dice).slice(0, 2))
+  const dice_ = { dice1: dice.dice1, dice2: dice.dice2 }
 
   let die: Die
 
@@ -128,8 +128,12 @@ function checkCheckers(checkers: CheckerType[], dice: DiceMoveType, color: UserC
 }
 
 // For checking checkers that ARE removed
-function checkRemoved(checkers: CheckerType[], dice: DiceMoveType, color: UserCheckerType) {
+function checkRemoved(color: UserCheckerType) {
+  const dice = useGameStore.getState().dice
+  const checkers = useGameStore.getState().checkers!
+
   type checkersOnEnemyColsType = { [key: number]: number }
+
   // This will have the checker column number as key, and number of checkers on that column (of the enemy house columns).
   const checkersOnEnemyCols = {} as checkersOnEnemyColsType
 
@@ -157,7 +161,7 @@ function checkRemoved(checkers: CheckerType[], dice: DiceMoveType, color: UserCh
     }
   }
 
-  const dice_ = <SpecificDice>Object.fromEntries(Object.entries(dice).slice(0, 2))
+  const dice_ = { dice1: dice.dice1, dice2: dice.dice2 }
 
   let die: Die
 

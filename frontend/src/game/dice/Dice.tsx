@@ -29,7 +29,7 @@ export default function Dice() {
   // Showing the invalid move panel
   const [show, setShow] = useState(false)
 
-  // To keep track of the dices finished throwing state
+  // To keep track of the dice finished throwing state
   const [finishedThrow, setFinishedThrow] = useState<DiceReadyType>({
     dice1: false,
     dice2: false,
@@ -104,8 +104,10 @@ export default function Dice() {
 
   // Game logic: Handling the dice throws
   useEffect(() => {
-    // Dices have not finished throwing
+    // Dice have not finished throwing
     if (!finishedThrow || !finishedThrow.dice1 || !finishedThrow.dice2) return
+
+    console.log("dice", useGameStore.getState().dice)
 
     // The game websocket
     const ws = useGameStore.getState().ws
