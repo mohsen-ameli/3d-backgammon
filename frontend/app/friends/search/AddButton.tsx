@@ -12,7 +12,7 @@ type AddButtonType = {
   session: Session
   sendFriendRequest: (
     session: Session,
-    id: number,
+    id: string,
   ) => Promise<{
     message: string
     error: boolean
