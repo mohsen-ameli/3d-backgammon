@@ -1,7 +1,9 @@
 import { JwtPayload } from "jwt-decode"
 
+export type ProvidersType = "credentials" | "discord"
+
 export type BaseUser = {
-  id: number
+  id: string
   username: string
 }
 
@@ -15,4 +17,11 @@ export type TokenType = {
   refresh: string
 }
 
-export type UserType = JwtPayload & { id: string; name: string; email: string; image: string; token: TokenType }
+export type UserType = JwtPayload & {
+  id: string
+  name: string
+  email: string
+  image: string
+  token: TokenType
+  provider: ProvidersType
+}

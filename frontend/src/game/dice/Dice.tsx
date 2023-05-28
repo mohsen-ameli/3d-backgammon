@@ -107,8 +107,6 @@ export default function Dice() {
     // Dice have not finished throwing
     if (!finishedThrow || !finishedThrow.dice1 || !finishedThrow.dice2) return
 
-    console.log("dice", useGameStore.getState().dice)
-
     // The game websocket
     const ws = useGameStore.getState().ws
 

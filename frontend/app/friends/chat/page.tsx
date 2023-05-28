@@ -20,7 +20,7 @@ import Head from "@/components/head"
 
 type MessageType = {
   timestamp: number
-  sender: number
+  sender: string
   message: string
 }[]
 
@@ -152,7 +152,7 @@ export default function Chat() {
           data.map((msg, index) => (
             <MessageBox
               key={index}
-              type={msg.sender === Number(session?.user.id) ? "user" : "friend"}
+              type={msg.sender === session?.user.id ? "user" : "friend"}
               message={msg.message}
               date={getDate(msg.timestamp)}
             />

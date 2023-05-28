@@ -6,7 +6,7 @@
  */
 
 import { MotionConfig, motion, useMotionValue } from "framer-motion"
-import { memo, useState } from "react"
+import { useState } from "react"
 import useMeasure from "react-use-measure"
 import * as types from "@/types/3d-button.types"
 import Shapes from "./Shapes"

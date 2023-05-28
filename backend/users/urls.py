@@ -9,7 +9,8 @@ urlpatterns = [
     path('handle-friends/', views.handle_friends),
     path('get-user-profile/', views.get_user_profile),
     path('search-friend/<str:typed>/', views.search_friend),
-    path('get-chat-uuid/<int:friend_id>/', views.get_chat_uuid),
+    path('get-chat-uuid/<str:friend_id>/', views.get_chat_uuid),
     path('validate-chat/<str:chat_uuid>/', views.validate_chat),
-    path('validate-user/<str:email>/<str:provider>/', views.validate_provider_user),
+    path('sign-in-up-provider/', views.sign_in_up_provider),
+    path('get-jwt-provider/', views.get_jwt_provider),
 ]

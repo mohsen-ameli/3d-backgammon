@@ -5,11 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import React from "react"
 
 type RequestProps = {
-  action: (id: number, action: "accept" | "reject") => Promise<void>
-  id: number
+  action: (id: string, action: "accept" | "reject") => Promise<void>
+  id: string
 }
 
-export function AcceptButton({ action, id }: RequestProps) {
+export function AcceptButton(props: RequestProps) {
+  const { action, id } = props
   return (
     <FontAwesomeIcon
       icon={faCheck}
@@ -19,7 +20,8 @@ export function AcceptButton({ action, id }: RequestProps) {
   )
 }
 
-export function RejectButton({ action, id }: RequestProps) {
+export function RejectButton(props: RequestProps) {
+  const { action, id } = props
   return (
     <FontAwesomeIcon
       icon={faXmark}

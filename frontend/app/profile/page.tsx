@@ -1,5 +1,4 @@
 import { authOptions } from "@/api/auth/[...nextauth]/route"
-import Header from "@/components/ui/Header"
 import { getServerSession } from "next-auth"
 import Image from "next/image"
 import { redirect } from "next/navigation"
@@ -20,8 +19,6 @@ export default async function ProfilePage() {
 
   return (
     <>
-      <Header href="/" title="Profile" />
-
       <div className="flex flex-col items-center justify-center gap-y-2">
         <div className="relative h-[80px] w-[80px] xl:h-[100px] xl:w-[100px]">
           <Image fill alt={session.user.name} src={session.user.image} className="inline-block rounded-full" />

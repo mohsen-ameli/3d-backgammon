@@ -20,7 +20,7 @@ body,
   top: 50%;
   translate: -50% -50%;
   width: clamp(20%, 400px, 80%);
-  height: min(100dvh, 450px);
+  height: min(90dvh, 450px);
 }
 
 /* Custom Scroll Bar */

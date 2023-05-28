@@ -1,40 +1,23 @@
 "use server"
 
-import { authOptions } from "@/api/auth/[...nextauth]/route"
-import getJWTToken from "@/components/utils/getJWTToken"
-import getServerUrl from "@/components/utils/getServerUrl"
+import AxiosInstance from "@/components/utils/AxiosInstance"
 import { BaseUser } from "@/types/User.type"
-import axios from "axios"
-import { getServerSession } from "next-auth"
+import { Session } from "next-auth"
 
 // Search for a friend
-export async function search(typed: string) {
-  const session = await getServerSession(authOptions)
-  const token = await getJWTToken(session!.user.token)
+export async function search(session: Session, typed: string) {
+  const axiosInstance = AxiosInstance(session)
 
-  const { data }: { data: BaseUser[] } = await axios.get(`${getServerUrl()}/api/search-friend/${typed}/`, {
-    headers: {
-      Authorization: `Bearer ${token.access}`,
-    },
-  })
+  const { data }: { data: BaseUser[] } = await axiosInstance.get(`/api/search-friend/${typed}/`)
   return data
 }
 
 // Send friend request
-export async function sendFriendRequest(id: number) {
+export async function sendFriendRequest(session: Session, id: number) {
   type Data = { message: string; error: boolean }
 
-  const session = await getServerSession(authOptions)
-  const token = await getJWTToken(session!.user.token)
+  const axiosInstance = AxiosInstance(session)
 
-  const { data }: { data: Data } = await axios.put(
-    getServerUrl() + "/api/handle-friends/",
-    { id, action: "add" },
-    {
-      headers: {
-        Authorization: `Bearer ${token.access}`,
-      },
-    },
-  )
+  const { data }: { data: Data } = await axiosInstance.put("/api/handle-friends/", { id, action: "add" })
   return data
 }

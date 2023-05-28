@@ -6,7 +6,7 @@ def remove_friend(user, friend):
         Removing a friend
     '''
     user.friends.remove(friend)
-    return Response({"message": "Friend removed"})
+    return Response({"message": "Friend removed"}, 200)
 
 
 def new_friend_request(user, friend):
@@ -26,7 +26,7 @@ def new_friend_request(user, friend):
         message = "Friend added"
         error = False
         friend.friend_requests.add(user)
-    return Response({"message": message, "error": error})
+    return Response({"message": message, "error": error}, 200)
 
 
 def accept_friend_request(user, friend):
@@ -35,7 +35,7 @@ def accept_friend_request(user, friend):
     '''
     user.friend_requests.remove(friend)
     user.friends.add(friend)
-    return Response({"message": "Friend accepted"})
+    return Response({"message": "Friend accepted"}, 200)
 
 
 def reject_friend_request(user, friend):
@@ -43,4 +43,4 @@ def reject_friend_request(user, friend):
         Rejecting a friend request
     '''
     user.friend_requests.remove(friend)
-    return Response({"message": "Friend rejected"})
+    return Response({"message": "Friend rejected"}, 200)

@@ -8,7 +8,6 @@ from .serializers import FriendSerializer, PrimaryUserSerializer, ProfileUserSer
 from django.db.models import Q
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from typing import Literal
 from .utils import (
     remove_friend,
     new_friend_request,
@@ -16,9 +15,10 @@ from .utils import (
     reject_friend_request
 )
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 # ----------------- CUSTOM TOKEN CLAIMS JWT ----------------- #
-
 '''
     Custom JWT token class based view
 '''
@@ -42,6 +42,20 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
+'''
+    Getting JWT tokens for users that have signed up using a provider. (e.g. Discord)
+'''
+@api_view(['POST'])
+@permission_classes([])
+def get_jwt_provider(request: Request):
+    if request.method == "POST":
+        user = CustomUser.objects.filter(id=request.data["id"])
+        if not user.exists():
+            return Response({ "error": "User does not exist" }, 404)
+
+        tokens = MyTokenObtainPairView.serializer_class.get_token(user=user.first())
+        return Response({ "refresh": str(tokens), "access": str(tokens.access_token) }, 200)
+
 # ----------------- USER VIEWS ----------------- #
 '''
     Registering a user
@@ -58,6 +72,35 @@ def register_user(request):
 
 
 '''
+    Check to see if user exists, if not, create a new user.
+'''
+@api_view(['POST'])
+@permission_classes([])
+def sign_in_up_provider(request: Request):
+    if request.method == "POST":
+        id = request.data.get("id")
+        username = request.data.get("name")
+        email = request.data.get("email")
+        image = request.data.get("image")
+        provider = request.data.get("provider")
+
+        user = CustomUser.objects.filter(email=email)
+
+        if user.exists():
+            if user.first().provider == provider:
+                return Response(True, 200)
+            else:
+                return Response(False, 200)
+        else:
+            password = CustomUser.objects.make_random_password()
+            user = CustomUser.objects.create(id=id, username=username, email=email, image=image, provider=provider)
+            user.set_password(password)
+            user.save()
+
+            return Response(True, 200)
+
+
+'''
     Search for a friend.
 '''
 @api_view(['GET'])
@@ -67,29 +110,12 @@ def search_friend(request, typed: str):
         results = CustomUser.objects.filter(
             Q(username__iexact=typed) | Q(email__iexact=typed)
         )
-        
-        return Response(list(results.values('id', 'username')))
 
+        to_return = []
+        for result in results.values('id', 'username'):
+            to_return.append({"id": str(result["id"]), "username": result["username"]})
 
-'''
-    Check to see if user exists, if not, create a new user.
-'''
-@api_view(['GET', 'POST'])
-@permission_classes([])
-def validate_provider_user(request: Request, email: str, provider: Literal["credentials", "discord"]):
-    user = CustomUser.objects.filter(email=email)
-
-    if request.method == "GET":
-        if user.exists() and user.first().provider == provider:
-            return Response(True, 200)
-        else:
-            return Response(False, 401)
-    elif request.method == "POST":
-        user = user.first()
-        serializer = MyTokenObtainPairSerializer(data={'username': user.username})
-        serializer.is_valid(raise_exception=True)
-        data = serializer.data
-        return Response(data)
+        return Response(to_return)
 
 
 '''
@@ -103,13 +129,21 @@ def handle_friends(request):
     
     # (GET) getting all friend requests of the user
     if request.method == "GET":
-        serializer = FriendSerializer(user.friend_requests, many=True)
-        return Response(serializer.data)
+        to_return = []
+        for result in user.friend_requests.values('id', 'username', 'is_online'):
+            to_return.append({"id": str(result["id"]), "username": result["username"], "is_online": result["is_online"]})
+
+        return Response(to_return)
 
     # (PUT) managing friend requests and removing friends
     elif request.method == "PUT":
         action = request.data['action']
-        friend = CustomUser.objects.get(id=request.data['id'])
+        friend = CustomUser.objects.filter(id=int(request.data['id']))
+
+        if not friend.exists():
+            return Response("No user found!", 404)
+        
+        friend = friend.first()
         
         if action == "remove":
             # TODO: Could potentially move this to the consumer, 
@@ -128,10 +162,10 @@ def handle_friends(request):
 '''
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_chat_uuid(request, friend_id):
+def get_chat_uuid(request, friend_id: str):
     if request.method == "GET":
         user = CustomUser.objects.get(id=request.user.id)
-        friend = CustomUser.objects.get(id=friend_id)
+        friend = CustomUser.objects.get(id=int(friend_id))
 
         try:
             chat_room = Chat.objects.filter(Q(users__pk=user.pk)).get(Q(users__pk=friend.pk))

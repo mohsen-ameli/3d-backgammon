@@ -206,7 +206,6 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
     }
 
     setFetched(true)
-    console.log("fetched")
   }
 
   return <></>

@@ -49,7 +49,7 @@ export default function useStatus() {
   }, [ws, inGame])
 
   // Accepting a game request
-  async function accept(id: number) {
+  async function accept(id: string) {
     const res = await axiosInstance.put("/api/game/handle-match-request/", {
       action: "accept",
       friend_id: id,
@@ -64,7 +64,7 @@ export default function useStatus() {
   }
 
   // Rejecting the game request
-  async function reject(id: number) {
+  async function reject(id: string) {
     const res = await axiosInstance.put("/api/game/handle-match-request/", {
       action: "reject",
       friend_id: id,

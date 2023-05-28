@@ -1,4 +1,6 @@
 import Head from "@/components/head"
+import Container from "@/components/ui/Container"
+import Header from "@/components/ui/Header"
 import { ReactNode } from "react"
 
 const metadata = {
@@ -8,9 +10,10 @@ const metadata = {
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <>
+    <Container>
       <Head description={metadata.description} title={metadata.title} />
+      <Header href="/" title="Credits" />
       {children}
-    </>
+    </Container>
   )
 }

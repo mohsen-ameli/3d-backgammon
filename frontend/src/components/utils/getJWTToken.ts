@@ -1,4 +1,4 @@
-import { TokenType } from "@/types/User.type"
+import { TokenType, UserType } from "@/types/User.type"
 import getServerUrl from "./getServerUrl"
 import axios, { AxiosError } from "axios"
 import { redirect } from "next/navigation"
@@ -6,7 +6,16 @@ import jwtDecode from "jwt-decode"
 
 // export const dynamic = "auto"
 
-export default async function getJWTToken(token: TokenType): Promise<TokenType> {
+export default async function getJWTToken(user: UserType): Promise<TokenType> {
+  if (user.provider !== "credentials") {
+    const { data }: { data: TokenType } = await axios.post(getServerUrl() + "/api/get-jwt-provider/", {
+      id: user.id,
+    })
+    return data
+  }
+
+  const token = user.token
+
   const expired = isTokenExpired(token.access)
   if (!expired) return token
 

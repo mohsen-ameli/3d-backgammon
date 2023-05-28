@@ -10,13 +10,18 @@ import { ReactNode } from "react"
 import dynamic from "next/dynamic"
 import "@fortawesome/fontawesome-svg-core/styles.css"
 import { config } from "@fortawesome/fontawesome-svg-core"
-import Loader from "@/components/ui/Loader"
+import FakeLoader from "@/components/ui/FakeLoader"
+// import Loader from "@/components/ui/Loader"
 
 // Adding font awesome everywhere
 config.autoAddCss = false
 
 const Experience = dynamic(() => import("@/game/Experience"), { ssr: false })
 const MainLayout3D = dynamic(() => import("@/game/ui/layout/MainLayout3D"), { ssr: false })
+const Loader = dynamic(() => import("@/components/ui/Loader"), {
+  ssr: false,
+  loading: () => <FakeLoader />,
+})
 
 const inter = Josefin_Sans({ subsets: ["latin"] })
 

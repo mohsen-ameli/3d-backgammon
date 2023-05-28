@@ -1,5 +1,5 @@
 export type FriendType = {
-  id: number
+  id: string
   username: string
   is_online: boolean
   last_login: number

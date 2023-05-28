@@ -13,30 +13,6 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "files.exclude": {
-    "**/.git": false,
-    "**/.svn": false,
-    "**/.hg": false,
-    "**/CVS": false,
-    "**/.DS_Store": false,
-    "**/Thumbs.db": false,
-    ".vscode": false,
-    ".next": false,
-    "node_modules": false,
-    "tsconfig.json": false,
-    "yarn.lock": false,
-    "sandbox.config.json": false,
-    "README.md": false,
-    "postcss.config.js": false,
-    "next-env.d.ts": false,
-    "LICENSE": false,
-    ".prettierrc": false,
-    ".prettierignore": false,
-    ".gitignore": false,
-    ".eslintrc": false,
-    ".eslintignore": false,
-    ".editorconfig": false
-  },
-  "explorerExclude.backup": {
     "**/.git": true,
     "**/.svn": true,
     "**/.hg": true,
@@ -60,6 +36,7 @@
     ".eslintignore": true,
     ".editorconfig": true
   },
+  "explorerExclude.backup": {},
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#93e6fc",
     "activityBar.background": "#93e6fc",

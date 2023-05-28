@@ -1,18 +1,27 @@
+"use client"
+
 import Button3d from "@/components/ui/3d-button/Button3d"
 import HyperLink from "@/components/ui/HyperLink"
 import Logout from "@/components/ui/Logout"
 import Link from "next/link"
-import { getServerSession } from "next-auth"
-import { authOptions } from "./api/auth/[...nextauth]/route"
+import { useSession } from "next-auth/react"
+import { useGameStore } from "@/game/store/useGameStore"
 
-export default async function Page() {
-  const session = await getServerSession(authOptions)
+export default function Page() {
+  const { status } = useSession()
+
+  const started = useGameStore(state => state.started)
+
+  if (!started) return <></>
 
   return (
     <>
+      {/* The half circle at the bottom */}
       <div className="fixed bottom-[-35%] z-20 h-[65%] w-full rounded-t-[50%] bg-[#ffffffac]" />
+
+      {/* Buttons */}
       <div className="absolute flex h-full w-full items-end justify-around overflow-y-hidden">
-        {session ? (
+        {status === "authenticated" ? (
           <>
             <Logout />
             <Link href="/profile" className="z-20 mb-[35%] sm:mb-[20%] lg:mb-[10%]">
@@ -34,36 +43,10 @@ export default async function Page() {
         )}
         <Link
           href="/game/pass-and-play"
-          className={`z-20 ${session ? "mb-[10%] lg:mb-[4%]" : "mb-[13%] lg:mb-[2%] xl:mb-[4%]"}`}
+          className={`z-20 ${status === "authenticated" ? "mb-[10%] lg:mb-[4%]" : "mb-[13%] lg:mb-[2%] xl:mb-[4%]"}`}
         >
           <Button3d text="Single Player" />
         </Link>
-      </div>
-
-      <div className="relative flex items-center justify-around">
-        {/* {session ? (
-            <>
-              <Logout />
-              <Link href="/profile">
-                <Button3d text="Profile" className="absolute bottom-14" />
-              </Link>
-              <Link href="/friends">
-                <Button3d text="Friends" className="absolute bottom-14" />
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link href="/signin">
-                <Button3d text="Sign In" className="absolute bottom-[10%]" />
-              </Link>
-              <Link href="/signup">
-                <Button3d text="Sign Up" className="absolute bottom-12 sm:bottom-10 lg:bottom-20" />
-              </Link>
-            </>
-          )}
-          <Link href="/game/pass-and-play">
-            <Button3d text="Single Player" />
-          </Link> */}
       </div>
 
       {/* Footer */}

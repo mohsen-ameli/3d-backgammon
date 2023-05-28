@@ -18,8 +18,13 @@ from .serializers import InGameMessagesSerializer
 @permission_classes([IsAuthenticated])
 def handle_match_request(request: Request):
     action = request.data["action"]
-    friend_id = request.data["friend_id"]
-    friend = CustomUser.objects.get(id=friend_id)
+    friend_id = int(request.data["friend_id"])
+    friend = CustomUser.objects.filter(id=friend_id)
+
+    if not friend.exists():
+        return Response("User not found!", 404)
+    
+    friend = friend.first()
 
     # User is sending a match request
     if action == "send":

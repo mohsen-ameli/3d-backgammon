@@ -26,7 +26,7 @@ export default function SidePanel({ img, player, sideType }: SideProps) {
   return (
     <div
       className={
-        "absolute top-1/2 z-[15] mx-4 h-full -translate-y-1/2 lg:mx-0 " + (sideType === "enemy" ? "left-0" : "right-0")
+        "absolute top-1/2 z-[15] mx-4 h-fit -translate-y-1/2 lg:mx-0 " + (sideType === "enemy" ? "left-0" : "right-0")
       }
     >
       <div className="flex h-full flex-col justify-center">
