@@ -88,16 +88,16 @@ def sign_in_up_provider(request: Request):
 
         if user.exists():
             if user.first().provider == provider:
-                return Response(True, 200)
+                return Response({ "valid": True, "id": user.first().id }, 200)
             else:
                 return Response(False, 200)
         else:
             password = CustomUser.objects.make_random_password()
-            user = CustomUser.objects.create(id=id, username=username, email=email, image=image, provider=provider)
+            user = CustomUser.objects.create(username=username, email=email, image=image, provider=provider)
             user.set_password(password)
             user.save()
 
-            return Response(True, 200)
+            return Response({ "valid": True, "id": user.id }, 200)
 
 
 '''
@@ -112,8 +112,8 @@ def search_friend(request, typed: str):
         )
 
         to_return = []
-        for result in results.values('id', 'username'):
-            to_return.append({"id": str(result["id"]), "username": result["username"]})
+        for _user in results.values('id', 'username'):
+            to_return.append({"id": _user["id"], "username": _user["username"]})
 
         return Response(to_return)
 
@@ -130,8 +130,8 @@ def handle_friends(request):
     # (GET) getting all friend requests of the user
     if request.method == "GET":
         to_return = []
-        for result in user.friend_requests.values('id', 'username', 'is_online'):
-            to_return.append({"id": str(result["id"]), "username": result["username"], "is_online": result["is_online"]})
+        for _user in user.friend_requests.values('id', 'username', 'is_online'):
+            to_return.append({"id": _user["id"], "username": _user["username"], "is_online": _user["is_online"]})
 
         return Response(to_return)
 

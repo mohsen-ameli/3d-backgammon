@@ -93,7 +93,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.room_group_name, context)
         elif "initial" in data:
             context = await get_initial_game_state(self.game)
-            await self.send(text_data=json.dumps(context))
+            if context is not None:
+                await self.send(text_data=json.dumps(context))
+            else:
+                await self.send(text_data=json.dumps({"error": "Something went wrong!"}))
         elif "update" in data:
             # Frontend wants to update the game state
             await update_game_state(self.game_obj, data)
@@ -245,20 +248,23 @@ def get_initial_game_state(game: Game) -> dict:
         Used for initial loading. Getting the current game state.
     '''
 
-    context = {}
+    try:
+        context = {}
 
-    context["initial"] = True
-    context["player_timer"] = game.player_timer
-    context["turn"] = game.turn
-    context["board"] = game.board
-    context["dice"] = game.dice
-    context["finished"] = game.finished
-    context["initial_physics"] = game.dice_physics
-    context["white"] = game.white.id
-    context["black"] = game.black.id
-    context["white_name"] = game.white.username
-    context["black_name"] = game.black.username
-    context["white_image"] = game.white.image.url
-    context["black_image"] = game.black.image.url
+        context["initial"] = True
+        context["player_timer"] = game.player_timer
+        context["turn"] = game.turn
+        context["board"] = game.board
+        context["dice"] = game.dice
+        context["finished"] = game.finished
+        context["initial_physics"] = game.dice_physics
+        context["white"] = game.white.id
+        context["black"] = game.black.id
+        context["white_name"] = game.white.username
+        context["black_name"] = game.black.username
+        context["white_image"] = game.white.image.url
+        context["black_image"] = game.black.image.url
 
-    return context
+        return context
+    except:
+        return None

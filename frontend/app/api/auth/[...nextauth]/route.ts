@@ -57,7 +57,6 @@ export const authOptions: AuthOptions = {
       }
 
       const context = {
-        id: user.id,
         name: user.name,
         email: user.email,
         image: user.image,
@@ -74,21 +73,13 @@ export const authOptions: AuthOptions = {
 
       const url = `${getServerUrl()}/api/sign-in-up-provider/`
 
-      const { data: valid }: { data: boolean } = await axios.post(url, context, config)
+      const { data }: { data: { valid: boolean; id: number } } = await axios.post(url, context, config)
 
-      // if (valid && account) {
-      //   const { access_token, id_token } = account
-      //   const { data } = await axios.post(`${getServerUrl()}/api/discord/`, { access_token, id_token })
-      // }
+      user.id = data.id.toString()
 
-      return valid
+      return data.valid
     },
     async jwt({ token, user, account }) {
-      if (account?.provider !== "credentials") {
-        // token.access = account.access_token
-        // token.refresh = account.refresh_token
-      }
-
       return { ...token, ...user, provider: account?.provider }
     },
     async session({ session, token }) {

@@ -57,6 +57,7 @@ export default function FriendsPage() {
 
   function onMessage(e: MessageEvent<any>) {
     const data: Data = JSON.parse(e.data)
+    console.log("new data --> ", data)
     setData(data)
   }
 

@@ -46,7 +46,7 @@ def get_updates(id: int) -> dict:
             last_login = round(datetime.timestamp(friend.last_login))
         except TypeError:
             last_login = None
-        dict_to_return['friends'].append({'id': str(friend.id), 'username': friend.username, 'is_online': friend.is_online, 'last_login': last_login})
+        dict_to_return['friends'].append({'id': friend.id, 'username': friend.username, 'is_online': friend.is_online, 'last_login': last_login})
 
     return dict_to_return
 
@@ -64,8 +64,8 @@ def get_user_game_requests(id: int) -> dict:
     dict_to_return['live_game'] = str(user.live_game.id) if user.live_game else None
 
     # All of user's game requests
-    for req in user.game_requests.all():
-        dict_to_return['game_requests'].append({"id": str(req.id), "username": req.username})
+    for _user in user.game_requests.all():
+        dict_to_return['game_requests'].append({"id": _user.id, "username": _user.username})
 
     return dict_to_return
 

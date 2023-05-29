@@ -1,6 +1,5 @@
 import Head from "@/components/head"
 import Container from "@/components/ui/Container"
-import Header from "@/components/ui/Header"
 import "@/styles/global.css"
 import { ReactNode } from "react"
 
@@ -13,10 +12,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <>
       <Head description={metadata.description} title={metadata.title} />
-      <Container>
-        <Header href="/" title="Register" />
-        {children}
-      </Container>
+      <Container>{children}</Container>
     </>
   )
 }

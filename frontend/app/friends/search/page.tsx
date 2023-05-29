@@ -8,6 +8,7 @@ import AddButton from "./AddButton"
 import { useSession } from "next-auth/react"
 import { redirect } from "next/navigation"
 import { search, sendFriendRequest } from "./ServerActions"
+import Header from "@/components/ui/Header"
 
 export default function SearchPage() {
   const { data: session } = useSession({
@@ -30,7 +31,9 @@ export default function SearchPage() {
   }
 
   return (
-    <div>
+    <>
+      <Header href="/friends" title="Add a Friend" />
+
       <form onSubmit={handleSubmit} className="mb-4 flex w-full gap-x-2">
         <Input ref={input} className="flex-1" name="typed" type="text" placeholder="Name or Email" />
         <Button disabled={clicked} className="w-[80px]">
@@ -49,6 +52,6 @@ export default function SearchPage() {
         ) : (
           <p>No user found with the specified name or email. (Did you spell something wrong?)</p>
         ))}
-    </div>
+    </>
   )
 }

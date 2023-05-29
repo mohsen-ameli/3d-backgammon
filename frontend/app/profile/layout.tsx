@@ -5,7 +5,6 @@ import { Metadata } from "next"
 import { ReactNode } from "react"
 import Head from "@/components/head"
 import Container from "@/components/ui/Container"
-import Header from "@/components/ui/Header"
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = await getServerSession(authOptions)
@@ -28,7 +27,6 @@ export default async function layout({ children }: { children: ReactNode }) {
   return (
     <Container>
       <Head description={metadata.description as string} title={metadata.title as string} />
-      <Header href="/" title="Profile" />
       {children}
     </Container>
   )

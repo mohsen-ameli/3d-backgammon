@@ -3,10 +3,20 @@ import channels.layers
 from asgiref.sync import async_to_sync
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
-from django.db.models.signals import post_save
 from fieldsignals import post_save_changed
+from typing import Literal
 
 from .models import CustomUser
+
+def update(consumer: Literal["user", "user-status"], id: int):
+    group_name = f'{consumer}-{id}'
+
+    channel_layer = channels.layers.get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        { 'type': 'send_updates' }
+    )
 
 '''
     Sends updates to user, when their friend_requests
@@ -15,14 +25,16 @@ from .models import CustomUser
 @receiver(m2m_changed, sender=CustomUser.friend_requests.through)
 @receiver(m2m_changed, sender=CustomUser.friends.through)
 def update_friend_list_listener(sender, instance: CustomUser, **kwargs):
-    group_name = f'user-{instance.id}'
+    try:
+        update("user", instance.id)
+    except:
+        pass
 
-    channel_layer = channels.layers.get_channel_layer()
-
-    async_to_sync(channel_layer.group_send)(
-        group_name,
-        { 'type': 'send_updates' }
-    )
+    try:
+        for friend in instance.friends.all():
+            update("user", friend.id)
+    except:
+        pass
 
 '''
     Sends updates to user's friends, when the current
@@ -31,14 +43,7 @@ def update_friend_list_listener(sender, instance: CustomUser, **kwargs):
 @receiver(post_save_changed, sender=CustomUser, fields=['is_online', 'username', 'image'])
 def update_friend_list_listener(sender, instance: CustomUser, **kwargs):
     for friend in instance.friends.all():
-        group_name = f'user-{friend.id}'
-
-        channel_layer = channels.layers.get_channel_layer()
-
-        async_to_sync(channel_layer.group_send)(
-            group_name,
-            { 'type': 'send_updates' }
-        )
+        update("user", friend.id)
 
 
 '''
@@ -46,25 +51,11 @@ def update_friend_list_listener(sender, instance: CustomUser, **kwargs):
 '''
 @receiver(m2m_changed, sender=CustomUser.game_requests.through)
 def update_user_game_requests(sender, instance: CustomUser, **kwargs):
-    group_name = f'user-status-{instance.id}'
-
-    channel_layer = channels.layers.get_channel_layer()
-
-    async_to_sync(channel_layer.group_send)(
-        group_name,
-        { 'type': 'send_updates' }
-    )
+    update("user-status", instance.id)
 
 '''
     Sends out an update to the user, when they enter a live game
 '''
 @receiver(post_save_changed, sender=CustomUser, fields=['live_game'])
 def update_friend_list_listener(sender, instance: CustomUser, **kwargs):
-    group_name = f'user-status-{instance.id}'
-
-    channel_layer = channels.layers.get_channel_layer()
-
-    async_to_sync(channel_layer.group_send)(
-        group_name,
-        { 'type': 'send_updates' }
-    )
+    update("user-status", instance.id)

@@ -20,7 +20,7 @@ PROVIDERS = [
     The abstract custom user
 '''
 class CustomUser(AbstractUser):
-    id = models.BigAutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     email = models.EmailField(unique=True, blank=True)
     image = models.ImageField(upload_to="profile_pics/", null=True, blank=True)
     games_won = models.IntegerField(default=0)

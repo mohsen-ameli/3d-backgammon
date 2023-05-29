@@ -29,6 +29,7 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
   const { data: session } = useSession()
   const [fetched, setFetched] = useState(false)
 
+  // Setting websocket listeners
   useGameStore.subscribe(
     state => state.ws,
     ws => {
@@ -60,6 +61,11 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
   function onMessage(e: MessageEvent) {
     const data: GameDataTypes = JSON.parse(e.data)
     const id = Number(session?.user.id)
+
+    if (data.error) {
+      notification(data.error, "error", true)
+      return
+    }
 
     // If there are too many sessions active
     // if (data.too_many_users) {

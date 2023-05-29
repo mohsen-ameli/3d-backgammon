@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import React from "react"
 import { ProfileData } from "@/types/Profile.type"
 import AxiosInstance from "@/components/utils/AxiosInstance"
+import Header from "@/components/ui/Header"
 
 // export const dynamic = "force-static"
 
@@ -19,6 +20,8 @@ export default async function ProfilePage() {
 
   return (
     <>
+      <Header href="/" title="Profile" />
+
       <div className="flex flex-col items-center justify-center gap-y-2">
         <div className="relative h-[80px] w-[80px] xl:h-[100px] xl:w-[100px]">
           <Image fill alt={session.user.name} src={session.user.image} className="inline-block rounded-full" />

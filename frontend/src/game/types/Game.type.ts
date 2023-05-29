@@ -52,6 +52,7 @@ export type ResetOrbitType = (focus: "board" | "env", isInitial?: boolean) => vo
 
 // The data that comes back from backend, when receiving updates
 export type GameDataTypes = {
+  error?: string
   too_many_users?: boolean
   finished?: boolean
   winner?: PlayerType

@@ -1,3 +1,10 @@
+import Header from "@/components/ui/Header"
+
 export default function ResetPassPage() {
-  return <div>Not yet implemented!</div>
+  return (
+    <>
+      <Header href="/signin" title="Reset Password" />
+      <div>Not yet implemented!</div>
+    </>
+  )
 }

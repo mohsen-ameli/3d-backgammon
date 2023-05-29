@@ -8,6 +8,7 @@ import Link from "next/link"
 import { SyntheticEvent, useEffect, useState } from "react"
 import signup from "../signup"
 import { useRouter } from "next/navigation"
+import Header from "@/components/ui/Header"
 
 export default function ContinueSignupPage() {
   const [btnClicked, setBtnClicked] = useState(false)
@@ -50,34 +51,38 @@ export default function ContinueSignupPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-y-4" autoComplete="on">
-      <FormField errors={errors} required label="Username" name="username" placeholder="Username" />
-      <FormField errors={errors} required label="Email" name="email" placeholder="Email" />
-      <FormField errors={errors} required label="Password" name="password" type="password" placeholder="Password" />
-      <FormField
-        errors={errors}
-        required
-        label="Password (again)"
-        name="password2"
-        type="password"
-        placeholder="Password Confirmation"
-      />
+    <>
+      <Header href="/signup" title="Email Register" />
 
-      <div className="">
-        <label htmlFor="image-input">Profile Picture (optional)</label>
-        <ImageUploader image={image} setImage={setImage} />
-      </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-y-4" autoComplete="on">
+        <FormField errors={errors} required label="Username" name="username" placeholder="Username" />
+        <FormField errors={errors} required label="Email" name="email" placeholder="Email" />
+        <FormField errors={errors} required label="Password" name="password" type="password" placeholder="Password" />
+        <FormField
+          errors={errors}
+          required
+          label="Password (again)"
+          name="password2"
+          type="password"
+          placeholder="Password Confirmation"
+        />
 
-      <Button type="submit" className={"mt-3 w-full self-center"}>
-        {btnClicked ? <ButtonLoading /> : "Sign Up"}
-      </Button>
+        <div className="">
+          <label htmlFor="image-input">Profile Picture (optional)</label>
+          <ImageUploader image={image} setImage={setImage} />
+        </div>
 
-      <div className="text-center text-sm">
-        Already have an account?{" "}
-        <Link href="/signin" className="text-gray-600 duration-200 hover:text-white hover:ease-in-out">
-          Sign In
-        </Link>
-      </div>
-    </form>
+        <Button type="submit" className={"mt-3 w-full self-center"}>
+          {btnClicked ? <ButtonLoading /> : "Sign Up"}
+        </Button>
+
+        <div className="text-center text-sm">
+          Already have an account?{" "}
+          <Link href="/signin" className="text-gray-600 duration-200 hover:text-white hover:ease-in-out">
+            Sign In
+          </Link>
+        </div>
+      </form>
+    </>
   )
 }

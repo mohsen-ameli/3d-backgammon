@@ -1,5 +1,4 @@
 import Head from "@/components/head"
-import Header from "@/components/ui/Header"
 import { ReactNode } from "react"
 
 const metadata = {
@@ -11,7 +10,6 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <>
       <Head description={metadata.description} title={metadata.title} />
-      <Header href="/friends" title="Add a Friend" />
       {children}
     </>
   )

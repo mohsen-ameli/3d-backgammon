@@ -13,7 +13,7 @@ export async function search(session: Session, typed: string) {
 }
 
 // Send friend request
-export async function sendFriendRequest(session: Session, id: string) {
+export async function sendFriendRequest(session: Session, id: number) {
   type Data = { message: string; error: boolean }
 
   const axiosInstance = AxiosInstance(session)

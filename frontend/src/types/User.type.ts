@@ -3,7 +3,7 @@ import { JwtPayload } from "jwt-decode"
 export type ProvidersType = "credentials" | "discord"
 
 export type BaseUser = {
-  id: string
+  id: number
   username: string
 }
 
