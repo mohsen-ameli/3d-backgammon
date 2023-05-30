@@ -57,7 +57,7 @@ export default function Loading() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 1 } }}
         >
-          {progress < 100 ? <Loader progress={progress} /> : forceRotation ? <Rotate /> : <Start />}
+          {progress < 100 ? <Loader progress={progress} /> : forceRotation ? <Rotate /> : <Start started={started} />}
         </motion.div>
       )}
     </AnimatePresence>
@@ -78,9 +78,7 @@ function Loader({ progress }: { progress: number }) {
   )
 }
 
-function Start() {
-  const started = useGameStore(state => state.started)
-
+function Start({ started }: { started: boolean }) {
   function startExperience() {
     useGameStore.setState({ started: true })
   }

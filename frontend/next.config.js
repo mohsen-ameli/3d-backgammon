@@ -26,6 +26,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "3d-backgammon.s3.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "platform-lookaside.fbsbx.com",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
     ],
   },
   webpack(config, { isServer }) {

@@ -1,5 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth"
+import FacebookProvider from "next-auth/providers/facebook"
 import DiscordProvider from "next-auth/providers/discord"
+import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import axios from "axios"
 import getServerUrl from "@/components/utils/getServerUrl"
@@ -14,6 +16,23 @@ const discordProvider = DiscordProvider({
   authorization: {
     params: {
       scope: "identify email guilds applications.commands.permissions.update",
+    },
+  },
+})
+
+const facebookProvider = FacebookProvider({
+  clientId: process.env.FACEBOOK_CLIENT_ID!,
+  clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
+})
+
+const googleProvider = GoogleProvider({
+  clientId: process.env.GOOGLE_CLIENT_ID!,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+  authorization: {
+    params: {
+      prompt: "consent",
+      access_type: "offline",
+      response_type: "code",
     },
   },
 })
@@ -45,7 +64,7 @@ const credentialsProvider = CredentialsProvider({
 })
 
 export const authOptions: AuthOptions = {
-  providers: [discordProvider, credentialsProvider],
+  providers: [discordProvider, facebookProvider, googleProvider, credentialsProvider],
   pages: { signIn: "/signin", error: "/signin" },
   callbacks: {
     async signIn({ user, account }) {

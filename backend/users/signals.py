@@ -25,16 +25,11 @@ def update(consumer: Literal["user", "user-status"], id: int):
 @receiver(m2m_changed, sender=CustomUser.friend_requests.through)
 @receiver(m2m_changed, sender=CustomUser.friends.through)
 def update_friend_list_listener(sender, instance: CustomUser, **kwargs):
-    try:
-        update("user", instance.id)
-    except:
-        pass
+    update("user", instance.id)
 
-    try:
+    if instance.friends.exists():
         for friend in instance.friends.all():
             update("user", friend.id)
-    except:
-        pass
 
 '''
     Sends updates to user's friends, when the current

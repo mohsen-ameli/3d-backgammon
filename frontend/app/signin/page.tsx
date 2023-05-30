@@ -1,13 +1,13 @@
 "use client"
 
 import notification from "@/components/utils/Notification"
-import DiscordButton from "./DiscordButton"
 import SigninForm from "./SigninForm"
 import { useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 import Header from "@/components/ui/Header"
+import ProviderIcon from "@/components/ui/ProviderButton"
 
-export default function SigninPage(props: { searchParams: { error: string } }) {
+export default function SigninPage() {
   const params = useSearchParams()
 
   useEffect(() => {
@@ -27,7 +27,11 @@ export default function SigninPage(props: { searchParams: { error: string } }) {
           <div className="grow border-t border-t-black"></div>
         </div>
 
-        <DiscordButton />
+        <div className="flex justify-between gap-x-4 pb-4">
+          <ProviderIcon name="discord" iconOnly={true} />
+          <ProviderIcon name="google" iconOnly={true} />
+          <ProviderIcon name="facebook" iconOnly={true} />
+        </div>
       </div>
     </>
   )

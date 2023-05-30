@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react"
 
 export default function SignOut() {
   return (
-    <div className="z-20 mb-[10%] lg:mb-[4%]">
+    <div className="z-20 mb-[6%] sm:mb-[4%]">
       <Button3d text="Sign Out" onClick={() => signOut()} />
     </div>
   )

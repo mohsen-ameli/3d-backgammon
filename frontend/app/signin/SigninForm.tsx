@@ -47,12 +47,19 @@ export default function SigninForm() {
     <form className="flex w-full flex-col justify-around gap-y-2" onSubmit={handleSubmit} autoComplete="on">
       <FormField required label="Username" name="username" placeholder="Username" />
       <FormField errors={errors} required label="Password" name="password" type="password" placeholder="Password" />
-      <Link
-        href="/reset-password"
-        className="w-fit text-sm text-gray-800 duration-200 hover:text-gray-100 hover:ease-in-out"
-      >
-        Reset your password?
-      </Link>
+
+      <div className="flex justify-between">
+        <Link
+          href="/reset-password"
+          className="w-fit text-sm text-gray-800 duration-200 hover:text-gray-100 hover:ease-in-out"
+        >
+          Reset password?
+        </Link>
+
+        <Link href="/signup" className="w-fit text-sm text-gray-800 duration-200 hover:text-gray-100 hover:ease-in-out">
+          Don&apos;t have an account?
+        </Link>
+      </div>
 
       <Button disabled={clicked} type="submit" className={"my-3 w-full self-center"}>
         {clicked ? <ButtonLoading /> : "Continue with Email"}

@@ -78,7 +78,6 @@ def register_user(request):
 @permission_classes([])
 def sign_in_up_provider(request: Request):
     if request.method == "POST":
-        id = request.data.get("id")
         username = request.data.get("name")
         email = request.data.get("email")
         image = request.data.get("image")

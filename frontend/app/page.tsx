@@ -24,26 +24,26 @@ export default function Page() {
         {status === "authenticated" ? (
           <>
             <Logout />
-            <Link href="/profile" className="z-20 mb-[35%] sm:mb-[20%] lg:mb-[10%]">
+            <Link href="/profile" className="z-20 mb-[15%] sm:mb-[10%] xl:mb-[7%]">
               <Button3d text="Profile" />
             </Link>
-            <Link href="/friends" className="z-20 mb-[35%] sm:mb-[20%] lg:mb-[10%]">
+            <Link href="/friends" className="z-20 mb-[15%] sm:mb-[10%] xl:mb-[7%]">
               <Button3d text="Friends" />
             </Link>
           </>
         ) : (
           <>
-            <Link href="/signin" className="z-20 mb-[13%] lg:mb-[2%] xl:mb-[4%]">
+            <Link href="/signin" className="z-20 mb-[13%] sm:mb-[6%] xl:mb-[4%]">
               <Button3d text="Sign In" />
             </Link>
-            <Link href="/signup" className="z-20 mb-[30%] sm:mb-[22%] lg:mb-[5%] xl:mb-[10%]">
+            <Link href="/signup" className="z-20 mb-[22%] sm:mb-[13%] xl:mb-[6%]">
               <Button3d text="Sign Up" />
             </Link>
           </>
         )}
         <Link
           href="/game/pass-and-play"
-          className={`z-20 ${status === "authenticated" ? "mb-[10%] lg:mb-[4%]" : "mb-[13%] lg:mb-[2%] xl:mb-[4%]"}`}
+          className={`z-20 ${status === "authenticated" ? "mb-[6%] sm:mb-[4%]" : "mb-[13%] sm:mb-[6%] xl:mb-[4%]"}`}
         >
           <Button3d text="Single Player" />
         </Link>
