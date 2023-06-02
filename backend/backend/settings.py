@@ -16,7 +16,8 @@ ALLOWED_HOSTS = [
     "www.3d-backgammon.up.railway.app",
     "www.3d-backgammon.com",
     "3d-backgammon.com",
-    "localhost"
+    "localhost",
+    "127.0.0.1",
 ]
 
 INTERNAL_IPS = (
@@ -220,6 +221,8 @@ if not DEBUG:
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
     'http://localhost:3000',
     'http://localhost:5173',
     'http://192.168.0.173:3000',

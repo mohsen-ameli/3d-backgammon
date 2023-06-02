@@ -30,7 +30,8 @@ export default function useStatus() {
   useEffect(() => {
     if (!session || ws) return
 
-    setWs(() => new WebSocket(`${getServerUrl(false)}/ws/status/${session.user.id}`))
+    const url = `${getServerUrl(false)}/ws/status/${session.user.id}/`
+    setWs(() => new WebSocket(url))
   }, [session])
 
   useEffect(() => {

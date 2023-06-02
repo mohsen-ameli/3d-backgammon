@@ -27,7 +27,13 @@ export default function FriendRequests() {
     if (session && !data) fetchStuff()
   }, [session])
 
-  if (!data) return <Loading basic center />
+  if (!data)
+    return (
+      <>
+        <Header href="/friends" title="Friend Requests" />
+        <Loading basic center />
+      </>
+    )
 
   return (
     <>

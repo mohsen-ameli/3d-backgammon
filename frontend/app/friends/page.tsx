@@ -37,9 +37,10 @@ export default function FriendsPage() {
   // Setting the websocket connection
   useEffect(() => {
     if (!session || ws) return
+
     const url = `${getServerUrl(false)}/ws/friends/${session.user.id}/`
     setWs(() => new WebSocket(url))
-  }, [session, ws])
+  }, [session])
 
   // Handling on message events
   useEffect(() => {
@@ -58,32 +59,17 @@ export default function FriendsPage() {
     setData(data)
   }
 
-  if (!data) return <Loading basic center />
+  if (!data)
+    return (
+      <>
+        <FriendsHeader />
+        <Loading basic center />
+      </>
+    )
 
   return (
     <>
-      <Header href="/" title="Friends List">
-        <div className="absolute -top-1 right-0 flex gap-x-2">
-          {/* Search for new friends */}
-          <Link href="/friends/search">
-            <Button className="relative">
-              <FontAwesomeIcon icon={faUserPlus} />
-            </Button>
-          </Link>
-
-          {/* Friend requests */}
-          <Link href="/friends/requests">
-            <Button className="relative text-xl">
-              <FontAwesomeIcon icon={faBell} />
-              {data.num_requests > 0 && (
-                <div className="absolute -right-7 -top-4 h-7 w-7 rounded-full bg-red-400 text-lg">
-                  <Center>{data.num_requests}</Center>
-                </div>
-              )}
-            </Button>
-          </Link>
-        </div>
-      </Header>
+      <FriendsHeader requests={data.num_requests} />
 
       {/* Friends list */}
       {data.friends.length !== 0 ? (
@@ -104,5 +90,32 @@ export default function FriendsPage() {
         <p className="mt-4 text-center text-xl font-semibold">No friends :(</p>
       )}
     </>
+  )
+}
+
+function FriendsHeader({ requests = 0 }: { requests?: number }) {
+  return (
+    <Header href="/" title="Friends List">
+      <div className="absolute -top-1 right-0 flex gap-x-2">
+        {/* Search for new friends */}
+        <Link href="/friends/search">
+          <Button className="relative">
+            <FontAwesomeIcon icon={faUserPlus} />
+          </Button>
+        </Link>
+
+        {/* Friend requests */}
+        <Link href="/friends/requests">
+          <Button className="relative text-xl">
+            <FontAwesomeIcon icon={faBell} />
+            {requests > 0 && (
+              <div className="absolute -right-7 -top-4 h-7 w-7 rounded-full bg-red-400 text-lg">
+                <Center>{requests}</Center>
+              </div>
+            )}
+          </Button>
+        </Link>
+      </div>
+    </Header>
   )
 }

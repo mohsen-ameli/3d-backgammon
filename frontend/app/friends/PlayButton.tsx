@@ -9,7 +9,7 @@ type PlayButtonProps = {
   play: (friend: FriendType) => void
 }
 
-const PlayButton = ({ friend, play }: PlayButtonProps) => {
+export default function PlayButton({ friend, play }: PlayButtonProps) {
   const [clicked, setClicked] = useState(false)
   const ref = useRef<SVGSVGElement>(null!)
 
@@ -29,7 +29,7 @@ const PlayButton = ({ friend, play }: PlayButtonProps) => {
     }
   }, [clicked])
 
-  const handleClick = () => {
+  function handleClick() {
     if (friend.is_online) {
       play(friend)
       setClicked(true)
@@ -50,5 +50,3 @@ const PlayButton = ({ friend, play }: PlayButtonProps) => {
     </button>
   )
 }
-
-export default PlayButton
