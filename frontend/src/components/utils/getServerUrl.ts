@@ -4,5 +4,9 @@
  * @returns A string that is the url to be hit
  */
 export default function getServerUrl(http: boolean = true) {
-  return http ? process.env.NEXT_PUBLIC_HTTP_SERVER! : process.env.NEXT_PUBLIC_WS_SERVER!
+  if (process.env.NODE_ENV === "development") {
+    return http ? "http://localhost:8000" : "ws://localhost:8000"
+  } else {
+    return http ? "https://3d-backgammon.up.railway.app" : "wss://3d-backgammon.up.railway.app"
+  }
 }
