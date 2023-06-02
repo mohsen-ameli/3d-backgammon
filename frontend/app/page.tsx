@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react"
 import { useGameStore } from "@/game/store/useGameStore"
 
 export default function Page() {
-  const { status } = useSession()
+  const { status, data: session } = useSession()
 
   const started = useGameStore(state => state.started)
 
@@ -24,7 +24,7 @@ export default function Page() {
         {status === "authenticated" ? (
           <>
             <Logout />
-            <Link href="/profile" className="z-20 mb-[15%] sm:mb-[10%] xl:mb-[7%]">
+            <Link href={`/profile/${session.user.id}`} className="z-20 mb-[15%] sm:mb-[10%] xl:mb-[7%]">
               <Button3d text="Profile" />
             </Link>
             <Link href="/friends" className="z-20 mb-[15%] sm:mb-[10%] xl:mb-[7%]">

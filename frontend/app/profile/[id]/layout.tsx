@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const session = await getServerSession(authOptions)
 
   if (!session) {
-    redirect("/signin?callbackUrl=/profile")
+    redirect("/signin?callbackUrl=/")
   }
 
   const { user } = session

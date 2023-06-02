@@ -6,7 +6,7 @@ import { useGameStore } from "../store/useGameStore"
 import { DEFAULT_ENV_MAP_INTENSITY } from "../data/Data"
 import { shallow } from "zustand/shallow"
 
-const files = ["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]
+const files = ["px.webp", "nx.webp", "py.webp", "ny.webp", "pz.webp", "nz.webp"]
 
 const manager = new LoadingManager()
 const loader = new CubeTextureLoader(manager)

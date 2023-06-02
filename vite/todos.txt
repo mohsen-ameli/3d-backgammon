@@ -1,0 +1,195 @@
+* means something is partially done
+** almost done
+*** done fr
+
+(1 - 5) Importance
+
+------------------------------------------------ TODO ------------------------------------------------
+Levels:
+	- Maybe add a level system.
+
+Shop:
+	- Allow users to buy in game currency.
+	- In the shop page, there are multiple tags and price ranges.
+	- Using stripe, handle user purchases. These interactions should be sort of a "one time" purchase. 
+	  So we're not storing any of the user's information for safety reasons.
+	- Users should see how much money they have in the lobby, and in game.
+
+(maybe) Add pressing, instead of dragging and dropping
+
+(maybe) Have users throw the dices one by one, to determine who starts first.
+
+(maybe) Have multiple rotations and angles to play the game with (Inside settings in-game)
+
+(maybe) Move the reset and lock orbit controls into settings.
+
+(maybe) Add an undo button?
+
+(3) Add other auth methods. Have the users enter a username after they successfully register with a provider.
+Also maybe show them the picture that we will use, and alow them to change it.
+
+(2) Add a "share with your friends" button.
+
+(3) Add voices for each in-game message :)
+
+(3) Add password reset.
+
+(3) Add ability to change user information like pfp, username, email, password, inside the profile page.
+
+--- Done ---
+
+If the user is anonymous, show them these options:
+	*** - Login/signup
+	- Start an anonymous game with a random player.
+	*** - Start a pass & play game
+
+If the user is already logged in:
+	*** - Logout
+	*** - View profile
+		*** + Name
+		*** + Picture
+		*** + Number of games played
+		*** + Game won / games lost
+
+	*** - View friends-list
+		*** + List of friends
+		*** + Ability to add/remove friends
+		*** + Ability to chat with them
+		*** + Be able to send match requests
+		+ Be able to put money on the line
+		+ (ability to see their profile ?)
+
+	*** - Sockets (real time) for seeing new friend requests, and match requests, and messages.
+	*** - A different socket for actual chatting.
+	*** - A different socket for playing the game online with another person
+	*** - Have a notification system, for when users send each other friend requests, invite each other,
+	*** - Accept invites, or accept friend requests.
+
+*** Have a chat option during the game, with pre-defined chat options.
+
+*** Add a timer to the game. 60 sec, and the next 5 are gonna appear as red, if the user doesn't make a move, then the game will abort.
+
+*** Add profile pics. Maybe a randomized profile picture, like the ones github has.
+
+*** Show the messages as a bubble next to each users' pfp, when in a game.
+
+*** Show score/pip count. https://www.bkgm.com/gloss/lookup.cgi?pip+count
+
+*** Add a starting animation for the checkers.
+
+*** Add a credit and an about me.
+
+*** Add random names when two users are playing against each other in pass-and-play, and the user is not logged in.
+	If user is logged in, then show one other random name. In pass-and-play show two panels.
+
+*** (5) Add some music, as soon as the experience starts.
+
+*** (5) Separate settings into different sections.
+
+*** (5) Add ability to pause the music
+
+------------------------------------------------ BUGS ------------------------------------------------
+* (5) The dice show wrong numbers for the opposite user (Dice physics)
+
+(4) Have the ability to move for the value of both dice.
+
+* (2) Screen layout is fucked up on phones. (on new devices?)
+
+(2) When dragging a checker on ios, if you drag with one finger, then go out of the app, the checker gets stuck in the air.
+
+--- Done ---
+
+*** (5) Checkers sometimes don't drop on the columns, even though the columns turn red.
+
+*** (1) The debug and perf monitor can't be turned on at the same time. wtf
+
+*** (5) Fix the dice number detection system. Use a raycaster system instead, to detect which ray is pointing up.
+
+*** (5) The dice should throw on one side.
+
+*** (5) The checkers don't stack properly when in the end house.
+
+*** (4) Checkers are hard to drag with a finger on phones.
+
+*** The orbit controls start off being turned off, which shouldn't happen. (Both in pass-and-play and friend-game) This only happens when the server is running.. interesting..
+
+*** Make it easier to drop the checkers. Have a dashed border.
+
+*** When you don't have a move, there should be a pop up in the middle of the screen
+
+*** the side panels don't always show up.
+
+*** move both panels inwards in a game. to compensate for the notch. 
+
+*** when its not ur turn, don't show the green timer.
+
+*** The throw dice sometimes doesn't show.
+
+*** when a checker is removed, other checkers when dragging them, shouldn't cause the columns to go red. 
+
+*** when there's a double dice on the side panel, they should stack on top of each other. grid cols 2
+
+*** the throw button should have a scaling animation instead
+
+*** add a trophy icon in the winner overlay.
+
+*** Have the ability to send a rematch after a game is over.
+
+*** When dragging a checker only make the columns that are available become red
+
+*** The settings environment should show which env is checked
+
+*** When a dice doesn't get recognized, the whole ui gets messed up
+
+*** 2 and 5 sometimes not get recognized.
+
+*** Fix the overlay for mobile.
+
+*** when removing a checker, it doesn't get removed right away
+
+*** when user doesn't have a move, dices should show, but switch users and show the throw button
+
+*** checkers should stack on top of each other
+
+*** checkers should order properly
+
+*** Fix the counter/timer overlay.
+
+*** Fix the layout for when users are logged out, and they want to play a pass and play game.
+
+------------------------------------------------ IDEAS ------------------------------------------------
+--- Description of what I want to build ---
+I want the user to be able to create a room, share it and be able to play with a single other person.
+I want the user to be able to play with random people from all around the world.
+I want the user to be able to do pass-and-play, where there are two physical users using one computer, against each other.
+Each user can have a friends-list, where they can add or remove friends, see their online status, and be able to send them a match request.
+The interface, i thought, should be like a big card in the middle, with a glossy background to it. Users should have the option to view
+their friends-list, start a game with a random, or start a pass-and-play game. They should also see a profile icon, where they can view their
+profile.
+
+--- Some ideas for the lobby layout ---
+Have the board closed up in the background doing an animation, maybe spinning or just floating. Maybe have
+the dice just float around it, or do some kind of an up down animation, with a flip in the middle. The 
+general background could be a nice cozy and warm background. Maybe a fireplace, or a jungle or a woody
+background.
+
+1: Have like a general mild dark overlay over the background, with buttons to login/logout/signup in the top
+and other buttons to play in the bottom area. If the user is logged in, then they'll see their logo on the
+top right. They can see their friends list right at the bottom of it. 
+	
+2: Same structure as 1, but moved inside a semi-small card with a glassy background. Maybe the animation in the 
+back could be moved to the left of the screen and the card to the right?
+
+3: Same buttons structure as 1, but without the animations. The board will be like the background of a card,
+that will contain all the buttons. There will be no animation of the board in this case.
+
+	- have a button to stop the board animation.
+	- The opponent can be anonymous or already a user
+
+--- How we will make dough! ---
+Have a shop that will allow users to buy our in game currency. Then they will be able to buy skins? for things like the 
+board, checkers, the dice, and enable more env maps. They will also be able to gamble in games against their friends, or randoms.
+There will be tournaments of like 16 people, and to join it you will need to put some amount of money on the line. 
+Users should be able to up the stakes in game, by using the special dice??
+Maybe there should be a subscription premium for users. Users will pay monthly for the service, and get features like, no ads and some skins.
+There should be some level of advertisements for non-premium users.

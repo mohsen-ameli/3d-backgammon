@@ -6,17 +6,25 @@ import React from "react"
 import { ProfileData } from "@/types/Profile.type"
 import AxiosInstance from "@/components/utils/AxiosInstance"
 import Header from "@/components/ui/Header"
+import axios from "axios"
+import getServerUrl from "@/components/utils/getServerUrl"
 
-// export const dynamic = "force-static"
+export const revalidate = 30
 
-export default async function ProfilePage() {
+export async function generateStaticParams() {
+  const { data }: { data: number[] } = await axios.get(getServerUrl() + "/api/get-user-ids/")
+
+  return data.map(id => ({ id: id.toString() }))
+}
+
+export default async function ProfilePage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions)
 
-  if (!session) redirect("/signin?callbackUrl=/profile")
+  if (!session) redirect(`/signin?callbackUrl=/`)
 
   const axiosInstance = AxiosInstance(session)
 
-  const { data }: { data: ProfileData } = await axiosInstance.get("/api/get-user-profile/")
+  const { data }: { data: ProfileData } = await axiosInstance.get(`/api/get-user-profile/${params.id}`)
 
   return (
     <>

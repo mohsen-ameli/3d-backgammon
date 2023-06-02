@@ -201,8 +201,22 @@ def validate_chat(request, chat_uuid: str):
 '''
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_user_profile(request):
+def get_user_profile(request, id: int):
     if request.method == "GET":
-        user = CustomUser.objects.get(id=request.user.id)
+        user = CustomUser.objects.get(id=id)
         serializer = ProfileUserSerializer(user)
         return Response(serializer.data)
+    
+'''
+    Getting all user ids
+'''
+@api_view(['GET'])
+@permission_classes([])
+def get_user_ids(request):
+    if request.method == "GET":
+        users = CustomUser.objects.all()
+        ids = []
+
+        for user in users:
+            ids.append(user.id)
+        return Response(ids)

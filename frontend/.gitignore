@@ -41,3 +41,7 @@ report.*.json
 
 # .vscode Debugging
 .vscode/*-debug-profile
+
+todos.txt
+
+.env*.local

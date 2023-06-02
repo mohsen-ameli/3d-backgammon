@@ -21,6 +21,7 @@
     "@react-three/drei": "^9.56.27",
     "@react-three/fiber": "^8.11.5",
     "@react-three/rapier": "0.12.2",
+    "@stripe/stripe-js": "^1.54.0",
     "@use-gesture/react": "^10.2.27",
     "@vercel/analytics": "^1.0.1",
     "animate.css": "^4.1.1",

@@ -37,7 +37,6 @@ export default function FriendsPage() {
   // Setting the websocket connection
   useEffect(() => {
     if (!session || ws) return
-
     const url = `${getServerUrl(false)}/ws/friends/${session.user.id}/`
     setWs(() => new WebSocket(url))
   }, [session, ws])
