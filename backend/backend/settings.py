@@ -12,10 +12,10 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = str(os.environ.get("DEBUG")) == "1"
 
 ALLOWED_HOSTS = [
-    "3d-backgammon.up.railway.app",
-    "www.3d-backgammon.up.railway.app",
-    "www.3d-backgammon.com",
-    "3d-backgammon.com",
+    "backend.3dbackgammon.com",
+    "www.backend.3dbackgammon.com",
+    "www.3dbackgammon.com",
+    "3dbackgammon.com",
     "localhost",
     "127.0.0.1",
 ]
@@ -227,16 +227,15 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://192.168.0.173:3000',
     'http://192.168.0.173:5173',
-    'https://www.3d-backgammon.com',
-    'https://3d-backgammon.up.railway.app',
-    'https://railway.app',
-    'https://3d-backgammon.vercel.app'
+    'https://backend.3dbackgammon.com',
+    'https://www.3dbackgammon.com',
+    'https://3dbackgammon.com'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://www.3d-backgammon.com',
-    'https://3d-backgammon.com',
-    'https://3d-backgammon.up.railway.app',
+    'https://www.3dbackgammon.com',
+    'https://3dbackgammon.com',
+    'https://backend.3dbackgammon.com',
 ]
 
 CORS_ALLOW_CREDENTIALS = True

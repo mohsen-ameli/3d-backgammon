@@ -11,7 +11,6 @@ import dynamic from "next/dynamic"
 import "@fortawesome/fontawesome-svg-core/styles.css"
 import { config } from "@fortawesome/fontawesome-svg-core"
 import FakeLoader from "@/components/ui/FakeLoader"
-// import Loader from "@/components/ui/Loader"
 
 // Adding font awesome everywhere
 config.autoAddCss = false

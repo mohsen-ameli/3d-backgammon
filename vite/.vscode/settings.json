@@ -1,6 +1,36 @@
 {
   "peacock.remoteColor": "#42b883",
   "files.exclude": {
+    "**/.git": false,
+    "**/.svn": false,
+    "**/.hg": false,
+    "**/CVS": false,
+    "**/.DS_Store": false,
+    "**/Thumbs.db": false,
+    "**/*.git": false,
+    ".env": false,
+    ".gitignore": false,
+    ".prettierrc": false,
+    "file.d.ts": false,
+    "package-lock.json": false,
+    "README": false,
+    "tsconfig.json": false,
+    "tsconfig.node.json": false,
+    "vercel.json": false,
+    "vite.config.ts": false,
+    "postcss.config.cjs": false,
+    "**/.vercel": false,
+    ".vercel": false,
+    "**/.vscode": false,
+    ".vscode": false,
+    "**/dist": false,
+    "dist": false,
+    "**/node_modules": false,
+    "node_modules": false,
+    "tailwind.config.cjs": false,
+    "yarn.lock": false
+  },
+  "explorerExclude.backup": {
     "**/.git": true,
     "**/.svn": true,
     "**/.hg": true,
@@ -30,7 +60,6 @@
     "tailwind.config.cjs": true,
     "yarn.lock": true
   },
-  "explorerExclude.backup": {},
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.organizeImports": true

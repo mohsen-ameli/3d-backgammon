@@ -7,7 +7,7 @@ import React, { useRef, useState } from "react"
 import AddButton from "./AddButton"
 import { useSession } from "next-auth/react"
 import { redirect } from "next/navigation"
-import { search, sendFriendRequest } from "./ServerActions"
+import { search, sendFriendRequest } from "./actions"
 import Header from "@/components/ui/Header"
 
 export default function SearchPage() {
