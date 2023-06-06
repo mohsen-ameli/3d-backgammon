@@ -1,22 +1,28 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useGameStore } from "@/game/store/useGameStore"
 import { DEFAULT_CHECKER_POSITIONS } from "@/game/data/Data"
-import { useSession } from "next-auth/react"
-import AxiosInstance from "@/components/utils/AxiosInstance"
 import switchPlayers from "@/game/utils/SwitchPlayers"
-import { Session } from "next-auth"
 import { PlayerType } from "@/game/types/Game.type"
-
-type DataType = {
-  data: [string, string]
-}
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
+import { randomNames } from "@/api/get-random-name/route"
 
 /**
  * Pass and play game mode. User is playing with themselves (perhaps with someone else irl)
  */
 export default function PassAndPlayPage() {
+  useQuery({
+    queryKey: ["random-name"],
+    queryFn: async () => {
+      const { data } = await axios.get("/api/get-random-name/")
+      return data as randomNames
+    },
+    refetchOnWindowFocus: false,
+    onSuccess: data => setGameState(data),
+  })
+
   // Lock camera on the board
   useGameStore.subscribe(
     state => state.resetOrbit,
@@ -25,26 +31,20 @@ export default function PassAndPlayPage() {
     },
   )
 
-  const { data: session } = useSession()
-
-  const [data, setData] = useState<[string, string] | null>(null)
-
   // Setting each player's info, game mode, checkers, dice, and phase.
-  useEffect(() => {
-    useGameStore.getState().resetOrbit?.("board", true)
-
+  function setGameState(names: randomNames) {
     const userChecker = Math.random() - 0.5 < 0 ? "white" : "black"
 
     const me: PlayerType = {
       id: 0,
-      name: data ? data[0] : "Guest",
+      name: names[0],
       image: "",
       color: userChecker,
     }
 
     const enemy: PlayerType = {
       id: 1,
-      name: data ? data[1] : "Guest",
+      name: names[1],
       image: "",
       color: switchPlayers(userChecker),
     }
@@ -58,35 +58,16 @@ export default function PassAndPlayPage() {
       phase: "initial",
       inGame: true,
     })
-  }, [data])
-
-  // Resetting states when user leaves the game.
-  useEffect(() => {
-    getRandomName(session)
-  }, [session])
+  }
 
   useEffect(() => {
+    useGameStore.getState().resetOrbit?.("board", true)
+
     return () => {
       useGameStore.setState({ inGame: false, gameMode: undefined })
       useGameStore.getState().resetOrbit?.("env")
     }
   }, [])
-
-  // Gets two random names for the users
-  async function getRandomName(session: Session | null) {
-    if (!session) {
-      setData(["Guest", "Guest"])
-      return
-    }
-    const axiosInstance = AxiosInstance(session)
-
-    try {
-      const { data: d }: DataType = await axiosInstance.get("/api/game/get-random-name/")
-      setData(d)
-    } catch (e) {
-      setData(["Guest", "Guest"])
-    }
-  }
 
   return <></>
 }

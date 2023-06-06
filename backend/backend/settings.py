@@ -14,8 +14,6 @@ DEBUG = str(os.environ.get("DEBUG")) == "1"
 ALLOWED_HOSTS = [
     "backend.3dbackgammon.com",
     "www.backend.3dbackgammon.com",
-    "www.3dbackgammon.com",
-    "3dbackgammon.com",
     "localhost",
     "127.0.0.1",
 ]
@@ -219,11 +217,8 @@ if not DEBUG:
 # CORS
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
-    'http://127.0.0.1:5173',
     'http://localhost:3000',
-    'http://localhost:5173',
     'http://192.168.0.173:3000',
-    'http://192.168.0.173:5173',
     'https://backend.3dbackgammon.com',
     'https://www.3dbackgammon.com',
     'https://3dbackgammon.com'

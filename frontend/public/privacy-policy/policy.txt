@@ -68,7 +68,7 @@ For the purposes of this Privacy Policy:
     the duration of a page visit).
 
   * Website refers to 3D Backgammon, accessible from
-    <https://3d-backgammon.vercel.app/>
+    <https://www.3dbackgammon.com/>
 
   * You means the individual accessing or using the Service, or the company,
     or other legal entity on behalf of which such individual is accessing or

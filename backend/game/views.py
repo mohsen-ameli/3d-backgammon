@@ -106,13 +106,3 @@ def valid_match(request: Request, game_id):
 def get_in_game_messages(request: Request):
     serializer = InGameMessagesSerializer(InGameMessages.objects.all().order_by("id"), many=True)
     return Response(serializer.data)
-
-'''
-    This method will use a 3rd-party api to fetch random funny names, for pass-and-play.
-'''
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_random_name(request: Request):
-    url = "https://names.drycodes.com/2?separator=space"
-    response = requests.request("GET", url)
-    return Response(json.loads(response.text))

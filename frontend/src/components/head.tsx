@@ -1,5 +1,5 @@
 const twitter = "https://twitter.com/MohsenAmeli"
-const url = "https://3d-backgammon.vercel.app/"
+const url = "https://www.3dbackgammon.com/"
 const author = "Mohsen Ameli"
 
 type HeadProps = {

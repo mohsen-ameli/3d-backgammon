@@ -95,7 +95,7 @@ export default function FriendsPage() {
 
 function FriendsHeader({ requests = 0 }: { requests?: number }) {
   return (
-    <Header href="/" title="Friends List">
+    <Header href="/" title="Friends">
       <div className="absolute -top-1 right-0 flex gap-x-2">
         {/* Search for new friends */}
         <Link href="/friends/search">
