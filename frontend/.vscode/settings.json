@@ -35,7 +35,9 @@
     ".eslintrc": false,
     ".eslintignore": false,
     ".editorconfig": false,
-    "tailwind.config.js": false
+    "tailwind.config.js": false,
+    "towebp.sh": false,
+    "next.config.js": false
   },
   "explorerExclude.backup": {
     "**/.git": true,
@@ -60,7 +62,9 @@
     ".eslintrc": true,
     ".eslintignore": true,
     ".editorconfig": true,
-    "tailwind.config.js": true
+    "tailwind.config.js": true,
+    "towebp.sh": true,
+    "next.config.js": true
   },
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#93e6fc",

@@ -50,7 +50,7 @@ export default function Page() {
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-5 flex w-full items-center justify-center gap-x-2 text-sm text-black lg:text-lg">
+      <div className="absolute bottom-5 z-20 flex w-full items-center justify-center gap-x-2 text-sm text-black lg:text-lg">
         <Link href="/credits" className="text-orange-900 underline duration-150 ease-in-out hover:text-black">
           Credits
         </Link>

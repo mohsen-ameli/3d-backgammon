@@ -6,6 +6,8 @@ import { ReactNode } from "react"
 import Head from "@/components/head"
 import Container from "@/components/ui/Container"
 
+export const dynamic = "force-dynamic"
+
 export async function generateMetadata(): Promise<Metadata> {
   const session = await getServerSession(authOptions)
 
