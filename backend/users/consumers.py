@@ -33,22 +33,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
             One of the users has sent a message over
             Or frontend wants initial data
         '''
-
         data = json.loads(text_data)
 
         message = data["message"]
         sender = data["sender"]
         timestamp = data["timestamp"]
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                "type": "send_message",
-                "message": message,
-                "sender": sender,
-                "timestamp": timestamp,
-            },
-        )
+        context = {
+            "type": "send_message",
+            "message": message,
+            "sender": sender,
+            "timestamp": timestamp,
+        }
+
+        # Sending the message to both users
+        await self.channel_layer.group_send(self.room_group_name, context)
 
         # Getting the sender user
         sender = await database_sync_to_async(CustomUser.objects.get)(id=sender)
@@ -58,6 +57,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             text=message,
             sender=sender
         )
+
         await database_sync_to_async(self.chat.messages.add)(msg)
 
     async def fetch_messages(self):
@@ -72,12 +72,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         '''
             Used to send a message to the chat, when one of the users sends a message
         '''
-        message = event["message"]
-        sender = event["sender"]
-        timestamp = event["timestamp"]
-
-        context = {"message": message, "sender": sender, "timestamp": timestamp}
-
+        context = {
+            "message": event["message"],
+            "sender": event["sender"],
+            "timestamp": event["timestamp"]
+        }
         await self.send(text_data=json.dumps([context]))
 
     async def disconnect(self, close_code):

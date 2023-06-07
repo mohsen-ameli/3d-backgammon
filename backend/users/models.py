@@ -1,13 +1,7 @@
-import uuid, io
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.core.files.base import ContentFile
-from randimage import get_random_image
-from matplotlib.image import imsave
-import numpy as np
 
 from game.models import Game
 
@@ -18,6 +12,25 @@ PROVIDERS = [
 
 '''
     The abstract custom user
+
+    Fields:
+    - id: Auto-incrementing primary key field.
+    - email: Email field that must be unique.
+    - image: Field to upload a user's profile picture.
+    - games_won: Integer field to track the number of games won by the user.
+    - games_lost: Integer field to track the number of games lost by the user.
+    - total_games: Integer field to track the total number of games played by the user.
+    - is_online: Boolean field indicating whether the user is currently online.
+    - friends: Many-to-many relationship field representing the user's friends.
+    - friend_requests: Many-to-many relationship field representing friend requests sent by the user.
+    - game_requests: Many-to-many relationship field representing game requests sent by the user.
+    - live_game: ForeignKey field representing the user's currently active game.
+    - games: Many-to-many relationship field representing the user's played games.
+    - provider: Field to specify the user's provider with a maximum length of 11 characters.
+
+    Methods:
+    - get_date_joined: Property method returning the timestamp of the user's date joined.
+    - save: Overridden save method to handle preventing the user from adding themselves as a friend.
 '''
 class CustomUser(AbstractUser):
     id = models.AutoField(primary_key=True)
@@ -51,28 +64,15 @@ class CustomUser(AbstractUser):
 
 
 '''
-    Function used to generate a picture given an image array
-'''
-def update_profile_picture(user: CustomUser, image_array: np.array):
-    buf = io.BytesIO()
-    imsave(buf, image_array, format="PNG")
-    image_file = ContentFile(buf.getvalue())
-    user.image.save(f'{user.username}.jpg', image_file, save=True)
+    Chat model, used for chats between users.
 
+    Fields:
+    - uuid: Primary key field representing the universally unique identifier (UUID) of the chat.
+    - users: Many-to-many relationship field representing the users participating in the chat.
+    - messages: Many-to-many relationship field representing the messages exchanged in the chat.
 
-'''
-    Signal to create a profile picture (A random one if user didn't upload one)
-    as soon as a user is signed up.
-'''
-@receiver(post_save, sender=CustomUser)
-def create_profile_picture(sender, instance: CustomUser, created: bool, **kwargs):
-    if instance.image == None or instance.image == "":
-        image_array = get_random_image((128,128))
-        update_profile_picture(instance, image_array)
-
-
-'''
-    A chat model, used for chats between users.
+    Methods:
+    - save: Overridden save method to ensure a chat has at most two users.
 '''
 class Chat(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True, editable=False)
@@ -90,7 +90,15 @@ class Chat(models.Model):
 
 
 '''
-    Model for a single chat message.
+    A single chat message.
+
+    Fields:
+    - text: The content of the message.
+    - sender: ForeignKey field representing the user who sent the message.
+    - timestamp: DateTimeField representing the timestamp when the message was created.
+
+    Methods:
+    - save: Overridden save method to ensure the message is not empty.
 '''
 class Message(models.Model):
     text = models.CharField(max_length=250)

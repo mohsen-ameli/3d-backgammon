@@ -1,14 +1,13 @@
 from datetime import datetime
 from channels.db import database_sync_to_async
 from django.utils import timezone
-from django.db.models import Q
 
 from .models import CustomUser, Chat
 
 
-# TODO: Probably convert this to a serializer
 '''
     Takes a chat object in, and return a list filled with the chat messages
+    TODO: Probably convert this to a serializer
 '''
 @database_sync_to_async
 def get_all_chat_msg(chat: Chat) -> list:
@@ -82,7 +81,6 @@ def update_user(id: int, is_online: bool, last_login: datetime):
 
     # for key, value in kwargs.items():
     #     user.update(**{key: value})
-    
 
 
 '''

@@ -7,7 +7,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('signup/', views.register_user),
     path('handle-friends/', views.handle_friends),
-    path('get-user-profile/<int:id>', views.get_user_profile),
+    path('get-user-profile/<int:id>/', views.get_user_profile),
     path('get-user-ids/', views.get_user_ids),
     path('search-friend/<str:typed>/', views.search_friend),
     path('get-chat-uuid/<str:friend_id>/', views.get_chat_uuid),

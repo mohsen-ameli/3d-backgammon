@@ -48,13 +48,12 @@ class MyTokenObtainPairView(TokenObtainPairView):
 @api_view(['POST'])
 @permission_classes([])
 def get_jwt_provider(request: Request):
-    if request.method == "POST":
-        user = CustomUser.objects.filter(id=request.data["id"])
-        if not user.exists():
-            return Response({ "error": "User does not exist" }, 404)
+    user = CustomUser.objects.filter(id=request.data["id"])
+    if not user.exists():
+        return Response({ "error": "User does not exist" }, 404)
 
-        tokens = MyTokenObtainPairView.serializer_class.get_token(user=user.first())
-        return Response({ "refresh": str(tokens), "access": str(tokens.access_token) }, 200)
+    tokens = MyTokenObtainPairView.serializer_class.get_token(user=user.first())
+    return Response({ "refresh": str(tokens), "access": str(tokens.access_token) }, 200)
 
 # ----------------- USER VIEWS ----------------- #
 '''
@@ -77,26 +76,25 @@ def register_user(request):
 @api_view(['POST'])
 @permission_classes([])
 def sign_in_up_provider(request: Request):
-    if request.method == "POST":
-        username = request.data.get("name")
-        email = request.data.get("email")
-        image = request.data.get("image")
-        provider = request.data.get("provider")
+    username = request.data.get("name")
+    email = request.data.get("email")
+    image = request.data.get("image")
+    provider = request.data.get("provider")
 
-        user = CustomUser.objects.filter(email=email)
+    user = CustomUser.objects.filter(email=email)
 
-        if user.exists():
-            if user.first().provider == provider:
-                return Response({ "valid": True, "id": user.first().id }, 200)
-            else:
-                return Response(False, 200)
+    if user.exists():
+        if user.first().provider == provider:
+            return Response({ "valid": True, "id": user.first().id }, 200)
         else:
-            password = CustomUser.objects.make_random_password()
-            user = CustomUser.objects.create(username=username, email=email, image=image, provider=provider)
-            user.set_password(password)
-            user.save()
+            return Response(False, 200)
+    else:
+        password = CustomUser.objects.make_random_password()
+        user = CustomUser.objects.create(username=username, email=email, image=image, provider=provider)
+        user.set_password(password)
+        user.save()
 
-            return Response({ "valid": True, "id": user.id }, 200)
+        return Response({ "valid": True, "id": user.id }, 200)
 
 
 '''
@@ -105,16 +103,15 @@ def sign_in_up_provider(request: Request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def search_friend(request, typed: str):
-    if request.method == "GET":
-        results = CustomUser.objects.filter(
-            Q(username__iexact=typed) | Q(email__iexact=typed)
-        )
+    results = CustomUser.objects.filter(
+        Q(username__iexact=typed) | Q(email__iexact=typed)
+    )
 
-        to_return = []
-        for _user in results.values('id', 'username'):
-            to_return.append({"id": _user["id"], "username": _user["username"]})
+    to_return = []
+    for _user in results.values('id', 'username'):
+        to_return.append({"id": _user["id"], "username": _user["username"]})
 
-        return Response(to_return)
+    return Response(to_return)
 
 
 '''
@@ -162,19 +159,18 @@ def handle_friends(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_chat_uuid(request, friend_id: str):
-    if request.method == "GET":
-        user = CustomUser.objects.get(id=request.user.id)
-        friend = CustomUser.objects.get(id=int(friend_id))
+    user = CustomUser.objects.get(id=request.user.id)
+    friend = CustomUser.objects.get(id=int(friend_id))
 
-        try:
-            chat_room = Chat.objects.filter(Q(users__pk=user.pk)).get(Q(users__pk=friend.pk))
-            return Response({'chat_uuid': chat_room.uuid})
-        except Chat.DoesNotExist:
-            chat_room = Chat.objects.create()
-            chat_room.users.add(user)
-            chat_room.users.add(friend)
-            chat_room.save()
-            return Response({'chat_uuid': chat_room.uuid})
+    try:
+        chat_room = Chat.objects.filter(Q(users__pk=user.pk)).get(Q(users__pk=friend.pk))
+        return Response({'chat_uuid': chat_room.uuid})
+    except Chat.DoesNotExist:
+        chat_room = Chat.objects.create()
+        chat_room.users.add(user)
+        chat_room.users.add(friend)
+        chat_room.save()
+        return Response({'chat_uuid': chat_room.uuid})
         
 '''
     This will validate the chat uuid between the user and the friend
@@ -182,19 +178,18 @@ def get_chat_uuid(request, friend_id: str):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def validate_chat(request, chat_uuid: str):
-    if request.method == "GET":
-        try:
-            uuid.UUID(chat_uuid)
-            
-            user = CustomUser.objects.get(id=request.user.id)
-            chat = Chat.objects.filter(uuid=chat_uuid)
+    try:
+        uuid.UUID(chat_uuid)
+        
+        user = CustomUser.objects.get(id=request.user.id)
+        chat = Chat.objects.filter(uuid=chat_uuid)
 
-            if chat.exists() and user in chat.first().users.all():
-                return Response({"valid": True})
-            else:
-                return Response({"valid": False})
-        except:
+        if chat.exists() and user in chat.first().users.all():
+            return Response({"valid": True})
+        else:
             return Response({"valid": False})
+    except:
+        return Response({"valid": False})
 
 '''
     Getting information about the user (aka their profile)
@@ -202,10 +197,9 @@ def validate_chat(request, chat_uuid: str):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_profile(request, id: int):
-    if request.method == "GET":
-        user = CustomUser.objects.get(id=id)
-        serializer = ProfileUserSerializer(user)
-        return Response(serializer.data)
+    user = CustomUser.objects.get(id=id)
+    serializer = ProfileUserSerializer(user)
+    return Response(serializer.data)
     
 '''
     Getting all user ids
@@ -213,10 +207,9 @@ def get_user_profile(request, id: int):
 @api_view(['GET'])
 @permission_classes([])
 def get_user_ids(request):
-    if request.method == "GET":
-        users = CustomUser.objects.all()
-        ids = []
+    users = CustomUser.objects.all()
+    ids = []
 
-        for user in users:
-            ids.append(user.id)
-        return Response(ids)
+    for user in users:
+        ids.append(user.id)
+    return Response(ids)

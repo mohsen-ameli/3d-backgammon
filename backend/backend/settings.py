@@ -2,10 +2,11 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
+'''
+    General
+'''
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
@@ -18,11 +19,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
-INTERNAL_IPS = (
-    '127.0.0.1'
-)
-
-# Application definition
+INTERNAL_IPS = ('127.0.0.1')
 
 INSTALLED_APPS = [
     # 3rd party
@@ -74,10 +71,10 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
-ASGI_APPLICATION = 'backend.asgi.application'
 
-# Channels
+'''
+    Channels
+'''
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -87,9 +84,13 @@ CHANNEL_LAYERS = {
     },
 }
 
+WSGI_APPLICATION = 'backend.wsgi.application'
+ASGI_APPLICATION = 'backend.asgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+'''
+    Database
+'''
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 if DEBUG:
    DATABASES = {
@@ -110,9 +111,9 @@ else:
         }
     }
 
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
+'''
+    Password validation
+'''
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -130,10 +131,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-# User turn duration (Synced with frontend in Data.ts)
-USER_TURN_DURATION = 70
-
-# REST Framework
+'''
+    REST Framework
+'''
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': ("rest_framework.permissions.IsAuthenticated",),
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -141,7 +141,9 @@ REST_FRAMEWORK = {
     )
 }
 
-# SIMPLE JWT
+'''
+    Simple JWT
+'''
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
@@ -174,26 +176,25 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
-
+'''
+    Internationalization
+'''
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
+'''
+    Static & Media
+'''
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# AWS S3 Storage
+'''
+    AWS S3 Storage
+'''
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
@@ -203,7 +204,9 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_S3_REGION_NAME = 'us-east-1'
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 
-# HTTPS settings
+'''
+    HTTPS settings
+'''
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -214,7 +217,9 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
 
-# CORS
+'''
+    CORS
+'''
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
@@ -232,7 +237,14 @@ CSRF_TRUSTED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Loading the Neural Network for the dice AI
+'''
+    Other
+'''
+USER_TURN_DURATION = 70 # User turn duration (Synced with frontend in Data.ts)
+
+'''
+    Neural Networks
+'''
 # NET = Net()
 # NET.load_state_dict(torch.load("static/dice_ai.pth"))
 # NET.eval()

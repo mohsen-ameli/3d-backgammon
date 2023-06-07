@@ -79,7 +79,7 @@ export default function Dice() {
     const listener = new AudioListener()
     camera.add(listener)
 
-    audioLoader.load("/sounds/NewDice.wav", buffer => {
+    audioLoader.load("/sounds/new-dice.wav", buffer => {
       const audio = new PositionalAudio(listener)
       audio.setBuffer(buffer)
       audio.setRefDistance(30)

@@ -51,3 +51,26 @@ USER_CHECKER_CHOICES = [
     ("white", "white"),
     ("black", "black"),
 ]
+
+'''
+    A singleton used for the default board.
+'''
+class SingletonJSONFieldDefault(object):
+    _instance = None
+
+    def __new__(cls):
+        if not cls._instance:
+            cls._instance = DEFAULT_BOARD
+        return cls._instance
+
+
+'''
+    A singleton used for the default dice.
+'''
+class DiceDefault(object):
+    _instance = None
+
+    def __new__(cls):
+        if not cls._instance:
+            cls._instance = DEFAULT_DICE
+        return cls._instance

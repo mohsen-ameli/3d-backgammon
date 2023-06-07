@@ -1,10 +1,16 @@
-import channels.layers
-
+import channels.layers, io
+import numpy as np
+from matplotlib.image import imsave
 from asgiref.sync import async_to_sync
+from typing import Literal
+from randimage import get_random_image
+from fieldsignals import post_save_changed
+
+from django.core.files.base import ContentFile
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
-from fieldsignals import post_save_changed
-from typing import Literal
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from .models import CustomUser
 
@@ -17,6 +23,26 @@ def update(consumer: Literal["user", "user-status"], id: int):
         group_name,
         { 'type': 'send_updates' }
     )
+
+'''
+    Signal to create a profile picture (A random one if user didn't upload one)
+    as soon as a user is signed up.
+'''
+@receiver(post_save, sender=CustomUser)
+def create_profile_picture(sender, instance: CustomUser, created: bool, **kwargs):
+    '''
+        Function used to generate a picture given an image array
+    '''
+    def update_profile_picture(user: CustomUser, image_array: np.array):
+        buf = io.BytesIO()
+        imsave(buf, image_array, format="PNG")
+        image_file = ContentFile(buf.getvalue())
+        user.image.save(f'{user.username}.jpg', image_file, save=True)
+
+    if instance.image == None or instance.image == "":
+        image_array = get_random_image((128,128))
+        update_profile_picture(instance, image_array)
+
 
 '''
     Sends updates to user, when their friend_requests
