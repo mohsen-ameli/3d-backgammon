@@ -43,7 +43,7 @@ export default function FriendRequests() {
         <div className="custom-scroll-bar">
           {data.map((user: BaseUser) => (
             <div
-              className="mb-3 mr-2 flex items-center justify-between rounded-md bg-slate-200 p-2"
+              className="mb-3 mr-2 flex items-center justify-between rounded-xl bg-slate-200 p-2"
               key={Number(user.id)}
             >
               <p>{user.username} wants to be your friend!</p>

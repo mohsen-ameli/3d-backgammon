@@ -3,19 +3,23 @@ import Modal from "../../../components/ui/Modal"
 import LayoutBtn from "../components/LayoutBtn"
 import Info from "../info/Info"
 import Settings from "../settings/Settings"
-import { faGear, faInfo, faLock, faLockOpen, faRotateLeft } from "@fortawesome/free-solid-svg-icons"
+import { faGear, faInfo, faLock, faLockOpen, faRotateLeft, faStar } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useGameStore } from "@/game/store/useGameStore"
+import Premium from "./premium/Premium"
+import { useSession } from "next-auth/react"
 
 /**
  * Set of buttons on the top left corner
  */
 export default function TopLeftLayout() {
+  const { status } = useSession()
   const inGame = useGameStore(state => state.inGame)
 
   const [controlsLock, setControlsLock] = useState(true)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [infoOpen, setInfoOpen] = useState(false)
+  const [premOpen, setPremOpen] = useState(false)
 
   function switchControls() {
     useGameStore.getState().toggleControls?.("layout")
@@ -28,6 +32,10 @@ export default function TopLeftLayout() {
 
   function openInfo() {
     setInfoOpen(curr => !curr)
+  }
+
+  function openPremium() {
+    setPremOpen(curr => !curr)
   }
 
   function handleReset() {
@@ -56,6 +64,12 @@ export default function TopLeftLayout() {
         <LayoutBtn title="Info" onClick={openInfo}>
           <FontAwesomeIcon icon={faInfo} />
         </LayoutBtn>
+
+        {status === "authenticated" && (
+          <LayoutBtn title="Premium" onClick={openPremium}>
+            <FontAwesomeIcon icon={faStar} />
+          </LayoutBtn>
+        )}
       </div>
 
       <Modal setOpen={setSettingsOpen} open={settingsOpen}>
@@ -65,6 +79,12 @@ export default function TopLeftLayout() {
       <Modal setOpen={setInfoOpen} open={infoOpen}>
         <Info />
       </Modal>
+
+      {status === "authenticated" && (
+        <Modal className="sm:min-w-[700px]" setOpen={setPremOpen} open={premOpen}>
+          <Premium />
+        </Modal>
+      )}
     </>
   )
 }

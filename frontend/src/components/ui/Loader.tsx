@@ -69,7 +69,7 @@ function Loader({ progress }: { progress: number }) {
     <>
       <div className="my-4 w-[400px] lg:w-[500px]">
         <div
-          className="rounded-md bg-orange-800 px-2 py-[2px] text-center text-xs font-medium text-black"
+          className="rounded-xl bg-orange-800 px-2 py-[2px] text-center text-xs font-medium text-black"
           style={{ width: `${Math.round(progress)}%` }}
         />
       </div>

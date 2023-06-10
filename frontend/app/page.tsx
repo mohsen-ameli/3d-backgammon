@@ -6,11 +6,17 @@ import Logout from "@/components/ui/Logout"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { useGameStore } from "@/game/store/useGameStore"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function Page() {
-  const { status, data: session } = useSession()
-
   const started = useGameStore(state => state.started)
+  const { status, data: session } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (session) router.push("/")
+  }, [session])
 
   if (!started) return <></>
 

@@ -1,9 +1,13 @@
 import { Children } from "@/types/children.type"
+import { faX } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { AnimatePresence, Variants, motion } from "framer-motion"
+import { twMerge } from "tailwind-merge"
 
 type CarouselProps = Children & {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  className?: string
 }
 
 const fadeVariants: Variants = {
@@ -33,7 +37,11 @@ const modalVariants: Variants = {
   },
 }
 
-const Modal = ({ setOpen, open, children }: CarouselProps) => {
+const Modal = ({ setOpen, open, className, children }: CarouselProps) => {
+  const c = twMerge(
+    `fixed left-1/2 top-1/2 z-[100] flex h-screen w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-[#0000005a] text-white ${className}`,
+  )
+
   return (
     <AnimatePresence mode="wait">
       {open && (
@@ -43,19 +51,20 @@ const Modal = ({ setOpen, open, children }: CarouselProps) => {
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="fixed left-1/2 top-1/2 z-[100] flex h-screen w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-[#0000005a] text-white"
+          className={c}
         >
           <motion.div variants={modalVariants} onClick={e => e.stopPropagation()}>
-            <div className="custom-scroll-bar max-h-screen min-w-[400px] overflow-x-hidden rounded-md border-2 border-orange-700 bg-orange-900 p-8 lg:max-w-[600px]">
+            <div className="custom-scroll-bar max-h-screen min-w-[400px] overflow-x-hidden rounded-xl border-2 border-orange-700 bg-[#7c2d12cc] p-8 lg:max-w-[600px]">
               {children}
             </div>
 
-            <button
-              className="absolute right-5 top-2 text-2xl duration-100 hover:text-slate-400 hover:ease-in-out"
+            <FontAwesomeIcon
+              icon={faX}
+              size="lg"
+              width={20}
+              className="absolute right-4 top-4 duration-100 hover:cursor-pointer hover:text-slate-400 hover:ease-in-out"
               onClick={() => setOpen(false)}
-            >
-              x
-            </button>
+            />
           </motion.div>
         </motion.div>
       )}

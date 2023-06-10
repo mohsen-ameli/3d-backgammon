@@ -1,6 +1,7 @@
 "use client"
 
 import { ButtonHTMLAttributes, useState } from "react"
+import { twMerge } from "tailwind-merge"
 
 type InputProps = ButtonHTMLAttributes<HTMLButtonElement>
 
@@ -12,6 +13,12 @@ const clickAudio = typeof Audio !== "undefined" ? new Audio("/sounds/button-clic
 export default function Button(props: InputProps) {
   const { className, onClick, children, disabled, ...rest } = props
 
+  const c = twMerge(
+    `group relative h-10 rounded-lg border-2 border-orange-800 px-4 outline-none ${
+      disabled && "cursor-not-allowed"
+    } ${className}`,
+  )
+
   const [click] = useState(() => clickAudio)
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -21,13 +28,7 @@ export default function Button(props: InputProps) {
   }
 
   return (
-    <button
-      type="submit"
-      className={`group relative h-10 rounded-lg border-2 border-orange-800 px-4 outline-none
-      ${disabled && "cursor-not-allowed"} ${className}`}
-      onClick={handleClick}
-      {...rest}
-    >
+    <button type="submit" className={c} onClick={handleClick} {...rest}>
       <div className="relative z-20">{children}</div>
       <div
         className={`absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 opacity-0 transition duration-200 ${

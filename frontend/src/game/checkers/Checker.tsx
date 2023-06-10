@@ -35,15 +35,12 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
   const ws = useGameStore.getState().ws
   const nodes = useGameStore.getState().nodes
   const materials = useGameStore.getState().materials
+  const toggleControls = useGameStore.getState().toggleControls!
   const initial = useGameStore(state => state.initial, shallow)
   const checkers = useGameStore(state => state.checkers, shallow)!
 
   const { data: session } = useSession()
   const user = session?.user
-
-  // Checkers
-  const { viewport } = useThree()
-  const { factor } = viewport
 
   // This checker's rigid body instance
   const checker = useRef<RigidBodyApi>(null!)
@@ -126,22 +123,15 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
 
   // Config for the useDrag
   const dragConfig: UserDragConfig = {
-    from: () => {
-      const from = spring.position.get() as number[]
-      return [from[0] * factor, from[2] * factor]
-    },
     eventOptions: { capture: false, passive: true },
   }
 
   // When a checker is picked up (dragged) and released
   // This is where the main logic for the game is
   const bind = useDrag(({ active, event, dragging, cancel }) => {
+    const dice = useGameStore.getState().dice!
     const userChecker = useGameStore.getState().userChecker!
     const phase = useGameStore.getState().phase!
-    const toggleControls = useGameStore.getState().toggleControls!
-    const checkerPicked = useGameStore.getState().checkerPicked!
-    const dice = useGameStore.getState().dice!
-    const newCheckerPosition = useGameStore.getState().newCheckerPosition!
 
     // Check to see if the user is allowed to move
     if (
@@ -152,13 +142,15 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
     )
       return
 
+    const checkerPicked = useGameStore.getState().checkerPicked!
+    const newCheckerPosition = useGameStore.getState().newCheckerPosition!
+
     if (active) {
       // @ts-ignore
       event.ray.intersectPlane(floorPlane, planeIntersectPoint)
+      springApi.start({ position: pos })
       setPos([planeIntersectPoint.x, 0, planeIntersectPoint.z])
     }
-
-    springApi.start({ position: pos })
 
     // User started dragging the checker
     if (dragging) {
@@ -242,6 +234,7 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
       }
       useGameStore.setState({ phase: "ended", userChecker: possibleWinner, inGame: false })
       springApi.start({ position: positions, rotation: [Math.PI / 3, 0, 0] })
+      setPos(positions)
 
       return
     }
@@ -303,6 +296,7 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
   function goToOriginalPos(currentChecker: CheckerType) {
     const oldPosition = getCheckerPos(currentChecker)
     springApi.start({ position: oldPosition })
+    setPos(oldPosition)
   }
 
   /**

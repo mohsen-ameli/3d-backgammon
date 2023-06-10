@@ -103,7 +103,7 @@ export default function AudioTab() {
             >
               {song.name}
               {selectedSongs?.includes(song) && (
-                <FontAwesomeIcon icon={faCheck} className="absolute right-2 top-1/2 -translate-y-1/2 text-green-500" />
+                <FontAwesomeIcon icon={faCheck} className="fa-beat-fade absolute right-2 top-4 text-green-500" />
               )}
             </h1>
           </div>

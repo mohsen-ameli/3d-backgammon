@@ -61,7 +61,7 @@ export default function SigninForm() {
         </Link>
       </div>
 
-      <Button disabled={clicked} type="submit" className={"my-3 w-full self-center"}>
+      <Button disabled={clicked} type="submit" className="w-full">
         {clicked ? <ButtonLoading /> : "Continue with Email"}
       </Button>
     </form>

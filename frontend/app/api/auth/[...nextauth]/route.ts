@@ -92,9 +92,14 @@ export const authOptions: AuthOptions = {
 
       const url = `${getServerUrl()}/api/sign-in-up-provider/`
 
-      const { data }: { data: { valid: boolean; id: number } } = await axios.post(url, context, config)
+      type Data = { data: { valid: boolean; id?: number; username?: string } }
 
-      user.id = data.id.toString()
+      const { data }: Data = await axios.post(url, context, config)
+
+      if (data.valid) {
+        user.id = data.id!.toString()
+        user.name = data.username!
+      }
 
       return data.valid
     },

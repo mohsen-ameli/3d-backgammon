@@ -1,10 +1,10 @@
-import uuid
+import uuid, random
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser, Chat
-from .serializers import FriendSerializer, PrimaryUserSerializer, ProfileUserSerializer
+from .serializers import PrimaryUserSerializer, ProfileUserSerializer
 from django.db.models import Q
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -85,16 +85,21 @@ def sign_in_up_provider(request: Request):
 
     if user.exists():
         if user.first().provider == provider:
-            return Response({ "valid": True, "id": user.first().id }, 200)
+            return Response({ "valid": True, "id": user.first().id, "username": user.first().username }, 200)
         else:
-            return Response(False, 200)
+            return Response({ "valid": False }, 200)
     else:
         password = CustomUser.objects.make_random_password()
+        not_unique_username = CustomUser.objects.filter(username=username).exists()
+
+        if not_unique_username:
+            username = f"{username}_{random.randint(0, 1000)}"
+
         user = CustomUser.objects.create(username=username, email=email, image=image, provider=provider)
         user.set_password(password)
         user.save()
 
-        return Response({ "valid": True, "id": user.id }, 200)
+        return Response({ "valid": True, "id": user.id, "username": user.username }, 200)
 
 
 '''

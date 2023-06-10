@@ -40,6 +40,7 @@
     "next.config.js": true
   },
   "explorerExclude.backup": {},
+  "peacock.remoteColor": "#61dafb",
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#93e6fc",
     "activityBar.background": "#93e6fc",
@@ -59,5 +60,5 @@
     "titleBar.inactiveBackground": "#61dafb99",
     "titleBar.inactiveForeground": "#15202b99"
   },
-  "peacock.remoteColor": "#61dafb"
+  "peacock.color": "#61dafb"
 }
