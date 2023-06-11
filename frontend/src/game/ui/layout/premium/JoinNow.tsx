@@ -2,27 +2,15 @@
 
 import Button, { ButtonLoading } from "@/components/ui/Button"
 import getStripe from "./get-stripe"
-import { useEffect, useState } from "react"
 import notification from "@/components/utils/Notification"
-import axios from "axios"
 import { useSession } from "next-auth/react"
 
 export default function JoinNow() {
   const { data: session } = useSession()
-  const [member, setMember] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    getUser()
-  }, [])
-
-  async function getUser() {
-    const { data: user }: { data: boolean } = await axios.get("/api/stripe")
-    setMember(user)
-  }
 
   async function checkout() {
     if (!session) return
-    if (member) {
+    if (session.user.premium) {
       notification("Wohoo, you're a member!")
       return
     }
@@ -32,8 +20,8 @@ export default function JoinNow() {
     const { error } = await stripe!.redirectToCheckout({
       lineItems: [{ price: process.env.NEXT_PUBLIC_PRICE!, quantity: 1 }],
       mode: "subscription",
-      successUrl: process.env.NEXT_PUBLIC_HTTP_SERVER!,
-      cancelUrl: process.env.NEXT_PUBLIC_HTTP_SERVER!,
+      successUrl: window?.location.href,
+      cancelUrl: window?.location.href,
       customerEmail: session.user.email,
     })
 
@@ -43,8 +31,8 @@ export default function JoinNow() {
   }
 
   return (
-    <Button onClick={checkout} type="submit" className="px-0" disabled={member === null}>
-      {member === null ? <ButtonLoading /> : member ? "Already a Member" : "Join Now!"}
+    <Button onClick={checkout} type="submit" className="px-0" disabled={session === null}>
+      {session === null ? <ButtonLoading /> : session.user.premium ? "Already a Member" : "Join Now!"}
     </Button>
   )
 }

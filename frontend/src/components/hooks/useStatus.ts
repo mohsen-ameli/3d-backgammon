@@ -4,10 +4,11 @@ import { BaseUser } from "@/types/User.type"
 import { useEffect, useRef, useState } from "react"
 import notification from "../utils/Notification"
 import AxiosInstance from "../utils/AxiosInstance"
-import { useSession } from "next-auth/react"
+import { getSession, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useGameStore } from "@/game/store/useGameStore"
 import getServerUrl from "../utils/getServerUrl"
+import axios from "axios"
 
 type DataType = {
   live_game?: string
@@ -16,9 +17,8 @@ type DataType = {
 
 export default function useStatus() {
   const inGame = useGameStore(state => state.inGame)
-
   const router = useRouter()
-  const { data: session } = useSession()
+  const { data: session, update } = useSession()
   const axiosInstance = AxiosInstance(session!)
 
   const [ws, setWs] = useState<WebSocket | null>(null)
@@ -27,6 +27,7 @@ export default function useStatus() {
   const showReqNotif = useRef(true)
   const showRejNotif = useRef(true)
 
+  // Starting a websocket connection
   useEffect(() => {
     if (!session || ws) return
 
@@ -34,6 +35,7 @@ export default function useStatus() {
     setWs(() => new WebSocket(url))
   }, [session])
 
+  // Setting up websocket event listeners
   useEffect(() => {
     if (!ws || inGame) return
 
@@ -48,6 +50,18 @@ export default function useStatus() {
       showReqNotif.current = true
     }
   }, [ws, inGame])
+
+  useEffect(() => {
+    isUserPremium()
+  }, [])
+
+  // Updating the premium status of the current user
+  async function isUserPremium() {
+    const session = await getSession()
+    if (!session) return
+    const { data }: { data: boolean } = await axios.get("/api/stripe")
+    await update({ ...session, user: { ...session?.user, premium: data } })
+  }
 
   // Accepting a game request
   async function accept(id: number) {
@@ -64,7 +78,7 @@ export default function useStatus() {
     router.push(`/game/${data.game_id}`)
   }
 
-  // Rejecting the game request
+  // Rejecting a game request
   async function reject(id: number) {
     const res = await axiosInstance.put("/api/game/handle-match-request/", {
       action: "reject",
@@ -78,7 +92,7 @@ export default function useStatus() {
     showReqNotif.current = true
   }
 
-  // Handling updates coming from the backend
+  // Handling incoming updates from the backend
   function onMessage(e: MessageEvent) {
     const data: DataType = JSON.parse(e.data)
 

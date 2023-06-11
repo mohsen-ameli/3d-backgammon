@@ -6,7 +6,7 @@ import { faMinus, faTrophy, faUser } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Image from "next/image"
 import { useGameStore } from "@/game/store/useGameStore"
-import { useSession } from "next-auth/react"
+import { getSession } from "next-auth/react"
 import AxiosInstance from "@/components/utils/AxiosInstance"
 import notification from "@/components/utils/Notification"
 
@@ -20,7 +20,6 @@ export default function WinnerLayout() {
   }))
 
   const router = useRouter()
-  const { data: session } = useSession()
 
   // Function to request a rematch
   async function playAgain() {
@@ -36,6 +35,7 @@ export default function WinnerLayout() {
 
       useGameStore.getState().resetOrbit?.("board", true)
     } else {
+      const session = await getSession()
       const axiosInstance = AxiosInstance(session!)
       const players = useGameStore.getState().players
 

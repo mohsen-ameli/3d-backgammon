@@ -70,7 +70,7 @@ export default function Chat() {
     else validateChat()
 
     const url = `${getServerUrl(false)}/ws/chat/${uuid}/`
-    setWs(new WebSocket(url))
+    setWs(() => new WebSocket(url))
   }, [session, ws, axiosInstance])
 
   // Web Socket listeners

@@ -4,7 +4,7 @@ import gsap from "gsap"
 import { useEffect, useRef, useState } from "react"
 import { MessageType } from "../../types/Message.type"
 import LayoutBtn from "./LayoutBtn"
-import { useSession } from "next-auth/react"
+import { getSession } from "next-auth/react"
 import AxiosInstance from "@/components/utils/AxiosInstance"
 import { faComments } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -17,16 +17,16 @@ import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
  * the backend, and back to both to users, to show the message.
  */
 export default function ChatButton() {
-  const { data: session } = useSession()
-  const axiosInstance = AxiosInstance(session!)
-
   const [messages, setMessages] = useState<MessageType[] | null>(null)
+  
+  async function fetchStuff() {
+    const session = await getSession()
+    const axiosInstance = AxiosInstance(session!)
+    const { data }: { data: MessageType[] } = await axiosInstance.get("/api/game/get-in-game-messages/")
+    setMessages(data)
+  }
 
   useEffect(() => {
-    async function fetchStuff() {
-      const { data }: { data: MessageType[] } = await axiosInstance.get("/api/game/get-in-game-messages/")
-      setMessages(data)
-    }
     fetchStuff()
   }, [])
 

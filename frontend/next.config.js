@@ -34,6 +34,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
+      {
+        protocol: "https",
+        hostname: "static-cdn.jtvnw.net",
+      },
     ],
   },
   webpack(config, { isServer }) {

@@ -7,7 +7,9 @@ from game.models import Game
 
 PROVIDERS = [
     ("credentials", "credentials"),
-    ("discord", "discord")
+    ("discord", "discord"),
+    ("google", "google"),
+    ("twitch", "twitch")
 ]
 
 '''

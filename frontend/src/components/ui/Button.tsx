@@ -3,7 +3,9 @@
 import { ButtonHTMLAttributes, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
-type InputProps = ButtonHTMLAttributes<HTMLButtonElement>
+type InputProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  filled?: boolean
+}
 
 /**
  * A button that has a somewhat cool hover effect
@@ -11,13 +13,22 @@ type InputProps = ButtonHTMLAttributes<HTMLButtonElement>
 const clickAudio = typeof Audio !== "undefined" ? new Audio("/sounds/button-click.mp3") : null
 
 export default function Button(props: InputProps) {
-  const { className, onClick, children, disabled, ...rest } = props
+  const { className, onClick, children, disabled, filled, ...rest } = props
 
-  const c = twMerge(
+  const buttonClassName = twMerge(
     `group relative h-10 rounded-lg border-2 border-orange-800 px-4 outline-none ${
       disabled && "cursor-not-allowed"
     } ${className}`,
   )
+
+  let bgClassName
+
+  if (!filled) {
+    bgClassName = twMerge(`absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 opacity-0 transition duration-75 ${disabled ? "" : "group-hover:opacity-100"}`)
+  } else {
+    bgClassName = twMerge(`absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 transition duration-75 ${disabled ? "" : "group-hover:ease-in-out group-hover:from-red-700 group-hover:to-orange-700"}`)
+  }
+
 
   const [click] = useState(() => clickAudio)
 
@@ -28,14 +39,9 @@ export default function Button(props: InputProps) {
   }
 
   return (
-    <button type="submit" className={c} onClick={handleClick} {...rest}>
+    <button type="submit" className={buttonClassName} onClick={handleClick} {...rest}>
       <div className="relative z-20">{children}</div>
-      <div
-        className={`absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 opacity-0 transition duration-200 ${
-          disabled ? "" : "group-hover:opacity-100"
-        }
-      `}
-      ></div>
+      <div className={bgClassName} />
     </button>
   )
 }

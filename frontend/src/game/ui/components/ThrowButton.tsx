@@ -30,7 +30,7 @@ export default function ThrowButton({ className }: { className?: string }) {
             duration: 1,
           }}
         >
-          <Button title="Throw Dice" className="inset-0 w-[90%] px-0 hover:animate-none" onClick={handleClick}>
+          <Button filled title="Throw Dice" className="inset-0 w-[90%] px-0 hover:animate-none" onClick={handleClick}>
             Throw <FontAwesomeIcon icon={faDice} />
           </Button>
         </motion.div>

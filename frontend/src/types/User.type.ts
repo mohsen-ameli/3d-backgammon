@@ -1,6 +1,6 @@
 import { JwtPayload } from "jwt-decode"
 
-export type ProvidersType = "credentials" | "discord" | "facebook" | "google"
+export type ProvidersType = "credentials" | "discord" | "twitch" | "google"
 
 export type BaseUser = {
   id: number
@@ -22,6 +22,7 @@ export type UserType = JwtPayload & {
   name: string
   email: string
   image: string
+  premium: boolean
   token: TokenType
   provider: ProvidersType
 }

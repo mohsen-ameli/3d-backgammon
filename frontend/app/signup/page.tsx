@@ -22,7 +22,7 @@ export default function Signup() {
         <div className="flex flex-col gap-4 pb-4">
           <ProviderIcon name="discord" />
           <ProviderIcon name="google" />
-          <ProviderIcon name="facebook" />
+          <ProviderIcon name="twitch" />
         </div>
       </div>
     </>

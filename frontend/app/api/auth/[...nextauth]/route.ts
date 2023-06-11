@@ -1,5 +1,5 @@
 import NextAuth, { AuthOptions } from "next-auth"
-import FacebookProvider from "next-auth/providers/facebook"
+import TwitchProvider from "next-auth/providers/twitch"
 import DiscordProvider from "next-auth/providers/discord"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
@@ -20,9 +20,9 @@ const discordProvider = DiscordProvider({
   },
 })
 
-const facebookProvider = FacebookProvider({
-  clientId: process.env.FACEBOOK_CLIENT_ID!,
-  clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
+const twitterProvider = TwitchProvider({
+  clientId: process.env.TWITCH_CLIENT_ID!,
+  clientSecret: process.env.TWITCH_CLIENT_SECRET!,
 })
 
 const googleProvider = GoogleProvider({
@@ -64,7 +64,7 @@ const credentialsProvider = CredentialsProvider({
 })
 
 export const authOptions: AuthOptions = {
-  providers: [discordProvider, facebookProvider, googleProvider, credentialsProvider],
+  providers: [discordProvider, twitterProvider, googleProvider, credentialsProvider],
   pages: { signIn: "/signin", error: "/signin" },
   callbacks: {
     async signIn({ user, account }) {
@@ -103,7 +103,10 @@ export const authOptions: AuthOptions = {
 
       return data.valid
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
+      if (trigger === "update") {
+        return { ...token, ...session.user, provider: account?.provider }
+      }
       return { ...token, ...user, provider: account?.provider }
     },
     async session({ session, token }) {

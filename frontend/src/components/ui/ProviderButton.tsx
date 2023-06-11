@@ -2,8 +2,7 @@
 
 import toCapitalize from "@/components/utils/ToCapitalize"
 import { ProvidersType } from "@/types/User.type"
-import { IconProp } from "@fortawesome/fontawesome-svg-core"
-import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons"
+import { faTwitch, faGoogle } from "@fortawesome/free-brands-svg-icons"
 import { faDiscord } from "@fortawesome/free-brands-svg-icons/faDiscord"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { signIn } from "next-auth/react"
@@ -15,14 +14,14 @@ export default function ProviderIcon({ name, iconOnly = false }: { name: Provide
 
   let className =
     "w-full group relative h-10 rounded-lg border-2 px-4 outline-none duration-100 hover:text-white hover:ease-in-out "
-  let icon = faFacebook
+  let icon = faTwitch
 
   if (name === "discord") {
     className += "border-[#7289da] hover:bg-[#7289da]"
     icon = faDiscord
-  } else if (name === "facebook") {
-    className += "border-[#3b5998] hover:bg-[#3b5998]"
-    icon = faFacebook
+  } else if (name === "twitch") {
+    className += "border-[#6441a5] hover:bg-[#6441a5]"
+    icon = faTwitch
   } else if (name === "google") {
     className += "border-[#4285F4] hover:bg-[#4285F4]"
     icon = faGoogle

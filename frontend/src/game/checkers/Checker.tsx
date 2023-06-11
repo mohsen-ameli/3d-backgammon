@@ -14,7 +14,7 @@ import switchPlayers from "../utils/SwitchPlayers"
 import GameWon from "./utils/GameWon"
 import getCheckerPos from "./utils/GetCheckerPos"
 import ValidateMove from "./utils/ValidateMove"
-import { useSession } from "next-auth/react"
+import { getSession } from "next-auth/react"
 import Modal from "@/components/ui/Modal"
 import { useGameStore } from "../store/useGameStore"
 import { shallow } from "zustand/shallow"
@@ -31,16 +31,13 @@ const floorPlane = new Plane(new Vector3(0, 1, 0), 0)
  * A single checker. This is where the magic takes place.
  * Most of the game logic is implemented here.
  */
-const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
+export default function Checker({ thisChecker }: { thisChecker: CheckerType }) {
   const ws = useGameStore.getState().ws
   const nodes = useGameStore.getState().nodes
   const materials = useGameStore.getState().materials
   const toggleControls = useGameStore.getState().toggleControls!
   const initial = useGameStore(state => state.initial, shallow)
   const checkers = useGameStore(state => state.checkers, shallow)!
-
-  const { data: session } = useSession()
-  const user = session?.user
 
   // This checker's rigid body instance
   const checker = useRef<RigidBodyApi>(null!)
@@ -358,10 +355,12 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
   /**
    * Sends a call to set the winner of the game
    */
-  function updateGameWinner() {
-    if (!ws || !user) return
+  async function updateGameWinner() {
+    if (!ws) return
 
-    const context = { finished: true, winner: user.id }
+    const session = await getSession()
+
+    const context = { finished: true, winner: session?.user.id }
     ws.send(JSON.stringify(context))
   }
 
@@ -405,5 +404,3 @@ const Checker = ({ thisChecker }: { thisChecker: CheckerType }) => {
     </>
   )
 }
-
-export default Checker

@@ -7,7 +7,7 @@ import getServerUrl from "@/components/utils/getServerUrl"
 import { useGameStore } from "@/game/store/useGameStore"
 import { GameDataTypes } from "@/game/types/Game.type"
 import switchPlayers from "@/game/utils/SwitchPlayers"
-import { useSession } from "next-auth/react"
+import { getSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -26,7 +26,6 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
   )
 
   const router = useRouter()
-  const { data: session } = useSession()
   const [fetched, setFetched] = useState(false)
 
   // Setting websocket listeners
@@ -42,7 +41,7 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
 
   useEffect(() => {
     fetchStuff()
-  }, [session])
+  }, [])
 
   useEffect(() => {
     useGameStore.getState().resetOrbit?.("board", true)
@@ -58,7 +57,8 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
   }, [])
 
   // Backend has sent game updates
-  function onMessage(e: MessageEvent) {
+  async function onMessage(e: MessageEvent) {
+    const session = await getSession()
     const data: GameDataTypes = JSON.parse(e.data)
     const id = Number(session?.user.id)
 
@@ -194,9 +194,10 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
   }
 
   async function fetchStuff() {
-    if (!session || fetched) return
+    if (fetched) return
 
-    const axiosInstance = AxiosInstance(session)
+    const session = await getSession()
+    const axiosInstance = AxiosInstance(session!)
     const { data }: DataType = await axiosInstance.get(`/api/game/valid-match/${params.uuid}/`)
 
     if (!data.valid) {

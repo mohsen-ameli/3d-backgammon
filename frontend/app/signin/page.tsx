@@ -37,7 +37,7 @@ export default function SigninPage() {
         <div className="flex justify-between gap-x-4">
           <ProviderIcon name="discord" iconOnly={true} />
           <ProviderIcon name="google" iconOnly={true} />
-          <ProviderIcon name="facebook" iconOnly={true} />
+          <ProviderIcon name="twitch" iconOnly={true} />
         </div>
       </div>
     </>
