@@ -10,7 +10,7 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@ducanh2912/next-pwa": "^8.2.0",
+    "@ducanh2912/next-pwa": "^8.5.1",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
