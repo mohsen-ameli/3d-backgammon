@@ -46,7 +46,7 @@
     "stripe": "^12.8.0",
     "tailwind-merge": "^1.13.1",
     "three": "^0.152.2",
-    "three-stdlib": "^2.21.8",
+    "three-stdlib": "^2.22.4",
     "tunnel-rat": "^0.1.2",
     "zustand": "^4.3.8"
   },
