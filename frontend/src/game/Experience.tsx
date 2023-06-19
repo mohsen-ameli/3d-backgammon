@@ -15,7 +15,7 @@ import Dice from "./dice/Dice"
 import Checkers from "./checkers/Checkers"
 import { shallow } from "zustand/shallow"
 import { GLTFResult } from "./types/GLTFResult.type"
-import useStatus from "@/components/hooks/useStatus"
+import useStatus from "@/game/hooks/useStatus"
 
 const Stage = dynamic(() => import("./other/Stage"), { ssr: false })
 
@@ -51,7 +51,6 @@ export default function Experience() {
         near: 0.2,
         far: 20,
       }}
-      // className="z-[-10]"
       shadows
       dpr={dpr}
     >

@@ -50,6 +50,7 @@ export default function Page() {
         <Link
           href="/game/pass-and-play"
           className={`z-20 ${status === "authenticated" ? "mb-[6%] sm:mb-[4%]" : "mb-[13%] sm:mb-[6%] xl:mb-[4%]"}`}
+          id="single-player"
         >
           <Button3d text="Single Player" />
         </Link>

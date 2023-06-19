@@ -24,11 +24,18 @@ export default function Button(props: InputProps) {
   let bgClassName
 
   if (!filled) {
-    bgClassName = twMerge(`absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 opacity-0 transition duration-75 ${disabled ? "" : "group-hover:opacity-100"}`)
+    bgClassName = twMerge(
+      `absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 opacity-0 transition duration-75 ${
+        disabled ? "" : "group-hover:opacity-100"
+      }`,
+    )
   } else {
-    bgClassName = twMerge(`absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 transition duration-75 ${disabled ? "" : "group-hover:ease-in-out group-hover:from-red-700 group-hover:to-orange-700"}`)
+    bgClassName = twMerge(
+      `absolute inset-0 z-10 rounded-md bg-gradient-to-b from-red-500 to-orange-500 transition duration-75 ${
+        disabled ? "" : "group-hover:ease-in-out group-hover:from-red-700 group-hover:to-orange-700"
+      }`,
+    )
   }
-
 
   const [click] = useState(() => clickAudio)
 

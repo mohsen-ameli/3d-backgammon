@@ -52,7 +52,7 @@ export default function SidePanel({ img, player, sideType }: SideProps) {
             </div>
           </div>
 
-          {/* The throw dice, and dice numbers section */}
+          {/* The throw dice and dice numbers section */}
           <BottomSection sideType={sideType} player={player} />
         </div>
       </div>
@@ -73,17 +73,19 @@ function BottomSection({ sideType, player }: BottomSectionProps) {
   const gameMode = useGameStore(state => state.gameMode)
   const dice = useGameStore(state => state.dice, shallow)
 
-  if (userChecker === player?.color && (dice.moves !== 0 || sideType === "me" || gameMode === "pass-and-play")) {
-    return (
-      <div className="absolute bottom-auto left-0 mt-4 w-full rounded-lg bg-[#8e84bab3] p-2 text-white">
-        {/* Showing the throw button if it's my turn */}
-        {(sideType === "me" || gameMode === "pass-and-play") && <ThrowButton />}
+  const show = userChecker === player?.color && (dice.moves !== 0 || sideType === "me" || gameMode === "pass-and-play")
 
-        {/* Showing the dice moves if I've already thrown the dice */}
-        {dice.moves > 0 && <DiceMoves />}
-      </div>
-    )
-  } else return <></>
+  if (!show) return <></>
+
+  return (
+    <div className="z-15 absolute bottom-auto left-0 mt-4 w-full rounded-lg bg-[#8e84bab3] p-2 text-white">
+      {/* Showing the throw button if it's my turn */}
+      {(sideType === "me" || gameMode === "pass-and-play") && <ThrowButton />}
+
+      {/* Showing the dice moves if I've already thrown the dice */}
+      {dice.moves > 0 && <DiceMoves />}
+    </div>
+  )
 }
 
 /**
@@ -100,5 +102,5 @@ function Score({ color }: { color: UserCheckerType | undefined }) {
     setScore(score_)
   }, [phase, color])
 
-  return <h1>Pip: {score}</h1>
+  return <h1>Score: {score}</h1>
 }

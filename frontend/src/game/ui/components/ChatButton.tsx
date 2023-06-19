@@ -18,7 +18,7 @@ import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
  */
 export default function ChatButton() {
   const [messages, setMessages] = useState<MessageType[] | null>(null)
-  
+
   async function fetchStuff() {
     const session = await getSession()
     const axiosInstance = AxiosInstance(session!)

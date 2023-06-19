@@ -29,6 +29,7 @@ export default function ThrowButton({ className }: { className?: string }) {
             repeatType: "reverse",
             duration: 1,
           }}
+          id="throw-dice"
         >
           <Button filled title="Throw Dice" className="inset-0 w-[90%] px-0 hover:animate-none" onClick={handleClick}>
             Throw <FontAwesomeIcon icon={faDice} />

@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^8.2.0",
@@ -32,7 +32,7 @@
     "framer-motion-3d": "^10.12.16",
     "gsap": "^3.11.4",
     "jwt-decode": "^3.1.2",
-    "next": "^13.4.4",
+    "next": "^13.4.5",
     "next-auth": "^4.22.1",
     "react": "^18.2.0",
     "react-countdown-circle-timer": "^3.2.1",
@@ -69,6 +69,7 @@
     "url-loader": "^4.1.1"
   },
   "scripts": {
+    "pretty": "prettier --write \"./**/*.{js,jsx,ts,tsx,json}\"",
     "lint": "next lint --fix --dir app",
     "dev": "next dev",
     "build": "next build",

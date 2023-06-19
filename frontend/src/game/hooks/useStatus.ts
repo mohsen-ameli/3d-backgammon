@@ -2,12 +2,12 @@
 
 import { BaseUser } from "@/types/User.type"
 import { useEffect, useRef, useState } from "react"
-import notification from "../utils/Notification"
-import AxiosInstance from "../utils/AxiosInstance"
+import notification from "../../components/utils/Notification"
+import AxiosInstance from "../../components/utils/AxiosInstance"
 import { getSession, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useGameStore } from "@/game/store/useGameStore"
-import getServerUrl from "../utils/getServerUrl"
+import getServerUrl from "../../components/utils/getServerUrl"
 import axios from "axios"
 
 type DataType = {

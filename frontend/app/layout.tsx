@@ -12,6 +12,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css"
 import { config } from "@fortawesome/fontawesome-svg-core"
 import FakeLoader from "@/components/ui/FakeLoader"
 import ReactQuery from "@/wrappers/ReactQuery"
+import Tutorial from "@/components/ui/Tutorial"
 
 // Adding font awesome everywhere
 config.autoAddCss = false
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               {children}
               <Experience />
               <MainLayout3D />
+              {/* <Tutorial /> */}
             </ReactQuery>
           </AuthProvider>
           <Toastify />

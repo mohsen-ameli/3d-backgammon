@@ -40,7 +40,7 @@ export default function notification(
         closeButton: false,
         pauseOnHover: false,
       })
-      toast.onChange((payload) => {
+      toast.onChange(payload => {
         if (payload.status === "removed") reject?.()
       })
       break

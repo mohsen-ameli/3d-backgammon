@@ -1,7 +1,9 @@
 import { FriendType } from "@/types/Friend.type"
 import { create } from "zustand"
 
-export const useFriendStore = create<{ friend: FriendType | null; uuid: string | undefined }>((set) => ({
+type FriendStore = { friend: FriendType | null; uuid: string | undefined }
+
+export const useFriendStore = create<FriendStore>(set => ({
   friend: null,
   uuid: undefined,
 }))
