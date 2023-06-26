@@ -8,13 +8,13 @@ export default function Checkers() {
   // const checkers = useGameStore.getState().checkers
   const checkers = useGameStore(state => state.checkers)
 
-  if (checkers) {
-    return (
-      <>
-        {checkers.map(data => (
-          <Checker thisChecker={data} key={data.id} />
-        ))}
-      </>
-    )
-  } else return <></>
+  if (!checkers) return <></>
+
+  return (
+    <>
+      {checkers.map(data => (
+        <Checker thisChecker={data} key={data.id} />
+      ))}
+    </>
+  )
 }

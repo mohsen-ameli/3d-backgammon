@@ -1,26 +1,23 @@
 import { a as a3f, useSpring } from "@react-spring/three"
 import { Html } from "@react-three/drei"
-import { useThree } from "@react-three/fiber"
 import { CuboidCollider, RigidBody, RigidBodyApi } from "@react-three/rapier"
-import { UserDragConfig, useDrag } from "@use-gesture/react"
-import { useEffect, useRef, useState } from "react"
+import { useDrag } from "@use-gesture/react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Plane, Vector3 } from "three"
 import { BOARD_W, CHECKER_W, GROUND_CHECKERS } from "../data/Data"
 import { CheckerType } from "../types/Checker.type"
 import Endgame from "../utils/Endgame"
-import hasMoves from "../utils/HasMoves"
 import lenRemovedCheckers from "../utils/LenRemovedCheckers"
-import switchPlayers from "../utils/SwitchPlayers"
 import GameWon from "./utils/GameWon"
 import getCheckerPos from "./utils/GetCheckerPos"
 import ValidateMove from "./utils/ValidateMove"
-import { getSession } from "next-auth/react"
 import Modal from "@/components/ui/Modal"
 import { useGameStore } from "../store/useGameStore"
 import { shallow } from "zustand/shallow"
 import getCheckersOnCol from "../utils/getCheckersOnCol"
-import updateLiveGame from "../utils/updateLiveGame"
 import SortCheckers from "./utils/SortCheckers"
+import updateGameWinner from "./utils/UpdateGameWinner"
+import updateStuff from "./utils/UpdateStuff"
 
 type PosType = [number, number, number] | Vector3 | number[]
 
@@ -32,12 +29,10 @@ const floorPlane = new Plane(new Vector3(0, 1, 0), 0)
  * Most of the game logic is implemented here.
  */
 export default function Checker({ thisChecker }: { thisChecker: CheckerType }) {
-  const ws = useGameStore.getState().ws
-  const nodes = useGameStore.getState().nodes
-  const materials = useGameStore.getState().materials
-  const toggleControls = useGameStore.getState().toggleControls!
+  const nodes = useMemo(() => useGameStore.getState().nodes, [])
+  const materials = useMemo(() => useGameStore.getState().materials, [])
+  const toggleControls = useCallback(useGameStore.getState().toggleControls!, [])
   const initial = useGameStore(state => state.initial, shallow)
-  const checkers = useGameStore(state => state.checkers, shallow)!
 
   // This checker's rigid body instance
   const checker = useRef<RigidBodyApi>(null!)
@@ -59,7 +54,9 @@ export default function Checker({ thisChecker }: { thisChecker: CheckerType }) {
     config: { mass: 1, friction: 28, tension: 400 },
   }))
 
-  // Showing an animation when the checkers first load in
+  /**
+   * Showing an animation when the checkers first load in
+   */
   useEffect(() => {
     // If we are not done loading, meaning the camera is still coming on top of the board, then return
     if (!initial || !initial.doneLoading) return
@@ -95,17 +92,18 @@ export default function Checker({ thisChecker }: { thisChecker: CheckerType }) {
     animate()
   }, [initial])
 
-  // When the checker is mounted, set its position and rotation
+  /**
+   * When the checker is mounted, set its position and rotation
+   */
   useEffect(() => {
     // If the checkers have just been loaded, return so that the entering animation can be played.
     if (!initial || initial.initialLoad) return
 
-    // New position for the checker
+    // New position and rotation for the checker
     const position = getCheckerPos(thisChecker)
-    setPos(position)
-
-    // Setting the checker's mesh position (not the physics)
     const rotation = [-3, -4].includes(thisChecker.col) ? [Math.PI / 3, 0, 0] : [0, 0, 0]
+
+    setPos(position)
 
     // Setting checker's mesh position
     springApi.start({ position, rotation })
@@ -118,258 +116,196 @@ export default function Checker({ thisChecker }: { thisChecker: CheckerType }) {
     })
   }, [thisChecker.col, thisChecker.row, thisChecker.removed])
 
-  // Config for the useDrag
-  const dragConfig: UserDragConfig = {
-    eventOptions: { capture: false, passive: true },
-  }
+  /**
+   * Goes back to the original position of the checker
+   */
+  const goToOriginalPos = useCallback((currentChecker: CheckerType) => {
+    const oldPosition = getCheckerPos(currentChecker)
+    springApi.start({ position: oldPosition })
+    setPos(oldPosition)
+  }, [])
 
-  // When a checker is picked up (dragged) and released
-  // This is where the main logic for the game is
-  const bind = useDrag(({ active, event, dragging, cancel }) => {
-    const dice = useGameStore.getState().dice!
-    const userChecker = useGameStore.getState().userChecker!
-    const phase = useGameStore.getState().phase!
+  /**
+   * When a checker is picked up (dragged) and released
+   * This is where the main logic for the game is
+   */
+  const bind = useDrag(
+    ({ active, event, dragging, cancel }) => {
+      const dice = useGameStore.getState().dice!
+      const userChecker = useGameStore.getState().userChecker!
+      const phase = useGameStore.getState().phase!
 
-    // Check to see if the user is allowed to move
-    if (
-      !["checkerMoveAgain", "checkerMove"].includes(phase) ||
-      dice.moves === 0 ||
-      thisChecker.color !== userChecker ||
-      [-3, -4].includes(thisChecker.col)
-    )
-      return
-
-    const checkerPicked = useGameStore.getState().checkerPicked!
-    const newCheckerPosition = useGameStore.getState().newCheckerPosition!
-
-    if (active) {
-      // @ts-ignore
-      event.ray.intersectPlane(floorPlane, planeIntersectPoint)
-      springApi.start({ position: pos })
-      setPos([planeIntersectPoint.x, 0, planeIntersectPoint.z])
-    }
-
-    // User started dragging the checker
-    if (dragging) {
-      // If the user is dragging multiple checkers, then stop the drag
-      if (checkerPicked && checkerPicked.id !== thisChecker.id) {
-        cancel()
+      // Check to see if the user is allowed to move
+      if (
+        !["checkerMoveAgain", "checkerMove"].includes(phase) ||
+        dice.moves === 0 ||
+        thisChecker.color !== userChecker ||
+        [-3, -4].includes(thisChecker.col)
+      )
         return
-      } else {
-        useGameStore.setState({ checkerPicked: thisChecker })
+
+      const checkerPicked = useGameStore.getState().checkerPicked!
+      const newCheckerPosition = useGameStore.getState().newCheckerPosition!
+
+      if (active) {
+        // @ts-ignore
+        event.ray.intersectPlane(floorPlane, planeIntersectPoint)
+        springApi.start({ position: pos })
+        setPos([planeIntersectPoint.x, 0, planeIntersectPoint.z])
       }
 
-      toggleControls("checkerDisable")
-      return
-    }
+      // User started dragging the checker
+      if (dragging) {
+        // If the user is dragging multiple checkers, then stop the drag
+        if (checkerPicked && checkerPicked.id !== thisChecker.id) {
+          cancel()
+          return
+        } else {
+          useGameStore.setState({ checkerPicked: thisChecker })
+        }
 
-    toggleControls("checkerEnable")
-    useGameStore.setState({ checkerPicked: null })
+        toggleControls("checkerDisable")
+        return
+      }
 
-    // From, to, and moved column numbers
-    const to = newCheckerPosition as number
-    let from: number
-    let moved: number
+      toggleControls("checkerEnable")
+      useGameStore.setState({ checkerPicked: null })
 
-    if (thisChecker.col === -1) from = -1
-    else if (thisChecker.col === -2) from = 24
-    else from = thisChecker.col
+      // From, to, and moved column numbers
+      const to = newCheckerPosition as number
+      let from: number
+      let moved: number
 
-    if (to === -3) moved = 24 - from
-    else if (to === -4) moved = from + 1
-    else moved = thisChecker.color === "white" ? to - from : from - to
+      if (thisChecker.col === -1) from = -1
+      else if (thisChecker.col === -2) from = 24
+      else from = thisChecker.col
 
-    /**
-     * User is trying to bear off their checker
-     */
-    if ([-3, -4].includes(to)) {
-      // If user is in an endgame
-      const end = Endgame(userChecker)
-      if (!end) return
+      if (to === -3) moved = 24 - from
+      else if (to === -4) moved = from + 1
+      else moved = thisChecker.color === "white" ? to - from : from - to
 
-      // Validating the move
-      if (!ValidateMove(thisChecker, moved)) {
+      /**
+       * User is trying to bear off their checker
+       */
+      if ([-3, -4].includes(to)) {
+        // If user is in an endgame
+        const end = Endgame(userChecker)
+        if (!end) return
+
+        // Validating the move
+        if (!ValidateMove(thisChecker, moved)) {
+          goToOriginalPos(thisChecker)
+          return
+        }
+
+        const checkers = useGameStore.getState().checkers!
+        const checkersOnEndCol = checkers.filter(checker => checker.col === to)
+        const checker_ = {
+          col: to,
+          row: checkersOnEndCol.length,
+          removed: false,
+        } as CheckerType
+        const positions = getCheckerPos(checker_)
+
+        // Saving the new position of the checker
+        thisChecker.col = to
+        thisChecker.row = checkersOnEndCol.length
+        thisChecker.removed = false
+
+        // Updating state
+        useGameStore.setState(curr => ({
+          checkers: curr.checkers?.map(checker => (checker.id === thisChecker.id ? { ...thisChecker } : checker)),
+        }))
+
+        // Sorting the checkers
+        SortCheckers(from)
+
+        // Checking if user has won
+        const possibleWinner = userChecker
+
+        if (!GameWon(possibleWinner)) {
+          updateStuff(moved, setShow)
+          return
+        }
+
+        /**
+         * !! User has won the game wohoo !!
+         */
+        const ws = useGameStore.getState().ws
+        if (ws) {
+          updateGameWinner(ws)
+          return
+        }
+        useGameStore.setState({ phase: "ended", userChecker: possibleWinner, inGame: false })
+        springApi.start({ position: positions, rotation: [Math.PI / 3, 0, 0] })
+        setPos(positions)
+
+        return
+      }
+
+      /**
+       * User is trying to move to a column within the board
+       */
+      const { action, numCheckers, rmChecker } = getCheckersOnCol(to, thisChecker.color)
+      const removedCheckersLen = lenRemovedCheckers(userChecker)
+
+      // If user is moving wrongly, move them back to their original position
+      if (
+        action === "invalid" ||
+        isNaN(moved) ||
+        moved <= 0 ||
+        ![dice.dice1, dice.dice2].includes(moved) ||
+        (removedCheckersLen <= 0 && thisChecker.removed) ||
+        (removedCheckersLen !== 0 && !thisChecker.removed)
+      ) {
         goToOriginalPos(thisChecker)
         return
       }
 
-      const checkersOnEndCol = checkers.filter(checker => checker.col === to)
-      const checker_ = {
-        col: to,
-        row: checkersOnEndCol.length,
-        removed: false,
-      } as CheckerType
-      const positions = getCheckerPos(checker_)
+      /**
+       * User is making a valid move. Nice..
+       */
+      if (action === "remove" && rmChecker) {
+        // Updating removed checker
+        rmChecker.col = rmChecker.color === "white" ? -1 : -2
+        rmChecker.row = lenRemovedCheckers(rmChecker.color)
+        rmChecker.removed = true
+      }
 
-      // Saving the new position of the checker
+      // Updating this checker
       thisChecker.col = to
-      thisChecker.row = checkersOnEndCol.length
+      thisChecker.row = action === "remove" ? numCheckers - 1 : numCheckers
       thisChecker.removed = false
 
       // Updating state
       useGameStore.setState(curr => ({
-        checkers: curr.checkers?.map(checker => (checker.id === thisChecker.id ? { ...thisChecker } : checker)),
+        checkers: curr.checkers?.map(checker =>
+          checker.id === thisChecker.id
+            ? { ...thisChecker }
+            : checker.id === rmChecker?.id
+            ? { ...rmChecker }
+            : checker,
+        ),
       }))
 
       // Sorting the checkers
       SortCheckers(from)
 
-      // Checking if user has won
-      const possibleWinner = userChecker
+      // Update states and backend
+      updateStuff(moved, setShow)
 
-      if (!GameWon(possibleWinner)) {
-        updateStuff(moved)
-        return
-      }
-
-      /**
-       * !! User has won the game wohoo !!
-       */
-      if (ws) {
-        updateGameWinner()
-        return
-      }
-      useGameStore.setState({ phase: "ended", userChecker: possibleWinner, inGame: false })
-      springApi.start({ position: positions, rotation: [Math.PI / 3, 0, 0] })
-      setPos(positions)
-
+      // End of logic... phew!
       return
-    }
-
-    /**
-     * User is trying to move to a column within the board
-     */
-    const { action, numCheckers, rmChecker } = getCheckersOnCol(to, thisChecker.color)
-    const removedCheckersLen = lenRemovedCheckers(userChecker)
-
-    // If user is moving wrongly, move them back to their original position
-    if (
-      action === "invalid" ||
-      isNaN(moved) ||
-      moved <= 0 ||
-      ![dice.dice1, dice.dice2].includes(moved) ||
-      (removedCheckersLen <= 0 && thisChecker.removed) ||
-      (removedCheckersLen !== 0 && !thisChecker.removed)
-    ) {
-      goToOriginalPos(thisChecker)
-      return
-    }
-
-    /**
-     * User is making a valid move. Nice..
-     */
-    if (action === "remove" && rmChecker) {
-      // Updating removed checker
-      rmChecker.col = rmChecker.color === "white" ? -1 : -2
-      rmChecker.row = lenRemovedCheckers(rmChecker.color)
-      rmChecker.removed = true
-    }
-
-    // Updating this checker
-    thisChecker.col = to
-    thisChecker.row = action === "remove" ? numCheckers - 1 : numCheckers
-    thisChecker.removed = false
-
-    // Updating state
-    useGameStore.setState(curr => ({
-      checkers: curr.checkers?.map(checker =>
-        checker.id === thisChecker.id ? { ...thisChecker } : checker.id === rmChecker?.id ? { ...rmChecker } : checker,
-      ),
-    }))
-
-    // Sorting the checkers
-    SortCheckers(from)
-
-    // Update states and backend
-    updateStuff(moved)
-
-    // End of logic... phew!
-    return
-  }, dragConfig)
-
-  /**
-   * Goes back to the original position of the checker
-   */
-  function goToOriginalPos(currentChecker: CheckerType) {
-    const oldPosition = getCheckerPos(currentChecker)
-    springApi.start({ position: oldPosition })
-    setPos(oldPosition)
-  }
-
-  /**
-   * Update states and backend
-   */
-  function updateStuff(moved: number) {
-    const dice = useGameStore.getState().dice
-
-    // Updating the dice
-    const newDice = dice
-    newDice.moves--
-    if (newDice.moves < 2) {
-      if (newDice.dice1 === moved) newDice.dice1 = 0
-      else newDice.dice2 = 0
-    }
-
-    useGameStore.setState({ dice: newDice })
-
-    // Check if user has any valid moves
-    const moves = hasMoves()
-
-    // If the user has no valid moves
-    if (!moves) {
-      useGameStore.setState(state => ({
-        userChecker: switchPlayers(state.userChecker!),
-        dice: { dice1: 0, dice2: 0, moves: 0 },
-      }))
-
-      // Set the phase to diceRoll
-      if (!ws) useGameStore.setState({ phase: "diceRoll" })
-      else updateLiveGame()
-
-      // Show a message that the user has no valid moves
-      setShow(true)
-      return
-    }
-
-    // Updating the user that is playing, and the phase
-    if (newDice.moves === 0) {
-      useGameStore.setState(state => ({ userChecker: switchPlayers(state.userChecker!) }))
-      !ws && useGameStore.setState({ phase: "diceRoll" })
-    } else {
-      // Making sure there's a rerender every time the user moves
-      // We have to make sure that user is not playing a live game
-      // since in a live game, this exact same code gets run (check
-      // useEffect with ws dependency in Game)
-
-      if (!ws) {
-        useGameStore.setState(state => ({
-          phase: state.phase === "checkerMove" ? "checkerMoveAgain" : "checkerMove",
-        }))
-      }
-    }
-
-    // Updating the backend
-    ws && updateLiveGame()
-  }
-
-  /**
-   * Sends a call to set the winner of the game
-   */
-  async function updateGameWinner() {
-    if (!ws) return
-
-    const session = await getSession()
-
-    const context = { finished: true, winner: session?.user.id }
-    ws.send(JSON.stringify(context))
-  }
+    },
+    { eventOptions: { capture: false, passive: true } },
+  )
 
   if (!nodes || !materials) return <></>
 
   return (
     <>
       <Html>
-        <Modal setOpen={setShow} open={show}>
+        <Modal setOpen={setShow} open={show} className="min-w-[300px]">
           You don&apos;t have a move!
         </Modal>
       </Html>

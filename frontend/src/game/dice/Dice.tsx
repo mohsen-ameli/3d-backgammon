@@ -58,23 +58,26 @@ export default function Dice() {
     const dice = [dice1.current, dice2.current]
     const physics = await throwDice(dice, userChecker)
 
-    const context = {
-      physics: true,
-      user: {
+    if (ws && wsGood(ws)) {
+      const context = {
+        physics: true,
         user: {
-          id: players.me.id,
-          name: players.me.name,
-          color: userChecker,
+          user: {
+            id: players.me.id,
+            name: players.me.name,
+            color: userChecker,
+          },
+          physics,
         },
-        physics,
-      },
+      }
+      ws.send(JSON.stringify(context))
     }
-
-    if (ws && wsGood(ws)) ws.send(JSON.stringify(context))
   }, [])
 
   // Loading the collision audio for the dice
   useEffect(() => {
+    useGameStore.setState({ throwDice: throwDiceFunc })
+
     const audioLoader = new AudioLoader()
     const listener = new AudioListener()
     camera.add(listener)
@@ -204,13 +207,10 @@ export default function Dice() {
     }
   }, [phase])
 
-  // Saving the throw dice function
-  useEffect(() => useGameStore.setState({ throwDice: throwDiceFunc }), [])
-
   return (
     <>
       <Html>
-        <Modal setOpen={setShow} open={show}>
+        <Modal setOpen={setShow} open={show} className="min-w-[300px]">
           You don&apos;t have a move!
         </Modal>
       </Html>

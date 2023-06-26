@@ -35,7 +35,7 @@
     ".eslintrc": true,
     ".eslintignore": true,
     ".editorconfig": true,
-    "tailwind.config.js": false,
+    "tailwind.config.js": true,
     "towebp.sh": true,
     "next.config.js": true
   },

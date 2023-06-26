@@ -1,12 +1,11 @@
 import { RigidBody, RigidBodyApi } from "@react-three/rapier"
-import { forwardRef, useRef } from "react"
+import { forwardRef, useCallback, useMemo, useRef } from "react"
 import { Group, PositionalAudio, Raycaster, Vector3 } from "three"
 import * as data from "../data/Data"
 import { DiceReadyType } from "../types/Dice.type"
 import DiceOnBoard from "./utils/DiceOnBoard"
 import IsInitial from "./utils/IsInitial"
 import { useGameStore } from "../store/useGameStore"
-import { shallow } from "zustand/shallow"
 
 type DiceProps = {
   index: 0 | 1
@@ -27,8 +26,8 @@ export default forwardRef<RigidBodyApi, DiceProps>(function Die(props, ref) {
   const { index, position, setFinishedThrow, setSleeping, showThrowBtn, audio } = props
 
   // Game context
-  const nodes = useGameStore.getState().nodes
-  const materials = useGameStore.getState().materials
+  const nodes = useMemo(() => useGameStore.getState().nodes, [])
+  const materials = useMemo(() => useGameStore.getState().materials, [])
 
   // Rigid body reference of each die
   const rigidBody = (ref as React.MutableRefObject<RigidBodyApi>).current
@@ -42,17 +41,17 @@ export default forwardRef<RigidBodyApi, DiceProps>(function Die(props, ref) {
   const diceRef6 = useRef<Group>(null!)
 
   // When the die collides with something, play a sound
-  function handleCollisionEnter() {
+  const handleCollisionEnter = useCallback(() => {
     const settings = useGameStore.getState().settings
-
     if (!DiceOnBoard(rigidBody) || !settings.sound || !audio) return
+
     audio.setVolume(Math.random())
     audio.stop()
     audio.play()
-  }
+  }, [audio])
 
   // When the die wakes up
-  function handleWake() {
+  const handleWake = useCallback(() => {
     // If the user is not playing, meaning other user has thrown their dice, and we're just viewing the animation
     const myTurn = useGameStore.getState().myTurn
     if (!myTurn) return
@@ -63,11 +62,11 @@ export default forwardRef<RigidBodyApi, DiceProps>(function Die(props, ref) {
       else newCurrent.dice2 = false
       return newCurrent
     })
-  }
+  }, [])
 
   // When the die goes to sleep, get the number on the dice, and save it.
   // TODO: Maybe we could use a settimeout for this, somehow. it will speed up the getting the dice number process.
-  async function handleSleep() {
+  const handleSleep = useCallback(() => {
     // If the dice are not on the board, then return
     if (!DiceOnBoard(rigidBody) || showThrowBtn) {
       setSleeping({ dice1: true, dice2: true })
@@ -115,7 +114,7 @@ export default forwardRef<RigidBodyApi, DiceProps>(function Die(props, ref) {
       else newCurrent.dice2 = true
       return newCurrent
     })
-  }
+  }, [rigidBody, showThrowBtn])
 
   if (!nodes || !materials) return <></>
 

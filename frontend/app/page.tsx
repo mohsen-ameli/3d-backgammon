@@ -6,13 +6,17 @@ import Logout from "@/components/ui/Logout"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { useGameStore } from "@/game/store/useGameStore"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import Modal from "@/components/ui/Modal"
+import Button from "@/components/ui/Button"
 
 export default function Page() {
   const started = useGameStore(state => state.started)
   const { status, data: session } = useSession()
   const router = useRouter()
+
+  const [openPlay, setOpenPlay] = useState(false)
 
   useEffect(() => {
     if (session) router.push("/")
@@ -47,13 +51,25 @@ export default function Page() {
             </Link>
           </>
         )}
-        <Link
-          href="/game/pass-and-play"
+        <Modal open={openPlay} setOpen={setOpenPlay} className="min-w-[400px]">
+          <div className="my-4 flex w-full flex-col gap-4">
+            <Button filled onClick={() => router.push("/game/pass-and-play")}>
+              Pass and Play
+            </Button>
+            <Button onClick={() => router.push("/game/computer")} disabled className="px-0">
+              <div className="flex w-full justify-center">
+                <div className="mr-1 line-through">Play VS Computer</div>
+                <div>Coming Soon!</div>
+              </div>
+            </Button>
+          </div>
+        </Modal>
+        <div
           className={`z-20 ${status === "authenticated" ? "mb-[6%] sm:mb-[4%]" : "mb-[13%] sm:mb-[6%] xl:mb-[4%]"}`}
-          id="single-player"
+          onClick={() => setOpenPlay(curr => !curr)}
         >
-          <Button3d text="Single Player" />
-        </Link>
+          <Button3d text="Play" />
+        </div>
       </div>
 
       {/* Footer */}

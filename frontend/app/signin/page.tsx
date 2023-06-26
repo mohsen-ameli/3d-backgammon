@@ -25,16 +25,16 @@ export default function SigninPage() {
     <>
       <Header href="/" title="Sign In" />
 
-      <div className="relative flex h-full w-full flex-col justify-around">
+      <div className="flex h-full w-full flex-col gap-4">
         <SigninForm />
 
-        <div className="relative mx-1 flex items-center text-black">
+        <div className="mx-1 flex items-center text-black">
           <div className="grow border-t border-t-black"></div>
           <h1 className="mx-3 shrink">OR</h1>
           <div className="grow border-t border-t-black"></div>
         </div>
 
-        <div className="flex justify-between gap-x-4">
+        <div className="flex justify-between gap-x-4 pb-4">
           <ProviderIcon name="discord" iconOnly={true} />
           <ProviderIcon name="google" iconOnly={true} />
           <ProviderIcon name="twitch" iconOnly={true} />

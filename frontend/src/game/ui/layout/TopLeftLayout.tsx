@@ -72,11 +72,11 @@ export default function TopLeftLayout() {
         )}
       </div>
 
-      <Modal setOpen={setSettingsOpen} open={settingsOpen}>
+      <Modal setOpen={setSettingsOpen} open={settingsOpen} className="h-[400px]">
         <Settings setOpen={setSettingsOpen} />
       </Modal>
 
-      <Modal setOpen={setInfoOpen} open={infoOpen}>
+      <Modal setOpen={setInfoOpen} open={infoOpen} className="w-[70%] lg:w-[50%]">
         <Info />
       </Modal>
 

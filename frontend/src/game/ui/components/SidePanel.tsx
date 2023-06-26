@@ -37,7 +37,7 @@ export default function SidePanel({ img, player, sideType }: SideProps) {
 
             <div className="mt-2 flex flex-col items-center justify-center text-xs lg:text-lg">
               {/* Username */}
-              <h1 className="w-full break-all">{(player?.name || player?.name !== "") && player?.name}</h1>
+              <h1 className="w-full break-all text-center">{(player?.name || player?.name !== "") && player?.name}</h1>
 
               {/* User checker color */}
               <div
