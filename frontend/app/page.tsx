@@ -56,11 +56,8 @@ export default function Page() {
             <Button filled onClick={() => router.push("/game/pass-and-play")}>
               Pass and Play
             </Button>
-            <Button onClick={() => router.push("/game/computer")} disabled className="px-0">
-              <div className="flex w-full justify-center">
-                <div className="mr-1 line-through">Play VS Computer</div>
-                <div>Coming Soon!</div>
-              </div>
+            <Button filled onClick={() => router.push("/game/computer")} className="px-0">
+              <div className="flex w-full justify-center">Play VS Computer</div>
             </Button>
           </div>
         </Modal>

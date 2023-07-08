@@ -4,7 +4,7 @@ import { UserCheckerType } from "@/game/types/Checker.type"
 /**
  * Checks to see if user has won the game
  */
-export default function GameWon(color: UserCheckerType) {
+export default function gameWon(color: UserCheckerType) {
   const checkers = useGameStore.getState().checkers!
 
   const allCheckers = checkers.filter(checker => checker.color === color)

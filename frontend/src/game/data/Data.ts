@@ -1,6 +1,6 @@
 import { Quaternion, Vector3 } from "three"
 import { EnvMap, EnvMapType, SettingsType } from "../types/Settings.type"
-import { DEFAULT_POS, LOTS_OF_REMOVABLES } from "./CheckerPositions"
+import { BLACK_ALMOST_WON, DEFAULT_POS, LOTS_OF_REMOVABLES, TWO_REMOVED, WHITE_ALMOST_WON } from "./CheckerPositions"
 import { WHITE_HOUSE_FULL } from "./CheckerPositions"
 
 export const ITEMS_TO_LOAD = 21
@@ -80,7 +80,7 @@ export const DEFAULT_CAMERA_QUATERNION = {
   w: 0.7071071347398497,
 }
 
-export const DEFAULT_CHECKER_POSITIONS = process.env.NODE_ENV === "development" ? WHITE_HOUSE_FULL : DEFAULT_POS
+export const DEFAULT_CHECKER_POSITIONS = process.env.NODE_ENV === "development" ? DEFAULT_POS : DEFAULT_POS
 
 /**
  * If we are in training dice mode

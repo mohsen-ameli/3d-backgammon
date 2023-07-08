@@ -99,11 +99,14 @@ export default forwardRef<RigidBodyApi, DiceProps>(function Die(props, ref) {
       // Each face has a corresponding name, which is that die's number
       const number = Number(intersections[0].object.name)
 
+      // const players = useGameStore.getState().players!
+      // const userChecker = useGameStore.getState().userChecker
+
       useGameStore.setState(curr => ({
         dice: {
           moves: curr.dice.moves,
-          dice1: index === 0 ? number : curr.dice.dice1,
-          dice2: index !== 0 ? number : curr.dice.dice2,
+          dice1: index === 0 ? number : curr.dice.dice1, //players.enemy.color === userChecker ? 1 : 1,
+          dice2: index !== 0 ? number : curr.dice.dice2, //players.enemy.color === userChecker ? 1 : 4,
         },
       }))
     }

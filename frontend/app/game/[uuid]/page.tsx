@@ -50,6 +50,7 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
       useGameStore.setState({
         inGame: false,
         gameMode: undefined,
+        gameId: null,
       })
 
       useGameStore.getState().resetOrbit?.("env")
@@ -209,7 +210,7 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
     } else {
       const url = `${getServerUrl(false)}/ws/game/${params.uuid}/`
 
-      useGameStore.setState({ inGame: true, gameMode: `friend-game_${params.uuid}`, ws: new WebSocket(url) })
+      useGameStore.setState({ inGame: true, gameMode: "friend-game", gameId: params.uuid, ws: new WebSocket(url) })
     }
 
     setFetched(true)

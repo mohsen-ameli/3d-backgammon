@@ -73,14 +73,14 @@ function BottomSection({ sideType, player }: BottomSectionProps) {
   const gameMode = useGameStore(state => state.gameMode)
   const dice = useGameStore(state => state.dice, shallow)
 
-  const show = userChecker === player?.color && (dice.moves !== 0 || sideType === "me" || gameMode === "pass-and-play")
+  const show = userChecker === player?.color && (dice.moves !== 0 || sideType === "me" || gameMode !== "friend-game")
 
   if (!show) return <></>
 
   return (
     <div className="z-15 absolute bottom-auto left-0 mt-4 w-full rounded-lg bg-[#8e84bab3] p-2 text-white">
       {/* Showing the throw button if it's my turn */}
-      {(sideType === "me" || gameMode === "pass-and-play") && <ThrowButton />}
+      {(sideType === "me" || gameMode !== "friend-game") && <ThrowButton />}
 
       {/* Showing the dice moves if I've already thrown the dice */}
       {dice.moves > 0 && <DiceMoves />}

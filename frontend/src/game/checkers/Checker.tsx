@@ -8,14 +8,14 @@ import { BOARD_W, CHECKER_W, GROUND_CHECKERS } from "../data/Data"
 import { CheckerType } from "../types/Checker.type"
 import Endgame from "../utils/Endgame"
 import lenRemovedCheckers from "../utils/LenRemovedCheckers"
-import GameWon from "./utils/GameWon"
+import gameWon from "./utils/GameWon"
 import getCheckerPos from "./utils/GetCheckerPos"
 import ValidateMove from "./utils/ValidateMove"
 import Modal from "@/components/ui/Modal"
 import { useGameStore } from "../store/useGameStore"
 import { shallow } from "zustand/shallow"
 import getCheckersOnCol from "../utils/getCheckersOnCol"
-import SortCheckers from "./utils/SortCheckers"
+import sortCheckers from "./utils/SortCheckers"
 import updateGameWinner from "./utils/UpdateGameWinner"
 import updateStuff from "./utils/UpdateStuff"
 
@@ -31,7 +31,7 @@ const floorPlane = new Plane(new Vector3(0, 1, 0), 0)
 export default function Checker({ thisChecker }: { thisChecker: CheckerType }) {
   const nodes = useMemo(() => useGameStore.getState().nodes, [])
   const materials = useMemo(() => useGameStore.getState().materials, [])
-  const toggleControls = useCallback(useGameStore.getState().toggleControls!, [])
+  const toggleControls = useGameStore.getState().toggleControls!
   const initial = useGameStore(state => state.initial, shallow)
 
   // This checker's rigid body instance
@@ -134,13 +134,16 @@ export default function Checker({ thisChecker }: { thisChecker: CheckerType }) {
       const dice = useGameStore.getState().dice!
       const userChecker = useGameStore.getState().userChecker!
       const phase = useGameStore.getState().phase!
+      const gameMode = useGameStore.getState().gameMode
+      const players = useGameStore.getState().players
 
       // Check to see if the user is allowed to move
       if (
         !["checkerMoveAgain", "checkerMove"].includes(phase) ||
         dice.moves === 0 ||
         thisChecker.color !== userChecker ||
-        [-3, -4].includes(thisChecker.col)
+        [-3, -4].includes(thisChecker.col) ||
+        (gameMode === "vs-computer" && players?.enemy.color === userChecker)
       )
         return
 
@@ -218,12 +221,12 @@ export default function Checker({ thisChecker }: { thisChecker: CheckerType }) {
         }))
 
         // Sorting the checkers
-        SortCheckers(from)
+        sortCheckers(from)
 
         // Checking if user has won
         const possibleWinner = userChecker
 
-        if (!GameWon(possibleWinner)) {
+        if (!gameWon(possibleWinner)) {
           updateStuff(moved, setShow)
           return
         }
@@ -289,7 +292,7 @@ export default function Checker({ thisChecker }: { thisChecker: CheckerType }) {
       }))
 
       // Sorting the checkers
-      SortCheckers(from)
+      sortCheckers(from)
 
       // Update states and backend
       updateStuff(moved, setShow)

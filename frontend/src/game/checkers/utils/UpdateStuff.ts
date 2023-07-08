@@ -4,9 +4,14 @@ import switchPlayers from "@/game/utils/SwitchPlayers"
 import updateLiveGame from "@/game/utils/updateLiveGame"
 
 /**
- * Update states and backend
+ * Updates the dice, the user checker (switches users if need be), phase,
+ * and the backend if there's a live game.
  */
-export default function updateStuff(moved: number, setShow: React.Dispatch<React.SetStateAction<boolean>>) {
+export default function updateStuff(
+  moved: number,
+  setShow: React.Dispatch<React.SetStateAction<boolean>>,
+  forceUpdate: boolean = true,
+) {
   const dice = useGameStore.getState().dice
   const ws = useGameStore.getState().ws
 
@@ -20,11 +25,8 @@ export default function updateStuff(moved: number, setShow: React.Dispatch<React
 
   useGameStore.setState({ dice: newDice })
 
-  // Check if user has any valid moves
-  const moves = hasMoves()
-
   // If the user has no valid moves
-  if (!moves) {
+  if (!hasMoves()) {
     useGameStore.setState(state => ({
       userChecker: switchPlayers(state.userChecker!),
       dice: { dice1: 0, dice2: 0, moves: 0 },
@@ -49,7 +51,7 @@ export default function updateStuff(moved: number, setShow: React.Dispatch<React
     // since in a live game, this exact same code gets run (check
     // useEffect with ws dependency in Game)
 
-    if (!ws) {
+    if (!ws && forceUpdate) {
       useGameStore.setState(state => ({
         phase: state.phase === "checkerMove" ? "checkerMoveAgain" : "checkerMove",
       }))

@@ -23,12 +23,11 @@ export default function WinnerLayout() {
 
   // Function to request a rematch
   async function playAgain() {
-    if (gameMode === "pass-and-play") {
+    if (gameMode !== "friend-game") {
       useGameStore.setState({
         inGame: true,
         phase: "initial",
         userChecker: "white",
-        gameMode: "pass-and-play",
         dice: { dice1: 0, dice2: 0, moves: 0 },
         checkers: JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS)),
       })
@@ -61,7 +60,7 @@ export default function WinnerLayout() {
   if (phase !== "ended") return <></>
 
   let TopSection: JSX.Element
-  if (gameMode === "pass-and-play") {
+  if (gameMode !== "friend-game") {
     const left = (
       <>
         <FontAwesomeIcon icon={faUser} className="text-[30pt] text-black" />

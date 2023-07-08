@@ -12,7 +12,7 @@ export default function PanelLayout() {
 
   const gameMode = useGameStore.getState().gameMode
 
-  if (gameMode === "pass-and-play") {
+  if (gameMode !== "friend-game") {
     return (
       <>
         <SidePanel img="" player={players?.me} sideType="me" />

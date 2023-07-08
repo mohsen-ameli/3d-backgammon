@@ -44,7 +44,7 @@ export type PhaseType =
   | "spectating"
 
 // Different game mode types
-export type GameModeType = "pass-and-play" | "vs-computer" | `friend-game_${string}` | undefined
+export type GameModeType = "pass-and-play" | "vs-computer" | "friend-game" | undefined
 
 // Function types
 export type ToggleControlsType = (from: "layout" | "checkerDisable" | "checkerEnable") => void

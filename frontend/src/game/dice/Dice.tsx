@@ -180,7 +180,7 @@ export default function Dice() {
     if (phase === "initial") {
       const gameMode = useGameStore.getState().gameMode
 
-      if (!myTurn && gameMode !== "pass-and-play") return
+      if (!myTurn && gameMode === "friend-game") return
 
       // User has initially connected to the game, with no available/previous dice moves
       const dice = useGameStore.getState().dice

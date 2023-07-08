@@ -15,6 +15,7 @@ export type GameStoreType = {
 
   // States
   gameMode: GameModeType | null
+  gameId: string | null
   userChecker: UserCheckerType | null
   winner: PlayerType | null
   dice: DiceMoveType

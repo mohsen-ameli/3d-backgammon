@@ -32,18 +32,18 @@ export default function TopRightLayout() {
 
   return (
     <div className="absolute right-8 top-0 z-[17] flex items-center justify-center gap-x-1 p-1 lg:right-0 lg:gap-x-2 lg:p-2">
-      {gameMode !== "pass-and-play" && <ChatButton />}
+      {gameMode === "friend-game" && <ChatButton />}
 
-      {gameMode === "pass-and-play" ? (
+      {gameMode === "friend-game" ? (
+        <LayoutBtn title="Resign" onClick={resignMe}>
+          <FontAwesomeIcon icon={faFlag} className="rotate-[-20deg]" />
+        </LayoutBtn>
+      ) : (
         <div onClick={exitGame}>
           <LayoutBtn title="Exit">
             <FontAwesomeIcon icon={faArrowRightFromBracket} />
           </LayoutBtn>
         </div>
-      ) : (
-        <LayoutBtn title="Resign" onClick={resignMe}>
-          <FontAwesomeIcon icon={faFlag} className="rotate-[-20deg]" />
-        </LayoutBtn>
       )}
     </div>
   )

@@ -31,6 +31,7 @@ export const useGameStore = create(
     materials: null,
 
     gameMode: null,
+    gameId: null,
     phase: undefined,
     inGame: false,
     players: null,

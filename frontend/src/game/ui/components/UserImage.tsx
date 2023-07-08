@@ -40,7 +40,7 @@ const UserImage = ({ img, player }: UserImageType) => {
     const gameMode = useGameStore.getState().gameMode
     const players = useGameStore.getState().players
 
-    if (!id || !players || gameMode === "pass-and-play") return
+    if (!id || !players || gameMode !== "friend-game") return
 
     // If I'm losing
     // if (id === players.me.id) {
