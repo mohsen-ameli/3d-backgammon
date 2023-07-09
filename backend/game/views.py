@@ -127,7 +127,6 @@ def computer_prediction(request: Request):
         raise ValueError()
 
     simple = convert_to_simple_format(board)
-    print(simple)
     process = subprocess.Popen(["gnubg" , "-q"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, universal_newlines=True)
     process.stdin.write("new game\n")
     process.stdin.flush()
@@ -165,7 +164,6 @@ def computer_prediction(request: Request):
     dice2 = int(dice2)
 
     hints = process.communicate()[0].split("-ply")[1].split("Eq.")[0].strip().split(" ")
-    print(hints)
     
     moves: list[str] = []
     
@@ -231,13 +229,12 @@ def computer_prediction(request: Request):
         else:
             moves += [hint]
     
-    print(moves)
-
     # Fixing the issue of having multiple moves within one hint. e.g:
     # hint = 18/14
     # dice1 = 1
     # dice2 = 2
     # split into -> 18/17 17/16
+
     again = True
     while again:
         for move in moves.copy():
