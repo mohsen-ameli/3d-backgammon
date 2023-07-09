@@ -36,21 +36,24 @@ export default function VsComputer() {
 
     // Setting the from position
     let fromPos = Number(move.split("/")[0])
-    fromPos = fromPos === -1 || fromPos === -2 ? fromPos : fromPos - 1
+    fromPos = fromPos === -1 || fromPos === -2 ? fromPos : fromPos - 1 // if we're bringing a checker off the bar, don't change fromPos
 
     // Setting the to position
     let toPos = Number(move.split("/")[1])
-    toPos = toPos === -3 || toPos === -4 ? toPos : toPos - 1
-
-    // Settings the total moved number
-    let moved = toPos - fromPos
-    if (toPos === -3) moved = fromPos + 1
-    else if (toPos === -4) moved = 24 - fromPos
+    toPos = toPos === -3 || toPos === -4 ? toPos : toPos - 1 // if we're bearing off, don't change toPos
 
     if (userChecker === "white") {
       if (fromPos !== -1) fromPos = 23 - fromPos
       if (toPos !== -3) toPos = 23 - toPos
     }
+
+    // Settings the total moved number
+    let moved: number
+    if (fromPos === -1) moved = toPos + 1 // white brining off the bar
+    else if (toPos === -3) moved = fromPos + 1 // white bearing off
+    else if (fromPos === -2) moved = 24 - toPos // black brining off the bar
+    else if (toPos === -4) moved = 24 - fromPos // black bearing off
+    else moved = toPos - fromPos // normal move
 
     // If the computer is removing a checker
     const removedCheckers = copyCheckers.filter(c => c.col === toPos)
@@ -78,7 +81,6 @@ export default function VsComputer() {
 
   // Get's the next best moves for the computer
   async function getPrediction() {
-    console.log("getting prediction")
     type Data = { data: { moves: string[] | null } }
 
     const url = getServerUrl() + "/api/game/get-computer-prediction/"
@@ -114,19 +116,20 @@ export default function VsComputer() {
     const data = await getSession()
 
     const userChecker = Math.random() - 0.5 < 0 ? "white" : "black"
+    const userChecker2 = Math.random() - 0.5 < 0 ? "white" : "black"
 
     const me: PlayerType = {
       id: 0,
       name: data ? data.user.name : "Me",
       image: data ? data.user.image : "",
-      color: userChecker,
+      color: userChecker2,
     }
 
     const enemy: PlayerType = {
       id: 1,
       name: "Computer",
       image: "",
-      color: switchPlayers(userChecker),
+      color: switchPlayers(userChecker2),
     }
 
     // Initializing the game

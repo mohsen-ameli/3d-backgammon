@@ -73,10 +73,6 @@ def get_initial_game_state(game: Game) -> dict:
         if "profile_pics" in str(black.image):
             black_img = str(black.image.url)
 
-
-        print(white_img)
-        print(black_img)
-
         return {
             "initial": True,
             "player_timer": game.player_timer,

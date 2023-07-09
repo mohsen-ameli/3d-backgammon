@@ -1,6 +1,14 @@
 import { Quaternion, Vector3 } from "three"
 import { EnvMap, EnvMapType, SettingsType } from "../types/Settings.type"
-import { BLACK_ALMOST_WON, DEFAULT_POS, LOTS_OF_REMOVABLES, TWO_REMOVED, WHITE_ALMOST_WON } from "./CheckerPositions"
+import {
+  BLACK_ALMOST_WON,
+  DEFAULT_POS,
+  LOTS_OF_REMOVABLES,
+  ONLY_ONE_MOVE_FOR_BLACK,
+  ONLY_ONE_MOVE_FOR_WHITE,
+  TWO_REMOVED,
+  WHITE_ALMOST_WON,
+} from "./CheckerPositions"
 import { WHITE_HOUSE_FULL } from "./CheckerPositions"
 
 export const ITEMS_TO_LOAD = 21

@@ -127,7 +127,7 @@ def computer_prediction(request: Request):
         raise ValueError()
 
     simple = convert_to_simple_format(board)
-
+    print(simple)
     process = subprocess.Popen(["gnubg" , "-q"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, universal_newlines=True)
     process.stdin.write("new game\n")
     process.stdin.flush()
@@ -161,7 +161,11 @@ def computer_prediction(request: Request):
     # hints = ["6/2(2)", "4/off(2)"]
     # hints = ["bar/21"]
 
+    dice1 = int(dice1)
+    dice2 = int(dice2)
+
     hints = process.communicate()[0].split("-ply")[1].split("Eq.")[0].strip().split(" ")
+    print(hints)
     
     moves: list[str] = []
     
@@ -234,53 +238,64 @@ def computer_prediction(request: Request):
     # dice1 = 1
     # dice2 = 2
     # split into -> 18/17 17/16
+    again = True
+    while again:
+        for move in moves.copy():
+            # Skipping the process if computer is bearing off a checker.
+            if "-3" in move or "-4" in move:
+                continue
 
-    # -2/21
-    # dice = 3 1
-    for move in moves.copy():
-        # Skipping the process if the move contains "bar" or "off".
+            move_a = int(move.split("/")[0])
+            move_b = int(move.split("/")[1])
 
-        # REMOVE THIS??
-        if "-3" in move or "-4" in move:
-            continue
+            # Computer is making two moves with a single checker, starting from the bar.
+            if (move_a == -1 or move_a == -2) and 25 - move_b not in [dice1, dice2] and 24 - move_b != 0:
+                moves.remove(move)
 
-        move_a = int(move.split("/")[0])
-        move_b = int(move.split("/")[1])
+                dice_to_compare = dice1 - 1 if user_checker == "white" else 24 - dice1
 
-        if move_a - move_b not in [dice1, dice2]:
-            moves.remove(move)
-
-            # Logic to correctly minus the dice number from move_a.
-            problem_with_dice1 = False
-
-            # There can be a problem when the two dice aren't the same and gnubg
-            # is adding the two dice numbers together for a total hints value of, ex: "14/4", if we rolled a 6 and a 4
-
-            # if dice1 != dice2 and move_a != -1 and move_a != -2:
-            if dice1 != dice2:
-                filtered_list = list(filter(lambda c: int(c['col']) == move_a - int(dice1) - 1 and c['color'] != user_checker, board))
+                # Checking for checkers on the black "enemy" house, for columns with two or more checkers
+                filtered_list = list(filter(lambda c: int(c['col']) == dice_to_compare and c['color'] != user_checker, board))
                 problem_with_dice1 = len(filtered_list) > 1
+                
+                if problem_with_dice1:
+                    middle = 25 - dice2
+                else:
+                    middle = 25 - dice1
 
-            if problem_with_dice1:
-                middle = move_a - dice2
                 new_move_a = f"{move_a}/{middle}"
                 new_move_b = f"{middle}/{move_b}"
+                moves.insert(0, new_move_b)
+                moves.insert(0, new_move_a)
+
+            elif move_a != -1 and move_a != -2 and move_a - move_b not in [dice1, dice2]:
+                moves.remove(move)
+
+                # Logic to correctly minus the dice number from move_a.
+                problem_with_dice1 = False
+
+                # There can be a problem when the two dice aren't the same and gnubg
+                # is adding the two dice numbers together for a total hints value of, ex: "14/4", if we rolled a 6 and a 4
+                if dice1 != dice2:
+                    filtered_list = list(filter(lambda c: int(c['col']) == move_a - dice1 - 1 and c['color'] != user_checker, board))
+                    problem_with_dice1 = len(filtered_list) > 1
+
+                if problem_with_dice1:
+                    middle = move_a - dice2
+                    again = middle - dice1 != move_b
+                else:
+                    middle = move_a - dice1
+                    again = middle - dice2 != move_b
+
+                new_move_a = f"{move_a}/{middle}"
+                new_move_b = f"{middle}/{move_b}"
+                moves += [new_move_a, new_move_b]
+
             else:
-                # if move_a == -1 or move_a == -2:
-                #     dice_to_compare = 24 - int(dice1) if user_checker == "black" else int(dice1) - 1
-                #     filtered_list = list(filter(lambda c: int(c['col']) == dice_to_compare and c['color'] != user_checker, board))
-                #     problem_with_dice1 = len(filtered_list) > 1
-                #     print(problem_with_dice1)
-                #     # THIS MIGHT NOT WORK v------v
-                #     if problem_with_dice1:
-                #         middle = dice2 if user_checker == "white" else 25 - dice2
-                #     else:
-                #         middle = dice1 if user_checker == "white" else 25 - dice1
-                # else:
-                middle = move_a - dice1
-                new_move_a = f"{move_a}/{middle}"
-                new_move_b = f"{middle}/{move_b}"
-            
-            moves += [new_move_a, new_move_b]
+                if (dice1 == dice2 and len(moves) == 4) or (dice1 != dice2 and len(moves) == 2) or (move_a == -1 or move_a == -2 and len(moves) == 1):
+                    again = False
+                moves.remove(move)
+                moves.append(move)
+                continue
 
     return Response({"moves": moves})
