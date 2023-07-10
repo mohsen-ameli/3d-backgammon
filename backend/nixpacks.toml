@@ -1,3 +1,4 @@
 [phases.setup]
+nixPkgs = ["...", "gnubg"]
 aptPkgs = ["...", "gnubg"]
-cmds = ["echo first", "...", "echo last && gnubg -h"]
+cmds = ["which apt", "...", "echo last && gnubg -h"]
