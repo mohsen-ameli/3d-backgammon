@@ -159,6 +159,7 @@ def computer_prediction(request: Request):
     # hints = ["6/1(4)"]
     # hints = ["6/2(2)", "4/off(2)"]
     # hints = ["bar/21"]
+    # hints = ["3/off", "1/off"]
 
     dice1 = int(dice1)
     dice2 = int(dice2)
@@ -240,6 +241,7 @@ def computer_prediction(request: Request):
         for move in moves.copy():
             # Skipping the process if computer is bearing off a checker.
             if "-3" in move or "-4" in move:
+                again = False
                 continue
 
             move_a = int(move.split("/")[0])
