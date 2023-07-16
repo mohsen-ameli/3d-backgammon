@@ -160,6 +160,8 @@ def computer_prediction(request: Request):
     # hints = ["6/2(2)", "4/off(2)"]
     # hints = ["bar/21"]
     # hints = ["3/off", "1/off"]
+    # hints = ["6/3", "6/off"]
+    # hints = ["18/-3", "5/-3"]
 
     dice1 = int(dice1)
     dice2 = int(dice2)
@@ -236,19 +238,47 @@ def computer_prediction(request: Request):
     # dice2 = 2
     # split into -> 18/17 17/16
 
+    if (dice1 == dice2 and len(moves) == 4) or (dice1 != dice2 and len(moves) == 2):
+        return Response({"moves": moves})
+
     again = True
+    i = 0
     while again:
         for move in moves.copy():
-            # Skipping the process if computer is bearing off a checker.
-            if "-3" in move or "-4" in move:
-                again = False
-                continue
-
             move_a = int(move.split("/")[0])
             move_b = int(move.split("/")[1])
 
             # Computer is making two moves with a single checker, starting from the bar.
-            if (move_a == -1 or move_a == -2) and 25 - move_b not in [dice1, dice2] and 24 - move_b != 0:
+            if (move_b == -3 or move_b == -4) and ((dice1 == dice2 and len(hints) < 4) or (dice1 != dice2 and len(hints) < 2)):
+                moves.remove(move)
+
+                # Logic to correctly minus the dice number from move_a.
+                problem_with_dice1 = False
+
+                # There can be a problem when the two dice aren't the same and gnubg
+                # is adding the two dice numbers together for a total hints value of, ex: "14/4", if we rolled a 6 and a 4
+                if dice1 != dice2:
+                    filtered_list = list(filter(lambda c: int(c['col']) == move_a - dice1 - 1 and c['color'] != user_checker, board))
+                    problem_with_dice1 = len(filtered_list) > 1
+
+                if problem_with_dice1:
+                    middle = move_a - dice2
+                    if middle <= 0:
+                        moves.append(move)
+                        continue
+                    again = middle - dice1 != 0
+                else:
+                    middle = move_a - dice1
+                    if middle <= 0:
+                        moves.append(move)
+                        continue
+                    again = middle - dice2 != 0
+
+                new_move_a = f"{move_a}/{middle}"
+                new_move_b = f"{middle}/{move_b}"
+                moves += [new_move_a, new_move_b]
+
+            elif (move_a == -1 or move_a == -2) and 25 - move_b not in [dice1, dice2] and 24 - move_b != 0:
                 moves.remove(move)
 
                 dice_to_compare = dice1 - 1 if user_checker == "white" else 24 - dice1
@@ -267,7 +297,7 @@ def computer_prediction(request: Request):
                 moves.insert(0, new_move_b)
                 moves.insert(0, new_move_a)
 
-            elif move_a != -1 and move_a != -2 and move_a - move_b not in [dice1, dice2]:
+            elif move_a != -1 and move_a != -2 and move_b != -3 and move_b != -4 and move_a - move_b not in [dice1, dice2]:
                 moves.remove(move)
 
                 # Logic to correctly minus the dice number from move_a.
@@ -291,10 +321,15 @@ def computer_prediction(request: Request):
                 moves += [new_move_a, new_move_b]
 
             else:
-                if (dice1 == dice2 and len(moves) == 4) or (dice1 != dice2 and len(moves) == 2) or (move_a == -1 or move_a == -2 and len(moves) == 1):
+                if (dice1 == dice2 and len(moves) == 4) or (dice1 != dice2 and len(moves) == 2) or ((move_a == -1 or move_a == -2) and len(moves) == 1):
                     again = False
                 moves.remove(move)
                 moves.append(move)
                 continue
+
+        # If there's a bug and the program gets stuck in an infinite loop, we will break it after 3 iterations
+        if i > 3:
+            break
+        i += 1
 
     return Response({"moves": moves})
