@@ -3,15 +3,13 @@ import { useGameStore } from "@/game/store/useGameStore"
 /**
  * Sorting the checkers on the new row and the old columns of this checker instance
  */
-export default function sortCheckers(from: number) {
+export default function sortCheckers(col: number) {
   const checkers = useGameStore.getState().checkers!
-  const checkersOnFromCol = checkers.filter(checker => checker.col === from)
+  const checkersOnCol = checkers.filter(checker => checker.col === col)
 
-  if (checkersOnFromCol.length >= 1) {
-    let i = 0
-    for (const checker of checkersOnFromCol) {
-      checkers[checker.id].row = i
-      i++
-    }
+  if (checkersOnCol.length < 1) return
+
+  for (let i = 0; i < checkersOnCol.length; i++) {
+    checkersOnCol[i].row = i
   }
 }

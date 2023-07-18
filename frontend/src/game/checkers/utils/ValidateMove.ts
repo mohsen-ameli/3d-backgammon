@@ -12,7 +12,7 @@ export default function ValidateMove(thisChecker: CheckerType, moved: number): b
   const checkers = useGameStore.getState().checkers!
   const dice = useGameStore.getState().dice
 
-  let backRankCheckers
+  let backRankCheckers: CheckerType[]
 
   // Getting the number of checkers in the back of the current checker
   if (thisChecker.color === "black") {
@@ -23,18 +23,15 @@ export default function ValidateMove(thisChecker: CheckerType, moved: number): b
     )
   }
 
-  backRankCheckers = backRankCheckers.length
-
   // If there are no checkers behind the current checker,
   // and the dice number is greater than the how much the user moved
-  if (backRankCheckers === 0 && (dice.dice1 >= moved || dice.dice2 >= moved)) {
-    // moved = dice.dice1 > dice.dice2 ? dice.dice1 : dice.dice2
+  if (backRankCheckers.length === 0 && (dice.dice1 >= moved || dice.dice2 >= moved)) {
     return true
   }
   // The user has moved directly outside
   else if (dice.dice1 === moved || dice.dice2 === moved) {
     return true
+  } else {
+    return false
   }
-
-  return false
 }

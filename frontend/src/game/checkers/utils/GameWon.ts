@@ -6,15 +6,13 @@ import { UserCheckerType } from "@/game/types/Checker.type"
  */
 export default function gameWon(color: UserCheckerType) {
   const checkers = useGameStore.getState().checkers!
+  const endCol = color === "white" ? -3 : -4
 
-  const allCheckers = checkers.filter(checker => checker.color === color)
+  const checkersOnEndCol = checkers.filter(checker => checker.color === color && checker.col === endCol)
 
-  const onEndColCheckers =
-    color === "white"
-      ? allCheckers.filter(checker => checker.col === -3)
-      : allCheckers.filter(checker => checker.col === -4)
-
-  if (onEndColCheckers.length === 15) return true
-
-  return false
+  if (checkersOnEndCol.length === 15) {
+    return true
+  } else {
+    return false
+  }
 }

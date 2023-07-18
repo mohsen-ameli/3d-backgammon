@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react"
+import { useCallback, useMemo, useRef } from "react"
 import { MeshStandardMaterial } from "three"
 import toCapitalize from "../../components/utils/ToCapitalize"
 import { COLUMN_HOVER_COLOR } from "../data/Data"
@@ -28,7 +28,7 @@ export default function ColumnSide({ node }: NodeType) {
   }, [])
 
   // User has hovered over the end column
-  function handleHover() {
+  const handleHover = useCallback(() => {
     const checkerPicked = useGameStore.getState().checkerPicked
     const userChecker = useGameStore.getState().userChecker!
 
@@ -52,13 +52,13 @@ export default function ColumnSide({ node }: NodeType) {
 
     material.color.set(COLUMN_HOVER_COLOR)
     useGameStore.setState({ newCheckerPosition: id })
-  }
+  }, [])
 
   // User has finished hovering over the end column
-  function handleHoverFinished() {
+  const handleHoverFinished = useCallback(() => {
     material.color.set(materials!.BoardWood2.color)
     useGameStore.setState({ newCheckerPosition: undefined })
-  }
+  }, [])
 
   return (
     <mesh

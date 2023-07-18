@@ -1,11 +1,10 @@
-import { ThreeEvent } from "@react-three/fiber"
-import { useLayoutEffect, useRef } from "react"
+import { ThreeEvent, useThree } from "@react-three/fiber"
+import { useCallback, useLayoutEffect, useRef } from "react"
 import { Color, Euler, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three"
 import { COLUMN_HOVER_COLOR, GROUND } from "../data/Data"
 import ColumnSide from "./ColumnSide"
 import { useGameStore } from "../store/useGameStore"
 import getValidHover from "./getValidHover"
-import { shallow } from "zustand/shallow"
 
 /**
  * The 24 columns on the board, where checkers get dropped in. This component
@@ -15,10 +14,8 @@ export default function Columns() {
   const nodes = useGameStore.getState().nodes
   const materials = useGameStore.getState().materials
 
-  // const checkerPicked = useGameStore(state => state.checkerPicked, shallow)
-
   // Ref to the actual columns
-  const columnsRef = useRef<InstancedMesh | null>(null)
+  const columnsRef = useRef<InstancedMesh>(null!)
   // Ref to the invisible column overlays for a better dragging experience.
   const columnsHoverRef = useRef<InstancedMesh | null>(null)
   // The color that the column will be changed to when it's hovered
@@ -81,48 +78,37 @@ export default function Columns() {
   }, [nodes])
 
   // When user hovers over one of the columns
-  function handleHover(e: ThreeEvent<PointerEvent>) {
-    const checkerPicked = useGameStore.getState().checkerPicked
-
-    if (!checkerPicked) return
-
+  const handleHover = useCallback((e: ThreeEvent<PointerEvent>) => {
     const id = e.instanceId as number
-    const validHover = getValidHover(checkerPicked, id)
+    const valid = getValidHover(id)
 
-    if (!validHover || !columnsRef.current) {
+    if (!valid || !columnsRef.current) {
       useGameStore.setState({ newCheckerPosition: undefined })
       return
     }
 
-    // Saving the state
-    useGameStore.setState({ newCheckerPosition: id })
-
     // Setting the color of the hovered column to red
     columnsRef.current.setColorAt(id, colorWhenHovered.current)
     columnsRef.current.instanceColor!.needsUpdate = true
-  }
-
-  // User has released their pointer, on one of the columns
-  function handleHoverFinished(e: ThreeEvent<PointerEvent>) {
-    const checkerPicked = useGameStore.getState().checkerPicked
-
-    const id = e.instanceId as number
-    if (!columnsRef.current) return
-
-    if (id! % 2 === 0) {
-      columnsRef.current.setColorAt(id, materials?.ColumnDark.color!)
-    } else {
-      columnsRef.current.setColorAt(id, materials?.ColumnWhite.color!)
-    }
-
-    // Updating the node
-    columnsRef.current.instanceColor!.needsUpdate = true
 
     // Saving the state
-    if (checkerPicked) return
+    useGameStore.setState({ newCheckerPosition: id })
+  }, [])
 
+  // User has released their pointer, on one of the columns
+  const handleHoverFinished = useCallback((e: ThreeEvent<PointerEvent>) => {
+    const id = e.instanceId as number
+    const instance = columnsRef.current.instanceColor!
+
+    // Resetting the color of the column, when user hovers off
+    columnsRef.current.setColorAt(id, id % 2 === 0 ? materials?.ColumnDark.color! : materials?.ColumnWhite.color!)
+    instance.needsUpdate = true
+
+    if (useGameStore.getState().checkerPicked) return
+
+    // Saving the state
     useGameStore.setState({ newCheckerPosition: undefined })
-  }
+  }, [])
 
   if (!nodes) return <></>
 

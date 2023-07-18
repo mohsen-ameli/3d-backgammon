@@ -6,14 +6,17 @@ import updateLiveGame from "@/game/utils/updateLiveGame"
 /**
  * Updates the dice, the user checker (switches users if need be), phase,
  * and the backend if there's a live game.
+ *
+ * @param moved The number of columns that a checker moved
+ * @param setShow A function to set the show state of the message "user has no valid moves"
+ * @param forceUpdate Whether to force a rerender or not
  */
 export default function updateStuff(
   moved: number,
   setShow: React.Dispatch<React.SetStateAction<boolean>>,
   forceUpdate: boolean = true,
 ) {
-  const dice = useGameStore.getState().dice
-  const ws = useGameStore.getState().ws
+  const { ws, dice } = useGameStore.getState()
 
   // Updating the dice
   const newDice = dice

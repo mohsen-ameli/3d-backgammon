@@ -80,6 +80,9 @@ export const DEFAULT_CAMERA_QUATERNION = {
   w: 0.7071071347398497,
 }
 
+/**
+ * The checker positions.
+ */
 export const DEFAULT_CHECKER_POSITIONS = process.env.NODE_ENV === "development" ? DEFAULT_POS : DEFAULT_POS
 
 /**
