@@ -31,7 +31,6 @@ const bindOptions = { eventOptions: { capture: false, passive: true } }
  */
 export default function Checker({ id, setShow }: { id: number; setShow: Dispatch<SetStateAction<boolean>> }) {
   const thisChecker = useGameStore(state => state.checkers![id], shallow)
-
   const nodes = useMemo(() => useGameStore.getState().nodes, [])
   const materials = useMemo(() => useGameStore.getState().materials, [])
   const toggleControls = useGameStore.getState().toggleControls!
@@ -39,6 +38,9 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
 
   // This checker's rigid body instance
   const checker = useRef<RigidBodyApi>(null!)
+
+  // To cause a rerender of this checker (for animations)
+  const [rerender, setRerender] = useState(false)
 
   // Checker's position
   const [pos] = useState<PosType>([
@@ -93,27 +95,24 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
   /**
    * Subscribe to this checker's state and update its position and rotation, whenever it changes
    */
-  useGameStore.subscribe(
-    state => state.checkers![id],
-    () => {
-      // If the checkers have just been loaded, return so that the entering animation can be played.
-      if (!initial || initial.initialLoad) return
+  useEffect(() => {
+    // If the checkers have just been loaded, return so that the entering animation can be played.
+    if (!initial || initial.initialLoad) return
 
-      // New position and rotation for the checker
-      const position = getCheckerPos(thisChecker)
-      const rotation = [-3, -4].includes(thisChecker.col) ? [Math.PI / 3, 0, 0] : [0, 0, 0]
+    // New position and rotation for the checker
+    const position = getCheckerPos(thisChecker)
+    const rotation = [-3, -4].includes(thisChecker.col) ? [Math.PI / 3, 0, 0] : [0, 0, 0]
 
-      // Setting checker's mesh position
-      springApi.start({ position, rotation })
+    // Setting checker's mesh position
+    springApi.start({ position, rotation })
 
-      // Setting the checker's physics position
-      checker.current?.setTranslation({
-        x: position[0],
-        y: position[1],
-        z: position[2],
-      })
-    },
-  )
+    // Setting the checker's physics position
+    checker.current?.setTranslation({
+      x: position[0],
+      y: position[1],
+      z: position[2],
+    })
+  }, [thisChecker.col, thisChecker.row, thisChecker.removed, rerender])
 
   /**
    * Goes back to the original position of the checker
@@ -263,6 +262,10 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
       rmChecker.col = rmChecker.color === "white" ? -1 : -2
       rmChecker.row = lenRemovedCheckers(rmChecker.color)
       rmChecker.removed = true
+
+      // useGameStore.setState(curr => ({
+      //   checkers: curr.checkers?.map(checker => (checker.id === rmChecker?.id ? { ...rmChecker } : checker)),
+      // }))
     }
 
     // Updating this checker
@@ -282,6 +285,8 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
 
     // Update states and backend
     updateStuff(moved, setShow)
+
+    setRerender(prev => !prev)
 
     // End of logic... phew!
     return

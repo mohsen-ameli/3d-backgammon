@@ -116,20 +116,20 @@ export default function VsComputer() {
     const data = await getSession()
 
     const userChecker = Math.random() - 0.5 < 0 ? "white" : "black"
-    const userChecker2 = Math.random() - 0.5 < 0 ? "white" : "black"
+    const myColor = Math.random() - 0.5 < 0 ? "white" : "black"
 
     const me: PlayerType = {
       id: 0,
       name: data ? data.user.name : "Me",
       image: data ? data.user.image : "",
-      color: userChecker2,
+      color: myColor,
     }
 
     const enemy: PlayerType = {
       id: 1,
       name: "Computer",
       image: "",
-      color: switchPlayers(userChecker2),
+      color: switchPlayers(myColor),
     }
 
     // Initializing the game
