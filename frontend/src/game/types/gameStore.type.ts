@@ -20,7 +20,7 @@ export type GameStoreType = {
   winner: PlayerType | null
   dice: DiceMoveType
   dicePhysics: DicePhysics | null
-  checkers: CheckerType[] | null
+  checkers: CheckerType[]
   checkerPicked: CheckerType | null
   timer: TimerType | null
   selectedSongs: Song[]

@@ -40,11 +40,8 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
   )
 
   useEffect(() => {
-    fetchStuff()
-  }, [])
-
-  useEffect(() => {
     useGameStore.getState().resetOrbit?.("board", true)
+    fetchStuff()
 
     return () => {
       useGameStore.setState({

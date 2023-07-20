@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { GameStoreType } from "../types/gameStore.type"
 import resign from "../utils/resign"
-import { DEFAULT_SETTINGS, DEFAULT_SONG } from "../data/Data"
+import { DEFAULT_CHECKER_POSITIONS, DEFAULT_SETTINGS, DEFAULT_SONG } from "../data/Data"
 import { subscribeWithSelector } from "zustand/middleware"
 
 export const useGameStore = create(
@@ -18,7 +18,7 @@ export const useGameStore = create(
     dicePhysics: null,
     showThrow: null,
 
-    checkers: null,
+    checkers: JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS)),
     userChecker: null,
     checkerPicked: null,
     newCheckerPosition: null,

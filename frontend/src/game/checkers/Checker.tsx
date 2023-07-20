@@ -30,7 +30,7 @@ const bindOptions = { eventOptions: { capture: false, passive: true } }
  * Most of the game logic is implemented here.
  */
 export default function Checker({ id, setShow }: { id: number; setShow: Dispatch<SetStateAction<boolean>> }) {
-  const thisChecker = useGameStore(state => state.checkers![id], shallow)
+  const thisChecker = useGameStore(state => state.checkers[id], shallow)
   const nodes = useMemo(() => useGameStore.getState().nodes, [])
   const materials = useMemo(() => useGameStore.getState().materials, [])
   const toggleControls = useGameStore.getState().toggleControls!
@@ -207,7 +207,7 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
 
       // Updating state
       useGameStore.setState(curr => ({
-        checkers: curr.checkers?.map(checker => (checker.id === thisChecker.id ? { ...thisChecker } : checker)),
+        checkers: curr.checkers.map(checker => (checker.id === thisChecker.id ? { ...thisChecker } : checker)),
       }))
 
       // Sorting the checkers
@@ -262,10 +262,6 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
       rmChecker.col = rmChecker.color === "white" ? -1 : -2
       rmChecker.row = lenRemovedCheckers(rmChecker.color)
       rmChecker.removed = true
-
-      // useGameStore.setState(curr => ({
-      //   checkers: curr.checkers?.map(checker => (checker.id === rmChecker?.id ? { ...rmChecker } : checker)),
-      // }))
     }
 
     // Updating this checker
@@ -275,7 +271,7 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
 
     // Updating state
     useGameStore.setState(curr => ({
-      checkers: curr.checkers?.map(checker =>
+      checkers: curr.checkers.map(checker =>
         checker.id === thisChecker.id ? { ...thisChecker } : checker.id === rmChecker?.id ? { ...rmChecker } : checker,
       ),
     }))
