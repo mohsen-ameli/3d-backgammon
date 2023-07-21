@@ -38,7 +38,7 @@ export default function hasMoves(): boolean {
 // For checking checkers that are NOT removed
 function checkCheckers(color: UserCheckerType) {
   const dice = useGameStore.getState().dice
-  const checkers = useGameStore.getState().checkers!
+  const checkers = useGameStore.getState().checkers
 
   // Variable to hold list of boolean values.
   const validMoves: boolean[] = []
@@ -130,7 +130,7 @@ function checkCheckers(color: UserCheckerType) {
 // For checking checkers that ARE removed
 function checkRemoved(color: UserCheckerType) {
   const dice = useGameStore.getState().dice
-  const checkers = useGameStore.getState().checkers!
+  const checkers = useGameStore.getState().checkers
 
   type checkersOnEnemyColsType = { [key: number]: number }
 

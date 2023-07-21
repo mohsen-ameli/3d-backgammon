@@ -6,7 +6,7 @@ import { UserCheckerType } from "../types/Checker.type"
  * @returns True if the game is in endgame, otherwise false
  */
 export default function Endgame(color: UserCheckerType): boolean {
-  const checkers = useGameStore.getState().checkers!
+  const checkers = useGameStore.getState().checkers
 
   const userCheckers = checkers.filter(checker => checker.color === color)
 

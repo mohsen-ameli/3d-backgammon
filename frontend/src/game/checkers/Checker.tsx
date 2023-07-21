@@ -191,7 +191,7 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
         return
       }
 
-      const checkers = useGameStore.getState().checkers!
+      const checkers = useGameStore.getState().checkers
       const checkersOnEndCol = checkers.filter(checker => checker.col === to)
       const checker_ = {
         col: to,
@@ -212,6 +212,8 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
 
       // Sorting the checkers
       sortCheckers(from)
+
+      setRerender(prev => !prev)
 
       // Checking if user has won
       const possibleWinner = userChecker

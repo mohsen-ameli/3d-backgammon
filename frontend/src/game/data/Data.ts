@@ -83,7 +83,7 @@ export const DEFAULT_CAMERA_QUATERNION = {
 /**
  * The checker positions.
  */
-export const DEFAULT_CHECKER_POSITIONS = process.env.NODE_ENV === "development" ? DEFAULT_POS : DEFAULT_POS
+export const DEFAULT_CHECKER_POSITIONS = process.env.NODE_ENV === "development" ? WHITE_HOUSE_FULL : DEFAULT_POS
 
 /**
  * If we are in training dice mode

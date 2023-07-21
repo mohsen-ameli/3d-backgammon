@@ -16,7 +16,7 @@ type ReturnType = {
  * specified above.
  */
 export default function getCheckersOnCol(col: number, color: UserCheckerType): ReturnType {
-  const checkers = useGameStore.getState().checkers!
+  const checkers = useGameStore.getState().checkers
 
   const checkersOnCol = checkers.filter(item => item.col === col)
   const lenCheckersOnCol = checkersOnCol.length

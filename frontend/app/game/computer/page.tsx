@@ -32,7 +32,7 @@ export default function VsComputer() {
 
   // Update the checkers based on the prediction.
   function update(userChecker: UserCheckerType, move: string) {
-    const copyCheckers = structuredClone(useGameStore.getState().checkers!)
+    const copyCheckers = structuredClone(useGameStore.getState().checkers)
 
     // Setting the from position
     let fromPos = Number(move.split("/")[0])

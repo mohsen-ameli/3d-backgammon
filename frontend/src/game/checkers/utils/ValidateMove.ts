@@ -9,7 +9,7 @@ import { CheckerType } from "@/game/types/Checker.type"
  * of a case in which this function is useful for.
  */
 export default function ValidateMove(thisChecker: CheckerType, moved: number): boolean {
-  const checkers = useGameStore.getState().checkers!
+  const checkers = useGameStore.getState().checkers
   const dice = useGameStore.getState().dice
 
   let backRankCheckers: CheckerType[]
