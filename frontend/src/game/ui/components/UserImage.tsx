@@ -8,7 +8,6 @@ import { faUser } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useGameStore } from "@/game/store/useGameStore"
 import Image from "next/image"
-import { shallow } from "zustand/shallow"
 
 type UserImageType = {
   img: string | undefined
@@ -21,6 +20,7 @@ type UserImageType = {
 const UserImage = ({ img, player }: UserImageType) => {
   const phase = useGameStore(state => state.phase)
   const userChecker = useGameStore(state => state.userChecker)
+  const gameMode = useGameStore.getState().gameMode
 
   const [size, setSize] = useState(() => resize())
   const [duration, setDuration] = useState(USER_TURN_DURATION)
@@ -88,6 +88,22 @@ const UserImage = ({ img, player }: UserImageType) => {
           icon={faUser}
           className={`text-[40px] lg:text-[50px] ${player?.color === "white" ? "text-slate-200" : "text-slate-900"}`}
         />
+      </div>
+    )
+  } else if (gameMode === "vs-computer") {
+    return (
+      <div className="relative">
+        <div className="h-[60px] w-[60px] lg:h-[90px] lg:w-[90px] xl:h-[110px] xl:w-[110px]"></div>
+        {/* Profile Pic */}
+        <Center className="h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
+          <Image
+            width={150}
+            height={150}
+            src={img}
+            alt="img"
+            className="h-full w-full rounded-full object-cover object-center"
+          />
+        </Center>
       </div>
     )
   }

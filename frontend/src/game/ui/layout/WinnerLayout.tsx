@@ -14,42 +14,10 @@ import notification from "@/components/utils/Notification"
  * An overlay when someone wins a live game.
  */
 export default function WinnerLayout() {
-  const { gameMode, phase } = useGameStore(state => ({
-    gameMode: state.gameMode,
-    phase: state.phase,
-  }))
+  const gameMode = useGameStore.getState().gameMode
+  const phase = useGameStore(state => state.phase)
 
   const router = useRouter()
-
-  // Function to request a rematch
-  async function playAgain() {
-    if (gameMode !== "friend-game") {
-      useGameStore.setState({
-        inGame: true,
-        phase: "initial",
-        userChecker: "white",
-        dice: { dice1: 0, dice2: 0, moves: 0 },
-        checkers: JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS)),
-      })
-
-      useGameStore.getState().resetOrbit?.("board", true)
-    } else {
-      const session = await getSession()
-      const axiosInstance = AxiosInstance(session!)
-      const players = useGameStore.getState().players
-
-      const res = await axiosInstance.put("/api/game/handle-match-request/", {
-        action: "send",
-        friend_id: players?.enemy.id,
-      })
-      if (!res.data.success) notification("Your friend is not online!", "error")
-      // Showing a rejection notification after 10 seconds
-      setTimeout(() => {
-        const msg = `${players?.enemy.name} rejected your match request.`
-        notification(msg, "delete-rejected")
-      }, 10000)
-    }
-  }
 
   // Redirects the user back home
   function goHome() {
@@ -147,4 +115,35 @@ function Top({ score, left, right }: { score: [string, string]; left: JSX.Elemen
       </div>
     </div>
   )
+}
+
+async function playAgain() {
+  const gameMode = useGameStore.getState().gameMode
+
+  if (gameMode !== "friend-game") {
+    useGameStore.setState({
+      inGame: true,
+      phase: "initial",
+      userChecker: "white",
+      dice: { dice1: 0, dice2: 0, moves: 0 },
+      checkers: JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS)),
+    })
+
+    useGameStore.getState().resetOrbit?.("board", true)
+  } else {
+    const session = await getSession()
+    const axiosInstance = AxiosInstance(session!)
+    const players = useGameStore.getState().players
+
+    const res = await axiosInstance.put("/api/game/handle-match-request/", {
+      action: "send",
+      friend_id: players?.enemy.id,
+    })
+    if (!res.data.success) notification("Your friend is not online!", "error")
+    // Showing a rejection notification after 10 seconds
+    setTimeout(() => {
+      const msg = `${players?.enemy.name} rejected your match request.`
+      notification(msg, "delete-rejected")
+    }, 10000)
+  }
 }

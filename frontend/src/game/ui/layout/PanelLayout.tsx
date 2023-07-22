@@ -12,19 +12,13 @@ export default function PanelLayout() {
 
   const gameMode = useGameStore.getState().gameMode
 
-  if (gameMode !== "friend-game") {
-    return (
-      <>
-        <SidePanel img="" player={players?.me} sideType="me" />
-        <SidePanel img="" player={players?.enemy} sideType="enemy" />
-      </>
-    )
-  } else {
-    return (
-      <>
-        <SidePanel img={session?.user.image} player={players?.me} sideType="me" />
-        <SidePanel img={players?.enemy.image} player={players?.enemy} sideType="enemy" />
-      </>
-    )
-  }
+  const myImg = gameMode === "pass-and-play" ? "" : session?.user.image
+  const enemyImg = gameMode === "pass-and-play" ? "" : players?.enemy.image
+
+  return (
+    <>
+      <SidePanel img={myImg} player={players?.me} sideType="me" />
+      <SidePanel img={enemyImg} player={players?.enemy} sideType="enemy" />
+    </>
+  )
 }
