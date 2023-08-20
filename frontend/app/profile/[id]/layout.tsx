@@ -10,10 +10,7 @@ export const dynamic = "force-dynamic"
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = await getServerSession(authOptions)
-
-  if (!session) {
-    redirect("/signin?callbackUrl=/")
-  }
+  if (!session) redirect("/signin?callbackUrl=/")
 
   const { user } = session
 

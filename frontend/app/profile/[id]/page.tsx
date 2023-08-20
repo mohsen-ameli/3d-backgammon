@@ -13,17 +13,14 @@ export const revalidate = 30
 
 export async function generateStaticParams() {
   const { data }: { data: number[] } = await axios.get(getServerUrl() + "/api/get-user-ids/")
-
   return data.map(id => ({ id: id.toString() }))
 }
 
 export default async function ProfilePage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions)
-
   if (!session) redirect(`/signin?callbackUrl=/`)
 
   const axiosInstance = AxiosInstance(session)
-
   const { data }: { data: ProfileData } = await axiosInstance.get(`/api/get-user-profile/${params.id}`)
 
   return (

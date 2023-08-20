@@ -29,11 +29,10 @@ type MessageType = {
  * It uses the state passed down to it from FriendDetails component.
  */
 export default function Chat() {
-  const friend = useFriendStore.getState().friend
-
   const { data: session } = useSession()
-
   const axiosInstance = AxiosInstance(session!)
+
+  const friend = useFriendStore.getState().friend
 
   const metadata = {
     title: `3D Backgammon | ${session?.user.name} • ${friend?.username}`,

@@ -9,37 +9,20 @@ type RequestProps = {
   session: Session
   id: number
   action: (session: Session, id: number, action: "accept" | "reject") => Promise<void>
-  fetchStuff: () => Promise<void>
+  type: "accept" | "reject"
 }
 
-export function AcceptButton(props: RequestProps) {
-  const { session, action, id, fetchStuff } = props
+export const generateStaticParams = []
+
+export function ActionButton(props: RequestProps) {
+  const { session, action, id, type } = props
   async function handleClick() {
-    await action(session, id, "accept")
-    await fetchStuff()
+    await action(session, id, type)
   }
 
-  return (
-    <FontAwesomeIcon
-      onClick={handleClick}
-      icon={faCheck}
-      className="cursor-pointer p-1 text-2xl text-green-500 hover:text-green-700"
-    />
-  )
-}
+  const c = `cursor-pointer p-1 text-2xl ${
+    type === "accept" ? "text-green-500 hover:text-green-700" : "text-red-500 hover:text-red-700"
+  }`
 
-export function RejectButton(props: RequestProps) {
-  const { session, action, id, fetchStuff } = props
-  async function handleClick() {
-    await action(session, id, "reject")
-    await fetchStuff()
-  }
-
-  return (
-    <FontAwesomeIcon
-      onClick={handleClick}
-      icon={faXmark}
-      className="cursor-pointer p-1 text-2xl text-red-500 hover:text-red-700"
-    />
-  )
+  return <FontAwesomeIcon onClick={handleClick} icon={type === "accept" ? faCheck : faXmark} className={c} />
 }

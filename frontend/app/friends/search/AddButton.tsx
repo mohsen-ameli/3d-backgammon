@@ -5,15 +5,10 @@ import notification from "@/components/utils/Notification"
 import { BaseUser } from "@/types/User.type"
 import { faCheck } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Session } from "next-auth"
 import { useState } from "react"
 
 type AddButtonType = {
-  session: Session
-  sendFriendRequest: (
-    session: Session,
-    id: number,
-  ) => Promise<{
+  sendFriendRequest: (id: number) => Promise<{
     message: string
     error: boolean
   }>
@@ -21,7 +16,7 @@ type AddButtonType = {
 }
 
 export default function AddButton(props: AddButtonType) {
-  const { session, sendFriendRequest, friend } = props
+  const { sendFriendRequest, friend } = props
 
   const [clicked, setClicked] = useState(false)
   const [error, setError] = useState<string | undefined | null>(undefined)
@@ -29,7 +24,7 @@ export default function AddButton(props: AddButtonType) {
   async function handleClick() {
     setError(undefined)
     setClicked(true)
-    const data = await sendFriendRequest(session, friend.id)
+    const data = await sendFriendRequest(friend.id)
 
     if (data.error) {
       notification(data.message, "error")

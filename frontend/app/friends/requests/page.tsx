@@ -1,39 +1,20 @@
-"use client"
-
 import AxiosInstance from "@/components/utils/AxiosInstance"
-import { AcceptButton, RejectButton } from "./RequestButtons"
+import { ActionButton } from "./RequestButtons"
 import { BaseUser } from "@/types/User.type"
 import Header from "@/components/ui/Header"
 import { friendRequestAction } from "./actions"
-import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
-import Loading from "@/components/ui/Loading"
+import { authOptions } from "@/api/auth/[...nextauth]/route"
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
 
-// export const dynamic = "force-dynamic"
-// export const fetchCache = "force-no-store"
+export const dynamic = "force-dynamic"
 
-export default function FriendRequests() {
-  const { data: session } = useSession()
+export default async function FriendRequests() {
+  const session = await getServerSession(authOptions)
+  if (!session) redirect("/signin?callbackUrl=/friends/requests")
 
-  const [data, setData] = useState<BaseUser[] | null>(null)
-
-  async function fetchStuff() {
-    const axiosInstance = AxiosInstance(session!)
-    const res = await axiosInstance.get("/api/handle-friends/")
-    setData(res.data)
-  }
-
-  useEffect(() => {
-    if (session && !data) fetchStuff()
-  }, [session])
-
-  if (!data)
-    return (
-      <>
-        <Header href="/friends" title="Friend Requests" />
-        <Loading basic center />
-      </>
-    )
+  const axiosInstance = AxiosInstance(session!)
+  const { data } = await axiosInstance.get("/api/handle-friends/")
 
   return (
     <>
@@ -48,8 +29,8 @@ export default function FriendRequests() {
             >
               <p>{user.username} wants to be your friend!</p>
               <div className="flex items-center gap-x-6">
-                <AcceptButton action={friendRequestAction} fetchStuff={fetchStuff} session={session!} id={user.id} />
-                <RejectButton action={friendRequestAction} fetchStuff={fetchStuff} session={session!} id={user.id} />
+                <ActionButton type="accept" action={friendRequestAction} session={session!} id={user.id} />
+                <ActionButton type="reject" action={friendRequestAction} session={session!} id={user.id} />
               </div>
             </div>
           ))}
