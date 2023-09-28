@@ -44,7 +44,7 @@
     "react-loader-spinner": "^5.3.4",
     "react-switch": "7.0.0",
     "react-toastify": "^9.1.2",
-    "sharp": "^0.32.1",
+    "sharp": "^0.32.6",
     "stripe": "^12.8.0",
     "tailwind-merge": "^1.13.1",
     "three": "^0.152.2",
