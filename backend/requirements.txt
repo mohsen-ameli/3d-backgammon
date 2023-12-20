@@ -18,3 +18,4 @@ boto3==1.26.88
 requests==2.28.2
 django-fieldsignals==0.7.0
 # torch==2.0.0
+fonttools>=4.43.0 # not directly required, pinned by Snyk to avoid a vulnerability
