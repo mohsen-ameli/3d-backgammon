@@ -12,7 +12,7 @@
   "dependencies": {
     "@babel/plugin-syntax-jsx": "^7.22.5",
     "@babel/plugin-syntax-typescript": "^7.22.5",
-    "@ducanh2912/next-pwa": "^8.2.0",
+    "@ducanh2912/next-pwa": "^10.2.7",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
