@@ -30,7 +30,7 @@ export default function Page() {
       <div className="fixed bottom-[-35%] z-20 h-[65%] w-full rounded-t-[50%] bg-[#ffffffac]" />
 
       {/* Buttons */}
-      <div className="absolute flex h-full w-full items-end justify-around overflow-y-hidden">
+      <div className="absolute flex size-full items-end justify-around overflow-y-hidden">
         {status === "authenticated" ? (
           <>
             <Logout />
@@ -74,7 +74,7 @@ export default function Page() {
         <Link href="/credits" className="text-orange-900 underline duration-150 ease-in-out hover:text-black">
           Credits
         </Link>
-        •
+        <span className="text-orange-900">•</span>
         <HyperLink href="https://www.mohsenameli.com/" text="About Me" />
       </div>
     </>

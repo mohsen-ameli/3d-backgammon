@@ -44,7 +44,7 @@ export default function Other({ setOpen }: SettingsProps) {
   return (
     <>
       <div className="flex items-center justify-between gap-x-8">
-        Toggle debug
+        Debug
         {/* @ts-ignore */}
         <ReactSwitch
           onChange={toggleDebug}
@@ -56,7 +56,7 @@ export default function Other({ setOpen }: SettingsProps) {
       </div>
 
       <div className="flex items-center justify-between gap-x-8">
-        Toggle performance monitor
+        Performance Monitor
         {/* @ts-ignore */}
         <ReactSwitch
           onChange={togglePerf}
@@ -67,7 +67,7 @@ export default function Other({ setOpen }: SettingsProps) {
         />
       </div>
 
-      <Button onClick={openFullScreen}>Toggle full-screen</Button>
+      <Button onClick={openFullScreen}>Full Screen</Button>
     </>
   )
 }

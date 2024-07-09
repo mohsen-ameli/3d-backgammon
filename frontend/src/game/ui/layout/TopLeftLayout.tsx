@@ -76,7 +76,7 @@ export default function TopLeftLayout() {
         <Settings setOpen={setSettingsOpen} />
       </Modal>
 
-      <Modal setOpen={setInfoOpen} open={infoOpen} className="w-[70%] lg:w-[50%]">
+      <Modal setOpen={setInfoOpen} open={infoOpen} className="w-[70%] lg:w-1/2">
         <Info />
       </Modal>
 

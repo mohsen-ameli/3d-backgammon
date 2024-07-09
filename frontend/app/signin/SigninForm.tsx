@@ -32,7 +32,7 @@ export default function SigninForm() {
       redirect: false,
     })
 
-    if (!res?.error) {
+    if (res?.ok) {
       router.push(callbackUrl!)
     } else {
       setErrors({

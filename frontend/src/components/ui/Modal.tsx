@@ -39,7 +39,7 @@ const modalVariants: Variants = {
 
 const Modal = ({ setOpen, open, className, children }: CarouselProps) => {
   const c = twMerge(
-    `custom-scroll-bar relative mx-auto max-h-screen overflow-x-hidden rounded-xl border-2 border-orange-700 bg-[#7c2d12cc] p-8 max-w-fit ${className}`,
+    `custom-scroll-bar relative mx-auto max-h-screen overflow-x-hidden rounded-xl border-2 border-orange-700 bg-[#7c2c12ed] p-8 max-w-fit ${className}`,
   )
 
   return (

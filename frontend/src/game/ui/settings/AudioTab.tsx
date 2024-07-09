@@ -62,7 +62,7 @@ export default function AudioTab() {
   return (
     <>
       <div className="flex items-center justify-between gap-x-8">
-        <h1>Toggle sound</h1>
+        <h1>Sound</h1>
         {/* @ts-ignore */}
         <ReactSwitch
           onChange={toggleSoundPlaying}
@@ -73,7 +73,7 @@ export default function AudioTab() {
         />
       </div>
       <div className="flex items-center justify-between gap-x-8">
-        <h1>Toggle music</h1>
+        <h1>Music</h1>
         {/* @ts-ignore */}
         <ReactSwitch
           onChange={toggleMusicPlaying}
@@ -86,7 +86,7 @@ export default function AudioTab() {
 
       {/* Music volume slider */}
       <div className="mb-2 flex flex-col items-center justify-between gap-y-2">
-        <h1>Music volume</h1>
+        <h1>Volume</h1>
         <VolumeSlider music={music} />
       </div>
 

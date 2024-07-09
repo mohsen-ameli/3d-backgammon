@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className="bg-gray-800 antialiased">
       <Head description={metadata.description} title={metadata.title} />
       <body className={inter.className}>
-        <Analytics />
+        <Analytics debug={false} />
         <OnlineStatus />
         <Loader />
         <Layout>
