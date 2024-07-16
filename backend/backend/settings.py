@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-
 '''
     General
 '''
