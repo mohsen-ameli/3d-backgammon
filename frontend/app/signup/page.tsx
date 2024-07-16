@@ -2,6 +2,7 @@ import Button from "@/components/ui/Button"
 import Header from "@/components/ui/Header"
 import ProviderIcon from "@/components/ui/ProviderButton"
 import Link from "next/link"
+import { Suspense } from "react"
 
 export default function Signup() {
   return (
@@ -20,9 +21,11 @@ export default function Signup() {
         </div>
 
         <div className="flex flex-col gap-4 pb-4">
-          <ProviderIcon name="discord" />
-          <ProviderIcon name="google" />
-          <ProviderIcon name="twitch" />
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProviderIcon name="discord" />
+            <ProviderIcon name="google" />
+            <ProviderIcon name="twitch" />
+          </Suspense>
         </div>
       </div>
     </>

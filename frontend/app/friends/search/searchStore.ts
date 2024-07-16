@@ -5,6 +5,6 @@ type SearchStore = {
   friends: BaseUser[]
 }
 
-export const searchStore = create<SearchStore>(set => ({
+export const searchStore = create<SearchStore>(() => ({
   friends: [],
 }))

@@ -3,7 +3,7 @@ import { create } from "zustand"
 
 type FriendStore = { friend: FriendType | null; uuid: string | undefined }
 
-export const useFriendStore = create<FriendStore>(set => ({
+export const useFriendStore = create<FriendStore>(() => ({
   friend: null,
   uuid: undefined,
 }))

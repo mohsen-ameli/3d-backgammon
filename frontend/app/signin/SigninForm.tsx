@@ -2,11 +2,12 @@
 
 import Button, { ButtonLoading } from "@/components/ui/Button"
 import FormField from "@/components/ui/FormField"
+import notification from "@/components/utils/Notification"
 import { ErrorType } from "@/types/User.type"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 
 export default function SigninForm() {
   const router = useRouter()
@@ -15,6 +16,10 @@ export default function SigninForm() {
 
   const [errors, setErrors] = useState<ErrorType>()
   const [clicked, setClicked] = useState(false)
+
+  useEffect(() => {
+    if (searchParams.get("error")) notification("You already have an account with that email!", "error")
+  }, [searchParams])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
