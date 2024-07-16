@@ -2,7 +2,6 @@
 
 import { InputHTMLAttributes, useEffect, useRef, useState } from "react"
 import Input from "./Input"
-import Image from "next/image"
 import { ErrorType } from "@/types/User.type"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"

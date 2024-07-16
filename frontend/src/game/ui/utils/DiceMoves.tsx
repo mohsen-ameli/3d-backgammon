@@ -38,7 +38,7 @@ export default function DiceMoves() {
   return (
     <div
       className={`mx-auto grid h-full ${
-        jsx.length > 2 ? "w-[50px] grid-cols-2 lg:w-full lg:grid-cols-4" : "w-[50px] grid-cols-2 lg:w-[50%]"
+        jsx.length > 2 ? "w-1/2 grid-cols-2 lg:w-full lg:grid-cols-4" : "w-1/2 grid-cols-2 lg:w-1/2"
       } gap-2 text-[18pt] lg:text-[22pt]`}
     >
       {jsx.map((number, index) => (

@@ -2,7 +2,7 @@
 
 import Modal from "@/components/ui/Modal"
 import { useGameStore } from "@/game/store/useGameStore"
-import { Stage, useStageStore } from "@/store/useStageStore"
+import { useStageStore } from "@/store/useStageStore"
 import { faChessPawn, faChessQueen } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import React, { useEffect, useRef, useState } from "react"
@@ -69,7 +69,7 @@ function ProNoob() {
     <Modal open={open} setOpen={setOpen}>
       <h1 className="mb-4 text-center text-2xl">Are you a?</h1>
 
-      <div className="flex h-full w-full justify-evenly gap-4">
+      <div className="flex size-full justify-evenly gap-4">
         <div
           onClick={() => setOpen(false)}
           className="flex h-full w-[150px] cursor-pointer flex-col gap-2 rounded-xl bg-slate-500 py-4 text-center text-xl text-black transition hover:bg-slate-600"

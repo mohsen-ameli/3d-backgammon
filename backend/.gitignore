@@ -140,3 +140,4 @@ GitHub.sublime-settings
 *.rdb
 
 profile_pics
+.env

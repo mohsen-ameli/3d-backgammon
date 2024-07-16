@@ -52,7 +52,7 @@ export default function Loading() {
     <AnimatePresence mode="wait">
       {!started && (
         <motion.div
-          className="absolute inset-0 z-[30] flex h-screen w-screen flex-col items-center justify-center bg-gray-800 text-white"
+          className="absolute inset-0 z-30 flex h-screen w-screen flex-col items-center justify-center bg-gray-800 text-white"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 1 } }}
@@ -84,7 +84,7 @@ function Start({ started }: { started: boolean }) {
   }
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-4">
+    <div className="flex size-full flex-col items-center justify-center gap-4">
       <h1 className="text-3xl">Welcome to 3D Backgammon!</h1>
       <Button disabled={started} className="px-16" onClick={startExperience}>
         Start The Experience

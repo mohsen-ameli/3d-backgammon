@@ -80,7 +80,7 @@ export default function FriendsPage() {
             <p>Play</p>
             <p>Remove</p>
           </div>
-          <div className="custom-scroll-bar flex h-full w-full flex-col gap-y-4">
+          <div className="custom-scroll-bar flex size-full flex-col gap-y-4">
             {data.friends.map((friend: FriendType) => (
               <FriendDetails key={friend.id} friend={friend} session={session!} />
             ))}
@@ -109,7 +109,7 @@ function FriendsHeader({ requests = 0 }: { requests?: number }) {
           <Button className="relative text-xl">
             <FontAwesomeIcon icon={faBell} />
             {requests > 0 && (
-              <div className="absolute -right-7 -top-4 h-7 w-7 rounded-full bg-red-400 text-lg">
+              <div className="absolute -right-7 -top-4 size-7 rounded-full bg-red-400 text-lg">
                 <Center>{requests}</Center>
               </div>
             )}

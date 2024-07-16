@@ -22,7 +22,11 @@ export const stages: Stage[] = [
   "final",
 ]
 
-type StageStore = { stage: Stage; nextStage: () => void; prevStage: () => void }
+type StageStore = {
+  stage: Stage
+  nextStage: () => void
+  prevStage: () => void
+}
 
 export const useStageStore = create(
   subscribeWithSelector<StageStore>(set => ({

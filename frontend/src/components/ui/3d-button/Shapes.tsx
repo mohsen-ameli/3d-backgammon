@@ -137,13 +137,13 @@ function Dice4({ geometry, material }: ObjType) {
 function Lights() {
   return (
     <>
-      <ambientLight intensity={0.5} />
-      <directionalLight color="#fbbd61" position={[-10, -10, -10]} intensity={0.2} />
-      <directionalLight color="#fbbd61" position={[-10, 0, 15]} intensity={0.8} />
-      <directionalLight color="#fbbd61" position={[-5, 20, 2]} intensity={0.5} />
-      <directionalLight color="#5d2289" position={[15, 10, -2]} intensity={2} />
-      <directionalLight color="#5d2289" position={[15, 10, 5]} intensity={1} />
-      <directionalLight color="#a980c9" position={[5, -10, 5]} intensity={1} />
+      <ambientLight intensity={2} />
+      <directionalLight color="#fbbd61" position={[-10, -10, -10]} intensity={0.4} />
+      <directionalLight color="#fbbd61" position={[-10, 0, 15]} intensity={1.6} />
+      <directionalLight color="#fbbd61" position={[-5, 20, 2]} intensity={1} />
+      <directionalLight color="#5d2289" position={[15, 10, -2]} intensity={4} />
+      <directionalLight color="#5d2289" position={[15, 10, 5]} intensity={2} />
+      <directionalLight color="#a980c9" position={[5, -10, 5]} intensity={2} />
     </>
   )
 }

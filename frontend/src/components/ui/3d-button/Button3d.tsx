@@ -81,8 +81,8 @@ export default function Button3d({ text, ...props }: types.Button3dProps) {
         >
           <div className="pink blush" />
           <div className="blue blush" />
-          <div className="h-full w-full">
-            <View className="h-full w-full">
+          <div className="size-full">
+            <View className="size-full">
               <Shapes text={label} isHover={isHover} isPress={isPress} mouseX={mouseX} mouseY={mouseY} />
             </View>
           </div>

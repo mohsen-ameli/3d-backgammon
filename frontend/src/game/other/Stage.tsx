@@ -75,12 +75,12 @@ export default function Stage() {
       )}
 
       {/* Lights */}
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={3} />
       <directionalLight
         ref={directionalLight}
         castShadow
         position={[0, 5, 0]}
-        intensity={0.5}
+        intensity={2}
         shadow-mapSize={[512, 512]}
       />
     </>

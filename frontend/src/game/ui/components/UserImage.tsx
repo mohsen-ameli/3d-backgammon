@@ -93,15 +93,15 @@ const UserImage = ({ img, player }: UserImageType) => {
   } else if (gameMode === "vs-computer") {
     return (
       <div className="relative">
-        <div className="h-[60px] w-[60px] lg:h-[90px] lg:w-[90px] xl:h-[110px] xl:w-[110px]"></div>
+        <div className="size-[60px] lg:size-[90px] xl:size-[110px]"></div>
         {/* Profile Pic */}
-        <Center className="h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
+        <Center className="size-[50px] lg:size-[80px] xl:size-[100px]">
           <Image
             width={150}
             height={150}
             src={img}
             alt="img"
-            className="h-full w-full rounded-full object-cover object-center"
+            className="size-full rounded-full object-cover object-center"
           />
         </Center>
       </div>
@@ -127,8 +127,8 @@ const UserImage = ({ img, player }: UserImageType) => {
         >
           {({ remainingTime }) =>
             (remainingTime / duration) * 100 <= 25 && (
-              <div className="absolute z-10 h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
-                <div className="h-full w-full rounded-full bg-[#6e6e6e99] text-red-500 lg:text-lg lg:font-bold">
+              <div className="absolute z-10 size-[50px] lg:size-[80px] xl:size-[100px]">
+                <div className="size-full rounded-full bg-[#6e6e6e99] text-red-500 lg:text-lg lg:font-bold">
                   <Center className="w-full text-center">{remainingTime} sec</Center>
                 </div>
               </div>
@@ -137,17 +137,17 @@ const UserImage = ({ img, player }: UserImageType) => {
         </CountdownCircleTimer>
       ) : (
         // Placeholder
-        <div className="h-[60px] w-[60px] lg:h-[90px] lg:w-[90px] xl:h-[110px] xl:w-[110px]"></div>
+        <div className="size-[60px] lg:size-[90px] xl:size-[110px]"></div>
       )}
 
       {/* Profile Pic */}
-      <Center className="h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
+      <Center className="size-[50px] lg:size-[80px] xl:size-[100px]">
         <Image
           width={150}
           height={150}
           src={img}
           alt="img"
-          className="h-full w-full rounded-full object-cover object-center"
+          className="size-full rounded-full object-cover object-center"
         />
       </Center>
     </div>

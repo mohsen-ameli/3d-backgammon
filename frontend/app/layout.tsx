@@ -18,7 +18,9 @@ import Tutorial from "@/components/ui/Tutorial"
 config.autoAddCss = false
 
 const Experience = dynamic(() => import("@/game/Experience"), { ssr: false })
-const MainLayout3D = dynamic(() => import("@/game/ui/layout/MainLayout3D"), { ssr: false })
+const MainLayout3D = dynamic(() => import("@/game/ui/layout/MainLayout3D"), {
+  ssr: false,
+})
 const Loader = dynamic(() => import("@/components/ui/Loader"), {
   ssr: false,
   loading: () => <FakeLoader />,

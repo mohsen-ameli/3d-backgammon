@@ -32,7 +32,10 @@ export default function FriendDetails({ friend, session }: { friend: FriendType;
   // Deleting a friend
   async function deleteFriend(friend: FriendType) {
     async function accept() {
-      await axiosInstance.put("/api/handle-friends/", { id: friend.id, action: "remove" })
+      await axiosInstance.put("/api/handle-friends/", {
+        id: friend.id,
+        action: "remove",
+      })
     }
     notification(`Are you sure you want to delete ${friend.username}?`, "accept-only", false, accept)
   }
@@ -71,7 +74,7 @@ export default function FriendDetails({ friend, session }: { friend: FriendType;
       {/* Name */}
       <div
         className={
-          "custom-scroll-bar col-span-2 ml-6 w-full text-lg self-center " +
+          "custom-scroll-bar col-span-2 ml-6 w-full self-center text-lg " +
           (friend.is_online ? "text-black" : "text-slate-600")
         }
       >

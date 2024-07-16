@@ -56,7 +56,7 @@ export default function Button(props: InputProps) {
 export const ButtonLoading = () => {
   return (
     <svg
-      className="mx-auto h-5 w-5 animate-spin text-blue-600"
+      className="mx-auto size-5 animate-spin text-blue-600"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

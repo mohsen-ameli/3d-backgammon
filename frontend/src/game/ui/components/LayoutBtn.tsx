@@ -22,7 +22,7 @@ export default function LayoutBtn(props_: BtnProps) {
 
   return (
     <button
-      className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-red-200 text-sm outline-none duration-200 ease-in-out hover:bg-red-300 lg:h-[50px] lg:w-[50px] lg:text-lg"
+      className="flex size-[40px] items-center justify-center rounded-full bg-red-200 text-sm outline-none duration-200 ease-in-out hover:bg-red-300 lg:size-[50px] lg:text-lg"
       onClick={handleClick}
       {...props}
     >

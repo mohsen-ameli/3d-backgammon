@@ -30,7 +30,7 @@ export default function SidePanel({ img, player, sideType }: SideProps) {
       }
     >
       <div className="flex h-full flex-col justify-center">
-        <div className="relative mx-4 max-h-[200px] w-[90px] rounded-lg bg-[#8e84bab3] p-1 text-black md:w-[108px] lg:max-h-[300px] lg:w-[180px] lg:p-3 ">
+        <div className="relative mx-4 max-h-[200px] w-[90px] rounded-lg bg-[#8e84bab3] p-1 text-black md:w-[108px] lg:max-h-[300px] lg:w-[180px] lg:p-3">
           <div className="flex flex-col items-center justify-center">
             {/* Image */}
             <UserImage img={img} player={player} />

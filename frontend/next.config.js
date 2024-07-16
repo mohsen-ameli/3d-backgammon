@@ -13,9 +13,7 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 const nextConfig = {
   reactStrictMode: true, // Recommended for the `pages` directory, default in `app`.
-  experimental: {
-    serverActions: true,
-  },
+  experimental: {},
   images: {
     remotePatterns: [
       {

@@ -12,8 +12,7 @@ export default forwardRef<HTMLInputElement, InputProps>(function Input(props, re
 
   return (
     <input
-      className={`rounded-lg border-2 border-transparent p-2 outline-none duration-200 
-                focus:border-orange-400 focus:ease-in-out ${className}`}
+      className={`rounded-lg border-2 border-transparent p-2 outline-none duration-200 focus:border-orange-400 focus:ease-in-out ${className}`}
       ref={ref}
       {...rest}
     />

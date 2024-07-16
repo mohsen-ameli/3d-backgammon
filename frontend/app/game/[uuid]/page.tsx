@@ -100,7 +100,9 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
 
     // If there is a chat message
     if (data.message) {
-      useGameStore.setState({ messages: { userId: data.id!, message: data.message } })
+      useGameStore.setState({
+        messages: { userId: data.id!, message: data.message },
+      })
       return
     }
 
@@ -146,7 +148,10 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
         myTurn &&
         dice.moves === 0
       ) {
-        useGameStore.setState({ phase: "diceRollPhysics", dicePhysics: data.initial_physics })
+        useGameStore.setState({
+          phase: "diceRollPhysics",
+          dicePhysics: data.initial_physics,
+        })
       } else {
         useGameStore.setState({ phase: "initial" })
       }
@@ -181,14 +186,22 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
       // newest updates from the backend. (aka, making sure
       // all the checker positions are updated)
 
-      if (!myTurn) useGameStore.setState(curr => ({ phase: curr.phase === "spectate" ? "spectating" : "spectate" }))
-      else useGameStore.setState(curr => ({ phase: curr.phase === "checkerMove" ? "checkerMoveAgain" : "checkerMove" }))
+      if (!myTurn)
+        useGameStore.setState(curr => ({
+          phase: curr.phase === "spectate" ? "spectating" : "spectate",
+        }))
+      else
+        useGameStore.setState(curr => ({
+          phase: curr.phase === "checkerMove" ? "checkerMoveAgain" : "checkerMove",
+        }))
 
       return
     }
 
     // Making sure there is a rerender in the checkers component so that both user's boards get updated
-    useGameStore.setState(curr => ({ phase: curr.phase === "diceRollAgain" ? "diceRoll" : "diceRollAgain" }))
+    useGameStore.setState(curr => ({
+      phase: curr.phase === "diceRollAgain" ? "diceRoll" : "diceRollAgain",
+    }))
   }
 
   async function fetchStuff() {
@@ -207,7 +220,12 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
     } else {
       const url = `${getServerUrl(false)}/ws/game/${params.uuid}/`
 
-      useGameStore.setState({ inGame: true, gameMode: "friend-game", gameId: params.uuid, ws: new WebSocket(url) })
+      useGameStore.setState({
+        inGame: true,
+        gameMode: "friend-game",
+        gameId: params.uuid,
+        ws: new WebSocket(url),
+      })
     }
 
     setFetched(true)

@@ -25,6 +25,13 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/premium/JoinNow.tsx"],
+  "include": [
+    "prettier.config.js",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/premium/JoinNow.tsx"
+  ],
   "exclude": ["node_modules"]
 }

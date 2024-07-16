@@ -38,7 +38,7 @@ export default function ProfilePage() {
       <Header href="/" title="Profile" />
 
       <div className="flex flex-col items-center justify-center gap-y-2">
-        <div className="relative h-[80px] w-[80px] xl:h-[100px] xl:w-[100px]">
+        <div className="relative size-[80px] xl:size-[100px]">
           <Image fill alt={session.user.name} src={session.user.image} className="inline-block rounded-full" />
         </div>
         <h1 className="text-lg">{session.user.name}</h1>

@@ -44,7 +44,9 @@ export default function AudioTab() {
     }
 
     // Select every song except for the random song
-    useGameStore.setState(curr => ({ selectedSongs: curr.selectedSongs?.filter(s => s !== DEFAULT_SONG) }))
+    useGameStore.setState(curr => ({
+      selectedSongs: curr.selectedSongs?.filter(s => s !== DEFAULT_SONG),
+    }))
 
     if (selectedSongs?.includes(song)) {
       // User is removing a song

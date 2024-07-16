@@ -46,7 +46,9 @@ export default function updateStuff(
 
   // Updating the user that is playing, and the phase
   if (newDice.moves === 0) {
-    useGameStore.setState(state => ({ userChecker: switchPlayers(state.userChecker!) }))
+    useGameStore.setState(state => ({
+      userChecker: switchPlayers(state.userChecker!),
+    }))
     !ws && useGameStore.setState({ phase: "diceRoll" })
   } else {
     // Making sure there's a rerender every time the user moves

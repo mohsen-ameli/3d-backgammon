@@ -9,7 +9,7 @@ export default function error({ reset }: { reset: () => void }) {
     <Container>
       <Header href="/" title="Error" />
 
-      <div className="flex h-full w-full flex-col items-center justify-center">
+      <div className="flex size-full flex-col items-center justify-center">
         <div className="mb-4 text-center text-xl">Something went wrong :(</div>
 
         <Button onClick={reset} className="w-fit">

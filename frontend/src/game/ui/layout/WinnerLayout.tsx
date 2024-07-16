@@ -59,8 +59,8 @@ export default function WinnerLayout() {
   }
 
   return (
-    <Center className="z-[10]">
-      <div className="h-full w-full rounded-lg bg-[#cbd5e18f] p-6">
+    <Center className="z-10">
+      <div className="size-full rounded-lg bg-[#cbd5e18f] p-6">
         {TopSection}
         <div className="flex w-full flex-col gap-y-2 text-sm lg:text-base">
           <Button onClick={playAgain}>Rematch</Button>
@@ -78,7 +78,7 @@ function getLeftRight(side: "left" | "right") {
 
   return (
     <>
-      <div className="relative h-[50px] w-[50px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px]">
+      <div className="relative size-[50px] lg:size-[80px] xl:size-[100px]">
         <Image
           src={side === "left" ? players.enemy.image : players.me.image}
           alt="Profile Pic"

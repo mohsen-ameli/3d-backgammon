@@ -4,7 +4,10 @@ import { forwardRef, HTMLAttributes, ReactNode, useImperativeHandle, useRef } fr
 import { View as ViewImpl } from "@react-three/drei"
 import { Three } from "@/next-three/Three"
 
-type ViewProps = HTMLAttributes<HTMLDivElement> & { children: ReactNode; orbit?: boolean }
+type ViewProps = HTMLAttributes<HTMLDivElement> & {
+  children: ReactNode
+  orbit?: boolean
+}
 
 const View = forwardRef(({ children, ...props }: ViewProps, ref) => {
   const localRef = useRef<HTMLDivElement>(null!)

@@ -145,7 +145,9 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
     if (active) {
       // @ts-ignore
       event.ray.intersectPlane(floorPlane, planeIntersectPoint)
-      springApi.start({ position: [planeIntersectPoint.x, 0, planeIntersectPoint.z] })
+      springApi.start({
+        position: [planeIntersectPoint.x, 0, planeIntersectPoint.z],
+      })
     }
 
     // User started dragging the checker
@@ -231,7 +233,11 @@ export default function Checker({ id, setShow }: { id: number; setShow: Dispatch
         updateGameWinner(ws)
         return
       }
-      useGameStore.setState({ phase: "ended", userChecker: possibleWinner, inGame: false })
+      useGameStore.setState({
+        phase: "ended",
+        userChecker: possibleWinner,
+        inGame: false,
+      })
       springApi.start({ position: positions, rotation: [Math.PI / 3, 0, 0] })
 
       return

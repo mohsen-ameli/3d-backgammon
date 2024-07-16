@@ -8,7 +8,7 @@ export default function Signup() {
     <>
       <Header href="/" title="Register" />
 
-      <div className="flex h-full w-full flex-col gap-4">
+      <div className="flex size-full flex-col gap-4">
         <Link href="/signup/continue">
           <Button className="mt-3 w-full self-center">Continue with Email</Button>
         </Link>

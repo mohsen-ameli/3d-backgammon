@@ -49,10 +49,14 @@ export default function VsComputer() {
 
     // Settings the total moved number
     let moved: number
-    if (fromPos === -1) moved = toPos + 1 // white brining off the bar
-    else if (toPos === -3) moved = fromPos + 1 // white bearing off
-    else if (fromPos === -2) moved = 24 - toPos // black brining off the bar
-    else if (toPos === -4) moved = 24 - fromPos // black bearing off
+    if (fromPos === -1)
+      moved = toPos + 1 // white brining off the bar
+    else if (toPos === -3)
+      moved = fromPos + 1 // white bearing off
+    else if (fromPos === -2)
+      moved = 24 - toPos // black brining off the bar
+    else if (toPos === -4)
+      moved = 24 - fromPos // black bearing off
     else moved = toPos - fromPos // normal move
 
     // If the computer is removing a checker

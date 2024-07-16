@@ -35,12 +35,12 @@ export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
     >
       <input {...getInputProps()} id="image-input" />
       {isDragActive ? (
-        <Center className="flex h-full w-full items-center justify-center rounded-lg">
+        <Center className="flex size-full items-center justify-center rounded-lg">
           <p className="text-center text-xl font-semibold">Drop the file here ...</p>
         </Center>
       ) : (
         <div className={"absolute left-1/2 w-full -translate-x-1/2 " + (image ? "top-5" : "top-1/2 -translate-y-1/2")}>
-          <FontAwesomeIcon icon={faCloudArrowUp} className="mx-auto mb-2 h-8 w-8 text-2xl text-gray-400" />
+          <FontAwesomeIcon icon={faCloudArrowUp} className="mx-auto mb-2 size-8 text-2xl text-gray-400" />
           <p className="text-gray-400">Drag &apos;n&apos; drop a file here, or click to select a file</p>
         </div>
       )}
@@ -51,7 +51,7 @@ export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
             height={250}
             src={image.preview}
             alt={image.file.name}
-            className="mx-auto h-[75px] w-[75px] rounded-full object-cover object-center"
+            className="mx-auto size-[75px] rounded-full object-cover object-center"
           />
         </div>
       )}

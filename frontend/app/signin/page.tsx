@@ -25,7 +25,7 @@ export default function SigninPage() {
     <>
       <Header href="/" title="Sign In" />
 
-      <div className="flex h-full w-full flex-col gap-4">
+      <div className="flex size-full flex-col gap-4">
         <SigninForm />
 
         <div className="mx-1 flex items-center text-black">
