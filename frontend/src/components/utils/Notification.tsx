@@ -34,7 +34,7 @@ export default function notification(
       toast.error(msg, args)
       break
     case "accept-reject": {
-      toast.info(<Msg msg={msg} green="Accept" red="Reject" accept={accept!} reject={reject!} />, {
+      toast.info(<Msg msg={msg} green="Confirm" red="Cancel" accept={accept!} reject={reject!} />, {
         ...args,
         autoClose: 10000,
         closeButton: false,

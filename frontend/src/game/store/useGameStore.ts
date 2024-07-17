@@ -32,7 +32,7 @@ export const useGameStore = create(
 
     gameMode: null,
     gameId: null,
-    phase: undefined,
+    phase: "cameraMove",
     inGame: false,
     players: null,
     winner: null,

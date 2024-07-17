@@ -127,7 +127,7 @@ def computer_prediction(request: Request):
         raise ValueError()
 
     simple = convert_to_simple_format(board)
-    process = subprocess.Popen(["gnubg" , "-q"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, universal_newlines=True)
+    process = subprocess.Popen(["gnubg" , "-q", "-t"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, universal_newlines=True)
     process.stdin.write("new game\n")
     process.stdin.flush()
     process.stdin.write(f"set board simple {simple}\n")

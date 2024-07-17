@@ -153,7 +153,7 @@ export default function FriendGame({ params }: { params: { uuid: string } }) {
           dicePhysics: data.initial_physics,
         })
       } else {
-        useGameStore.setState({ phase: "initial" })
+        useGameStore.setState({ phase: "cameraMove" })
       }
 
       // Filling the players reference

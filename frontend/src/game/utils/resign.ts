@@ -15,6 +15,6 @@ export default function resign(winnerId: number, loserId: number, send: boolean 
     return
   }
 
-  const msg = "Confirm resignation?"
+  const msg = "Resign?"
   notification(msg, "accept-reject", false, () => ws?.send(context), undefined)
 }

@@ -10,18 +10,18 @@ export default function Info() {
     <div className="flex flex-col gap-y-5">
       <div className="">
         <h1 className="mb-2 text-center text-xl font-bold">How to interact:</h1>
-        <div className="flex size-full items-center justify-evenly text-sm text-white lg:text-lg">
-          <div className="flex flex-col items-center gap-y-2">
+        <div className="grid size-full grid-cols-3 gap-4 text-sm text-white lg:text-lg">
+          <div className="flex w-full flex-col items-center gap-y-2 rounded-xl bg-[#47474762] py-4">
             <Image width="0" height="0" className="size-[50px]" src="/svg/finger-zoom.svg" alt="finger-zoom" />
             <h1>Zoom</h1>
             <Image width="0" height="0" className="size-[50px]" src="/svg/mouse-zoom.svg" alt="mouse-zoom" />
           </div>
-          <div className="flex flex-col items-center gap-y-2">
+          <div className="flex w-full flex-col items-center gap-y-2 rounded-xl bg-[#47474762] py-4">
             <Image width="0" height="0" className="size-[50px]" src="/svg/finger-drag.svg" alt="finger-drag" />
             <h1>Rotate</h1>
             <Image width="0" height="0" className="size-[50px]" src="/svg/mouse-left.svg" alt="mouse-left" />
           </div>
-          <div className="flex flex-col items-center gap-y-2">
+          <div className="flex w-full flex-col items-center gap-y-2 rounded-xl bg-[#47474762] py-4">
             <Image width="0" height="0" className="size-[50px]" src="/svg/finger-pan.svg" alt="finger-pan" />
             <h1>Pan</h1>
             <Image width="0" height="0" className="size-[50px]" src="/svg/mouse-right.svg" alt="mouse-right" />

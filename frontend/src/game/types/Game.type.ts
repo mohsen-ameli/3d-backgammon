@@ -32,6 +32,7 @@ export type TimerType = { id: number; time: number }
 // Different Phases of the game
 // TODO: cleanup the again phases
 export type PhaseType =
+  | "cameraMove"
   | "checkerMove"
   | "checkerMoveAgain"
   | "diceRoll"

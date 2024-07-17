@@ -72,8 +72,15 @@ function BottomSection({ sideType, player }: BottomSectionProps) {
   const userChecker = useGameStore(state => state.userChecker)
   const gameMode = useGameStore(state => state.gameMode)
   const dice = useGameStore(state => state.dice, shallow)
+  const [showButtons, setShowButtons] = useState(false)
 
-  const show = userChecker === player?.color && (dice.moves !== 0 || sideType === "me" || gameMode !== "friend-game")
+  useEffect(() => {
+    setTimeout(() => {
+      setShowButtons(true)
+    }, 10000)
+  }, [])
+
+  const show = showButtons && userChecker === player?.color && (dice.moves !== 0 || sideType === "me" || gameMode !== "friend-game")
 
   if (!show) return <></>
 

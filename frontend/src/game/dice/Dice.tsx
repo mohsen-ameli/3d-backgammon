@@ -155,6 +155,14 @@ export default function Dice() {
     const dicePhysics = useGameStore.getState().dicePhysics
     let timeout: NodeJS.Timeout
 
+    // Wait for the camera to move and checkers to get to their positions
+    if (phase === "cameraMove") {
+      setTimeout(() => {
+        useGameStore.setState({ phase: "initial" })
+      }, 10000)
+      return
+    } 
+
     // User already has dice physics, and it's their turn, and they don't have the numbers on the dice saved
     if (phase === "diceRollPhysics") {
       timeout = setTimeout(() => {

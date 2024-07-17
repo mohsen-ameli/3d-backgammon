@@ -34,7 +34,7 @@ export default function Settings({ setOpen }: SettingsProps) {
           <li
             className={
               "cursor-pointer border-b-4 " +
-              (tab.audio ? "animate-pulse border-emerald-600 text-emerald-200" : "border-transparent")
+              (tab.audio ? "animate-pulse border-orange-900 text-orange-900" : "border-transparent transition hover:text-orange-600")
             }
             onClick={() => toggleTab("audio")}
           >
@@ -43,7 +43,7 @@ export default function Settings({ setOpen }: SettingsProps) {
           <li
             className={
               "cursor-pointer border-b-4 " +
-              (tab.background ? "animate-pulse border-emerald-600 text-emerald-200" : "border-transparent")
+              (tab.background ? "animate-pulse border-orange-900 text-orange-900" : "border-transparent transition hover:text-orange-600")
             }
             onClick={() => toggleTab("background")}
           >
@@ -52,7 +52,7 @@ export default function Settings({ setOpen }: SettingsProps) {
           <li
             className={
               "cursor-pointer border-b-4 " +
-              (tab.other ? "animate-pulse border-emerald-600 text-emerald-200" : "border-transparent")
+              (tab.other ? "animate-pulse border-orange-900 text-orange-900" : "border-transparent transition hover:text-orange-600")
             }
             onClick={() => toggleTab("other")}
           >

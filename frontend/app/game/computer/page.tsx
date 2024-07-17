@@ -143,7 +143,7 @@ export default function VsComputer() {
       userChecker,
       checkers: JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS)),
       players: { me, enemy },
-      phase: "initial",
+      phase: "cameraMove",
       inGame: true,
     })
   }

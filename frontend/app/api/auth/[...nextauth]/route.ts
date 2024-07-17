@@ -39,18 +39,19 @@ const googleProvider = GoogleProvider({
 
 const credentialsProvider = CredentialsProvider({
   name: "Credentials",
-  credentials: {},
-  async authorize(credentials, req) {
-    const { username, password } = credentials as {
-      username: string
-      password: string
-    }
+  credentials: {
+    username: { label: "Username", type: "text" },
+    password: { label: "Password", type: "password" },
+  },
+  async authorize(credentials) {
+    const { username, password } = credentials!
 
-    // Add logic here to look up the user from the credentials supplied
     const { data }: { data: TokenType } = await axios.post(`${getServerUrl()}/api/token/`, {
       username,
       password,
     })
+
+    console.log("server: ", username, password)
 
     const user: UserType = jwtDecode(data.access)
     user.token = data
@@ -81,6 +82,8 @@ export const authOptions: AuthOptions = {
         image: user.image,
         provider: account?.provider,
       }
+
+      console.log("backend", context)
 
       const config = user.image
         ? {

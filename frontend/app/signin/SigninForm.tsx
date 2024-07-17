@@ -25,7 +25,7 @@ export default function SigninForm() {
     e.preventDefault()
 
     setClicked(true)
-
+    
     const { username, password } = e.target as typeof e.target & {
       username: { value: string }
       password: { value: string }
@@ -34,7 +34,7 @@ export default function SigninForm() {
     const res = await signIn("credentials", {
       username: username.value,
       password: password.value,
-      redirect: false,
+      redirect: false
     })
 
     if (res?.ok) {

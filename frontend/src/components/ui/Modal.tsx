@@ -24,7 +24,7 @@ const fadeVariants: Variants = {
 
 const modalVariants: Variants = {
   hidden: {
-    y: "-100vh",
+    y: "-1vh",
   },
   visible: {
     y: "0",
@@ -35,11 +35,20 @@ const modalVariants: Variants = {
       mass: 1.5,
     },
   },
+  exit: {
+    y: "1vh",
+    transition: {
+      type: "spring",
+      damping: 30,
+      stiffness: 400,
+      mass: 1.5,
+    },
+  }
 }
 
 const Modal = ({ setOpen, open, className, children }: CarouselProps) => {
   const c = twMerge(
-    `custom-scroll-bar relative mx-auto max-h-screen overflow-x-hidden rounded-xl border-2 border-orange-700 bg-[#7c2c12ed] p-8 max-w-fit ${className}`,
+    `custom-scroll-bar relative drop-shadow-xl text-black mx-auto max-h-screen overflow-x-hidden rounded-xl bg-[#cbd5e1c0] p-8 max-w-fit ${className}`,
   )
 
   return (
@@ -58,8 +67,7 @@ const Modal = ({ setOpen, open, className, children }: CarouselProps) => {
             <FontAwesomeIcon
               icon={faX}
               size="lg"
-              width={20}
-              className="absolute right-4 top-4 duration-100 hover:cursor-pointer hover:text-slate-400 hover:ease-in-out"
+              className="absolute right-0 top-0 p-4 text-black duration-100 hover:cursor-pointer hover:text-slate-500 hover:ease-in-out"
               onClick={() => setOpen(false)}
             />
           </motion.div>

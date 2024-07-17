@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react"
-import { DEFAULT_SETTINGS, DEFAULT_SONG } from "../../data/Data"
+import { DEFAULT_SONG } from "../../data/Data"
 import ReactSwitch from "react-switch"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheck } from "@fortawesome/free-solid-svg-icons"

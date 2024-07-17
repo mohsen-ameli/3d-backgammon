@@ -55,7 +55,7 @@ export default function PassAndPlayPage() {
       userChecker,
       checkers: JSON.parse(JSON.stringify(DEFAULT_CHECKER_POSITIONS)),
       players: { me, enemy },
-      phase: "initial",
+      phase: "cameraMove",
       inGame: true,
     })
   }
