@@ -3,7 +3,7 @@ import { ActionButton } from "./RequestButtons"
 import { BaseUser } from "@/types/User.type"
 import Header from "@/components/ui/Header"
 import { friendRequestAction } from "./actions"
-import { authOptions } from "@/api/auth/[...nextauth]/route"
+import { authOptions } from "@/components/auth"
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 

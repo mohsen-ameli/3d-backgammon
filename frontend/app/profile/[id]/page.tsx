@@ -1,4 +1,4 @@
-import { authOptions } from "@/api/auth/[...nextauth]/route"
+import { authOptions } from "@/components/auth"
 import { getServerSession } from "next-auth"
 import Image from "next/image"
 import { redirect } from "next/navigation"
