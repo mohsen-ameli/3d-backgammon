@@ -12,8 +12,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = str(os.environ.get("DEBUG")) == "1"
 
 ALLOWED_HOSTS = [
-    "backend.3dbackgammon.com",
-    "www.backend.3dbackgammon.com",
+    "backend-3dbackgammon.mohsenameli.com",
+    "www.backend-3dbackgammon.mohsenameli.com",
     "localhost",
     "127.0.0.1",
 ]
@@ -223,15 +223,15 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
     'http://192.168.0.173:3000',
-    'https://backend.3dbackgammon.com',
-    'https://www.3dbackgammon.com',
-    'https://3dbackgammon.com'
+    'https://3dbackgammon.mohsenameli.com',
+    'https://www.3dbackgammon.mohsenameli.com',
+    'https://3dbackgammon.mohsenameli.com'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://www.3dbackgammon.com',
-    'https://3dbackgammon.com',
-    'https://backend.3dbackgammon.com',
+    'https://www.3dbackgammon.mohsenameli.com',
+    'https://3dbackgammon.mohsenameli.com',
+    'https://3dbackgammon.mohsenameli.com',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
